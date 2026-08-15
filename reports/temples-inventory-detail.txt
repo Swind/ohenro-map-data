@@ -1,0 +1,90 @@
+# temples-inventory
+
+## per-number strict candidates
+
+  #01 way 416330224: '第01番札所 霊山寺' religion='buddhist' denomination='shingon_shu'
+  #02 node 314743789: '第02番札所 極楽寺' religion='buddhist' denomination='shingon_shu'
+  #03 node 314747849: '第03番札所 金泉寺 (Konsen-ji)' religion='buddhist' denomination='shingon_shu'
+  #04 way 901586777: '第04番札所 大日寺 (Dainichi-ji)' religion='buddhist' denomination='shingon_shu'
+  #05 node 314760216: '第05番札所 地蔵寺' religion='buddhist' denomination='shingon_shu'
+  #06 node 373318456: '第06番札所 安楽寺(Anraku-ji)' religion='buddhist' denomination='shingon_shu'
+  #07 node 373319108: '第07番札所 十楽寺(Juraku-ji)' religion='buddhist' denomination='shingon_shu'
+  #08 node 373493768: '第08番札所 熊谷寺 (Kumadani-ji)' religion='buddhist' denomination='shingon_shu'
+  #09 node 373551362: '第09番札所 法輪寺 (Horin-ji)' religion='buddhist' denomination='shingon_shu'
+  #10 node 302633891: '第10番札所 切幡寺 (Kirihata-ji)' religion='buddhist' denomination='shingon_shu'
+  #11 node 302592266: '第11番札所 藤井寺 (Fujii-dera)' religion='buddhist' denomination='rinzai'
+  #12 node 311958226: '第12番札所 焼山寺(Shosan-ji)' religion='buddhist' denomination='shingon_shu'
+  #13 way 771571308: '第13番札所 大日寺' religion='buddhist' denomination='shingon_shu'
+  #14 node 378613360: '第14番札所 常楽寺 (Joraku-ji)' religion='buddhist' denomination='shingon_shu'
+  #15 way 1020874787: '第15番札所 阿波国分寺 (Kokubun-ji)' religion='buddhist' denomination='shingon_shu'
+  #16 way 1020874753: "第16番札所 観音寺(Kan'on-ji)" religion='buddhist' denomination='shingon_shu'
+  #17 node 378737822: '第17番札所 井戸寺 (Ido-ji)' religion='buddhist' denomination='shingon_shu'
+  #18 node 293930778: '第18番札所 恩山寺 (Onzan-ji)' religion='buddhist' denomination='shingon_shu'
+  #19 node 293931125: '第19番札所 立江寺 (Tatsue-ji)' religion='buddhist' denomination='shingon_shu'
+  #20 node 294058400: '第20番札所 鶴林寺 (Kakurin-ji)' religion='buddhist' denomination='shingon_shu'
+  #21 node 13478796431: '第21番札所 太龍寺 (Tairyu-ji)' religion='buddhist' denomination='shingon_shu'
+  #22 node 294063123: '第22番札所 平等寺 (Byodo-ji)' religion='buddhist' denomination='shingon_shu'
+  #23 node 369741886: '第23番札所 薬王寺 (Yakuo-ji)' religion='buddhist' denomination='shingon_shu'
+  #24 node 331438826: '第24番札所 最御崎寺' religion='buddhist' denomination='shingon_shu'
+  #25 node 331437344: '第25番札所 津照寺 (Shinsho-ji)' religion='buddhist' denomination='shingon_shu'
+  #26 node 331437020: '第26番札所 金剛頂寺 (Kongōchōji)' religion='buddhist' denomination='shingon_shu'
+  #27 node 408839421: '第27番札所 神峯寺 (Konomine-ji)' religion='buddhist' denomination='shingon_shu'
+  #28 node 4434022193: '第28番札所 大日寺 (Dainichi-ji)' religion='buddhist' denomination='shingon_shu'
+  #29 node 4434078589: '第29番札所 土佐国分寺 (Tosa Kokubun-ji)' religion='buddhist' denomination='shingon_shu'
+  #30 way 787559037: '第30番札所 善楽寺 (Zenraku-ji)' religion='buddhist' denomination='shingon_shu'
+  #31 way 1392390182: '第31番札所 竹林寺' religion='buddhist' denomination='shingon_shu'
+  #32 node 1078632741: '第32番札所 禅師峰寺(Zenjibu-ji)' religion='buddhist' denomination='shingon_shu'
+  #33 node 725217819: '第33番札所 雪渓寺 (Sekkei-ji)' religion='buddhist' denomination='shingon_shu'
+  #34 node 770247808: '第34番札所 種間寺 (Tanema-ji)' religion='buddhist' denomination='shingon_shu'
+  #35 node 3919866480: '第35番札所 清滝寺 (Kiyotaki-ji)' religion='buddhist' denomination='shingon_shu'
+  #36 node 4834644228: '第36番札所 青龍寺 (Seiryu-ji)' religion='buddhist' denomination='shingon_shu'
+  #37 node 4434078789: '第37番札所 岩本寺 (Iwamoto-ji)' religion='buddhist' denomination='shingon_shu'
+  #38 way 1024256178: '第38番札所 金剛福寺' religion='buddhist' denomination='shingon_shu'
+  #39 node 4434097289: '第39番札所 延光寺' religion='buddhist' denomination='shingon_shu'
+  #40 way 1060201493: '第40番札所 観自在寺' religion='buddhist' denomination='shingon_shu'
+  #41 node 811018694: '第41番札所 龍光寺 (Ryuko-ji)' religion='buddhist' denomination='shingon_shu'
+  #42 node 811018827: '第42番札所 佛木寺 仏木寺 (Butsumoku-ji)' religion='buddhist' denomination='shingon_shu'
+  #43 node 811019635: '第43番札所 明石寺 (Meiseki-ji)' religion='buddhist' denomination='shingon_shu'
+  #44 node 4435493592: '第44番札所 大宝寺 (Daihō-ji)' religion='buddhist' denomination=None
+  #45 node 4435482997: '第45番札所 岩屋寺 (Iwaya-ji)' religion='buddhist' denomination=None
+  #46 node 2387948456: '第46番札所 浄瑠璃寺 (Joruri-ji)' religion='buddhist' denomination=None
+  #47 node 2980855411: '第47番札所 八坂寺 (Yasaka-ji)' religion='buddhist' denomination=None
+  #48 node 2387950625: '第48番札所 清滝山 西林寺 (Sairin-ji)' religion='buddhist' denomination=None
+  #49 node 2387958055: '第49番札所 浄土寺' religion='buddhist' denomination=None
+  #50 node 608287974: '第50番札所 繁多寺 (Hanta-ji)' religion='buddhist' denomination=None
+  #51 way 1291330157: '第51番札所 石手寺' religion='buddhist' denomination='shingon_shu'
+  #52 node 2387968017: '第52番札所 太山寺 (Taisan-ji)' religion='buddhist' denomination=None
+  #53 node 2387969156: '第53番札所 円明寺 (Enmyo-ji)' religion='buddhist' denomination=None
+  #54 node 4435525893: '第54番札所 延命寺' religion='buddhist' denomination=None
+  #55 node 4435546089: '第55番札所 南光坊' religion='buddhist' denomination=None
+  #56 node 5089656382: '第56番札所 泰山寺 (Taisan-ji)' religion='buddhist' denomination=None
+  #57 node 4435546090: '第57番札所 栄福寺 (Eifuku-ji)' religion='buddhist' denomination=None
+  #58 node 4435546189: '第58番札所 仙遊寺 (Senyū-ji)' religion='buddhist' denomination=None
+  #59 node 4435525693: '第59番札所 伊予国分寺 (Iyo Kokubun-ji)' religion='buddhist' denomination=None
+  #60 node 412335511: '第60番札所 横峰寺' religion='buddhist' denomination='shingon_shu'
+  #61 node 412335530: '第61番札所 香園寺' religion='buddhist' denomination='shingon_shu'
+  #62 node 412335963: '第62番札所 宝寿寺' religion='buddhist' denomination='shingon_shu'
+  #63 node 412335542: '第63番札所 吉祥寺' religion='buddhist' denomination='shingon_shu'
+  #64 node 412335769: '第64番札所 前神寺' religion='buddhist' denomination='shingon_shu'
+  #65 node 4839325648: '第65番札所 三角寺' religion='buddhist' denomination='shingon_shu'
+  #66 node 13457190181: '第66番札所 大興寺' religion='buddhist' denomination=None
+  #66 node 13457236116: '第66番札所 雲辺寺' religion='buddhist' denomination=None
+  #68 node 13457231076: '第68番札所 神恵院' religion='buddhist' denomination=None
+  #69 node 13457234989: '第69番札所 観音寺' religion='buddhist' denomination=None
+  #70 node 13457234990: '第70番札所 本山寺' religion='buddhist' denomination=None
+  #71 node 1396608737: '第71番札所 弥谷寺' religion='buddhist' denomination='shingon_shu'
+  #72 node 1019987711: '第72番札所 曼荼羅寺' religion='buddhist' denomination='shingon_shu'
+  #73 node 1019987945: '第73番札所 出釈迦寺' religion='buddhist' denomination='shingon_shu'
+  #75 relation 13795824: '第75番札所 善通寺' religion='buddhist' denomination='shingon_shu'
+  #77 node 13457234991: '第77番札所 道隆寺' religion='buddhist' denomination=None
+  #78 way 604212160: '第78番札所 郷照寺' religion='buddhist' denomination=None
+  #79 way 911832935: '第79番札所 天皇寺 高照院' religion='buddhist' denomination=None
+  #80 node 902733558: '第80番札所 国分寺' religion='buddhist' denomination='shingon_shu'
+  #81 node 705230870: '第81番札所 白峯寺' religion='buddhist' denomination='shingon_shu'
+  #82 way 56201574: '第82番札所 根香寺' religion='buddhist' denomination='shingon_shu'
+  #83 way 772798146: '第83番札所 一宮寺' religion='buddhist' denomination='shingon_shu'
+  #84 way 422803840: '第84番札所 屋島寺' religion='buddhist' denomination='shingon_shu'
+  #85 way 47174503: '第85番札所 八栗寺' religion='buddhist' denomination='shingon_shu'
+  #86 node 2043015584: '第86番札所 志度寺' religion='buddhist' denomination='shingon_shu'
+  #87 node 1047293559: '第87番札所 長尾寺 (Nagao-ji)' religion='buddhist' denomination='shingon_shu'
+  #88 node 302548391: '第88番札所 大窪寺 (Okubo-ji)' religion='buddhist' denomination='shingon_shu'

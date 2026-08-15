@@ -1,0 +1,1677 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "temple-001",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.502972,
+          34.159474
+        ]
+      },
+      "properties": {
+        "id": "temple-001",
+        "type": "temple",
+        "number": 1,
+        "name_ja": "霊山寺",
+        "name_en": "Ryouzen-ji",
+        "name_kana": "りょうぜんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-002",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.490351,
+          34.155682
+        ]
+      },
+      "properties": {
+        "id": "temple-002",
+        "type": "temple",
+        "number": 2,
+        "name_ja": "極楽寺",
+        "name_en": "Gokuraku-ji",
+        "name_kana": "ごくらくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-003",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.468531,
+          34.147386
+        ]
+      },
+      "properties": {
+        "id": "temple-003",
+        "type": "temple",
+        "number": 3,
+        "name_ja": "金泉寺",
+        "name_en": "Konsen-ji",
+        "name_kana": "こんせんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.430899,
+          34.151348
+        ]
+      },
+      "properties": {
+        "id": "temple-004",
+        "type": "temple",
+        "number": 4,
+        "name_ja": "大日寺",
+        "name_en": "Dainichi-ji",
+        "name_kana": "だいにちじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-005",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.432146,
+          34.137255
+        ]
+      },
+      "properties": {
+        "id": "temple-005",
+        "type": "temple",
+        "number": 5,
+        "name_ja": "地蔵寺",
+        "name_en": "Jizo-ji",
+        "name_kana": "じぞうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-006",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.388312,
+          34.11804
+        ]
+      },
+      "properties": {
+        "id": "temple-006",
+        "type": "temple",
+        "number": 6,
+        "name_ja": "安楽寺",
+        "name_en": "Anraku-ji",
+        "name_kana": "あんらくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-007",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.377921,
+          34.120732
+        ]
+      },
+      "properties": {
+        "id": "temple-007",
+        "type": "temple",
+        "number": 7,
+        "name_ja": "十楽寺",
+        "name_en": "Juraku-ji",
+        "name_kana": "じゅうらくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-008",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.340035,
+          34.120804
+        ]
+      },
+      "properties": {
+        "id": "temple-008",
+        "type": "temple",
+        "number": 8,
+        "name_ja": "熊谷寺",
+        "name_en": "Kumadani-ji",
+        "name_kana": "くまだにじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-009",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.333768,
+          34.104372
+        ]
+      },
+      "properties": {
+        "id": "temple-009",
+        "type": "temple",
+        "number": 9,
+        "name_ja": "法輪寺",
+        "name_en": "Horin-ji",
+        "name_kana": "ほうりんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-010",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.304277,
+          34.1078
+        ]
+      },
+      "properties": {
+        "id": "temple-010",
+        "type": "temple",
+        "number": 10,
+        "name_ja": "切幡寺",
+        "name_en": "Kirihata-ji",
+        "name_kana": "きりはたじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-011",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.348482,
+          34.051651
+        ]
+      },
+      "properties": {
+        "id": "temple-011",
+        "type": "temple",
+        "number": 11,
+        "name_ja": "藤井寺",
+        "name_en": "Fujii-dera",
+        "name_kana": "ふじいでら"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-012",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.310218,
+          33.984969
+        ]
+      },
+      "properties": {
+        "id": "temple-012",
+        "type": "temple",
+        "number": 12,
+        "name_ja": "焼山寺",
+        "name_en": "Syosan-ji",
+        "name_kana": "しょうざんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-013",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.462669,
+          34.038156
+        ]
+      },
+      "properties": {
+        "id": "temple-013",
+        "type": "temple",
+        "number": 13,
+        "name_ja": "大日寺",
+        "name_en": "Dainichi-ji",
+        "name_kana": "だいにちじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-014",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.47568,
+          34.050311
+        ]
+      },
+      "properties": {
+        "id": "temple-014",
+        "type": "temple",
+        "number": 14,
+        "name_ja": "常楽寺",
+        "name_en": "Jyoraku-ji",
+        "name_kana": "じょうらくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-015",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.473601,
+          34.055609
+        ]
+      },
+      "properties": {
+        "id": "temple-015",
+        "type": "temple",
+        "number": 15,
+        "name_ja": "國分寺",
+        "name_en": "Kokubun-ji",
+        "name_kana": "こくぶんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-016",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.474342,
+          34.068479
+        ]
+      },
+      "properties": {
+        "id": "temple-016",
+        "type": "temple",
+        "number": 16,
+        "name_ja": "観音寺",
+        "name_en": "Kannon-ji",
+        "name_kana": "かんおんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-017",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.485525,
+          34.085167
+        ]
+      },
+      "properties": {
+        "id": "temple-017",
+        "type": "temple",
+        "number": 17,
+        "name_ja": "井戸寺",
+        "name_en": "Ido-ji",
+        "name_kana": "いどじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-018",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.578242,
+          33.985946
+        ]
+      },
+      "properties": {
+        "id": "temple-018",
+        "type": "temple",
+        "number": 18,
+        "name_ja": "恩山寺",
+        "name_en": "Onzan-ji",
+        "name_kana": "おんざんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-019",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.605956,
+          33.96772
+        ]
+      },
+      "properties": {
+        "id": "temple-019",
+        "type": "temple",
+        "number": 19,
+        "name_ja": "立江寺",
+        "name_en": "Tatsue-ji",
+        "name_kana": "たつえじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-020",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.505634,
+          33.913843
+        ]
+      },
+      "properties": {
+        "id": "temple-020",
+        "type": "temple",
+        "number": 20,
+        "name_ja": "鶴林寺",
+        "name_en": "Kakurin-ji",
+        "name_kana": "かくりんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-021",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.521818,
+          33.882562
+        ]
+      },
+      "properties": {
+        "id": "temple-021",
+        "type": "temple",
+        "number": 21,
+        "name_ja": "太龍寺",
+        "name_en": "Tairyu-ji",
+        "name_kana": "たいりゅうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-022",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.58258,
+          33.851752
+        ]
+      },
+      "properties": {
+        "id": "temple-022",
+        "type": "temple",
+        "number": 22,
+        "name_ja": "平等寺",
+        "name_en": "Byodo-ji",
+        "name_kana": "びょうどうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-023",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.527632,
+          33.732259
+        ]
+      },
+      "properties": {
+        "id": "temple-023",
+        "type": "temple",
+        "number": 23,
+        "name_ja": "薬王寺",
+        "name_en": "Yakuo-ji",
+        "name_kana": "やくおうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-024",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.175725,
+          33.249021
+        ]
+      },
+      "properties": {
+        "id": "temple-024",
+        "type": "temple",
+        "number": 24,
+        "name_ja": "最御崎寺",
+        "name_en": "Hotsumisaki-ji",
+        "name_kana": "ほつみさきじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-025",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.148404,
+          33.288265
+        ]
+      },
+      "properties": {
+        "id": "temple-025",
+        "type": "temple",
+        "number": 25,
+        "name_ja": "津照寺",
+        "name_en": "Shinsyo-ji",
+        "name_kana": "しんしょうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-026",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.122834,
+          33.307215
+        ]
+      },
+      "properties": {
+        "id": "temple-026",
+        "type": "temple",
+        "number": 26,
+        "name_ja": "金剛頂寺",
+        "name_en": "Kongoucho-ji",
+        "name_kana": "こんごうちょうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-027",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.974807,
+          33.467616
+        ]
+      },
+      "properties": {
+        "id": "temple-027",
+        "type": "temple",
+        "number": 27,
+        "name_ja": "神峯寺",
+        "name_en": "Kounomine-ji",
+        "name_kana": "こうのみねじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-028",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.70541,
+          33.577577
+        ]
+      },
+      "properties": {
+        "id": "temple-028",
+        "type": "temple",
+        "number": 28,
+        "name_ja": "大日寺",
+        "name_en": "Dainichi-ji",
+        "name_kana": "だいにちじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-029",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.640441,
+          33.59877
+        ]
+      },
+      "properties": {
+        "id": "temple-029",
+        "type": "temple",
+        "number": 29,
+        "name_ja": "国分寺",
+        "name_en": "Kokubun-ji",
+        "name_kana": "こくぶんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-030",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.577757,
+          33.591965
+        ]
+      },
+      "properties": {
+        "id": "temple-030",
+        "type": "temple",
+        "number": 30,
+        "name_ja": "善楽寺",
+        "name_en": "Zenraku-ji",
+        "name_kana": "ぜんらくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-031",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.577027,
+          33.546535
+        ]
+      },
+      "properties": {
+        "id": "temple-031",
+        "type": "temple",
+        "number": 31,
+        "name_ja": "竹林寺",
+        "name_en": "Chikurin-ji",
+        "name_kana": "ちくりんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-032",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.611364,
+          33.526647
+        ]
+      },
+      "properties": {
+        "id": "temple-032",
+        "type": "temple",
+        "number": 32,
+        "name_ja": "禅師峰寺",
+        "name_en": "Zenjibu-ji",
+        "name_kana": "ぜんじぶじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-033",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.543058,
+          33.500822
+        ]
+      },
+      "properties": {
+        "id": "temple-033",
+        "type": "temple",
+        "number": 33,
+        "name_ja": "雪蹊寺",
+        "name_en": "Sekkei-ji",
+        "name_kana": "せっけいじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-034",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.487678,
+          33.491871
+        ]
+      },
+      "properties": {
+        "id": "temple-034",
+        "type": "temple",
+        "number": 34,
+        "name_ja": "種間寺",
+        "name_en": "Tanema-ji",
+        "name_kana": "たねまじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-035",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.409508,
+          33.512547
+        ]
+      },
+      "properties": {
+        "id": "temple-035",
+        "type": "temple",
+        "number": 35,
+        "name_ja": "清瀧寺",
+        "name_en": "Kiyotaki-ji",
+        "name_kana": "きよたきじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-036",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.450797,
+          33.426006
+        ]
+      },
+      "properties": {
+        "id": "temple-036",
+        "type": "temple",
+        "number": 36,
+        "name_ja": "青龍寺",
+        "name_en": "Shoryu-ji",
+        "name_kana": "しょうりゅうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-037",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.134594,
+          33.207984
+        ]
+      },
+      "properties": {
+        "id": "temple-037",
+        "type": "temple",
+        "number": 37,
+        "name_ja": "岩本寺",
+        "name_en": "Iwamoto-ji",
+        "name_kana": "いわもとじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-038",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.01753,
+          32.725184
+        ]
+      },
+      "properties": {
+        "id": "temple-038",
+        "type": "temple",
+        "number": 38,
+        "name_ja": "金剛福寺",
+        "name_en": "Kongofuku-ji",
+        "name_kana": "こんごうふくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-039",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.774322,
+          32.961328
+        ]
+      },
+      "properties": {
+        "id": "temple-039",
+        "type": "temple",
+        "number": 39,
+        "name_ja": "延光寺",
+        "name_en": "Enko-ji",
+        "name_kana": "えんこうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-040",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.564099,
+          32.96467
+        ]
+      },
+      "properties": {
+        "id": "temple-040",
+        "type": "temple",
+        "number": 40,
+        "name_ja": "観自在寺",
+        "name_en": "Kanjizai-ji",
+        "name_kana": "かんじざいじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-041",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.5985,
+          33.295206
+        ]
+      },
+      "properties": {
+        "id": "temple-041",
+        "type": "temple",
+        "number": 41,
+        "name_ja": "龍光寺",
+        "name_en": "Ryuko-ji",
+        "name_kana": "りゅうこうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-042",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.58192,
+          33.310253
+        ]
+      },
+      "properties": {
+        "id": "temple-042",
+        "type": "temple",
+        "number": 42,
+        "name_ja": "佛木寺",
+        "name_en": "Butsumoku-ji",
+        "name_kana": "ぶつもくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-043",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.518945,
+          33.369233
+        ]
+      },
+      "properties": {
+        "id": "temple-043",
+        "type": "temple",
+        "number": 43,
+        "name_ja": "明石寺",
+        "name_en": "Meiseki-ji",
+        "name_kana": "めいせきじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-044",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.912059,
+          33.660873
+        ]
+      },
+      "properties": {
+        "id": "temple-044",
+        "type": "temple",
+        "number": 44,
+        "name_ja": "大寶寺",
+        "name_en": "Daiho-ji",
+        "name_kana": "だいほうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-045",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.981082,
+          33.658898
+        ]
+      },
+      "properties": {
+        "id": "temple-045",
+        "type": "temple",
+        "number": 45,
+        "name_ja": "岩屋寺",
+        "name_en": "Iwaya-ji",
+        "name_kana": "いわやじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-046",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.819158,
+          33.753588
+        ]
+      },
+      "properties": {
+        "id": "temple-046",
+        "type": "temple",
+        "number": 46,
+        "name_ja": "浄瑠璃寺",
+        "name_en": "Joruri-ji",
+        "name_kana": "じょうるりじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-047",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.812852,
+          33.757965
+        ]
+      },
+      "properties": {
+        "id": "temple-047",
+        "type": "temple",
+        "number": 47,
+        "name_ja": "八坂寺",
+        "name_en": "Yasaka-ji",
+        "name_kana": "やさかじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-048",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.814018,
+          33.793721
+        ]
+      },
+      "properties": {
+        "id": "temple-048",
+        "type": "temple",
+        "number": 48,
+        "name_ja": "西林寺",
+        "name_en": "Sairin-ji",
+        "name_kana": "さいりんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-049",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.808396,
+          33.816708
+        ]
+      },
+      "properties": {
+        "id": "temple-049",
+        "type": "temple",
+        "number": 49,
+        "name_ja": "浄土寺",
+        "name_en": "Jodo-ji",
+        "name_kana": "じょうどじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-050",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.804505,
+          33.828146
+        ]
+      },
+      "properties": {
+        "id": "temple-050",
+        "type": "temple",
+        "number": 50,
+        "name_ja": "繁多寺",
+        "name_en": "Hanta-ji",
+        "name_kana": "はんたじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-051",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.797269,
+          33.847613
+        ]
+      },
+      "properties": {
+        "id": "temple-051",
+        "type": "temple",
+        "number": 51,
+        "name_ja": "石手寺",
+        "name_en": "Ishite-ji",
+        "name_kana": "いしてじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-052",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.714984,
+          33.885047
+        ]
+      },
+      "properties": {
+        "id": "temple-052",
+        "type": "temple",
+        "number": 52,
+        "name_ja": "太山寺",
+        "name_en": "Taisan-ji",
+        "name_kana": "たいさんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-053",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.739981,
+          33.891497
+        ]
+      },
+      "properties": {
+        "id": "temple-053",
+        "type": "temple",
+        "number": 53,
+        "name_ja": "圓明寺",
+        "name_en": "Enmyo-ji",
+        "name_kana": "えんみょうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-054",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.964128,
+          34.066805
+        ]
+      },
+      "properties": {
+        "id": "temple-054",
+        "type": "temple",
+        "number": 54,
+        "name_ja": "延命寺",
+        "name_en": "Enmei-ji",
+        "name_kana": "えんめいじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-055",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.995309,
+          34.068178
+        ]
+      },
+      "properties": {
+        "id": "temple-055",
+        "type": "temple",
+        "number": 55,
+        "name_ja": "南光坊",
+        "name_en": "Nankobo",
+        "name_kana": "なんこうぼう"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-056",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.974743,
+          34.050234
+        ]
+      },
+      "properties": {
+        "id": "temple-056",
+        "type": "temple",
+        "number": 56,
+        "name_ja": "泰山寺",
+        "name_en": "Taisan-ji",
+        "name_kana": "たいさんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-057",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.978366,
+          34.029712
+        ]
+      },
+      "properties": {
+        "id": "temple-057",
+        "type": "temple",
+        "number": 57,
+        "name_ja": "栄福寺",
+        "name_en": "Eifuku-ji",
+        "name_kana": "えいふくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-058",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          132.977346,
+          34.013204
+        ]
+      },
+      "properties": {
+        "id": "temple-058",
+        "type": "temple",
+        "number": 58,
+        "name_ja": "仙遊寺",
+        "name_en": "Senyu-ji",
+        "name_kana": "せんゆうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-059",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.025448,
+          34.026193
+        ]
+      },
+      "properties": {
+        "id": "temple-059",
+        "type": "temple",
+        "number": 59,
+        "name_ja": "国分寺",
+        "name_en": "Kokubun-ji",
+        "name_kana": "こくぶんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-060",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.111134,
+          33.837807
+        ]
+      },
+      "properties": {
+        "id": "temple-060",
+        "type": "temple",
+        "number": 60,
+        "name_ja": "横峰寺",
+        "name_en": "Yokomine-ji",
+        "name_kana": "よこみねじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-061",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.103287,
+          33.893537
+        ]
+      },
+      "properties": {
+        "id": "temple-061",
+        "type": "temple",
+        "number": 61,
+        "name_ja": "香園寺",
+        "name_en": "Kouon-ji",
+        "name_kana": "こうおんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-062",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.114929,
+          33.897235
+        ]
+      },
+      "properties": {
+        "id": "temple-062",
+        "type": "temple",
+        "number": 62,
+        "name_ja": "宝寿寺",
+        "name_en": "Hoju-ji",
+        "name_kana": "ほうじゅじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-063",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.129158,
+          33.895839
+        ]
+      },
+      "properties": {
+        "id": "temple-063",
+        "type": "temple",
+        "number": 63,
+        "name_ja": "吉祥寺",
+        "name_en": "Kichijo-ji",
+        "name_kana": "きちじょうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-064",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.160156,
+          33.891592
+        ]
+      },
+      "properties": {
+        "id": "temple-064",
+        "type": "temple",
+        "number": 64,
+        "name_ja": "前神寺",
+        "name_en": "Maegami-ji",
+        "name_kana": "まえがみじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-065",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.586668,
+          33.967416
+        ]
+      },
+      "properties": {
+        "id": "temple-065",
+        "type": "temple",
+        "number": 65,
+        "name_ja": "三角寺",
+        "name_en": "Sankaku-ji",
+        "name_kana": "さんかくじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-066",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.723633,
+          34.035444
+        ]
+      },
+      "properties": {
+        "id": "temple-066",
+        "type": "temple",
+        "number": 66,
+        "name_ja": "雲辺寺",
+        "name_en": "Unpen-ji",
+        "name_kana": "うんぺんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-067",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.719054,
+          34.102419
+        ]
+      },
+      "properties": {
+        "id": "temple-067",
+        "type": "temple",
+        "number": 67,
+        "name_ja": "大興寺",
+        "name_en": "Daiko-ji",
+        "name_kana": "だいこうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-068",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.647366,
+          34.133977
+        ]
+      },
+      "properties": {
+        "id": "temple-068",
+        "type": "temple",
+        "number": 68,
+        "name_ja": "神恵院",
+        "name_en": "Jinnein",
+        "name_kana": "じんねいん"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-069",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.647615,
+          34.134471
+        ]
+      },
+      "properties": {
+        "id": "temple-069",
+        "type": "temple",
+        "number": 69,
+        "name_ja": "観音寺",
+        "name_en": "Kannon-ji",
+        "name_kana": "かんのんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-070",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.694087,
+          34.139713
+        ]
+      },
+      "properties": {
+        "id": "temple-070",
+        "type": "temple",
+        "number": 70,
+        "name_ja": "本山寺",
+        "name_en": "Motoyama-ji",
+        "name_kana": "もとやまじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-071",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.724269,
+          34.229759
+        ]
+      },
+      "properties": {
+        "id": "temple-071",
+        "type": "temple",
+        "number": 71,
+        "name_ja": "弥谷寺",
+        "name_en": "Iyadani-ji",
+        "name_kana": "いやだにじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-072",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.750239,
+          34.223304
+        ]
+      },
+      "properties": {
+        "id": "temple-072",
+        "type": "temple",
+        "number": 72,
+        "name_ja": "曼荼羅寺",
+        "name_en": "Mandara-ji",
+        "name_kana": "まんだらじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-073",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.750203,
+          34.219408
+        ]
+      },
+      "properties": {
+        "id": "temple-073",
+        "type": "temple",
+        "number": 73,
+        "name_ja": "出釋迦寺",
+        "name_en": "Syussyaka-ji",
+        "name_kana": "しゅっしゃかじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-074",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.765751,
+          34.233254
+        ]
+      },
+      "properties": {
+        "id": "temple-074",
+        "type": "temple",
+        "number": 74,
+        "name_ja": "甲山寺",
+        "name_en": "Koyama-ji",
+        "name_kana": "こうやまじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-075",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.774073,
+          34.225036
+        ]
+      },
+      "properties": {
+        "id": "temple-075",
+        "type": "temple",
+        "number": 75,
+        "name_ja": "善通寺",
+        "name_en": "Zentsu-ji",
+        "name_kana": "ぜんつうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-076",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.780963,
+          34.249909
+        ]
+      },
+      "properties": {
+        "id": "temple-076",
+        "type": "temple",
+        "number": 76,
+        "name_ja": "金倉寺",
+        "name_en": "Konzo-ji",
+        "name_kana": "こんぞうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-077",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.762682,
+          34.276726
+        ]
+      },
+      "properties": {
+        "id": "temple-077",
+        "type": "temple",
+        "number": 77,
+        "name_ja": "道隆寺",
+        "name_en": "Doryu-ji",
+        "name_kana": "どうりゅうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-078",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.824617,
+          34.306654
+        ]
+      },
+      "properties": {
+        "id": "temple-078",
+        "type": "temple",
+        "number": 78,
+        "name_ja": "郷照寺",
+        "name_en": "Gosyo-ji",
+        "name_kana": "ごうしょうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-079",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.882823,
+          34.311446
+        ]
+      },
+      "properties": {
+        "id": "temple-079",
+        "type": "temple",
+        "number": 79,
+        "name_ja": "天皇寺",
+        "name_en": "Tenno-ji",
+        "name_kana": "てんのうじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-080",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.944084,
+          34.303159
+        ]
+      },
+      "properties": {
+        "id": "temple-080",
+        "type": "temple",
+        "number": 80,
+        "name_ja": "國分寺",
+        "name_en": "Kokubun-ji",
+        "name_kana": "こくぶんじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-081",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.92681,
+          34.333481
+        ]
+      },
+      "properties": {
+        "id": "temple-081",
+        "type": "temple",
+        "number": 81,
+        "name_ja": "白峯寺",
+        "name_en": "Shiromine-ji",
+        "name_kana": "しろみねじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-082",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.960676,
+          34.344444
+        ]
+      },
+      "properties": {
+        "id": "temple-082",
+        "type": "temple",
+        "number": 82,
+        "name_ja": "根香寺",
+        "name_en": "Negoro-ji",
+        "name_kana": "ねごろじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-083",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.026625,
+          34.286632
+        ]
+      },
+      "properties": {
+        "id": "temple-083",
+        "type": "temple",
+        "number": 83,
+        "name_ja": "一宮寺",
+        "name_en": "Ichinomiya-ji",
+        "name_kana": "いちのみやじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-084",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.101258,
+          34.357944
+        ]
+      },
+      "properties": {
+        "id": "temple-084",
+        "type": "temple",
+        "number": 84,
+        "name_ja": "屋島寺",
+        "name_en": "Yashima-ji",
+        "name_kana": "やしまじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-085",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.139466,
+          34.359827
+        ]
+      },
+      "properties": {
+        "id": "temple-085",
+        "type": "temple",
+        "number": 85,
+        "name_ja": "八栗寺",
+        "name_en": "Yakuri-ji",
+        "name_kana": "やくりじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-086",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.179432,
+          34.323531
+        ]
+      },
+      "properties": {
+        "id": "temple-086",
+        "type": "temple",
+        "number": 86,
+        "name_ja": "志度寺",
+        "name_en": "Shido-ji",
+        "name_kana": "しどじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-087",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.171596,
+          34.266586
+        ]
+      },
+      "properties": {
+        "id": "temple-087",
+        "type": "temple",
+        "number": 87,
+        "name_ja": "長尾寺",
+        "name_en": "Nagao-ji",
+        "name_kana": "ながおじ"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "temple-088",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          134.206799,
+          34.191403
+        ]
+      },
+      "properties": {
+        "id": "temple-088",
+        "type": "temple",
+        "number": 88,
+        "name_ja": "大窪寺",
+        "name_en": "Okubo-ji",
+        "name_kana": "おおくぼじ"
+      }
+    }
+  ]
+}

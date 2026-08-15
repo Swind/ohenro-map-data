@@ -1,0 +1,13 @@
+# Build artifacts
+target/
+
+# Large generated binaries (small JSON outputs under output/ can be tracked)
+*.pmtiles
+*.osm.pbf
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

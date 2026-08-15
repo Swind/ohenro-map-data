@@ -1,0 +1,27 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 131.769819, lat: 32.229585) (long: 135.179380, lat: 34.651510)
+min zoom: 0
+max zoom: 15
+center: (long: 133.474600, lat: 33.440548)
+center zoom: 7
+addressed tiles count: 111230
+tile entries count: 48140
+tile contents count: 40880
+clustered: true
+internal compression: gzip
+tile compression: gzip
+pgf:devanagari:version 1
+planetiler:buildtime 2026-03-28T14:41:39.524Z
+planetiler:version 0.10.2
+type baselayer
+attribution <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap</a>
+planetiler:githash 0e5588c4a6e8c29a270a33afe8df62027d889604
+planetiler:osm:osmosisreplicationseq 3395
+planetiler:osm:osmosisreplicationtime 2026-08-13T20:21:01Z
+planetiler:osm:osmosisreplicationurl https://download.geofabrik.de/asia/japan/shikoku-updates
+version 4.15.2
+vector_layers <object, use --metadata to view full JSON metadata>
+description Basemap layers derived from OpenStreetMap and Natural Earth
+name Protomaps Basemap
+pgf:devanagari:name NotoSansDevanagari-Regular
