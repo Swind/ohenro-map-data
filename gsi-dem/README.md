@@ -1,0 +1,115 @@
+# gsi-dem
+
+GSI 四國 DEM 資料轉換工具（Rust）。對應 `reference/gis-dem-converter.md` 規劃的 Phase 1（Inspector）。
+
+## Phase 1 狀態（Inspector）
+
+- ZIP reader：直接從 ZIP 讀 XML entry，**不將 XML 解壓到磁碟**（in-memory buffer，`gsi/archive.rs`）。
+- 支援 nested ZIP（`open_inner_zip` + `MAX_INNER_ZIP_SIZE=64MiB` guard）。
+- XML streaming parser（`gsi/xml.rs`，quick-xml event mode，不建 DOM）。
+- tupleList streaming parse → SoA arrays（`elevation: Vec<f32>` + `mask: Vec<u8>`）。
+- 正確解析 Terrain / Sea / InlandWater / NoData。
+- 保留 `sequenceRule` / `startPoint`，供後續 pixel→coordinate 對映使用。
+- CLI：`inspect` / `query` / `render`。
+
+## 資料結構關鍵發現（重要，規劃假設需要修正）
+
+### 1. DEM5 的 sample count 不固定
+
+規劃文件假設每張 raster 都是 `225×150 = 33750` samples。**實際上沿海 mesh 只存部分 grid**：
+
+```
+mesh 51346200 (內陸): 33750 samples (full)
+mesh 51346278 (沿海): 23850 samples (partial, start=(0,44))
+mesh 51346258 (沿海):  2539 samples (partial, start=(161,138))
+```
+
+全部 69 個 DEM5A mesh 驗證一致：tuple 數 = `(W - start_x) + W * (H - 1 - start_y)`。
+因此 **validate 不能要求 sample count == width×height**，partial mesh 是正常資料，
+不是損壞。`is_partial()` 用於標記。
+
+### 2. Grid 方向：row 0 = 北（max_lat）
+
+`gml:Envelope` 的 `lowerCorner` 是 SW、`upperCorner` 是 NE，但 GSI 的實際 grid
+排列是 **row 0 = 北方邊緣**，往南遞增。以 DEM10B 對照小豆島地標驗證：
+
+| 座標 | 真實地物 | 本工具 |
+|---|---|---|
+| (34.508, 134.296) 寒霞渓 | 山（陸地） | 272.60m |
+| (34.503, 134.256) | 小豆島內陸 | 200.90m |
+| (34.575, 134.30) | 瀨戶內海 | N/A |
+
+`raster/grid.rs` 的 `cell_center` / `nearest_cell` 已實作 north-up 對映
+（`lat = max_lat - (row+0.5)*step`）。
+
+### 3. DEM5 與 DEM10B 的 tuple schema 不同
+
+- DEM5（5A/5B/5C）：`地表面,123.45` / `海水面,-9999.` / `データなし,-9999.` / `内水面,396.63`
+  - `内水面`（內陸水）**帶有真實高程**（0~527m），不是 sentinel。
+- DEM10B：全部標 `その他,<value>`，`-9999.00` 是 nodata/sea sentinel，
+  **沒有 sea 語義區分**。`classify_tuple()` 處理此差異。
+
+### 4. Sea 正規化
+
+`海水面` → elevation `0.0` + `mask=SEA`。`データなし` → `NaN` + `mask=NODATA`。
+`内水面` → 保留真實高程 + `mask=INLAND_WATER`。
+
+### 5. DEM10B 是單一 XML / ZIP
+
+DEM10B 每 zip 只有一個 XML，grid 是 `1125×750 = 843750` samples（full coverage），
+而 DEM5 每 zip 有 69~74 個 XML（每個 mesh 一個）。檔案命名也不同
+（`FG-GML-5134-62-dem10b-20161001.xml`，全小寫 `dem10b`）。
+
+## 使用方法
+
+```bash
+# Inspect（不落 XML 到磁碟）
+cargo run --release -- inspect source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
+cargo run --release -- inspect --verbose source/GSI/DEM10B/FG-GML-513462-DEM10B-20161001.zip
+
+# 只顯示 partial mesh
+cargo run --release -- inspect --partial-only source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
+
+# lat/lon -> elevation（nearest-cell，bilinear 屬後續 phase）
+cargo run --release -- query source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip --lat 34.503 --lon 134.256
+
+# Debug render PNG（north-up；黑=未儲存格, 紫=NODATA, 藍=SEA, 青=內水, 灰階=地形）
+cargo run --release -- render source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip --mesh 51346200 --output /tmp/mesh.png
+```
+
+## 測試
+
+```bash
+cargo test
+```
+
+- `tests/parser.rs`：synthetic GML fixture（3×2 grid），metadata / kinds / 正負高程 /
+  grid placement（full + partial）/ north-up 對映 / 錯誤處理。
+- `tests/integration.rs`：真實 `FG-GML-513462-DEM5A-20251208.zip` 與
+  `FG-GML-513462-DEM10B-20161001.zip`，驗證 sample counts、地標高程、round-trip。
+  archive 不存在時自動 skip。
+
+## 結構
+
+```text
+src/
+├── main.rs            CLI entry（clap）
+├── lib.rs
+├── cli/
+│   ├── inspect.rs      inspect 命令
+│   ├── query.rs        lat/lon -> elevation
+│   └── render.rs       debug PNG
+├── gsi/
+│   ├── archive.rs      ZIP / nested ZIP / entry reader
+│   ├── xml.rs          streaming XML parser（quick-xml）
+│   ├── model.rs        GsiDemRaster / SampleKind / DemSource
+│   └── error.rs        DemError
+└── raster/
+    └── grid.rs         grid placement / coordinate mapping / lookup
+```
+
+## Phase 2 預告（Raster correctness）
+
+- 目前 `query` 用 nearest-cell；bilinear interpolation 需處理 NODATA neighbors。
+- 已確認 row 0 = north；render 驗證方向已通過。
+- Phase 2 完成前**不要開始 bulk build**（規劃 §42）。

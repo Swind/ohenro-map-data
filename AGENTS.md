@@ -14,12 +14,13 @@ shikoku-latest.osm.pbf
 
 ```text
 ohenro-map-data/
-├── source/                    原始資料（immutable）：OSM PBF、seichijunrei spots.json、henroyado.html 快照
+├── source/                    原始資料（immutable）：OSM PBF、seichijunrei spots.json、henroyado.html 快照、GSI DEM ZIPs
 ├── basemaps/                  Protomaps Basemaps repo（外部 git clone，勿放入自訂檔案）
 ├── henro/                     自訂 Henro Planetiler 專案（schema 見 henro/schema.md）
 │   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
 ├── henroyado/                 Henroyado 住宿爬蟲（Python package，Phase 1：fetcher→parse→normalize）
 │   └── tests/                 regression fixtures + 單元測試
+├── gsi-dem/                   GSI DEM 轉換工具（Rust，Phase 1 Inspector 完成）
 ├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、兩份 PMTiles
 ├── scripts/                   build / validate 腳本
 ├── docs/                      操作文件（lodging_data_pipeline.md 等）
@@ -31,6 +32,23 @@ ohenro-map-data/
 住宿資料管線詳見 `docs/lodging_data_pipeline.md`（OSM lodging extractor，
 `python3 henro/scripts/extract_lodging.py` → `output/lodging.geojson` + `lodging-report.json`）。
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
+GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
+
+## GSI DEM（Phase 1 Inspector）
+
+```bash
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- inspect source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
+cargo test --manifest-path gsi-dem/Cargo.toml
+```
+
+- 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
+- streaming XML parser（quick-xml），tupleList → SoA（elevation f32 + mask u8）。
+- 關鍵資料結構發現（詳見 `gsi-dem/README.md`）：
+  - DEM5 沿海 mesh 的 sample count **不固定**（partial coverage，非損壞）。
+  - Grid row 0 = 北（north-up），與 envelope lowerCorner（SW）不同。
+  - DEM10B 用 `その他,-9999.00` sentinel，無 sea 語義；DEM5 用 `海水面`/`内水面`。
+  - `内水面`（內陸水）帶真實高程，非 sentinel。
+- Phase 2（raster correctness）完成前**不要開始 bulk build**（規劃 §42）。
 
 ## Henroyado Crawler（Phase 1：fetcher）
 
