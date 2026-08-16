@@ -1,0 +1,160 @@
+{
+ "schema_version": 1,
+ "source": {
+  "provider": "henroyado",
+  "source_id": null,
+  "source_url": null,
+  "prefecture_page": "https://henroyado.com/inns",
+  "retrieved_at": null
+ },
+ "identity": {
+  "name": "ゲストハウス鳴門おへんろ",
+  "name_kana": null
+ },
+ "description": null,
+ "henro": {
+  "from_temple": {
+   "number": 1,
+   "name": "霊山寺"
+  },
+  "to_temple": {
+   "number": 2,
+   "name": "極楽寺"
+  },
+  "raw_route_text": "こちらは 1番霊山寺 から 2番極楽寺 へのお宿です。"
+ },
+ "notice": null,
+ "rooms": {
+  "types": [
+   "個室"
+  ],
+  "room_count": null,
+  "raw_text": "個室"
+ },
+ "meals": {
+  "breakfast": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "dinner": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "raw_text": "なし"
+ },
+ "check_in": {
+  "time": "15:00",
+  "start": "15:00",
+  "end": null,
+  "notes": null,
+  "raw_text": "15:00"
+ },
+ "check_out": {
+  "time": null,
+  "start": null,
+  "end": null,
+  "notes": null,
+  "raw_text": null
+ },
+ "facilities": [
+  {
+   "type": "washing_machine",
+   "available": true,
+   "label": null,
+   "source_icon": "wash_g.png"
+  },
+  {
+   "type": "dryer",
+   "available": true,
+   "label": null,
+   "source_icon": "dry_g.png"
+  },
+  {
+   "type": "wifi",
+   "available": true,
+   "label": null,
+   "source_icon": "wifi_g.png"
+  },
+  {
+   "type": "toilet",
+   "available": true,
+   "label": null,
+   "source_icon": "wc_g.png"
+  },
+  {
+   "type": "bath",
+   "available": true,
+   "label": null,
+   "source_icon": "bathtub_g.png"
+  },
+  {
+   "type": "shuttle",
+   "available": false,
+   "label": null,
+   "source_icon": "sougei_g.png"
+  },
+  {
+   "type": "parking",
+   "available": true,
+   "label": null,
+   "source_icon": "parking_g.png"
+  },
+  {
+   "type": "card_payment",
+   "available": true,
+   "label": null,
+   "source_icon": "card_g.png"
+  }
+ ],
+ "pricing": {
+  "prices": [],
+  "raw_text": null
+ },
+ "payment": {
+  "methods": [
+   "cash"
+  ],
+  "cards": [],
+  "raw_text": "現金"
+ },
+ "contact": {
+  "phone": "080-6390-2138",
+  "website": "https://www.instagram.com/guesthouse_naruto_ohenro?igsh=MTB0MWFlbXoxcGZyYQ%3D%3D",
+  "email": null
+ },
+ "location": {
+  "prefecture": "徳島県",
+  "address": null,
+  "coordinates": null,
+  "google_maps_search_url": "http://maps.google.com/maps?q=ゲストハウス鳴門おへんろ+徳島県",
+  "google_maps_embed_url": null
+ },
+ "images": [],
+ "raw": {
+  "name": "ゲストハウス鳴門おへんろ",
+  "room": "個室",
+  "meal": "なし",
+  "route": "こちらは 1番霊山寺 から 2番極楽寺 へのお宿です。",
+  "payment": "現金",
+  "distance": "0.2 km",
+  "types": [
+   "個室/食事なし"
+  ],
+  "type_icons": [
+   "type_2.png"
+  ],
+  "remark": "Online予約可",
+  "data_types": [
+   2
+  ],
+  "table_heading": "1 番札所 霊山寺 ( 0km )",
+  "table_kind": "temple",
+  "prefecture": "tokushima",
+  "extra_details": []
+ },
+ "_warnings": []
+}

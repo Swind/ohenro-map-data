@@ -1,0 +1,95 @@
+{
+ "schema_version": 1,
+ "source": {
+  "provider": "henroyado",
+  "source_id": null,
+  "source_url": null,
+  "prefecture_page": "https://henroyado.com/inns",
+  "retrieved_at": null
+ },
+ "identity": {
+  "name": "Guesthose ほとけの座",
+  "name_kana": null
+ },
+ "description": null,
+ "henro": {
+  "from_temple": null,
+  "to_temple": null,
+  "raw_route_text": null
+ },
+ "notice": null,
+ "rooms": {
+  "types": [],
+  "room_count": null,
+  "raw_text": null
+ },
+ "meals": {
+  "breakfast": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "dinner": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "raw_text": null
+ },
+ "check_in": {
+  "time": null,
+  "start": null,
+  "end": null,
+  "notes": null,
+  "raw_text": null
+ },
+ "check_out": {
+  "time": null,
+  "start": null,
+  "end": null,
+  "notes": null,
+  "raw_text": null
+ },
+ "facilities": [],
+ "pricing": {
+  "prices": [],
+  "raw_text": null
+ },
+ "payment": {
+  "methods": [],
+  "cards": [],
+  "raw_text": null
+ },
+ "contact": {
+  "phone": null,
+  "website": null,
+  "email": null
+ },
+ "location": {
+  "prefecture": "徳島県",
+  "address": null,
+  "coordinates": null,
+  "google_maps_search_url": null,
+  "google_maps_embed_url": null
+ },
+ "images": [],
+ "raw": {
+  "name": "Guesthose ほとけの座",
+  "room": null,
+  "meal": null,
+  "route": null,
+  "payment": null,
+  "distance": "37.8 km",
+  "types": [],
+  "type_icons": [],
+  "remark": null,
+  "data_types": [],
+  "table_heading": null,
+  "table_kind": null,
+  "prefecture": "tokushima",
+  "extra_details": []
+ },
+ "_warnings": []
+}

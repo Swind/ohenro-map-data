@@ -1,0 +1,188 @@
+{
+ "schema_version": 1,
+ "source": {
+  "provider": "henroyado",
+  "source_id": null,
+  "source_url": null,
+  "prefecture_page": "https://henroyado.com/inns",
+  "retrieved_at": null
+ },
+ "identity": {
+  "name": "Hostel 東風ノ家",
+  "name_kana": null
+ },
+ "description": "安芸市の中心地にある古民家ゲストハウスです。",
+ "henro": {
+  "from_temple": {
+   "number": 27,
+   "name": "神峯寺"
+  },
+  "to_temple": {
+   "number": 28,
+   "name": "大日寺"
+  },
+  "raw_route_text": "こちらは 27番神峯寺 から 28番大日寺 へのお宿です。"
+ },
+ "notice": "下記公式サイトから予約可",
+ "rooms": {
+  "types": [
+   "個室",
+   "相部屋",
+   "ドミトリー"
+  ],
+  "room_count": 5,
+  "raw_text": "個室 、 相部屋\nﾄﾞﾐﾄﾘｰ2人 1部屋. ﾄﾞﾐﾄﾘｰ4人 2部屋. 個室 2部屋\n個室4500円～"
+ },
+ "meals": {
+  "breakfast": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "dinner": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "raw_text": "なし"
+ },
+ "check_in": {
+  "time": "16:00",
+  "start": "16:00",
+  "end": null,
+  "notes": "16時以前対応可。要事前連絡",
+  "raw_text": "16:00 16時以前対応可。要事前連絡"
+ },
+ "check_out": {
+  "time": "10:00",
+  "start": "10:00",
+  "end": null,
+  "notes": null,
+  "raw_text": "10:00"
+ },
+ "facilities": [
+  {
+   "type": "washing_machine",
+   "available": true,
+   "label": "￥200",
+   "source_icon": "wash_g.png"
+  },
+  {
+   "type": "dryer",
+   "available": true,
+   "label": "￥100",
+   "source_icon": "dry_g.png"
+  },
+  {
+   "type": "wifi",
+   "available": true,
+   "label": "有り",
+   "source_icon": "wifi_g.png"
+  },
+  {
+   "type": "toilet",
+   "available": true,
+   "label": "ウオシュレット",
+   "source_icon": "wc_g.png"
+  },
+  {
+   "type": "bath",
+   "available": true,
+   "label": "シャワー",
+   "source_icon": "bathtub_g.png"
+  },
+  {
+   "type": "shuttle",
+   "available": false,
+   "label": null,
+   "source_icon": "sougei_g.png"
+  },
+  {
+   "type": "parking",
+   "available": true,
+   "label": "無料",
+   "source_icon": "parking_g.png"
+  },
+  {
+   "type": "card_payment",
+   "available": true,
+   "label": "可",
+   "source_icon": "card_g.png"
+  }
+ ],
+ "pricing": {
+  "prices": [],
+  "raw_text": "素泊まり : 3500 円 〜\n詳細は予約時ご確認願います。"
+ },
+ "payment": {
+  "methods": [
+   "cash",
+   "card"
+  ],
+  "cards": [
+   "VISA",
+   "Mastercard",
+   "JCB",
+   "AE"
+  ],
+  "raw_text": "現金、カード（VISA,MASTER,JCB,ｱﾒﾘｶﾝｴｸｽﾌﾟﾚｽ,etc）"
+ },
+ "contact": {
+  "phone": null,
+  "website": "https://kochinoya.com/",
+  "email": "info@kochinoya.com"
+ },
+ "location": {
+  "prefecture": "高知県",
+  "address": null,
+  "coordinates": null,
+  "google_maps_search_url": "http://maps.google.com/maps?q=Hostel 東風ノ家+高知県",
+  "google_maps_embed_url": null
+ },
+ "images": [
+  {
+   "url": "https://henroyado.com/storage/inns/HYK_28061.jpg",
+   "original_url": "https://henroyado.com/storage/inns/HYK_28061.jpg?20260816132954"
+  },
+  {
+   "url": "https://henroyado.com/storage/inns/HYK_28063.jpg",
+   "original_url": "https://henroyado.com/storage/inns/HYK_28063.jpg?20260816132954"
+  },
+  {
+   "url": "https://henroyado.com/storage/inns/HYK_28064.jpg",
+   "original_url": "https://henroyado.com/storage/inns/HYK_28064.jpg?20260816132954"
+  },
+  {
+   "url": "https://henroyado.com/storage/inns/HYK_28065.jpg",
+   "original_url": "https://henroyado.com/storage/inns/HYK_28065.jpg?20260816132954"
+  }
+ ],
+ "raw": {
+  "name": "Hostel 東風ノ家",
+  "room": "個室 、 相部屋\nﾄﾞﾐﾄﾘｰ2人 1部屋. ﾄﾞﾐﾄﾘｰ4人 2部屋. 個室 2部屋\n個室4500円～",
+  "meal": "なし",
+  "route": "こちらは 27番神峯寺 から 28番大日寺 へのお宿です。",
+  "payment": "現金 、 カード （VISA,MASTER,JCB,ｱﾒﾘｶﾝｴｸｽﾌﾟﾚｽ,etc）",
+  "distance": "280.9 km",
+  "types": [
+   "個室/食事なし",
+   "ドミトリー"
+  ],
+  "type_icons": [
+   "type_2.png",
+   "type_3.png"
+  ],
+  "remark": "Online予約可",
+  "data_types": [
+   2,
+   3
+  ],
+  "table_heading": "27 番札所 神峯寺 ( 268km )",
+  "table_kind": "temple",
+  "prefecture": "kochi",
+  "extra_details": []
+ },
+ "_warnings": []
+}

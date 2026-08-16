@@ -5,6 +5,9 @@ target/
 *.pmtiles
 *.osm.pbf
 
+# Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
+source/henroyado.html
+
 # Python
 __pycache__/
 *.pyc

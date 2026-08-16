@@ -1,0 +1,166 @@
+{
+ "schema_version": 1,
+ "source": {
+  "provider": "henroyado",
+  "source_id": null,
+  "source_url": null,
+  "prefecture_page": "https://henroyado.com/inns",
+  "retrieved_at": null
+ },
+ "identity": {
+  "name": "徳島ワシントンホテルプラザ",
+  "name_kana": null
+ },
+ "description": null,
+ "henro": {
+  "from_temple": {
+   "number": 17,
+   "name": "井戸寺"
+  },
+  "to_temple": {
+   "number": 18,
+   "name": "恩山寺"
+  },
+  "raw_route_text": "こちらは 17番井戸寺 から 18番恩山寺 へのお宿です。"
+ },
+ "notice": null,
+ "rooms": {
+  "types": [
+   "個室"
+  ],
+  "room_count": null,
+  "raw_text": "個室"
+ },
+ "meals": {
+  "breakfast": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "dinner": {
+   "available": false,
+   "time": null,
+   "start": null,
+   "end": null
+  },
+  "raw_text": "なし"
+ },
+ "check_in": {
+  "time": "14:00",
+  "start": "14:00",
+  "end": null,
+  "notes": null,
+  "raw_text": "14：00"
+ },
+ "check_out": {
+  "time": "10:00",
+  "start": "10:00",
+  "end": null,
+  "notes": null,
+  "raw_text": "10：00"
+ },
+ "facilities": [
+  {
+   "type": "washing_machine",
+   "available": true,
+   "label": null,
+   "source_icon": "wash_g.png"
+  },
+  {
+   "type": "dryer",
+   "available": true,
+   "label": null,
+   "source_icon": "dry_g.png"
+  },
+  {
+   "type": "wifi",
+   "available": true,
+   "label": null,
+   "source_icon": "wifi_g.png"
+  },
+  {
+   "type": "toilet",
+   "available": false,
+   "label": null,
+   "source_icon": "wc_g.png"
+  },
+  {
+   "type": "bath",
+   "available": true,
+   "label": null,
+   "source_icon": "bathtub_g.png"
+  },
+  {
+   "type": "shuttle",
+   "available": false,
+   "label": null,
+   "source_icon": "sougei_g.png"
+  },
+  {
+   "type": "parking",
+   "available": true,
+   "label": null,
+   "source_icon": "parking_g.png"
+  },
+  {
+   "type": "card_payment",
+   "available": true,
+   "label": null,
+   "source_icon": "card_g.png"
+  }
+ ],
+ "pricing": {
+  "prices": [],
+  "raw_text": null
+ },
+ "payment": {
+  "methods": [
+   "cash",
+   "card"
+  ],
+  "cards": [],
+  "raw_text": "現金、カード"
+ },
+ "contact": {
+  "phone": "088-653-7111",
+  "website": "https://www.washingtonhotel.co.jp/whp/tokushima/",
+  "email": null
+ },
+ "location": {
+  "prefecture": "徳島県",
+  "address": null,
+  "coordinates": null,
+  "google_maps_search_url": "http://maps.google.com/maps?q=徳島ワシントンホテルプラザ+徳島県",
+  "google_maps_embed_url": null
+ },
+ "images": [
+  {
+   "url": "https://henroyado.com/storage/inns/ﾜｼﾝﾄﾝﾎﾃﾙ.jpg",
+   "original_url": "https://henroyado.com/storage/inns/ﾜｼﾝﾄﾝﾎﾃﾙ.jpg?20260816132952"
+  }
+ ],
+ "raw": {
+  "name": "徳島ワシントンホテルプラザ",
+  "room": "個室",
+  "meal": "なし",
+  "route": "こちらは 17番井戸寺 から 18番恩山寺 へのお宿です。",
+  "payment": "現金 、 カード",
+  "distance": "88.3 km",
+  "types": [
+   "ビジネスホテル"
+  ],
+  "type_icons": [
+   "type_4.png"
+  ],
+  "remark": "Online 予約可",
+  "data_types": [
+   4
+  ],
+  "table_heading": null,
+  "table_kind": null,
+  "prefecture": "tokushima",
+  "extra_details": []
+ },
+ "_warnings": []
+}
