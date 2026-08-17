@@ -60,6 +60,9 @@ cargo run --manifest-path gsi-dem/Cargo.toml --release -- build \
   --tiles work/tiles --grid /tmp/tile-report.json --output output/shikoku-elevation.sqlite
 cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db \
   output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
+# Phase 7：golden coordinates regression + coverage/source report
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate-db \
+  output/shikoku-elevation.sqlite --golden gsi-dem/tests/golden/elevation.json
 ```
 
 - 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
@@ -93,8 +96,10 @@ cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db \
   source_tiles，規劃 §23），540MB。`query-db` 實作 runtime 查詢
   （lat/lon → tile → zstd → sample；DEM5 無值 fallback DEM10），
   例如 (33.754,133.544) → 335.0m（DEM10）、(34.50513,134.25787) → 285.0m（DEM5）。
-- Phase 7（golden coordinates、visual checks、coverage report）尚未實作；
-  `query` 目前用 nearest-cell。
+- Phase 7 完成：`validate-db` 做 golden coordinates regression（`tests/golden/`
+  elevation.json，7 點全過，tolerance DEM5=10m / DEM10=20m）與 coverage/source
+  report（source 分佈與 merge 一致）。`tests/golden.rs` 自動化 regression。
+- Phase 8（Android 整合）尚未實作；`query` 目前用 nearest-cell。
 
 ## Henroyado Crawler（Phase 1：fetcher）
 

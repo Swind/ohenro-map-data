@@ -1,0 +1,65 @@
+{
+  "_comment": "Golden coordinates for the Shikoku elevation database (plan §36). Expected values are baselined from the 2026-08-18 build (DEM5 merge + DEM10 fallback, 1m int16). Points are chosen on stable/gentle terrain (city plains, verified inland areas, one DEM10 fallback area) where a 5m/10m DEM is reliable; sharp mountain peaks are intentionally excluded because their value is highly coordinate-sensitive. Tolerance: 10m for DEM5, 20m for DEM10.",
+  "tolerance_m": {
+    "dem5": 10,
+    "dem10": 20
+  },
+  "points": [
+    {
+      "name": "shodoshima_inland",
+      "lat": 34.50513,
+      "lon": 134.25787,
+      "expected_m": 285,
+      "layer": "dem5",
+      "note": "Shodoshima inland slope, cross-validated in Phase 2/5"
+    },
+    {
+      "name": "shodoshima_kankakei",
+      "lat": 34.508,
+      "lon": 134.296,
+      "expected_m": 272,
+      "layer": "dem5",
+      "note": "Kankakei viewpoint area"
+    },
+    {
+      "name": "matsuyama_city",
+      "lat": 33.839,
+      "lon": 132.766,
+      "expected_m": 24,
+      "layer": "dem5",
+      "note": "Matsuyama city plain"
+    },
+    {
+      "name": "kochi_city",
+      "lat": 33.559,
+      "lon": 133.531,
+      "expected_m": 3,
+      "layer": "dem5",
+      "note": "Kochi city lowland"
+    },
+    {
+      "name": "tokushima_city",
+      "lat": 34.07,
+      "lon": 134.55,
+      "expected_m": 1,
+      "layer": "dem5",
+      "note": "Tokushima city lowland"
+    },
+    {
+      "name": "marugame_city",
+      "lat": 34.289,
+      "lon": 133.797,
+      "expected_m": 5,
+      "layer": "dem5",
+      "note": "Marugame city (Kagawa)"
+    },
+    {
+      "name": "kochi_south_fallback",
+      "lat": 33.754,
+      "lon": 133.544,
+      "expected_m": 335,
+      "layer": "dem10",
+      "note": "Kochi south coast, DEM5 nodata -> DEM10B fallback"
+    }
+  ]
+}

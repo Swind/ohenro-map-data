@@ -185,6 +185,93 @@ pub struct QueryResult {
     pub source_code: Option<u8>,
 }
 
+/// Golden coordinate spec (plan §36).
+#[derive(Debug, Clone, Deserialize)]
+pub struct GoldenSpec {
+    #[serde(rename = "tolerance_m")]
+    pub tolerance: GoldenTolerance,
+    pub points: Vec<GoldenPoint>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct GoldenTolerance {
+    pub dem5: f64,
+    pub dem10: f64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct GoldenPoint {
+    pub name: String,
+    pub lat: f64,
+    pub lon: f64,
+    pub expected_m: f64,
+    pub layer: String,
+}
+
+/// Result of one golden point check.
+#[derive(Debug, Clone)]
+pub struct GoldenCheck {
+    pub name: String,
+    pub lat: f64,
+    pub lon: f64,
+    pub expected_m: f64,
+    pub actual_m: Option<f32>,
+    pub actual_layer: Option<u8>,
+    pub passed: bool,
+    pub detail: String,
+}
+
+/// Run golden-coordinate regression against a SQLite database.
+pub fn validate_golden(db_path: &Path, spec: &GoldenSpec) -> DemResult<Vec<GoldenCheck>> {
+    let mut out = Vec::with_capacity(spec.points.len());
+    for p in &spec.points {
+        let r = query_db(db_path, p.lat, p.lon)?;
+        let tolerance = match p.layer.as_str() {
+            "dem10" => spec.tolerance.dem10,
+            _ => spec.tolerance.dem5,
+        };
+        let (passed, detail) = match r.meters {
+            Some(m) => {
+                let diff = (m as f64 - p.expected_m).abs();
+                let layer_name = match r.layer {
+                    Some(5) => "DEM5",
+                    Some(10) => "DEM10",
+                    _ => "?",
+                };
+                if diff <= tolerance {
+                    (
+                        true,
+                        format!(
+                            "ok: {m:.1} m (layer={layer_name}) vs expected {:.1} m (|diff| {diff:.1} <= {tolerance})",
+                            p.expected_m
+                        ),
+                    )
+                } else {
+                    (
+                        false,
+                        format!(
+                            "FAIL: {m:.1} m (layer={layer_name}) vs expected {:.1} m (|diff| {diff:.1} > {tolerance})",
+                            p.expected_m
+                        ),
+                    )
+                }
+            }
+            None => (false, format!("FAIL: no data at ({}, {})", p.lat, p.lon)),
+        };
+        out.push(GoldenCheck {
+            name: p.name.clone(),
+            lat: p.lat,
+            lon: p.lon,
+            expected_m: p.expected_m,
+            actual_m: r.meters,
+            actual_layer: r.layer,
+            passed,
+            detail,
+        });
+    }
+    Ok(out)
+}
+
 /// Runtime lookup: DEM5 first, DEM10B fallback (plan §17/§25).
 pub fn query_db(path: &Path, lat: f64, lon: f64) -> DemResult<QueryResult> {
     let conn = open(path)?;

@@ -1,8 +1,8 @@
 # gsi-dem
 
 GSI 四國 DEM 資料轉換工具（Rust）。對應 `reference/gis-dem-converter.md` 規劃的
-Phase 1-6 已完成（Inspector / Raster correctness / DEM5 merge / DEM10B fallback /
-Final tiling / SQLite container + runtime query）。
+Phase 1-7 已完成（Inspector / Raster correctness / DEM5 merge / DEM10B fallback /
+Final tiling / SQLite container + runtime query / Validation）。
 
 ## Phase 1 狀態（Inspector）
 
@@ -109,6 +109,11 @@ cargo run --release -- build --tiles work/tiles \
 cargo run --release -- query-db output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
 # => Elevation: 335.0 m  (layer=DEM10, source=DEM10B)
 
+# Phase 7：golden coordinates regression + coverage/source report
+cargo run --release -- validate-db output/shikoku-elevation.sqlite \
+  --golden gsi-dem/tests/golden/elevation.json --report /tmp/validate-report.json
+# => golden: 7/7 passed; coverage DEM5/DEM10 breakdown
+
 # 交叉驗證 raster 正確性（Phase 2 acceptance）
 # DEM5A vs DEM10B：
 cargo run --release -- validate \
@@ -138,6 +143,8 @@ cargo test
   mesh/DEM10 放置到 tile（含 nodata skip）。
 - `db.rs` 內建 test：合成 tiles → SQLite build → query 的完整 round-trip
   （DEM5 命中 + DEM10 fallback）。
+- `tests/golden.rs`：golden-coordinate regression（讀 `tests/golden/elevation.json`，
+  DB 不存在時自動 skip）。
 - `tests/integration.rs`：真實 `FG-GML-513462-DEM5A-20251208.zip`、
   `FG-GML-513462-DEM10B-20161001.zip`、`FG-GML-493254-DEM5B-20210115.zip`。
   驗證 sample counts、地標高程、round-trip、混合 schema、DEM5 vs DEM10B 交叉驗證。
@@ -157,7 +164,8 @@ src/
 │   ├── query_db.rs     lat/lon -> elevation（SQLite，DEM5→DEM10 fallback）
 │   ├── render.rs       debug PNG
 │   ├── tile.rs         256x256 tiling（zstd int16 tile）
-│   └── validate.rs     DEM5 vs DEM10B 交叉驗證（Phase 2 acceptance）
+│   ├── validate.rs     DEM5 vs DEM10B 交叉驗證（Phase 2 acceptance）
+│   └── validate_db.rs  golden coordinates + coverage/source report（Phase 7）
 ├── db.rs               SQLite schema + build + runtime query（規劃 §23-§25）
 ├── gsi/
 │   ├── archive.rs      ZIP / nested ZIP / entry reader
@@ -307,7 +315,26 @@ DEM5 nodata/缺 tile → DEM10 tile → 回傳或 no data
   - `(33.754, 133.544)` → `335.0 m (layer=DEM10, source=DEM10B)` ✓ fallback
   - `(34.7, 134.0)`（四國外）→ `no data` ✓
 
-Phase 7 預告：golden coordinates regression（規劃 §36）、visual raster checks、
-coverage / source distribution report。`query` 仍用 nearest-cell；
-bilinear interpolation（§26）與 route elevation profile（§27）尚未實作。
+## Phase 7 狀態（Validation）
+
+`validate-db` 命令提供回歸與覆蓋率驗證（規劃 §34-§37）：
+
+- **golden coordinates**（§36）：讀 `tests/golden/elevation.json`，對每點查詢
+  SQLite 並與期望值比對（DEM5 tolerance 10m、DEM10 20m）。點選在**地勢穩定的
+  平地/緩坡**（城市、已交叉驗證的小豆島內陸）與一個 DEM10 fallback 區；
+  尖峰山頂刻意排除（其高程對座標極敏感，5m 網格常抓不到最高格）。
+  任一點失敗 → exit code 非零。`tests/golden.rs` 將其做成自動 regression
+  （DB 不存在時自動 skip）。
+- **coverage / source report**：掃描所有 elevation/source tiles，統計每 layer
+  的 valid/nodata 格與 source 分佈（A/B/C/DEM10，§16）。
+
+**結果**（2026-08-17，全量）：
+- golden **7/7 passed**。
+- coverage DEM5：10,836 tiles，633,143,706 valid / 77,004,390 nodata；
+  source 分佈 A=626.7M B=6.4M C=17.5k —— 與 merge report 完全一致。
+- coverage DEM10：2,889 tiles，151,126,794 valid，全為 DEM10 來源。
+
+Phase 8 預告：Android 整合（SQLite + tile cache + zstd + lookup，§42）。
+`query` 仍用 nearest-cell；bilinear interpolation（§26）與 route elevation
+profile（§27）尚未實作。
 - Phase 2 完成前**不要開始 bulk build**（規劃 §42）。

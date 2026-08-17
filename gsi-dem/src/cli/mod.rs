@@ -6,3 +6,4 @@ pub mod query_db;
 pub mod render;
 pub mod tile;
 pub mod validate;
+pub mod validate_db;

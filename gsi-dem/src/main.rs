@@ -31,6 +31,8 @@ enum Command {
     Tile(cli::tile::TileArgs),
     /// Cross-validate DEM5 vs DEM10B raster agreement.
     Validate(cli::validate::ValidateArgs),
+    /// Validate the SQLite database (golden coordinates + coverage).
+    ValidateDb(cli::validate_db::ValidateDbArgs),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -44,5 +46,6 @@ fn main() -> anyhow::Result<()> {
         Command::Render(args) => cli::render::run(&args),
         Command::Tile(args) => cli::tile::run(&args),
         Command::Validate(args) => cli::validate::run(&args),
+        Command::ValidateDb(args) => cli::validate_db::run(&args),
     }
 }
