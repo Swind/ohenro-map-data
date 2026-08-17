@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shikoku Henro Map Preview</title>
+    <style>
+      html,
+      body,
+      #map {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+      #debug-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font: 12px/1.5 system-ui, sans-serif;
+        width: 220px;
+        max-height: 90vh;
+        overflow: auto;
+      }
+      #debug-panel pre {
+        margin: 4px 0;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      #debug-panel summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      #debug-panel label {
+        display: block;
+        margin: 4px 0;
+      }
+      .maplibregl-popup-content {
+        font: 12px/1.5 system-ui, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="debug-panel">
+      <details open>
+        <summary>Debug</summary>
+        <pre id="debug-info"></pre>
+      </details>
+      <details>
+        <summary>Layers</summary>
+        <label><input type="checkbox" id="toggle-labels" checked /> basemap labels</label>
+        <label><input type="checkbox" id="toggle-temples" checked /> temples</label>
+        <label><input type="checkbox" id="toggle-temple-labels" checked /> temple labels</label>
+        <label><input type="checkbox" id="toggle-route" checked /> henro route</label>
+        <label><input type="checkbox" id="toggle-lodging" checked /> lodging</label>
+      </details>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
