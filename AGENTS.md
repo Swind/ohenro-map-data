@@ -34,11 +34,14 @@ ohenro-map-data/
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
 
-## GSI DEM（Phase 1 Inspector）
+## GSI DEM（Phase 1 Inspector + Phase 2 Raster correctness）
 
 ```bash
 cargo run --manifest-path gsi-dem/Cargo.toml --release -- inspect source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
 cargo test --manifest-path gsi-dem/Cargo.toml
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate \
+  source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip \
+  source/GSI/DEM10B/FG-GML-513462-DEM10B-20161001.zip
 ```
 
 - 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
@@ -47,8 +50,12 @@ cargo test --manifest-path gsi-dem/Cargo.toml
   - DEM5 沿海 mesh 的 sample count **不固定**（partial coverage，非損壞）。
   - Grid row 0 = 北（north-up），與 envelope lowerCorner（SW）不同。
   - DEM10B 用 `その他,-9999.00` sentinel，無 sea 語義；DEM5 用 `海水面`/`内水面`。
+  - DEM5B/5C（`数値地形`）是**混合 schema**（その他/地表面/海水面/データなし），
+    且 partial mesh 常有真實資料缺口（DEM10B fallback 的用途）。
   - `内水面`（內陸水）帶真實高程，非 sentinel。
-- Phase 2（raster correctness）完成前**不要開始 bulk build**（規劃 §42）。
+- Phase 2 驗證通過：`validate` 交叉比對 DEM5A/5B vs DEM10B（median |diff| ~4m、
+  sea 一致性 100%、無 land-over-sea 方向錯誤）。
+- Phase 3（DEM5 merge A>B>C）尚未實作；`query` 目前用 nearest-cell。
 
 ## Henroyado Crawler（Phase 1：fetcher）
 

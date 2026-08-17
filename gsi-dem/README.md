@@ -1,6 +1,7 @@
 # gsi-dem
 
-GSI 四國 DEM 資料轉換工具（Rust）。對應 `reference/gis-dem-converter.md` 規劃的 Phase 1（Inspector）。
+GSI 四國 DEM 資料轉換工具（Rust）。對應 `reference/gis-dem-converter.md` 規劃的
+Phase 1（Inspector）與 Phase 2（Raster correctness）已完成。
 
 ## Phase 1 狀態（Inspector）
 
@@ -44,10 +45,16 @@ mesh 51346258 (沿海):  2539 samples (partial, start=(161,138))
 
 ### 3. DEM5 與 DEM10B 的 tuple schema 不同
 
-- DEM5（5A/5B/5C）：`地表面,123.45` / `海水面,-9999.` / `データなし,-9999.` / `内水面,396.63`
+- DEM5A（`5mメッシュ（標高）`）：`地表面,123.45` / `海水面,-9999.` / `データなし,-9999.` / `内水面,396.63`
   - `内水面`（內陸水）**帶有真實高程**（0~527m），不是 sentinel。
+- DEM5B/5C（`5mメッシュ（数値地形）`）：**混合 schema** — 同一檔案可能混用
+  `その他` / `地表面` / `海水面` / `データなし`。
+  - `その他` + 非 `-9999` 值是**真實高程**（驗證：與 `地表面` 平滑連續，如 674.11→676.60）。
+  - `海水面` 用 `-9999.` sentinel（與 DEM5A 相同語義）。
+  - 部分 5B mesh 是 partial coverage（如 n=33600），且此類 mesh 常**真的有資料缺口**
+    （DEM10B 有值、DEM5B 無值），這是 DEM10B 作為 fallback 的用途，不是損壞。
 - DEM10B：全部標 `その他,<value>`，`-9999.00` 是 nodata/sea sentinel，
-  **沒有 sea 語義區分**。`classify_tuple()` 處理此差異。
+  **沒有 sea 語義區分**。`classify_tuple()` 處理所有差異。
 
 ### 4. Sea 正規化
 
@@ -75,6 +82,16 @@ cargo run --release -- query source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
 
 # Debug render PNG（north-up；黑=未儲存格, 紫=NODATA, 藍=SEA, 青=內水, 灰階=地形）
 cargo run --release -- render source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip --mesh 51346200 --output /tmp/mesh.png
+
+# 交叉驗證 raster 正確性（Phase 2 acceptance）
+# DEM5A vs DEM10B：
+cargo run --release -- validate \
+  source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip \
+  source/GSI/DEM10B/FG-GML-513462-DEM10B-20161001.zip --samples 500
+# DEM5B（混合 schema）vs DEM10B：
+cargo run --release -- validate \
+  source/GSI/DEM5/5B/FG-GML-493254-DEM5B-20210115.zip \
+  source/GSI/DEM10B/FG-GML-493254-DEM10B-20161001.zip --samples 500
 ```
 
 ## 測試
@@ -85,8 +102,9 @@ cargo test
 
 - `tests/parser.rs`：synthetic GML fixture（3×2 grid），metadata / kinds / 正負高程 /
   grid placement（full + partial）/ north-up 對映 / 錯誤處理。
-- `tests/integration.rs`：真實 `FG-GML-513462-DEM5A-20251208.zip` 與
-  `FG-GML-513462-DEM10B-20161001.zip`，驗證 sample counts、地標高程、round-trip。
+- `tests/integration.rs`：真實 `FG-GML-513462-DEM5A-20251208.zip`、
+  `FG-GML-513462-DEM10B-20161001.zip`、`FG-GML-493254-DEM5B-20210115.zip`。
+  驗證 sample counts、地標高程、round-trip、混合 schema、DEM5 vs DEM10B 交叉驗證。
   archive 不存在時自動 skip。
 
 ## 結構
@@ -98,7 +116,8 @@ src/
 ├── cli/
 │   ├── inspect.rs      inspect 命令
 │   ├── query.rs        lat/lon -> elevation
-│   └── render.rs       debug PNG
+│   ├── render.rs       debug PNG
+│   └── validate.rs     DEM5 vs DEM10B 交叉驗證（Phase 2 acceptance）
 ├── gsi/
 │   ├── archive.rs      ZIP / nested ZIP / entry reader
 │   ├── xml.rs          streaming XML parser（quick-xml）
@@ -108,8 +127,23 @@ src/
     └── grid.rs         grid placement / coordinate mapping / lookup
 ```
 
-## Phase 2 預告（Raster correctness）
+## Phase 2 狀態（Raster correctness）
 
-- 目前 `query` 用 nearest-cell；bilinear interpolation 需處理 NODATA neighbors。
-- 已確認 row 0 = north；render 驗證方向已通過。
+已完成並驗證：
+
+- **sequenceRule / startPoint**：`+x-y` Linear + startPoint 的 tuple→grid 對映
+  已整理進 `raster/grid.rs`（含 row flip 語意說明），sample-count 公式對全部
+  69 個 DEM5A mesh + DEM5B/5C + DEM10B 成立。
+- **pixel ordering**：row 0 = north（max_lat）已確認。
+- **coordinate mapping**：`gsi-dem validate` 交叉驗證通過：
+  - DEM5A vs DEM10B（Shodoshima 513462）：median |diff| 3.87m，sea 一致性 100%。
+  - DEM5B vs DEM10B（Uwajima 493254）：median 4.07m，0 個 land-over-sea 錯誤。
+  - 剩餘的 "land-over-sea" 點都是 0~3m 的沿海邊界格（10m vs 5m 解析度差異），
+    非方向錯誤。
+- **PNG debug render**：`render` 命令輸出 north-up 灰階圖，方向已驗證。
+
+**Phase 2 完成前不要開始 bulk build** 的條件已滿足，可進入 Phase 3（DEM5 merge）。
+
+Phase 3 預告：`query` 目前用 nearest-cell；bilinear interpolation 需處理
+NODATA neighbors。merge（A > B > C per-pixel）尚未實作。
 - Phase 2 完成前**不要開始 bulk build**（規劃 §42）。

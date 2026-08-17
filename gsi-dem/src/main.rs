@@ -17,6 +17,8 @@ enum Command {
     Query(cli::query::QueryArgs),
     /// Render a mesh raster as a debug PNG.
     Render(cli::render::RenderArgs),
+    /// Cross-validate DEM5 vs DEM10B raster agreement.
+    Validate(cli::validate::ValidateArgs),
 }
 
 fn main() -> anyhow::Result<()> {
@@ -25,5 +27,6 @@ fn main() -> anyhow::Result<()> {
         Command::Inspect(args) => cli::inspect::run(&args),
         Command::Query(args) => cli::query::run(&args),
         Command::Render(args) => cli::render::run(&args),
+        Command::Validate(args) => cli::validate::run(&args),
     }
 }

@@ -40,10 +40,17 @@ impl GridBounds {
 /// Maps a tuple index to a grid (row, col) using the traversal rule
 /// defined by the XML (`sequenceRule` order + `startPoint`).
 ///
-/// Empirical finding (verified across 69 DEM5A meshes + DEM10B):
-/// the tuple list begins at grid coordinate `startPoint`, and covers
-/// rows `start_y .. high_y` (northward). The first row is partial:
-/// columns `start_x .. high_x`; subsequent rows are full width.
+/// GML semantics (Phase 2): the GML grid is defined with `low` at the
+/// envelope SW corner and `high` at NE (y north-positive), but GSI stores
+/// raster rows north-up (row 0 = upperCorner latitude). After applying the
+/// row flip, the `+x-y` sequenceRule (x east, then y south) becomes:
+/// rows are stored from `start_y` southward to the bottom edge; the first
+/// row is partial (columns `start_x .. high_x`), and after reaching the
+/// east edge, x wraps to column 0 for subsequent rows.
+///
+/// Verified: sample-count formula `(W-sx) + W*(H-1-sy)` holds for all 69
+/// DEM5A meshes, and DEM5 vs DEM10B cross-validation confirms the
+/// resulting coordinate mapping (see `gsi-dem validate`).
 pub fn tuple_index_to_grid(r: &GsiDemRaster, index: usize) -> Option<(usize, usize)> {
     let width = r.width();
     let sx = r.start_x as usize;

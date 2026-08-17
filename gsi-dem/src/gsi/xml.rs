@@ -329,9 +329,16 @@ fn split_tuple(line: &str) -> DemResult<(&str, &str)> {
 
 /// Classify a tuple line into a SampleKind.
 ///
-/// DEM5 files (地表面/海水面/内水面/データなし) carry an explicit semantic
-/// label. DEM10B files use a single label `その他` where `-9999.00` is the
+/// DEM5A (`5mメッシュ（標高）`) files carry an explicit semantic label:
+/// `地表面` / `海水面` / `内水面` / `データなし`.
+///
+/// DEM10B files use a single label `その他` where `-9999.00` is the
 /// nodata/sea sentinel and any other value is terrain elevation.
+///
+/// DEM5B/5C (`5mメッシュ（数値地形）`) files use a MIXED schema: within
+/// one file you can find `地表面`, `海水面`, `データなし` AND `その他`.
+/// Here `その他` with a real value is terrain (verified continuous with
+/// `地表面` elevations), and `その他,-9999.` is nodata.
 fn classify_tuple(label: &str, value: &str) -> DemResult<SampleKind> {
     match label {
         "地表面" => Ok(SampleKind::Terrain),
