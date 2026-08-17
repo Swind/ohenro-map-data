@@ -33,6 +33,17 @@ impl DemSource {
             DemSource::Dem10B => "DEM10B",
         }
     }
+
+    /// Per-pixel source code for merged rasters (plan §16):
+    /// 0 = NODATA, 1 = DEM10B, 2 = DEM5C, 3 = DEM5B, 4 = DEM5A.
+    pub fn source_code(&self) -> u8 {
+        match self {
+            DemSource::Dem5A => 4,
+            DemSource::Dem5B => 3,
+            DemSource::Dem5C => 2,
+            DemSource::Dem10B => 1,
+        }
+    }
 }
 
 impl fmt::Display for DemSource {
@@ -48,6 +59,8 @@ pub enum SampleKind {
     Terrain = 1,
     Sea = 2,
     InlandWater = 3,
+    Seabed = 4,
+    InlandBottom = 5,
 }
 
 impl SampleKind {
@@ -57,6 +70,8 @@ impl SampleKind {
             SampleKind::Terrain => "terrain",
             SampleKind::Sea => "sea",
             SampleKind::InlandWater => "inland_water",
+            SampleKind::Seabed => "seabed",
+            SampleKind::InlandBottom => "inland_bottom",
         }
     }
 }
@@ -118,8 +133,8 @@ impl GsiDemRaster {
     }
 
     /// Count samples by kind.
-    pub fn kind_counts(&self) -> [(SampleKind, usize); 4] {
-        let mut counts = [0usize; 4];
+    pub fn kind_counts(&self) -> [(SampleKind, usize); 6] {
+        let mut counts = [0usize; 6];
         for &m in &self.mask {
             counts[m as usize] += 1;
         }
@@ -128,6 +143,8 @@ impl GsiDemRaster {
             (SampleKind::Terrain, counts[1]),
             (SampleKind::Sea, counts[2]),
             (SampleKind::InlandWater, counts[3]),
+            (SampleKind::Seabed, counts[4]),
+            (SampleKind::InlandBottom, counts[5]),
         ]
     }
 }

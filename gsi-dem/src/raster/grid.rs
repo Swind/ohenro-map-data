@@ -129,10 +129,16 @@ pub fn sample_at(r: &GsiDemRaster, row: usize, col: usize) -> Option<ElevationSa
         1 => SampleKind::Terrain,
         2 => SampleKind::Sea,
         3 => SampleKind::InlandWater,
+        4 => SampleKind::Seabed,
+        5 => SampleKind::InlandBottom,
         _ => SampleKind::NoData,
     };
     Some(ElevationSample {
-        meters: if elevation.is_nan() { None } else { Some(*elevation) },
+        meters: if elevation.is_nan() {
+            None
+        } else {
+            Some(*elevation)
+        },
         kind,
     })
 }

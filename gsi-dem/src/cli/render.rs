@@ -73,6 +73,8 @@ pub fn run(args: &RenderArgs) -> anyhow::Result<()> {
                     }
                     SampleKind::Sea => (30, 90, 200),
                     SampleKind::InlandWater => (60, 160, 210),
+                    SampleKind::Seabed => (20, 60, 130),
+                    SampleKind::InlandBottom => (15, 45, 100),
                     SampleKind::NoData => (255, 0, 255),
                 },
                 None => (0, 0, 0),

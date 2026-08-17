@@ -53,7 +53,11 @@ const SMALL_DEM: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
 
 #[test]
 fn parses_metadata() {
-    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(SMALL_DEM)).unwrap();
+    let r = parse_dem(
+        "FG-GML-5134-62-00-DEM5A-20251208.xml",
+        Cursor::new(SMALL_DEM),
+    )
+    .unwrap();
     assert_eq!(r.mesh, "51346200");
     assert_eq!(r.source.as_str(), "DEM5A");
     assert_eq!(r.survey_date, "2025-12-08");
@@ -72,7 +76,11 @@ fn parses_metadata() {
 
 #[test]
 fn parses_sample_kinds() {
-    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(SMALL_DEM)).unwrap();
+    let r = parse_dem(
+        "FG-GML-5134-62-00-DEM5A-20251208.xml",
+        Cursor::new(SMALL_DEM),
+    )
+    .unwrap();
     assert_eq!(r.sample_count(), 6);
     assert_eq!(r.mask[0], SampleKind::Terrain as u8);
     assert_eq!(r.elevation[0], 100.5);
@@ -89,7 +97,8 @@ fn parses_sample_kinds() {
 #[test]
 fn dem10b_sentinel_label() {
     // DEM10B uses `その他` with -9999.00 sentinel
-    let xml = SMALL_DEM.replace("地表面,100.5", "その他,100.5")
+    let xml = SMALL_DEM
+        .replace("地表面,100.5", "その他,100.5")
         .replace("海水面,-9999.", "その他,-9999.00")
         .replace("データなし,-9999.", "その他,-9999.00");
     let r = parse_dem("FG-GML-5134-62-dem10b-20161001.xml", Cursor::new(xml)).unwrap();
@@ -115,7 +124,11 @@ fn negative_and_decimal_elevations() {
 #[test]
 fn grid_placement_full_grid() {
     use gsi_dem::raster::grid::{grid_to_tuple_index, sample_at, tuple_index_to_grid};
-    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(SMALL_DEM)).unwrap();
+    let r = parse_dem(
+        "FG-GML-5134-62-00-DEM5A-20251208.xml",
+        Cursor::new(SMALL_DEM),
+    )
+    .unwrap();
     // Full grid (start 0,0), width 3, height 2, row-major north->south.
     // tuple index 0 = (row 0, col 0), index 3 = (row 1, col 0).
     assert_eq!(tuple_index_to_grid(&r, 0), Some((0, 0)));
@@ -134,7 +147,10 @@ fn grid_placement_partial_grid() {
     use gsi_dem::raster::grid::{grid_to_tuple_index, tuple_index_to_grid};
     // startPoint (2, 1): first row (y=1) covers x=2..2 (1 sample),
     // then full rows y=2..2? height is 2 so only y=1.
-    let xml = SMALL_DEM.replace("<gml:startPoint>0 0</gml:startPoint>", "<gml:startPoint>2 1</gml:startPoint>");
+    let xml = SMALL_DEM.replace(
+        "<gml:startPoint>0 0</gml:startPoint>",
+        "<gml:startPoint>2 1</gml:startPoint>",
+    );
     let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(xml)).unwrap();
     // width 3, height 2, start (2,1): first row has 3-2=1 sample at (1,2).
     assert_eq!(tuple_index_to_grid(&r, 0), Some((1, 2)));
@@ -149,7 +165,11 @@ fn grid_placement_partial_grid() {
 #[test]
 fn cell_center_north_up() {
     use gsi_dem::raster::grid::cell_center;
-    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(SMALL_DEM)).unwrap();
+    let r = parse_dem(
+        "FG-GML-5134-62-00-DEM5A-20251208.xml",
+        Cursor::new(SMALL_DEM),
+    )
+    .unwrap();
     // bounds: lat 34.5..34.5083333 (2 rows), lon 134.25..134.2625 (3 cols)
     // (row 0, col 0) = NW cell center = max_lat - 0.5*step_lat, min_lon + 0.5*step_lon
     let (lat, lon) = cell_center(&r, 0, 0);
@@ -171,4 +191,63 @@ fn invalid_elevation_is_error() {
     let xml = SMALL_DEM.replace("地表面,100.5", "地表面,abc");
     let err = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(xml)).unwrap_err();
     assert!(err.to_string().contains("invalid elevation"));
+}
+
+#[test]
+fn seabed_kind_with_real_negative_elevation() {
+    // `海水底面` (seabed) carries a real measured elevation (e.g. -5.16m),
+    // unlike `海水面` which is the -9999 sentinel. It must keep its value.
+    let xml = SMALL_DEM.replace("海水面,-9999.", "海水底面,-5.16");
+    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(xml)).unwrap();
+    assert_eq!(r.mask[1], SampleKind::Seabed as u8);
+    assert_eq!(r.elevation[1], -5.16);
+}
+
+#[test]
+fn inland_bottom_kind_with_real_elevation() {
+    // `内水底面` (inland water bed) likewise carries a real elevation.
+    let xml = SMALL_DEM.replace("内水面,50.5", "内水底面,12.3");
+    let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", Cursor::new(xml)).unwrap();
+    assert_eq!(r.mask[4], SampleKind::InlandBottom as u8);
+    assert_eq!(r.elevation[4], 12.3);
+}
+
+#[test]
+fn shift_jis_archive_decodes_labels() {
+    // Legacy 2008-2010 DEM5B archives declare encoding="Shift_JIS".
+    let (bytes, _, _) = encoding_rs::SHIFT_JIS.encode(SMALL_DEM);
+    let mut bytes = bytes.into_owned();
+    // swap the (ASCII) encoding declaration; Japanese text stays as
+    // Shift_JIS bytes
+    let decl = b"encoding=\"UTF-8\"";
+    let pos = bytes
+        .windows(decl.len())
+        .position(|w| w == decl)
+        .expect("decl");
+    bytes.splice(
+        pos..pos + decl.len(),
+        b"encoding=\"Shift_JIS\"".iter().copied(),
+    );
+    let r = parse_dem("FG-GML-5134-40-31-dem5b-20080331.xml", Cursor::new(bytes)).unwrap();
+    assert_eq!(r.mesh, "51346200");
+    assert_eq!(r.source.as_str(), "DEM5B");
+    assert_eq!(r.type_label, "5mメッシュ（標高）");
+    assert_eq!(r.mask[0], SampleKind::Terrain as u8);
+    assert_eq!(r.elevation[0], 100.5);
+    assert_eq!(r.mask[1], SampleKind::Sea as u8);
+    assert_eq!(r.mask[2], SampleKind::NoData as u8);
+    assert!(r.elevation[2].is_nan());
+}
+
+#[test]
+fn parse_meta_stops_at_tuple_list() {
+    use gsi_dem::gsi::xml::parse_dem_meta;
+    let meta = parse_dem_meta(
+        "FG-GML-5134-62-00-DEM5A-20251208.xml",
+        Cursor::new(SMALL_DEM),
+    )
+    .unwrap();
+    assert_eq!(meta.mesh, "51346200");
+    assert_eq!(meta.source.as_str(), "DEM5A");
+    assert_eq!(meta.survey_date, "2025-12-08");
 }

@@ -5,6 +5,12 @@ target/
 *.pmtiles
 *.osm.pbf
 
+# GSI DEM pipeline intermediate + output (re-buildable, see gsi-dem/README.md)
+work/
+*.sqlite
+*.tile
+*.bin
+
 # Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
 source/henroyado.html
 

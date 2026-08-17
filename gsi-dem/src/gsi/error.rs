@@ -31,6 +31,13 @@ pub enum DemError {
 
     #[error("unsupported: {context}")]
     Unsupported { context: String },
+
+    #[error("sqlite: {context}: {source}")]
+    Db {
+        context: String,
+        #[source]
+        source: rusqlite::Error,
+    },
 }
 
 pub type DemResult<T> = Result<T, DemError>;

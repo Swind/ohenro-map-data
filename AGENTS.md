@@ -34,7 +34,7 @@ ohenro-map-data/
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
 
-## GSI DEM（Phase 1 Inspector + Phase 2 Raster correctness）
+## GSI DEM（Phase 1-6：Inspector + Raster correctness + DEM5 merge + DEM10B fallback + Final tiling + SQLite）
 
 ```bash
 cargo run --manifest-path gsi-dem/Cargo.toml --release -- inspect source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
@@ -42,20 +42,59 @@ cargo test --manifest-path gsi-dem/Cargo.toml
 cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate \
   source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip \
   source/GSI/DEM10B/FG-GML-513462-DEM10B-20161001.zip
+# Phase 3+4：per-mesh merge + DEM10B fallback（20,362 meshes 全量約 57 秒）
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
+  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B --report /tmp/merge-report.json
+# 示範 fallback 查詢路徑（DEM5 無資料 → DEM10B）
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
+  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B \
+  --region 503354 --query-lat 33.754 --query-lon 133.544
+# Phase 5：先 merge 落盤（~3.8GB），再切成 256x256 zstd tile（~1.4GB）
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
+  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B --out-dir work/merged
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- tile \
+  --merged work/merged --dem10b source/GSI/DEM10B --out work/tiles \
+  --check-lat 33.754 --check-lon 133.544
+# Phase 6：tiles -> SQLite（540MB），並用 runtime query 查詢
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- build \
+  --tiles work/tiles --grid /tmp/tile-report.json --output output/shikoku-elevation.sqlite
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db \
+  output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
 ```
 
 - 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
 - streaming XML parser（quick-xml），tupleList → SoA（elevation f32 + mask u8）。
 - 關鍵資料結構發現（詳見 `gsi-dem/README.md`）：
-  - DEM5 沿海 mesh 的 sample count **不固定**（partial coverage，非損壞）。
+  - DEM5 沿海 mesh 的 sample count **不固定**（partial coverage，非損壞），
+    且最後一列也可能 partial（merge 需 bounds-check）。
   - Grid row 0 = 北（north-up），與 envelope lowerCorner（SW）不同。
   - DEM10B 用 `その他,-9999.00` sentinel，無 sea 語義；DEM5 用 `海水面`/`内水面`。
   - DEM5B/5C（`数値地形`）是**混合 schema**（その他/地表面/海水面/データなし），
     且 partial mesh 常有真實資料缺口（DEM10B fallback 的用途）。
-  - `内水面`（內陸水）帶真實高程，非 sentinel。
+  - `内水面`（內陸水）帶真實高程，非 sentinel；`海水底面`/`内水底面`（海底/內水底）
+    同樣帶真實（負）高程。全資料集 tuple label 共 7 種，全部支援。
+  - 8 個 2008–2010 的 5B archive 是 **Shift_JIS 編碼**（其餘全 UTF-8），parser 依
+    XML declaration 用 encoding_rs 解碼。
 - Phase 2 驗證通過：`validate` 交叉比對 DEM5A/5B vs DEM10B（median |diff| ~4m、
   sea 一致性 100%、無 land-over-sea 方向錯誤）。
-- Phase 3（DEM5 merge A>B>C）尚未實作；`query` 目前用 nearest-cell。
+- Phase 3 完成：`merge` 依 primary region 群組、per-mesh A>B>C pixel-level merge，
+  per-pixel 保留 source code（§16：0=NODATA, 2=DEM5C, 3=DEM5B, 4=DEM5A）。
+  2026-08-17 全量結果：A=626.7M / B=6.4M / C=17.5k / nodata=54.1M pixels。
+- Phase 4 完成：`merge --dem10b-input source/GSI/DEM10B` 載入獨立 10m layer，
+  計算 DEM10B 對 DEM5 nodata 的填補（全量 999,851 格、佔 nodata 1.8%；
+  其餘為公海，DEM10B 亦無資料）。`--query-lat/--query-lon` 示範 fallback 查詢
+  （DEM5 無值 → DEM10B，如 503354 區域 335.00m）。runtime 語義：
+  DEM5 有值即回、無值才 fallback DEM10（不 resample、不 merge）。
+- Phase 5 完成：`tile` 把 merged .bin + DEM10B 切成 256×256 zstd int16 tile。
+  固定 geographic grid（DEM5 step=1/18000°、DEM10 step=1/9000°，不 resample），
+  row-sweep 有界記憶體。全量：DEM5 10,836 tiles / 633.1M valid，DEM10 2,889 tiles。
+  DEM5 有效格數 == merge A+B+C 總和（無遺失）；`--check-lat/lon` 驗證 round-trip。
+- Phase 6 完成：`build` 把 G5T1 tiles 讀入 SQLite（metadata / elevation_tiles /
+  source_tiles，規劃 §23），540MB。`query-db` 實作 runtime 查詢
+  （lat/lon → tile → zstd → sample；DEM5 無值 fallback DEM10），
+  例如 (33.754,133.544) → 335.0m（DEM10）、(34.50513,134.25787) → 285.0m（DEM5）。
+- Phase 7（golden coordinates、visual checks、coverage report）尚未實作；
+  `query` 目前用 nearest-cell。
 
 ## Henroyado Crawler（Phase 1：fetcher）
 

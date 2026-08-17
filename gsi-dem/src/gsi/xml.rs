@@ -1,10 +1,25 @@
 use std::io::BufRead;
 
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 
 use crate::gsi::error::{DemError, DemResult};
-use crate::gsi::model::{GsiDemRaster, SampleKind};
+use crate::gsi::model::{DemSource, GsiDemRaster, SampleKind};
+
+/// Metadata of a DEM XML entry, cheaply parsed without reading the
+/// (potentially large) tupleList. Used for building the mesh index before
+/// the actual merge pass.
+#[derive(Debug, Clone)]
+pub struct GsiDemMeta {
+    pub entry_name: String,
+    pub source: DemSource,
+    pub mesh: String,
+    pub survey_date: String,
+    pub lower_lat: f64,
+    pub lower_lon: f64,
+    pub upper_lat: f64,
+    pub upper_lon: f64,
+}
 
 /// Streaming SAX-style parse of one GSI DEM GML XML entry.
 ///
@@ -14,6 +29,29 @@ pub fn parse_dem<R: BufRead>(name: &str, reader: R) -> DemResult<GsiDemRaster> {
     let mut parser = DemParser::new(name);
     parser.run(reader)?;
     parser.finish()
+}
+
+/// Streaming parse that stops at the tupleList, returning only metadata.
+///
+/// Old archives (e.g. 2008-2010 DEM5B) are `encoding="Shift_JIS"`, so the
+/// XML declaration is read here too — `parse_dem` uses the same field.
+pub fn parse_dem_meta<R: BufRead>(name: &str, reader: R) -> DemResult<GsiDemMeta> {
+    let mut parser = DemParser::new(name);
+    parser.meta_only = true;
+    parser.run(reader)?;
+    let source = DemSource::from_entry_name(name).ok_or_else(|| DemError::Unsupported {
+        context: format!("cannot determine source from entry name {name}"),
+    })?;
+    Ok(GsiDemMeta {
+        entry_name: name.to_string(),
+        source,
+        mesh: parser.mesh,
+        survey_date: parser.survey_date,
+        lower_lat: parser.lower_lat,
+        lower_lon: parser.lower_lon,
+        upper_lat: parser.upper_lat,
+        upper_lon: parser.upper_lon,
+    })
 }
 
 struct DemParser {
@@ -42,6 +80,12 @@ struct DemParser {
 
     elevation: Vec<f32>,
     mask: Vec<u8>,
+
+    // legacy archives (2008-2010) declare encoding="Shift_JIS"
+    shift_jis: bool,
+    // metadata-only parse stops at the tupleList
+    meta_only: bool,
+    meta_done: bool,
 
     // parser state
     in_tuple_list: bool,
@@ -92,6 +136,9 @@ impl DemParser {
             start_y: 0,
             elevation: Vec::new(),
             mask: Vec::new(),
+            shift_jis: false,
+            meta_only: false,
+            meta_done: false,
             in_tuple_list: false,
             tuple_buf: Vec::new(),
             cur_text: Vec::new(),
@@ -111,16 +158,37 @@ impl DemParser {
                 Ok(Event::Empty(e)) => self.on_start(&e)?,
                 Ok(Event::End(e)) => self.on_end(&e)?,
                 Ok(Event::Text(t)) => self.on_text(t.as_ref()),
+                Ok(Event::Decl(d)) => {
+                    if let Some(Ok(enc)) = d.encoding() {
+                        self.shift_jis = enc.eq_ignore_ascii_case(b"Shift_JIS")
+                            || enc.eq_ignore_ascii_case(b"Shift-JIS")
+                            || enc.eq_ignore_ascii_case(b"sjis");
+                    }
+                }
                 Ok(Event::Eof) => break,
                 Ok(_) => {}
                 Err(e) => {
                     return Err(DemError::Xml {
                         context: format!("{}: {e}", self.entry_name),
-                    })
+                    });
                 }
+            }
+            if self.meta_done {
+                break;
             }
         }
         Ok(())
+    }
+
+    /// Decode a byte slice to a String, honoring the XML declaration
+    /// encoding (legacy Shift_JIS archives vs UTF-8).
+    fn decode(&self, bytes: &[u8]) -> String {
+        if self.shift_jis {
+            let (s, _, _) = encoding_rs::SHIFT_JIS.decode(bytes);
+            s.into_owned()
+        } else {
+            String::from_utf8_lossy(bytes).into_owned()
+        }
     }
 
     fn local_name(e: &quick_xml::events::BytesStart) -> Vec<u8> {
@@ -150,8 +218,7 @@ impl DemParser {
                 // capture sequenceRule order attribute
                 for attr in e.attributes().flatten() {
                     if attr.key.as_ref() == b"order" {
-                        self.sequence_order =
-                            String::from_utf8_lossy(&attr.value).into_owned();
+                        self.sequence_order = String::from_utf8_lossy(&attr.value).into_owned();
                     }
                 }
                 self.in_field = Some(Field::SequenceRule);
@@ -168,6 +235,9 @@ impl DemParser {
             b"tupleList" => {
                 self.in_tuple_list = true;
                 self.tuple_buf.clear();
+                if self.meta_only {
+                    self.meta_done = true;
+                }
             }
             _ => {}
         }
@@ -183,7 +253,7 @@ impl DemParser {
         };
 
         // flush pending text for simple fields
-        let text = String::from_utf8_lossy(&self.cur_text).trim().to_string();
+        let text = self.decode(&self.cur_text).trim().to_string();
         if let Some(f) = self.in_field {
             match f {
                 Field::Fid => self.fid = text,
@@ -243,7 +313,7 @@ impl DemParser {
     }
 
     fn finish_tuple_buf(&mut self) -> DemResult<()> {
-        let s = String::from_utf8_lossy(&self.tuple_buf);
+        let s = self.decode(&self.tuple_buf);
         for line in s.split('\n') {
             let line = line.trim();
             if line.is_empty() {
@@ -252,7 +322,10 @@ impl DemParser {
             let (label, value) = split_tuple(line)?;
             let kind = classify_tuple(label, value)?;
             match kind {
-                SampleKind::Terrain | SampleKind::InlandWater => {
+                SampleKind::Terrain
+                | SampleKind::InlandWater
+                | SampleKind::Seabed
+                | SampleKind::InlandBottom => {
                     let v = parse_elevation(value)?;
                     self.elevation.push(v);
                     self.mask.push(kind as u8);
@@ -273,10 +346,14 @@ impl DemParser {
     fn finish(self) -> DemResult<GsiDemRaster> {
         let raster = GsiDemRaster {
             entry_name: self.entry_name.clone(),
-            source: crate::gsi::model::DemSource::from_entry_name(&self.entry_name)
-                .ok_or_else(|| DemError::Unsupported {
-                    context: format!("cannot determine source from entry name {}", self.entry_name),
-                })?,
+            source: crate::gsi::model::DemSource::from_entry_name(&self.entry_name).ok_or_else(
+                || DemError::Unsupported {
+                    context: format!(
+                        "cannot determine source from entry name {}",
+                        self.entry_name
+                    ),
+                },
+            )?,
             fid: self.fid,
             survey_date: self.survey_date,
             type_label: self.type_label,
@@ -343,7 +420,9 @@ fn classify_tuple(label: &str, value: &str) -> DemResult<SampleKind> {
     match label {
         "地表面" => Ok(SampleKind::Terrain),
         "海水面" => Ok(SampleKind::Sea),
+        "海水底面" => Ok(SampleKind::Seabed),
         "内水面" => Ok(SampleKind::InlandWater),
+        "内水底面" => Ok(SampleKind::InlandBottom),
         "データなし" => Ok(SampleKind::NoData),
         "その他" => {
             let v = value.trim().trim_end_matches('.');
