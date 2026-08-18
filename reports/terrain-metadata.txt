@@ -1,0 +1,21 @@
+pmtiles spec version: 3
+tile type: png
+bounds: (long: -180.000000, lat: -85.000000) (long: 180.000000, lat: 85.000000)
+min zoom: 6
+max zoom: 14
+center: (long: 0.000000, lat: 0.000000)
+center zoom: 6
+addressed tiles count: 8540
+tile entries count: 8101
+tile contents count: 7714
+clustered: true
+internal compression: gzip
+tile compression: none
+maxzoom 14
+minzoom 6
+name 
+type baselayer
+version 1
+attribution <a href="https://maps.gsi.go.jp">国土地理院</a> (GSI)
+description 
+format png

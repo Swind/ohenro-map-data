@@ -1,0 +1,26 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 132.013208, lat: 32.702920) (long: 134.821071, lat: 34.583333)
+min zoom: 12
+max zoom: 15
+center: (long: 133.071899, lat: 33.765449)
+center zoom: 15
+addressed tiles count: 26818
+tile entries count: 26818
+tile contents count: 26818
+clustered: true
+internal compression: gzip
+tile compression: gzip
+vector_layers <object, use --metadata to view full JSON metadata>
+antimeridian_adjusted_bounds 132.013208,32.702920,134.821071,34.583333
+attribution <a href="https://maps.gsi.go.jp">国土地理院</a> (GSI)
+generator tippecanoe v2.82.0
+maxzoom 15
+version 2
+description /home/swind/Data/Program/ohenro-map-data/work/elevation/contours.mbtiles
+format pbf
+generator_options tippecanoe --force --output /home/swind/Data/Program/ohenro-map-data/work/elevation/contours.mbtiles --layer contours --minimum-zoom 12 --maximum-zoom 15 --drop-densest-as-needed --extend-zooms-if-still-dropping /home/swind/Data/Program/ohenro-map-data/work/elevation/contours.geojsonseq
+minzoom 12
+name /home/swind/Data/Program/ohenro-map-data/work/elevation/contours.mbtiles
+tilestats <object, use --metadata to view full JSON metadata>
+type overlay

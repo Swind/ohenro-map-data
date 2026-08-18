@@ -1,4 +1,5 @@
 pub mod build;
+pub mod export_vrt;
 pub mod inspect;
 pub mod merge;
 pub mod query;

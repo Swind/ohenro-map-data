@@ -19,6 +19,8 @@ enum Command {
     Inspect(cli::inspect::InspectArgs),
     /// Build the SQLite elevation database from `tile` output.
     Build(cli::build::BuildArgs),
+    /// Export a DEM layer as a raw Int16 raster + GDAL VRT.
+    ExportVrt(cli::export_vrt::ExportVrtArgs),
     /// Merge DEM5A > DEM5B > DEM5C per mesh.
     Merge(cli::merge::MergeArgs),
     /// Query elevation at a lat/lon (against a ZIP archive).
@@ -40,6 +42,7 @@ fn main() -> anyhow::Result<()> {
     match cli.command {
         Command::Inspect(args) => cli::inspect::run(&args),
         Command::Build(args) => cli::build::run(&args),
+        Command::ExportVrt(args) => cli::export_vrt::run(&args),
         Command::Merge(args) => cli::merge::run(&args),
         Command::Query(args) => cli::query::run(&args),
         Command::QueryDb(args) => cli::query_db::run(&args),

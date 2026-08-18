@@ -14,6 +14,20 @@ export interface HenroLayers {
   routeForeground: string;
   lodgingMarker: string;
   lodgingLabel: string;
+  trail: string[];
+  trailLabel: string[];
+  elevation: ElevationLayers;
+}
+
+export interface ElevationLayers {
+  available: boolean;
+  terrain: boolean;
+  contours: boolean;
+  colorRelief: string[];
+  hillshade: string[];
+  contour: string[];
+  contourIndex: string[];
+  contourLabel: string[];
 }
 
 const BASEMAP_LABEL_IDS = [
@@ -33,6 +47,174 @@ const BASEMAP_LABEL_IDS = [
   "places_country",
 ];
 
+// Stable basemap layer IDs to insert elevation layers between (spec §11.3).
+const RELIEF_BEFORE = ["landcover", "earth"]; // color-relief + hillshade
+const CONTOUR_BEFORE = ["roads_tunnels_other_casing", "roads_runway"]; // contours
+// Fallback target when the preferred beforeId is missing (first label layer).
+const LABEL_FALLBACK = [
+  "address_label",
+  "places_subplace",
+  "places_locality",
+  "water_waterway_label",
+  "earth_label_islands",
+];
+
+const GSI_ATTRIBUTION =
+  '<a href="https://maps.gsi.go.jp">国土地理院</a> (GSI)';
+
+function findInsertionPoint(
+  map: MapLibreMap,
+  candidates: string[],
+  fallback: string[],
+): string | undefined {
+  for (const c of candidates) if (map.getLayer(c)) return c;
+  for (const f of fallback) if (map.getLayer(f)) return f;
+  return undefined;
+}
+
+function elevationEnabled(url: string | undefined): boolean {
+  return Boolean(url && url.length > 0);
+}
+
+function addElevationSources(
+  map: MapLibreMap,
+  terrainUrl: string | undefined,
+  contoursUrl: string | undefined,
+): { terrain: boolean; contours: boolean } {
+  const terrain = elevationEnabled(terrainUrl);
+  if (terrain) {
+    // Two source IDs over the same PMTiles URL: MapLibre warns if the same
+    // source backs both terrain and color-relief, so use distinct IDs that
+    // share the archive (no data duplication).
+    map.addSource("elevation-dem-style", {
+      type: "raster-dem",
+      url: `pmtiles://${terrainUrl}`,
+      encoding: "mapbox",
+      tileSize: 256,
+      attribution: GSI_ATTRIBUTION,
+    });
+    map.addSource("elevation-dem-terrain", {
+      type: "raster-dem",
+      url: `pmtiles://${terrainUrl}`,
+      encoding: "mapbox",
+      tileSize: 256,
+      attribution: GSI_ATTRIBUTION,
+    });
+  }
+
+  const contours = elevationEnabled(contoursUrl);
+  if (contours) {
+    map.addSource("elevation-contours", {
+      type: "vector",
+      url: `pmtiles://${contoursUrl}`,
+    });
+  }
+  return { terrain, contours };
+}
+
+function addElevationLayers(
+  map: MapLibreMap,
+  elevation: ElevationLayers,
+): void {
+  if (!elevation.terrain) return;
+
+  const colorReliefBefore = findInsertionPoint(map, RELIEF_BEFORE, LABEL_FALLBACK);
+  map.addLayer(
+    {
+      id: "elevation-color-relief",
+      type: "color-relief",
+      source: "elevation-dem-style",
+      layout: { visibility: "none" }, // hidden by default (spec §11.3)
+      paint: {
+        "color-relief-color": [
+          "interpolate",
+          ["linear"],
+          ["elevation"],
+          0, "#d9e8bd",
+          100, "#b9d39a",
+          300, "#d8c589",
+          600, "#b8956e",
+          1000, "#8c766b",
+          1800, "#e2dfda",
+        ],
+      },
+    },
+    colorReliefBefore,
+  );
+
+  map.addLayer(
+    {
+      id: "elevation-hillshade",
+      type: "hillshade",
+      source: "elevation-dem-style",
+      paint: {
+        "hillshade-exaggeration": 0.5,
+      },
+    },
+    colorReliefBefore,
+  );
+
+  if (!elevation.contours) return;
+  const contourBefore = findInsertionPoint(map, CONTOUR_BEFORE, LABEL_FALLBACK);
+
+  map.addLayer(
+    {
+      id: "elevation-contour-index",
+      type: "line",
+      source: "elevation-contours",
+      "source-layer": "contours",
+      filter: ["==", ["%", ["get", "elevation_m"], 100], 0],
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": "#7a4a2b",
+        "line-width": 1.4,
+        "line-opacity": 0.75,
+      },
+    },
+    contourBefore,
+  );
+
+  map.addLayer(
+    {
+      id: "elevation-contour",
+      type: "line",
+      source: "elevation-contours",
+      "source-layer": "contours",
+      filter: ["!=", ["%", ["get", "elevation_m"], 100], 0],
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": "#b08d6f",
+        "line-width": 0.7,
+        "line-opacity": 0.55,
+      },
+    },
+    contourBefore,
+  );
+
+  map.addLayer(
+    {
+      id: "elevation-contour-label",
+      type: "symbol",
+      source: "elevation-contours",
+      "source-layer": "contours",
+      filter: ["==", ["%", ["get", "elevation_m"], 100], 0],
+      layout: {
+        "symbol-placement": "line",
+        "text-field": ["to-string", ["get", "elevation_m"]],
+        "text-font": ["Noto Sans Regular"],
+        "text-size": 10,
+        "text-letter-spacing": 0.05,
+      },
+      paint: {
+        "text-color": "#5d3a1e",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1.4,
+      },
+    },
+    contourBefore,
+  );
+}
+
 function applyHenroSources(map: MapLibreMap): void {
   const templesUrl = import.meta.env.VITE_TEMPLES_URL;
   if (templesUrl) {
@@ -49,6 +231,14 @@ function applyHenroSources(map: MapLibreMap): void {
     map.addSource("henro-route", {
       type: "vector",
       url: `pmtiles://${henroUrl}`,
+    });
+  }
+
+  const trailUrl = import.meta.env.VITE_TRAIL_URL;
+  if (trailUrl) {
+    map.addSource("trail", {
+      type: "vector",
+      url: `pmtiles://${trailUrl}`,
     });
   }
 }
@@ -86,9 +276,52 @@ export function createMap(container: HTMLElement): {
     style,
   });
 
+  const terrainUrl = import.meta.env.VITE_TERRAIN_URL;
+  const contoursUrl = import.meta.env.VITE_CONTOURS_URL;
+  const elevation = {
+    terrain: elevationEnabled(terrainUrl),
+    contours: elevationEnabled(contoursUrl),
+  };
+
+  const elevationLayers: ElevationLayers = {
+    available: elevation.terrain || elevation.contours,
+    terrain: elevation.terrain,
+    contours: elevation.contours,
+    colorRelief: ["elevation-color-relief"],
+    hillshade: ["elevation-hillshade"],
+    contour: ["elevation-contour"],
+    contourIndex: ["elevation-contour-index"],
+    contourLabel: ["elevation-contour-label"],
+  };
+
   map.addControl(new maplibregl.NavigationControl(), "top-left");
 
+  // Elevation source/archive failures must not block basemap + Henro layers
+  // (spec §11.5): log source id + error; toggles are left to the caller to
+  // disable based on `elevation.available`.
+  map.on("error", (e) => {
+    const msg = e?.error?.message ?? String(e);
+    if (
+      terrainUrl &&
+      (msg.includes("elevation-dem-style") ||
+        msg.includes("elevation-dem-terrain") ||
+        msg.includes(terrainUrl))
+    ) {
+      console.error("elevation terrain source error:", msg);
+    }
+    if (contoursUrl && (msg.includes("elevation-contours") || msg.includes(contoursUrl))) {
+      console.error("elevation contours source error:", msg);
+    }
+  });
+
   map.on("load", () => {
+    // Sources/layers must be added after the style is loaded (calling
+    // map.addSource before load throws "Style is not done loading").
+    addElevationSources(map, terrainUrl, contoursUrl);
+    if (elevation.terrain || elevation.contours) {
+      addElevationLayers(map, elevationLayers);
+    }
+
     applyHenroSources(map);
 
     if (map.getSource("henro-route")) {
@@ -122,6 +355,45 @@ export function createMap(container: HTMLElement): {
           "line-color": "#8f4b32",
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 4, 14, 8],
           "line-opacity": 0.9,
+        },
+      });
+    }
+
+    if (map.getSource("trail")) {
+      map.addLayer({
+        id: "trail",
+        type: "line",
+        source: "trail",
+        "source-layer": "shikoku_trail",
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-color": "#2a7d4f",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 5],
+          "line-opacity": 0.9,
+        },
+      });
+
+      map.addLayer({
+        id: "trail-label",
+        type: "symbol",
+        source: "trail",
+        "source-layer": "shikoku_trail",
+        layout: {
+          "symbol-placement": "line",
+          "text-field": ["coalesce", ["get", "name"], ""],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 11,
+          "text-letter-spacing": 0.05,
+          "text-rotation-alignment": "map",
+          "symbol-spacing": 400,
+        },
+        paint: {
+          "text-color": "#1b5e38",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.4,
         },
       });
     }
@@ -240,6 +512,9 @@ export function createMap(container: HTMLElement): {
     routeForeground: "henro-route",
     lodgingMarker: "lodging",
     lodgingLabel: "lodging-label",
+    trail: ["trail"],
+    trailLabel: ["trail-label"],
+    elevation: elevationLayers,
   };
 
   return { map, henro };

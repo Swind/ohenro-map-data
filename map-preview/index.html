@@ -39,6 +39,12 @@
         display: block;
         margin: 4px 0;
       }
+      #debug-panel label.disabled {
+        color: #999;
+      }
+      #debug-panel label.disabled input {
+        opacity: 0.5;
+      }
       .maplibregl-popup-content {
         font: 12px/1.5 system-ui, sans-serif;
       }
@@ -57,7 +63,14 @@
         <label><input type="checkbox" id="toggle-temples" checked /> temples</label>
         <label><input type="checkbox" id="toggle-temple-labels" checked /> temple labels</label>
         <label><input type="checkbox" id="toggle-route" checked /> henro route</label>
+        <label><input type="checkbox" id="toggle-trail" checked /> nature trail</label>
+        <label><input type="checkbox" id="toggle-trail-labels" checked /> trail labels</label>
         <label><input type="checkbox" id="toggle-lodging" checked /> lodging</label>
+        <label><input type="checkbox" id="toggle-elevation-color" /> color relief</label>
+        <label><input type="checkbox" id="toggle-hillshade" checked /> hillshade</label>
+        <label><input type="checkbox" id="toggle-contours" checked /> contours</label>
+        <label><input type="checkbox" id="toggle-contour-labels" checked /> contour labels</label>
+        <label><input type="checkbox" id="toggle-terrain" /> 3D terrain</label>
       </details>
     </div>
     <script type="module" src="/src/main.ts"></script>

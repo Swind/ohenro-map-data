@@ -41,6 +41,24 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     el.addEventListener("change", () => fn(el.checked));
   };
 
+  // Disable elevation toggles when no elevation source was configured, so the
+  // user sees they are unavailable (spec §11.5).
+  const elevation = henro.elevation;
+  for (const id of [
+    "toggle-elevation-color",
+    "toggle-hillshade",
+    "toggle-contours",
+    "toggle-contour-labels",
+    "toggle-terrain",
+  ]) {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el && !elevation.available) {
+      el.disabled = true;
+      el.checked = false;
+      el.parentElement?.classList.add("disabled");
+    }
+  }
+
   bindToggle("toggle-labels", (v) => toggleLayer(map, henro.labels, v));
   bindToggle("toggle-temples", (v) =>
     toggleLayer(map, [henro.templeMarker], v),
@@ -51,13 +69,56 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   bindToggle("toggle-route", (v) =>
     toggleLayer(map, [henro.routeCasing, henro.routeForeground], v),
   );
+  bindToggle("toggle-trail", (v) => toggleLayer(map, henro.trail, v));
+  bindToggle("toggle-trail-labels", (v) =>
+    toggleLayer(map, henro.trailLabel, v),
+  );
   bindToggle("toggle-lodging", (v) =>
     toggleLayer(map, [henro.lodgingMarker, henro.lodgingLabel], v),
   );
+
+  bindToggle("toggle-elevation-color", (v) =>
+    toggleLayer(map, elevation.colorRelief, v),
+  );
+  bindToggle("toggle-hillshade", (v) =>
+    toggleLayer(map, elevation.hillshade, v),
+  );
+  bindToggle("toggle-contours", (v) =>
+    toggleLayer(map, [...elevation.contour, ...elevation.contourIndex], v),
+  );
+  bindToggle("toggle-contour-labels", (v) =>
+    toggleLayer(map, elevation.contourLabel, v),
+  );
+
+  bindToggle("toggle-terrain", (v) => {
+    if (v) {
+      map.setTerrain({ source: "elevation-dem-terrain", exaggeration: 1 });
+    } else {
+      map.setTerrain(null);
+    }
+  });
 }
 
-function setupClickPopup(map: MapLibreMap): void {
+function setupClickPopup(map: MapLibreMap, elevationAvailable: boolean): void {
+  let terrainActive = false;
+  map.on("terrain", () => {
+    terrainActive = map.getTerrain() !== null;
+  });
   map.on("click", (e) => {
+    // When terrain is active, always show the click elevation (spec §11.4).
+    if (terrainActive && elevationAvailable) {
+      const elevation = map.queryTerrainElevation(e.lngLat);
+      const label =
+        elevation === null || Number.isNaN(elevation)
+          ? "elevation: unavailable"
+          : `elevation: ${elevation.toFixed(1)} m`;
+      new maplibregl.Popup({ closeButton: true })
+        .setLngLat(e.lngLat)
+        .setHTML(`<b>${label}</b>`)
+        .addTo(map);
+      return;
+    }
+
     const features = map.queryRenderedFeatures(e.point);
     if (features.length === 0) return;
 
@@ -95,6 +156,6 @@ const container = document.getElementById("map");
 if (container) {
   const { map, henro } = createMap(container);
   setupDebugPanel(map, henro);
-  setupClickPopup(map);
+  setupClickPopup(map, henro.elevation.available);
   (window as unknown as { __map: MapLibreMap }).__map = map;
 }

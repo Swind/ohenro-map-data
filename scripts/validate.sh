@@ -65,6 +65,49 @@ else
   echo "WARN: henro pmtiles not built yet, skipping henro checks"
 fi
 
+# ---- Shikoku Nature Trail ----
+TRAIL="$ROOT/output/shikoku-trail.pmtiles"
+echo "==> Trail: $TRAIL"
+if [ -f "$TRAIL" ]; then
+  [ -s "$TRAIL" ] || fail "trail pmtiles is empty"
+
+  meta=$(pmtiles show --metadata "$TRAIL" 2>/dev/null) || fail "trail metadata unreadable"
+
+  echo "$meta" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+layers=json.loads(d['vector_layers']) if isinstance(d['vector_layers'],str) else d['vector_layers']
+ids={l['id'] for l in layers}
+sys.exit(0 if 'shikoku_trail' in ids else 1)
+" || fail "shikoku_trail layer missing"
+
+  # bounds must cover Shikoku trail extent (roughly 132-135E, 32.5-34.5N)
+  header=$(pmtiles show --header-json "$TRAIL" 2>/dev/null) || fail "trail header unreadable"
+  echo "$header" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+lon_min,lat_min,lon_max,lat_max=d['bounds']
+ok = lon_min > 131.0 and lon_max < 136.0 and lat_min > 31.5 and lat_max < 35.5
+sys.exit(0 if ok else 1)
+" || fail "trail bounds not within Shikoku: $lon_min,$lat_min,$lon_max,$lat_max"
+else
+  echo "WARN: shikoku-trail pmtiles not built yet, skipping trail checks"
+fi
+
+# ---- Elevation visualization ----
+CONTOURS="$ROOT/output/shikoku-contours.pmtiles"
+TERRAIN="$ROOT/output/shikoku-terrain.pmtiles"
+echo "==> Elevation visualization"
+if [ -f "$CONTOURS" ] && [ -f "$TERRAIN" ]; then
+  if "$SCRIPT_DIR/validate-elevation-visuals.sh" "$CONTOURS" "$TERRAIN"; then
+    : # passed
+  else
+    FAIL=1
+  fi
+else
+  echo "WARN: elevation visualization artifacts not built, skipping (strict validation runs in build-elevation-visuals.sh)"
+fi
+
 if [ "$FAIL" -eq 1 ]; then
   echo "==> VALIDATION FAILED"
   exit 1

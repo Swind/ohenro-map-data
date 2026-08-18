@@ -8,20 +8,22 @@ shikoku-latest.osm.pbf
         +--> Protomaps Basemaps profile --> shikoku-basemap.pmtiles (通用底圖)
         |
         +--> Custom Henro profile        --> shikoku-henro.pmtiles  (遍路 overlay)
+        |
+        +--> Henro 自行? no：shikoku-trail.pmtiles 由官方 GPX/KML 產生（見下）
 ```
 
 ## 目錄結構
 
 ```text
 ohenro-map-data/
-├── source/                    原始資料（immutable）：OSM PBF、seichijunrei spots.json、henroyado.html 快照、GSI DEM ZIPs
+├── source/                    原始資料（immutable）：OSM PBF、seichijunrei spots.json、henroyado.html 快照、GSI DEM ZIPs、shikoku_trail/ 四國自然步道官方 KML/GPX
 ├── basemaps/                  Protomaps Basemaps repo（外部 git clone，勿放入自訂檔案）
 ├── henro/                     自訂 Henro Planetiler 專案（schema 見 henro/schema.md）
 │   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
 ├── henroyado/                 Henroyado 住宿爬蟲（Python package，Phase 1：fetcher→parse→normalize）
 │   └── tests/                 regression fixtures + 單元測試
 ├── gsi-dem/                   GSI DEM 轉換工具（Rust，Phase 1 Inspector 完成）
-├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、兩份 PMTiles
+├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、shikoku-trail.*、五份 PMTiles（basemap/henro/contours/terrain/trail）
 ├── scripts/                   build / validate 腳本
 ├── docs/                      操作文件（lodging_data_pipeline.md 等）
 ├── reference/                 計畫與操作文件
@@ -63,6 +65,35 @@ cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db \
 # Phase 7：golden coordinates regression + coverage/source report
 cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate-db \
   output/shikoku-elevation.sqlite --golden gsi-dem/tests/golden/elevation.json
+# 高程視覺化：export-vrt（raw Int16 + VRT）→ build-elevation-visuals.sh（Docker: GDAL/tippecanoe/rgbify）
+cargo run --manifest-path gsi-dem/Cargo.toml --release -- export-vrt \
+  output/shikoku-elevation-dem10.sqlite --layer 10 --output work/elevation/dem10.vrt
+./scripts/build-elevation-visuals.sh   # -> output/shikoku-contours.pmtiles + output/shikoku-terrain.pmtiles
+```
+
+#### 高程視覺化 build（build-elevation-visuals.sh）
+
+```bash
+# 前置需求：cargo、pmtiles CLI、docker；DEM10-only SQLite（預設 output/shikoku-elevation-dem10.sqlite）
+
+# 第一次使用：build 工具 Docker 映像（host 不需安裝 GDAL/tippecanoe/rgbify）
+docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
+
+# 之後每次：從 DEM10 SQLite 一次重建兩份 PMTiles
+./scripts/build-elevation-visuals.sh
+# -> output/shikoku-contours.pmtiles（20m 等高線, MVT, z12-15）
+# -> output/shikoku-terrain.pmtiles（Terrain-RGB, PNG, z6-14）
+# 完整流程：export-vrt -> gdal_translate COG -> gdalinfo 驗證 -> gdal_contour ->
+#   tippecanoe -> gdalwarp 3857 -> rgbify_dem -> pmtiles convert -> 嚴格驗證 -> npm build
+# 全部 stdout/stderr 寫入 reports/elevation-visuals-build.log；
+# metadata 寫入 reports/{contours,terrain}-metadata.txt；GSI attribution 寫入 PMTiles。
+
+# 可調環境變數（只有需要時才設）
+#   ELEVATION_DB=...          DEM10 SQLite 路徑（預設 output/shikoku-elevation-dem10.sqlite）
+#   WORK_DIR=...              中間檔目錄（預設 work/elevation）
+#   CONTOUR_INTERVAL=20       等高線間隔
+#   TERRAIN_MIN_ZOOM=6 / TERRAIN_MAX_ZOOM=14
+#   RGBIFY_WORKERS=4
 ```
 
 - 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
@@ -194,6 +225,27 @@ warnings / writers / fixtures+tests），產出 `source/henroyado.html`、
 - Maven 3.8+
 - git
 - PMTiles CLI（`go install github.com/protomaps/go-pmtiles@latest`，binary 為 `go-pmtiles`）
+- Docker（build-shikoku-trail.sh 用 `ohenro-elevation-visuals` image 內的 tippecanoe）
+
+## Build Shikoku Trail（四國自然步道）
+
+```bash
+./scripts/build-shikoku-trail.sh   # -> output/shikoku-trail.pmtiles + shikoku-trail.geojson
+```
+
+- 來源：`source/shikoku_trail/` 四縣官方 KML（每 `<Placemark>` = 一段路線）。
+  KML 的 name/description 已拆好、geometry 與同目錄 GPX 一致，故以 KML 為來源。
+- 流程：KML → GeoJSON（`henro/scripts/extract_shikoku_trail.py`，每段一個 LineString
+  feature）→ tippecanoe（Docker，`--no-line-simplification` 保留官方幾何）→ PMTiles。
+- Layer `shikoku_trail`，zoom 0–14，attribution 寫入 metadata。
+- 每個 feature 屬性讓 App 可「選段顯示」：
+  - `route_id`：`SHIKOKU_TKS_01` 等官方編號；無編號者合成 `SHIKOKU_KCH_神峯のみち`
+    （高知 4 條、愛媛 1 條共用前綴，需以名稱區分）。
+  - `name`：中文名（`渦潮の見えるみち`）；接続/連絡コース為 null。
+  - `pref`：tokushima / kagawa / ehime / kochi。
+  - `kind`：main / connector（接続コース）/ link（連絡コース）。
+  - `seg` / `seg_count`：同名多段路線的分段序號與總段數（如 TKS_13 有 4 段）。
+- 驗證結果（2026-08-18）：158 段（125 條主路線 + 14 connector + 3 link）、38,878 點。
 
 ## Build Basemap
 
@@ -217,7 +269,7 @@ polygons、landcover、qrank、pgf-encoding），不會重新下載 OSM。
 ## Inspect / Validate
 
 ```bash
-./scripts/inspect-pmtiles.sh   # 顯示 basemap 與 henro metadata
+./scripts/inspect-pmtiles.sh   # 顯示 basemap、henro、contours、terrain、trail metadata
 ./scripts/validate.sh          # 驗證輸出、bounds、必需 layers（失敗回傳 1）
 ```
 

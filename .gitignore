@@ -14,6 +14,9 @@ work/
 # Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
 source/henroyado.html
 
+# GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
+source/GSI/
+
 # Python
 __pycache__/
 *.pyc

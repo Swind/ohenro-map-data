@@ -1,0 +1,35 @@
+# Single image carrying every elevation-visualization CLI the build pipeline
+# needs: GDAL (gdal_translate/gdalwarp/gdal_contour/gdalinfo), tippecanoe, and
+# rio-rgbify. Built on top of the official osgeo/gdal image so the CRS registry
+# matches the source data. Used only by scripts/build-elevation-visuals.sh;
+# nothing is installed on the host.
+#
+# Build:
+#   docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
+FROM osgeo/gdal:ubuntu-small-3.6.3
+
+# Build tippecanoe from source (felt fork; Ubuntu 22.04 has no package).
+# Also install pip so we can add rio-rgbify.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+        libsqlite3-dev \
+        zlib1g-dev \
+        libzstd-dev \
+        make \
+        python3-pip \
+        python3-numpy \
+    && git clone --depth 1 https://github.com/felt/tippecanoe.git /tmp/tippecanoe \
+    && make -C /tmp/tippecanoe -j"$(nproc)" \
+    && install -m 0755 /tmp/tippecanoe/tippecanoe /usr/local/bin/tippecanoe \
+    && rm -rf /tmp/tippecanoe
+
+# rio-rgbify (rasterio wheels link against the system GDAL libs).
+RUN python3 -m pip install --no-cache-dir rasterio rio-rgbify
+
+# Drop the one-shot build tools to keep the image lean.
+RUN apt-get purge -y build-essential git \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /data

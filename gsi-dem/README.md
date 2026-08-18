@@ -105,6 +105,10 @@ cargo run --release -- tile --merged work/merged \
 cargo run --release -- build --tiles work/tiles \
   --grid /tmp/tile-report.json --output output/shikoku-elevation.sqlite
 
+# 只用 DEM10 layer 的精簡版（126MB，10m 解析度）
+cargo run --release -- build --tiles work/tiles --grid /tmp/tile-report.json \
+  --layer 10 --output output/shikoku-elevation-dem10.sqlite
+
 # runtime 查詢：DEM5 優先、無值 fallback DEM10
 cargo run --release -- query-db output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
 # => Elevation: 335.0 m  (layer=DEM10, source=DEM10B)
@@ -113,6 +117,16 @@ cargo run --release -- query-db output/shikoku-elevation.sqlite --lat 33.754 --l
 cargo run --release -- validate-db output/shikoku-elevation.sqlite \
   --golden gsi-dem/tests/golden/elevation.json --report /tmp/validate-report.json
 # => golden: 7/7 passed; coverage DEM5/DEM10 breakdown
+
+# 高程視覺化：把 DEM10 layer 匯出成 raw Int16 + GDAL VRT（不 link libgdal）
+# 輸入可以是精簡的 output/shikoku-elevation-dem10.sqlite（--layer 10）
+cargo run --release -- export-vrt \
+  output/shikoku-elevation-dem10.sqlite --layer 10 --output work/elevation/dem10.vrt
+# 同時寫 work/elevation/dem10.raw（row-major Int16 LE）+ dem10.vrt。
+# 之後用 scripts/build-elevation-visuals.sh 產生兩份 PMTiles：
+#   output/shikoku-contours.pmtiles（20m 等高線, MVT, z12-15）
+#   output/shikoku-terrain.pmtiles（Terrain-RGB, PNG, z6-14）
+# 該 build script 用 Docker 跑 GDAL / tippecanoe / rgbify（見 docker/Dockerfile.elevation）。
 
 # 交叉驗證 raster 正確性（Phase 2 acceptance）
 # DEM5A vs DEM10B：

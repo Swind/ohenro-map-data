@@ -7,6 +7,11 @@ App 不碰 GSI GML / ZIP / merge / tile 產生等邏輯，只讀最終 SQLite
 
 資料檔案：`output/shikoku-elevation.sqlite`（540 MB，2026-08-18 build，shikoku-elevation.sqlite）
 
+另有 **DEM10-only 精簡版**：`output/shikoku-elevation-dem10.sqlite`（126 MB，
+只有 10m DEM layer，解析度較粗、體積小 76%）。適用於只需粗略海拔/地勢概覽、
+不要求 5m 精度的用途。兩者共用同一套 schema 與查詢演算法（見下文），差異只在
+layer 數與 grid 解析度。
+
 ---
 
 ## 1. 資料庫 Schema

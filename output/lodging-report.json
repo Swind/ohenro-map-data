@@ -1,0 +1,632 @@
+{
+  "total": 1161,
+  "by_subtype": {
+    "hostel": 51,
+    "hotel": 649,
+    "camp_site": 164,
+    "chalet": 24,
+    "guest_house": 204,
+    "motel": 63,
+    "apartment": 6
+  },
+  "by_osm_type": {
+    "node": 480,
+    "way": 678,
+    "relation": 3
+  },
+  "missing_name": 76,
+  "missing_coordinate": 0,
+  "missing_phone": 715,
+  "missing_website": 849,
+  "with_laundry_tags": 1,
+  "with_internet_tags": 85,
+  "unknown_subtypes": [],
+  "duplicate_candidates": [
+    {
+      "a": "lodging-osm-node-1690345418",
+      "b": "lodging-osm-way-582534272",
+      "signal": "same name + near coords (7m)"
+    },
+    {
+      "a": "lodging-osm-node-3717950541",
+      "b": "lodging-osm-way-312545576",
+      "signal": "same name + near coords (24m)"
+    },
+    {
+      "a": "lodging-osm-node-3718179777",
+      "b": "lodging-osm-way-312538774",
+      "signal": "same name + near coords (14m)"
+    },
+    {
+      "a": "lodging-osm-node-4846938618",
+      "b": "lodging-osm-way-492704253",
+      "signal": "same name + near coords (38m)"
+    },
+    {
+      "a": "lodging-osm-node-6694798887",
+      "b": "lodging-osm-node-6780706985",
+      "signal": "same name + near coords (5m)"
+    },
+    {
+      "a": "lodging-osm-node-12703657960",
+      "b": "lodging-osm-way-371671561",
+      "signal": "same name + near coords (2m)"
+    },
+    {
+      "a": "lodging-osm-node-13441905162",
+      "b": "lodging-osm-way-311484641",
+      "signal": "same name + near coords (2m)"
+    },
+    {
+      "a": "lodging-osm-way-310168080",
+      "b": "lodging-osm-way-310168600",
+      "signal": "same name + near coords (16m)"
+    },
+    {
+      "a": "lodging-osm-way-310188686",
+      "b": "lodging-osm-way-310188721",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-311054110",
+      "b": "lodging-osm-way-311054111",
+      "signal": "same name + near coords (11m)"
+    },
+    {
+      "a": "lodging-osm-way-311055646",
+      "b": "lodging-osm-way-311055647",
+      "signal": "same name + near coords (14m)"
+    },
+    {
+      "a": "lodging-osm-way-311055646",
+      "b": "lodging-osm-way-311055648",
+      "signal": "same name + near coords (26m)"
+    },
+    {
+      "a": "lodging-osm-way-311055647",
+      "b": "lodging-osm-way-311055648",
+      "signal": "same name + near coords (13m)"
+    },
+    {
+      "a": "lodging-osm-way-311055976",
+      "b": "lodging-osm-way-311055977",
+      "signal": "same name + near coords (24m)"
+    },
+    {
+      "a": "lodging-osm-way-311055976",
+      "b": "lodging-osm-way-311055978",
+      "signal": "same name + near coords (36m)"
+    },
+    {
+      "a": "lodging-osm-way-311055977",
+      "b": "lodging-osm-way-311055978",
+      "signal": "same name + near coords (16m)"
+    },
+    {
+      "a": "lodging-osm-way-311499591",
+      "b": "lodging-osm-way-311499592",
+      "signal": "same name + near coords (15m)"
+    },
+    {
+      "a": "lodging-osm-way-311499591",
+      "b": "lodging-osm-way-311499593",
+      "signal": "same name + near coords (23m)"
+    },
+    {
+      "a": "lodging-osm-way-311499591",
+      "b": "lodging-osm-way-311499594",
+      "signal": "same name + near coords (25m)"
+    },
+    {
+      "a": "lodging-osm-way-311499591",
+      "b": "lodging-osm-way-311499595",
+      "signal": "same name + near coords (53m)"
+    },
+    {
+      "a": "lodging-osm-way-311499592",
+      "b": "lodging-osm-way-311499593",
+      "signal": "same name + near coords (8m)"
+    },
+    {
+      "a": "lodging-osm-way-311499592",
+      "b": "lodging-osm-way-311499594",
+      "signal": "same name + near coords (38m)"
+    },
+    {
+      "a": "lodging-osm-way-311499592",
+      "b": "lodging-osm-way-311499595",
+      "signal": "same name + near coords (39m)"
+    },
+    {
+      "a": "lodging-osm-way-311499593",
+      "b": "lodging-osm-way-311499594",
+      "signal": "same name + near coords (46m)"
+    },
+    {
+      "a": "lodging-osm-way-311499593",
+      "b": "lodging-osm-way-311499595",
+      "signal": "same name + near coords (34m)"
+    },
+    {
+      "a": "lodging-osm-way-311499594",
+      "b": "lodging-osm-way-311499595",
+      "signal": "same name + near coords (69m)"
+    },
+    {
+      "a": "lodging-osm-way-311514119",
+      "b": "lodging-osm-way-311514120",
+      "signal": "same name + near coords (21m)"
+    },
+    {
+      "a": "lodging-osm-way-311514119",
+      "b": "lodging-osm-way-311515822",
+      "signal": "same name + near coords (15m)"
+    },
+    {
+      "a": "lodging-osm-way-311514119",
+      "b": "lodging-osm-way-311515823",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-311514120",
+      "b": "lodging-osm-way-311515822",
+      "signal": "same name + near coords (7m)"
+    },
+    {
+      "a": "lodging-osm-way-311514120",
+      "b": "lodging-osm-way-311515823",
+      "signal": "same name + near coords (40m)"
+    },
+    {
+      "a": "lodging-osm-way-311515822",
+      "b": "lodging-osm-way-311515823",
+      "signal": "same name + near coords (35m)"
+    },
+    {
+      "a": "lodging-osm-way-312007200",
+      "b": "lodging-osm-way-312007201",
+      "signal": "same name + near coords (24m)"
+    },
+    {
+      "a": "lodging-osm-way-312154236",
+      "b": "lodging-osm-way-312154238",
+      "signal": "same name + near coords (21m)"
+    },
+    {
+      "a": "lodging-osm-way-312155809",
+      "b": "lodging-osm-way-312155810",
+      "signal": "same name + near coords (22m)"
+    },
+    {
+      "a": "lodging-osm-way-312160799",
+      "b": "lodging-osm-way-312160811",
+      "signal": "same name + near coords (58m)"
+    },
+    {
+      "a": "lodging-osm-way-312160799",
+      "b": "lodging-osm-way-312160812",
+      "signal": "same name + near coords (98m)"
+    },
+    {
+      "a": "lodging-osm-way-312160799",
+      "b": "lodging-osm-way-312160815",
+      "signal": "same name + near coords (21m)"
+    },
+    {
+      "a": "lodging-osm-way-312160800",
+      "b": "lodging-osm-way-312160801",
+      "signal": "same name + near coords (52m)"
+    },
+    {
+      "a": "lodging-osm-way-312160800",
+      "b": "lodging-osm-way-312160802",
+      "signal": "same name + near coords (87m)"
+    },
+    {
+      "a": "lodging-osm-way-312160800",
+      "b": "lodging-osm-way-312160811",
+      "signal": "same name + near coords (97m)"
+    },
+    {
+      "a": "lodging-osm-way-312160800",
+      "b": "lodging-osm-way-312160812",
+      "signal": "same name + near coords (91m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160802",
+      "signal": "same name + near coords (38m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160803",
+      "signal": "same name + near coords (59m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160804",
+      "signal": "same name + near coords (83m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160805",
+      "signal": "same name + near coords (100m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160806",
+      "signal": "same name + near coords (82m)"
+    },
+    {
+      "a": "lodging-osm-way-312160801",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (81m)"
+    },
+    {
+      "a": "lodging-osm-way-312160802",
+      "b": "lodging-osm-way-312160803",
+      "signal": "same name + near coords (22m)"
+    },
+    {
+      "a": "lodging-osm-way-312160802",
+      "b": "lodging-osm-way-312160804",
+      "signal": "same name + near coords (46m)"
+    },
+    {
+      "a": "lodging-osm-way-312160802",
+      "b": "lodging-osm-way-312160805",
+      "signal": "same name + near coords (78m)"
+    },
+    {
+      "a": "lodging-osm-way-312160802",
+      "b": "lodging-osm-way-312160806",
+      "signal": "same name + near coords (58m)"
+    },
+    {
+      "a": "lodging-osm-way-312160802",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (49m)"
+    },
+    {
+      "a": "lodging-osm-way-312160803",
+      "b": "lodging-osm-way-312160804",
+      "signal": "same name + near coords (25m)"
+    },
+    {
+      "a": "lodging-osm-way-312160803",
+      "b": "lodging-osm-way-312160805",
+      "signal": "same name + near coords (61m)"
+    },
+    {
+      "a": "lodging-osm-way-312160803",
+      "b": "lodging-osm-way-312160806",
+      "signal": "same name + near coords (42m)"
+    },
+    {
+      "a": "lodging-osm-way-312160803",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (28m)"
+    },
+    {
+      "a": "lodging-osm-way-312160804",
+      "b": "lodging-osm-way-312160805",
+      "signal": "same name + near coords (55m)"
+    },
+    {
+      "a": "lodging-osm-way-312160804",
+      "b": "lodging-osm-way-312160806",
+      "signal": "same name + near coords (41m)"
+    },
+    {
+      "a": "lodging-osm-way-312160804",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (98m)"
+    },
+    {
+      "a": "lodging-osm-way-312160804",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160806",
+      "signal": "same name + near coords (19m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160807",
+      "signal": "same name + near coords (63m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160808",
+      "signal": "same name + near coords (69m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160809",
+      "signal": "same name + near coords (84m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160810",
+      "signal": "same name + near coords (82m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (55m)"
+    },
+    {
+      "a": "lodging-osm-way-312160805",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (36m)"
+    },
+    {
+      "a": "lodging-osm-way-312160806",
+      "b": "lodging-osm-way-312160807",
+      "signal": "same name + near coords (81m)"
+    },
+    {
+      "a": "lodging-osm-way-312160806",
+      "b": "lodging-osm-way-312160808",
+      "signal": "same name + near coords (88m)"
+    },
+    {
+      "a": "lodging-osm-way-312160806",
+      "b": "lodging-osm-way-312160810",
+      "signal": "same name + near coords (97m)"
+    },
+    {
+      "a": "lodging-osm-way-312160806",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (73m)"
+    },
+    {
+      "a": "lodging-osm-way-312160806",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (21m)"
+    },
+    {
+      "a": "lodging-osm-way-312160807",
+      "b": "lodging-osm-way-312160808",
+      "signal": "same name + near coords (31m)"
+    },
+    {
+      "a": "lodging-osm-way-312160807",
+      "b": "lodging-osm-way-312160809",
+      "signal": "same name + near coords (29m)"
+    },
+    {
+      "a": "lodging-osm-way-312160807",
+      "b": "lodging-osm-way-312160810",
+      "signal": "same name + near coords (41m)"
+    },
+    {
+      "a": "lodging-osm-way-312160807",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (36m)"
+    },
+    {
+      "a": "lodging-osm-way-312160807",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (98m)"
+    },
+    {
+      "a": "lodging-osm-way-312160808",
+      "b": "lodging-osm-way-312160809",
+      "signal": "same name + near coords (57m)"
+    },
+    {
+      "a": "lodging-osm-way-312160808",
+      "b": "lodging-osm-way-312160810",
+      "signal": "same name + near coords (72m)"
+    },
+    {
+      "a": "lodging-osm-way-312160808",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (17m)"
+    },
+    {
+      "a": "lodging-osm-way-312160808",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (100m)"
+    },
+    {
+      "a": "lodging-osm-way-312160809",
+      "b": "lodging-osm-way-312160810",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-312160809",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (65m)"
+    },
+    {
+      "a": "lodging-osm-way-312160810",
+      "b": "lodging-osm-way-312160813",
+      "signal": "same name + near coords (76m)"
+    },
+    {
+      "a": "lodging-osm-way-312160811",
+      "b": "lodging-osm-way-312160812",
+      "signal": "same name + near coords (41m)"
+    },
+    {
+      "a": "lodging-osm-way-312160811",
+      "b": "lodging-osm-way-312160815",
+      "signal": "same name + near coords (75m)"
+    },
+    {
+      "a": "lodging-osm-way-312160813",
+      "b": "lodging-osm-way-312160814",
+      "signal": "same name + near coords (83m)"
+    },
+    {
+      "a": "lodging-osm-way-389540433",
+      "b": "lodging-osm-way-389540434",
+      "signal": "same name + near coords (13m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756190",
+      "signal": "same name + near coords (10m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756226",
+      "signal": "same name + near coords (24m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756240",
+      "signal": "same name + near coords (36m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756246",
+      "signal": "same name + near coords (42m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756247",
+      "signal": "same name + near coords (24m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (26m)"
+    },
+    {
+      "a": "lodging-osm-way-408756188",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (38m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756226",
+      "signal": "same name + near coords (14m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756240",
+      "signal": "same name + near coords (26m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756246",
+      "signal": "same name + near coords (44m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756247",
+      "signal": "same name + near coords (19m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (26m)"
+    },
+    {
+      "a": "lodging-osm-way-408756190",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (31m)"
+    },
+    {
+      "a": "lodging-osm-way-408756226",
+      "b": "lodging-osm-way-408756240",
+      "signal": "same name + near coords (13m)"
+    },
+    {
+      "a": "lodging-osm-way-408756226",
+      "b": "lodging-osm-way-408756246",
+      "signal": "same name + near coords (46m)"
+    },
+    {
+      "a": "lodging-osm-way-408756226",
+      "b": "lodging-osm-way-408756247",
+      "signal": "same name + near coords (18m)"
+    },
+    {
+      "a": "lodging-osm-way-408756226",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (28m)"
+    },
+    {
+      "a": "lodging-osm-way-408756226",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-408756240",
+      "b": "lodging-osm-way-408756246",
+      "signal": "same name + near coords (46m)"
+    },
+    {
+      "a": "lodging-osm-way-408756240",
+      "b": "lodging-osm-way-408756247",
+      "signal": "same name + near coords (20m)"
+    },
+    {
+      "a": "lodging-osm-way-408756240",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (31m)"
+    },
+    {
+      "a": "lodging-osm-way-408756240",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (11m)"
+    },
+    {
+      "a": "lodging-osm-way-408756246",
+      "b": "lodging-osm-way-408756247",
+      "signal": "same name + near coords (28m)"
+    },
+    {
+      "a": "lodging-osm-way-408756246",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (18m)"
+    },
+    {
+      "a": "lodging-osm-way-408756246",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (37m)"
+    },
+    {
+      "a": "lodging-osm-way-408756247",
+      "b": "lodging-osm-way-408756312",
+      "signal": "same name + near coords (11m)"
+    },
+    {
+      "a": "lodging-osm-way-408756247",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (16m)"
+    },
+    {
+      "a": "lodging-osm-way-408756312",
+      "b": "lodging-osm-way-408756330",
+      "signal": "same name + near coords (25m)"
+    },
+    {
+      "a": "lodging-osm-way-1313060407",
+      "b": "lodging-osm-way-1313769139",
+      "signal": "same name + near coords (61m)"
+    },
+    {
+      "a": "lodging-osm-way-1456391651",
+      "b": "lodging-osm-way-1456619846",
+      "signal": "same name + near coords (31m)"
+    },
+    {
+      "a": "lodging-osm-way-312174147",
+      "b": "lodging-osm-way-312371403",
+      "signal": "same website"
+    },
+    {
+      "a": "lodging-osm-way-312691451",
+      "b": "lodging-osm-way-312692093",
+      "signal": "same website"
+    }
+  ],
+  "warnings": []
+}

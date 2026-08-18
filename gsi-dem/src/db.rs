@@ -28,7 +28,7 @@ pub struct GridReport {
     pub grid_dem10: GridInfo,
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct GridInfo {
     pub origin_lat: f64,
     pub origin_lon: f64,
@@ -48,6 +48,17 @@ fn open(path: &Path) -> DemResult<Connection> {
 
 /// Build the SQLite database from a `tile` output directory.
 pub fn write_db(tiles_dir: &Path, grid: &GridReport, output: &Path) -> DemResult<()> {
+    write_db_layers(tiles_dir, grid, output, &[LAYER_DEM5, LAYER_DEM10])
+}
+
+/// Build the SQLite database, writing only the requested layers
+/// (e.g. `&[LAYER_DEM10]` for a small DEM10-only database).
+pub fn write_db_layers(
+    tiles_dir: &Path,
+    grid: &GridReport,
+    output: &Path,
+    layers: &[i64],
+) -> DemResult<()> {
     if let Some(parent) = output.parent() {
         std::fs::create_dir_all(parent).map_err(|e| DemError::Io {
             context: format!("create {}", parent.display()),
@@ -125,7 +136,16 @@ pub fn write_db(tiles_dir: &Path, grid: &GridReport, output: &Path) -> DemResult
 
     let mut elev_count = 0u64;
     let mut src_count = 0u64;
-    for (layer, dirname) in [(LAYER_DEM5, "dem5"), (LAYER_DEM10, "dem10")] {
+    for &layer in layers {
+        let dirname = match layer {
+            LAYER_DEM5 => "dem5",
+            LAYER_DEM10 => "dem10",
+            other => {
+                return Err(DemError::Unsupported {
+                    context: format!("unknown layer code {other}"),
+                });
+            }
+        };
         let dir = tiles_dir.join(dirname);
         let mut paths: Vec<_> = std::fs::read_dir(&dir)
             .map_err(|e| DemError::Io {
@@ -320,8 +340,176 @@ pub fn query_db(path: &Path, lat: f64, lon: f64) -> DemResult<QueryResult> {
     })
 }
 
+/// Rectangle of tiles (inclusive) covered by a layer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TileExtent {
+    pub min_tile_x: i64,
+    pub max_tile_x: i64,
+    pub min_tile_y: i64,
+    pub max_tile_y: i64,
+}
+
+/// Persistent, reusable reader for the elevation SQLite database.
+///
+/// Unlike `query_db()`, which re-opens the database for every point and
+/// decompresses the full covering tile, this reader holds a single
+/// `rusqlite::Connection` for its whole lifetime and exposes per-tile reads
+/// (used by the bulk `export-vrt` exporter). No LRU cache: a bulk exporter
+/// reads each tile exactly once.
+pub struct ElevationDb {
+    conn: Connection,
+    tile_size: usize,
+    dem5: Option<GridInfo>,
+    dem10: Option<GridInfo>,
+}
+
+impl ElevationDb {
+    /// Open the database and load its grid + tile-size metadata.
+    pub fn open(path: &Path) -> DemResult<Self> {
+        let conn = open(path)?;
+        let tile_size: usize = meta(&conn, "tile_size")?
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(TILE_SIZE);
+        let dem5 = load_grid(&conn, "dem5")?;
+        let dem10 = load_grid(&conn, "dem10")?;
+        Ok(ElevationDb {
+            conn,
+            tile_size,
+            dem5,
+            dem10,
+        })
+    }
+
+    /// Read a single `metadata` key.
+    pub fn metadata(&self, key: &str) -> DemResult<Option<String>> {
+        self.conn
+            .query_row(
+                "SELECT value FROM metadata WHERE key = ?1",
+                params![key],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(db_err("read metadata"))
+    }
+
+    /// Grid geometry for a layer, if present.
+    pub fn grid(&self, layer: i64) -> DemResult<Option<GridInfo>> {
+        let g = match layer {
+            LAYER_DEM5 => self.dem5.clone(),
+            LAYER_DEM10 => self.dem10.clone(),
+            other => {
+                return Err(DemError::Unsupported {
+                    context: format!("unknown layer code {other}"),
+                });
+            }
+        };
+        Ok(g)
+    }
+
+    /// Inclusive rectangle of tiles present for a layer, or `None` if empty.
+    pub fn tile_extent(&self, layer: i64) -> DemResult<Option<TileExtent>> {
+        let row: Option<(Option<i64>, Option<i64>, Option<i64>, Option<i64>)> = self
+            .conn
+            .query_row(
+                "SELECT MIN(tile_x), MAX(tile_x), MIN(tile_y), MAX(tile_y)
+                 FROM elevation_tiles WHERE layer = ?1",
+                params![layer],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+            )
+            .optional()
+            .map_err(db_err("tile extent"))?;
+        // A SELECT with aggregates over zero rows returns one row of NULLs.
+        let Some((Some(min_x), Some(max_x), Some(min_y), Some(max_y))) = row else {
+            return Ok(None);
+        };
+        Ok(Some(TileExtent {
+            min_tile_x: min_x,
+            max_tile_x: max_x,
+            min_tile_y: min_y,
+            max_tile_y: max_y,
+        }))
+    }
+
+    /// Decompress one elevation tile into row-major `i16` cells.
+    ///
+    /// Returns `Ok(None)` when the tile does not exist, and a `Parse` error
+    /// when the decompressed blob is not exactly `tile_size² * 2` bytes
+    /// (malformed database) rather than panicking or reading out of bounds.
+    pub fn read_elevation_tile(
+        &self,
+        layer: i64,
+        tile_x: i64,
+        tile_y: i64,
+    ) -> DemResult<Option<Vec<i16>>> {
+        let blob: Option<Vec<u8>> = self
+            .conn
+            .query_row(
+                "SELECT data FROM elevation_tiles WHERE layer = ?1 AND tile_x = ?2 AND tile_y = ?3",
+                params![layer, tile_x, tile_y],
+                |r| r.get(0),
+            )
+            .optional()
+            .map_err(db_err("read elevation tile"))?;
+        let Some(blob) = blob else {
+            return Ok(None);
+        };
+        let expected = self.tile_size.checked_mul(self.tile_size).and_then(|n| n.checked_mul(2)).ok_or_else(|| {
+            DemError::Parse { context: format!("tile size overflow: {}", self.tile_size) }
+        })?;
+        let raw = decompress(&blob, expected)?;
+        if raw.len() != expected {
+            return Err(DemError::Parse {
+                context: format!(
+                    "tile ({tile_x},{tile_y}) layer {layer}: decompressed {} bytes, expected {expected}",
+                    raw.len()
+                ),
+            });
+        }
+        let cells = raw
+            .chunks_exact(2)
+            .map(|c| i16::from_le_bytes([c[0], c[1]]))
+            .collect();
+        Ok(Some(cells))
+    }
+}
+
 fn parse(s: String) -> Option<f64> {
     s.trim().parse().ok()
+}
+
+fn meta(conn: &Connection, key: &str) -> DemResult<Option<String>> {
+    conn.query_row(
+        "SELECT value FROM metadata WHERE key = ?1",
+        params![key],
+        |r| r.get(0),
+    )
+    .optional()
+    .map_err(db_err("read metadata"))
+}
+
+fn load_grid(conn: &Connection, prefix: &str) -> DemResult<Option<GridInfo>> {
+    let origin_lat = meta(conn, &format!("{prefix}.origin_lat"))?
+        .and_then(parse)
+        .unwrap_or(f64::NAN);
+    if origin_lat.is_nan() {
+        return Ok(None);
+    }
+    let tile_size: usize = meta(conn, "tile_size")?
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(TILE_SIZE);
+    Ok(Some(GridInfo {
+        origin_lat,
+        origin_lon: meta(conn, &format!("{prefix}.origin_lon"))?
+            .and_then(parse)
+            .unwrap_or(f64::NAN),
+        step_lat: meta(conn, &format!("{prefix}.step_lat"))?
+            .and_then(parse)
+            .unwrap_or(f64::NAN),
+        step_lon: meta(conn, &format!("{prefix}.step_lon"))?
+            .and_then(parse)
+            .unwrap_or(f64::NAN),
+        tile_size,
+    }))
 }
 
 fn sample_layer(
@@ -458,5 +646,115 @@ mod tests {
         let r = query_db(&db_path, lat, lon).unwrap();
         assert_eq!(r.meters, Some(99.0));
         assert_eq!(r.layer, Some(10));
+    }
+
+    #[test]
+    fn elevation_db_reader_grid_and_extent() {
+        let root = temp_dir("reader");
+        let tiles = root.join("tiles");
+        std::fs::create_dir_all(tiles.join("dem5")).unwrap();
+        std::fs::create_dir_all(tiles.join("dem10")).unwrap();
+        let step = 1.0 / 9000.0;
+        let grid = GridReport {
+            grid_dem5: GridInfo {
+                origin_lat: 34.5,
+                origin_lon: 134.0,
+                step_lat: step,
+                step_lon: step,
+                tile_size: TILE_SIZE,
+            },
+            grid_dem10: GridInfo {
+                origin_lat: 34.5,
+                origin_lon: 134.0,
+                step_lat: step,
+                step_lon: step,
+                tile_size: TILE_SIZE,
+            },
+        };
+        let grid_path = root.join("grid.json");
+        std::fs::write(&grid_path, serde_json::to_vec(&grid).unwrap()).unwrap();
+        // two dem10 tiles at (0,0) and (1,0)
+        write_tile(&tiles.join("dem10"), 10, 0, 0, 0, 5, 1);
+        write_tile(&tiles.join("dem10"), 10, 1, 0, 0, 6, 1);
+        let db_path = root.join("elev.sqlite");
+        write_db_layers(&tiles, &grid, &db_path, &[LAYER_DEM10]).unwrap();
+
+        let db = ElevationDb::open(&db_path).unwrap();
+        let g = db.grid(LAYER_DEM10).unwrap().unwrap();
+        assert_eq!(g.origin_lat, 34.5);
+        assert_eq!(g.step_lat, step);
+        // write_db writes both grid metadata blocks; dem5 has no tiles here.
+        assert!(db.grid(LAYER_DEM5).unwrap().is_some());
+
+        let ext = db.tile_extent(LAYER_DEM10).unwrap().unwrap();
+        assert_eq!(
+            ext,
+            TileExtent {
+                min_tile_x: 0,
+                max_tile_x: 1,
+                min_tile_y: 0,
+                max_tile_y: 0,
+            }
+        );
+        assert_eq!(db.tile_extent(LAYER_DEM5).unwrap(), None);
+
+        // tile (0,0) cell 0 = 5, all else nodata; tile (1,0) cell 0 = 6.
+        let t00 = db.read_elevation_tile(LAYER_DEM10, 0, 0).unwrap().unwrap();
+        assert_eq!(t00.len(), TILE_SIZE * TILE_SIZE);
+        assert_eq!(t00[0], 5);
+        assert_eq!(t00[1], ELEV_NODATA);
+        let t10 = db.read_elevation_tile(LAYER_DEM10, 1, 0).unwrap().unwrap();
+        assert_eq!(t10[0], 6);
+        // missing tile -> Ok(None)
+        assert_eq!(
+            db.read_elevation_tile(LAYER_DEM10, 0, 1).unwrap(),
+            None
+        );
+    }
+
+    #[test]
+    fn elevation_db_reader_rejects_malformed_blob() {
+        let root = temp_dir("reader-malformed");
+        let tiles = root.join("tiles");
+        std::fs::create_dir_all(tiles.join("dem5")).unwrap();
+        std::fs::create_dir_all(tiles.join("dem10")).unwrap();
+        let grid = GridReport {
+            grid_dem5: GridInfo {
+                origin_lat: 34.5,
+                origin_lon: 134.0,
+                step_lat: 1.0 / 9000.0,
+                step_lon: 1.0 / 9000.0,
+                tile_size: TILE_SIZE,
+            },
+            grid_dem10: GridInfo {
+                origin_lat: 34.5,
+                origin_lon: 134.0,
+                step_lat: 1.0 / 9000.0,
+                step_lon: 1.0 / 9000.0,
+                tile_size: TILE_SIZE,
+            },
+        };
+        let grid_path = root.join("grid.json");
+        std::fs::write(&grid_path, serde_json::to_vec(&grid).unwrap()).unwrap();
+        // Write a dem10 tile file with a deliberately short elevation blob
+        // (not the full TILE_SIZE²*2 bytes).
+        let short_elev: Vec<u8> = vec![0u8; 8];
+        let tf = TileFile {
+            layer: 10,
+            tile_x: 0,
+            tile_y: 0,
+            elevation_zstd: compress(&short_elev).unwrap(),
+            source: vec![0u8; TILE_SIZE * TILE_SIZE],
+        };
+        tf.write(&tiles.join("dem10/000000_000000.tile")).unwrap();
+        let db_path = root.join("elev.sqlite");
+        write_db_layers(&tiles, &grid, &db_path, &[LAYER_DEM10]).unwrap();
+
+        let db = ElevationDb::open(&db_path).unwrap();
+        let err = db.read_elevation_tile(LAYER_DEM10, 0, 0).unwrap_err();
+        assert!(
+            matches!(err, DemError::Parse { .. }),
+            "expected Parse error, got {err:?}"
+        );
     }
 }

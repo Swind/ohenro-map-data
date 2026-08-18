@@ -1,0 +1,17 @@
+{
+  "by_pref": {
+    "tokushima": 38,
+    "kagawa": 31,
+    "ehime": 43,
+    "kochi": 46
+  },
+  "by_kind": {
+    "main": 141,
+    "connector": 14,
+    "link": 3
+  },
+  "routes": 125,
+  "segments": 158,
+  "points": 38878,
+  "unparsed": 0
+}
