@@ -5,6 +5,7 @@ import sys
 from datetime import datetime, timezone
 
 from henroyado.fetcher import DEFAULT_RAW_FILENAME, fetch
+from henroyado.geocode import enrich_file
 from henroyado.html_parser import detect_records, extract_all
 from henroyado.normalize import normalize_inn
 
@@ -43,6 +44,17 @@ def build_parser():
                    help="V1 JSONL output (default: %(default)s)")
     n.add_argument("--raw-html", default=DEFAULT_RAW_HTML,
                    help="raw HTML snapshot whose mtime becomes source.retrieved_at (default: %(default)s)")
+
+    g = sub.add_parser("geocode", help="enrich V1 records from Google Maps embed place results")
+    g.add_argument("input", nargs="?", default=os.path.join(OUTPUT_DIR, "v1.jsonl"),
+                   help="V1 JSONL input (default: %(default)s)")
+    g.add_argument("--output", default=os.path.join(OUTPUT_DIR, "v1-geocoded.jsonl"),
+                   help="geocoded V1 JSONL output (default: %(default)s)")
+    g.add_argument("--cache-dir", default=os.path.join(SOURCE_DIR, "henroyado-google-maps"),
+                   help="raw Google embed response cache (default: %(default)s)")
+    g.add_argument("--timeout", type=int, default=30, help="HTTP timeout seconds (default: %(default)s)")
+    g.add_argument("--delay", type=float, default=0.3, help="delay after uncached requests (default: %(default)s)")
+    g.add_argument("--force", action="store_true", help="replace cached responses")
     return p
 
 
@@ -117,6 +129,15 @@ def main(argv=None):
         print("normalized %d records -> %s" % (len(v1s), args.output))
         print("  records with warnings: %d | total warnings: %d" % (warn_count, total_warn))
         return 0
+
+    if args.command == "geocode":
+        stats = enrich_file(args.input, args.output, args.cache_dir,
+                            timeout=args.timeout, delay=args.delay, force=args.force)
+        print("geocoded %d/%d records -> %s" % (
+            stats["geocoded"], stats["records"], args.output))
+        print("  no URL: %d | place not found: %d | errors: %d" % (
+            stats["no_url"], stats["not_found"], stats["errors"]))
+        return 0 if stats["errors"] == 0 else 1
 
     return 1
 

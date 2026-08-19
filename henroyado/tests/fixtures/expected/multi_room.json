@@ -11,6 +11,7 @@
   "name": "Hostel 東風ノ家",
   "name_kana": null
  },
+ "business_status": null,
  "description": "安芸市の中心地にある古民家ゲストハウスです。",
  "henro": {
   "from_temple": {
@@ -138,6 +139,7 @@
   "prefecture": "高知県",
   "address": null,
   "coordinates": null,
+  "map_data_status": "pending_geocode",
   "google_maps_search_url": "http://maps.google.com/maps?q=Hostel 東風ノ家+高知県",
   "google_maps_embed_url": null
  },
@@ -166,6 +168,7 @@
   "route": "こちらは 27番神峯寺 から 28番大日寺 へのお宿です。",
   "payment": "現金 、 カード （VISA,MASTER,JCB,ｱﾒﾘｶﾝｴｸｽﾌﾟﾚｽ,etc）",
   "distance": "280.9 km",
+  "status": null,
   "types": [
    "個室/食事なし",
    "ドミトリー"

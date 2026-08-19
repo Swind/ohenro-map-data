@@ -13,6 +13,7 @@ work/
 
 # Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
 source/henroyado.html
+source/henroyado-google-maps/
 
 # Shikoku Nature Trail raw archive (re-fetchable via
 # `python3 -m shikoku_nature_trail crawl-all`); keep the crawler code tracked

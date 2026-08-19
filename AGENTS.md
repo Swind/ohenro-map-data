@@ -144,8 +144,8 @@ python3 -m henroyado fetch    # 下載全四國住宿清單，存為 source/henr
 
 - 下載 `https://henroyado.com/inns` 並存為 `source/henroyado.html`。
 - 只做 URL → HTML 快照（plan Step 1），不解析。
-- 只存一份：server 忽略 `pref` 參數，任一 prefecture 頁都回傳全部 88 札所
-  的完整清單（~507 筆住宿），用 base URL 抓反而多幾筆。
+- 只存一份：base 與四個 `?pref=` URL 的 HTTP body 都包含完整四縣資料；
+  `pref` 只由 `inn.js` 在瀏覽器端切換 `div.js_prefGroup` 的顯示，不會另抓資料。
 - `source/henroyado.html` 已 gitignore（可重新抓取）。
 
 ### Detect（plan Step 2：記錄偵測）
@@ -155,36 +155,37 @@ python3 -m henroyado detect   # → output/henroyado/detect.jsonl
 ```
 
 - 每筆住宿 = `tr.bl_table_row_frontInfo`（+ 緊接的 `tr.bl_table_row_detail`）。
-- 偵測結果（2026-08-16）：572 筆 listing（569 distinct 名稱），445 筆含
-  detail card、127 筆無 detail；tokushima 123 / kochi 182 / ehime 163 / kagawa 104。
-- 頁面以 155 個 table 分段：90 個 temple caption（88 札所）+ 65 個 route section
+- 偵測結果（2026-08-19 更新快照）：702 筆 listing（699 distinct 名稱），680 筆含
+  detail card、22 筆無 detail；tokushima 137 / kochi 225 / ehime 224 / kagawa 116。
+- 頁面以 164 個 table 分段：90 個 temple caption（88 札所）+ 74 個 route section
   （如 `#10-11合流後ルート`、`#19別格慈眼寺`），route section 的 record 無 temple。
-- 已知 source 資料：3 組重複 listing（如スーパーホテル今治 在同一 temple table
-  出現兩次），detector 照樣各存一筆，不去重（plan §30）。
+- 已知 source 資料：3 組重複 listing（一富士旅館 / 松屋旅館 / 農家民宿かじか），
+  detector 照樣各存一筆，不去重（plan §30）。
 
 ### Parse（plan Step 3：RawInn 抽取）
 
 ```bash
-python3 -m henroyado parse   # → output/henroyado/raw.jsonl（572 筆）
+python3 -m henroyado parse   # → output/henroyado/raw.jsonl（702 筆）
 ```
 
 - 每筆 = `tr.bl_table_row_frontInfo`（summary row）+ `tr.bl_table_row_detail`
   （detail card，含 h3 名稱 / description / route / お知らせ / 宿詳細 /
   料金 / お問い合わせ / マップ / carousel 圖片）。
+- front row 第 4 欄的 `休業` / `閉業` 保存為 `source_context.row_status`；
+  `詳細` 是按鈕文字，不視為狀態。
 - 純抽取、不標準化（RawInn，plan §19）。空字串一律轉 `null`（plan §3.4）。
 - 只把 <br> 保留為換行、其餘空白收斂；付款等文字未清除標點周圍空白
   （那是 Step 4 normalizer 的工作）。
-- 445 張有完整 detail card、127 張只有 front row（無 detail 內容）。
-- 全頁僅 3 個 Google Maps iframe（其餘 JS lazy load），embed URL 少見；
-  每張卡的「google mapを開く」連結（search URL）恆在。
-- 109 張卡片的 部屋 值為空白 `<br/>` → `room: null`（source 本身無資料）。
+- 680 張有完整 detail card、22 張只有 front row（無 detail 內容）。
+- 全頁僅 2 個 Google Maps iframe（其餘 JS lazy load），embed URL 少見；
+  679 張卡片有「google mapを開く」搜尋 URL。
 - 圖片：只抽 `storage/inns/*` URL（去重、保留 query），**不**下載圖片。
-- 522 張卡片有 room/meal/check-in 等文字資料，但 check_out 常缺（僅 203 張有）。
+- check_out 常缺（702 筆中僅 214 筆有）。
 
 ### Normalize（plan Step 4/5：RawInn → HenroyadoInnV1）
 
 ```bash
-python3 -m henroyado normalize   # → output/henroyado/v1.jsonl（572 筆）
+python3 -m henroyado normalize   # → output/henroyado/v1.jsonl（702 筆）
 ```
 
 - 純函式 normalizer（`henroyado/normalize/`）：text/time/room/meal/route/
@@ -192,18 +193,42 @@ python3 -m henroyado normalize   # → output/henroyado/v1.jsonl（572 筆）
 - 結果符合 plan §5 schema：`henro.from/to_temple`（1番霊山寺→2番極楽寺）、
   `rooms.room_count`（`(\d+)部屋`，全形數字/冒號先正規化）、`meals`、
   `check_in/out`、`facilities`（icon→type 對應 + cross.png disabled）、
-  `payment.methods/cards`（VISA/JCB/Mastercard/AE/UC 等）、
-  `location.coordinates`（僅 2 筆有 embed iframe）、`images.url`（去 query）。
+  `payment.methods/cards`（VISA/JCB/Mastercard/AE/UC 等）、`images.url`（去 query）。
+  基礎 V1 只保留 Maps URL，不把 iframe viewport center 當作住宿座標。
+- `business_status`：`休業` → `temporarily_closed`、`閉業` →
+  `permanently_closed`，原文保留於 `raw.status`。更新快照共有 13 筆休業、15 筆閉業。
 - **時間結構化**（`normalize/time.py`）：`check_in/out` 與 `meals.breakfast/dinner`
   各含 `time`（顯示）`start` `end`（`HH:MM`，range `15:00-19:00` 拆成
   start/end；開尾 `16:00-` → start + end null；`適宜/随時` → time null + notes；
   全形 `：`/數字與 4 位 `1500`→`15:00` 皆正常化；餐點 `06:30~` 同）。
-  check_in 115 range / 200 single / 1 open / 256 none（含無資料）；breakfast 157 有時間。
+  check_in 115 range / 227 single-or-open / 360 none（含無資料）；breakfast 164 有時間。
 - 原始值保留在 `raw.*` + 各欄 `raw_text`（plan §3.3）。
 - 圖片只做 URL 處理，**全程不下載 image binary**（僅 fetcher 會連網）。
 - `rooms.room_count`：單一 `N部屋` 直接取；多組間數（如 Hostel 東風ノ家
   `ﾄﾞﾐﾄﾘｰ2人 1部屋. ﾄﾞﾐﾄﾘｰ4人 2部屋. 個室 2部屋`）**加總**（1+2+2=5）。
 - 目前 0 warnings。
+
+### Geocode（Google Maps embed place 補座標）
+
+```bash
+python3 -m henroyado geocode
+# output/henroyado/v1.jsonl -> output/henroyado/v1-geocoded.jsonl
+```
+
+- 以每筆 `google_maps_search_url` 請求 `output=embed&hl=ja`，回應快取在
+  `source/henroyado-google-maps/`；既有 cache 預設不重抓，`--force` 才更新。
+- 只接受 Google place record 或 resolved URL 的
+  `!8m2!3d<latitude>!4d<longitude>` marker；不使用原始 iframe 前段的
+  `!2d...!3d...` viewport center。
+- 保留 Google 正規化名稱、地址、place ID、CID 與請求 URL，查無單一 place
+  時記 warning，不把地圖中心誤當住宿座標。
+- `location.map_data_status` 區分 `source_data_incomplete`（Henroyado 無 Maps URL）、
+  `pending_geocode`、`resolved`、`place_not_found`、`place_outside_shikoku` 與
+  `fetch_failed`；重跑完整管線會依新版 source 自動更新。
+- 2026-08-19 更新快照結果：702 筆中 582 筆有 place 座標、23 筆無 Maps URL、
+  97 筆無有效單一 place（含 3 筆四國外同名結果）、0 fetch errors。基礎
+  `v1.jsonl` 不含推導座標，地圖使用
+  `v1-geocoded.jsonl`。
 
 ### Tests（plan Step 8：regression fixtures）
 
@@ -212,7 +237,7 @@ python3 -m unittest discover henroyado/tests
 ```
 
 - `tests/test_normalizers.py`：normalizer 純函式單元測試（time/room/meal/route/
-  payment/facility/image/map/text，39 個 test）。
+  payment/facility/image/map/text/geocode/status，46 個 test）。
 - `tests/test_pipeline.py`：HTML fixture → RawInn → V1 == 凍結的 expected JSON
   （6 個代表性 record：ootoriien / no_meal / no_detail / multi_room /
   fullwidth_times / price）。
@@ -220,8 +245,8 @@ python3 -m unittest discover henroyado/tests
   `henroyado/tests/extract_fixtures.py` + `generate_expected.py` 重新凍結。
 
 **Phase 1 狀態**：Step 1–8 全完成（fetch / detect / parse / normalize /
-warnings / writers / fixtures+tests），產出 `source/henroyado.html`、
-`output/henroyado/{detect,raw,v1}.jsonl`。
+warnings / writers / fixtures+tests），另有 Google embed geocode enrichment；產出
+`source/henroyado.html`、`output/henroyado/{detect,raw,v1,v1-geocoded}.jsonl`。
 
 ## Shikoku Nature Trail（Phase 1 raw archive + Phase 2 normalization）
 

@@ -9,13 +9,18 @@ import re
 from henroyado.model.v1 import PREFECTURE_JP, PREFECTURE_PAGE, PROVIDER, SCHEMA_VERSION
 from henroyado.normalize.facility import facility_type
 from henroyado.normalize.image import split_image_url
-from henroyado.normalize.map import parse_coordinates
 from henroyado.normalize.meal import parse_meal
 from henroyado.normalize.payment import clean_payment_text, parse_payment
 from henroyado.normalize.room import parse_room
 from henroyado.normalize.route import parse_route
 from henroyado.normalize.text import clean_punct, normalize_half_kana, normalize_digits
 from henroyado.normalize.time import parse_time_range
+
+
+BUSINESS_STATUS = {
+    "休業": "temporarily_closed",
+    "閉業": "permanently_closed",
+}
 
 
 def _warn(warnings, field, code, message, raw_value):
@@ -43,17 +48,15 @@ def _source_block(retrieved_at):
     }
 
 
-def _location(raw, embed_url, warnings):
+def _location(raw, embed_url):
     pref = raw["source_context"].get("prefecture")
-    coordinates = parse_coordinates(embed_url)
-    if embed_url and coordinates is None:
-        _warn(warnings, "location.coordinates", "MAP_COORDINATES_NOT_FOUND",
-              "Could not extract coordinates from embed URL.", embed_url)
+    search_url = raw.get("google_maps_search_url")
     return {
         "prefecture": PREFECTURE_JP.get(pref) if pref else None,
         "address": None,
-        "coordinates": dict(coordinates, source="google_maps_embed") if coordinates else None,
-        "google_maps_search_url": raw.get("google_maps_search_url"),
+        "coordinates": None,
+        "map_data_status": "pending_geocode" if search_url else "source_data_incomplete",
+        "google_maps_search_url": search_url,
         "google_maps_embed_url": embed_url,
     }
 
@@ -123,6 +126,7 @@ def normalize_inn(raw, retrieved_at=None):
         "schema_version": SCHEMA_VERSION,
         "source": _source_block(retrieved_at),
         "identity": {"name": raw.get("name"), "name_kana": None},
+        "business_status": BUSINESS_STATUS.get(sc.get("row_status")),
         "description": raw.get("description"),
         "henro": _henro(raw, warnings),
         "notice": raw.get("notice"),
@@ -161,7 +165,7 @@ def normalize_inn(raw, retrieved_at=None):
             "website": raw.get("website"),
             "email": raw.get("email"),
         },
-        "location": _location(raw, embed_url, warnings),
+        "location": _location(raw, embed_url),
         "images": images,
         "raw": {
             "name": sc.get("front_row_name"),
@@ -170,6 +174,7 @@ def normalize_inn(raw, retrieved_at=None):
             "route": raw.get("route"),
             "payment": raw.get("payment"),
             "distance": sc.get("row_distance"),
+            "status": sc.get("row_status"),
             "types": sc.get("row_types"),
             "type_icons": sc.get("row_type_icons"),
             "remark": sc.get("row_remark"),

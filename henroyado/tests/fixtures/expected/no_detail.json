@@ -11,6 +11,7 @@
   "name": "Guesthose ほとけの座",
   "name_kana": null
  },
+ "business_status": null,
  "description": null,
  "henro": {
   "from_temple": null,
@@ -71,6 +72,7 @@
   "prefecture": "徳島県",
   "address": null,
   "coordinates": null,
+  "map_data_status": "source_data_incomplete",
   "google_maps_search_url": null,
   "google_maps_embed_url": null
  },
@@ -82,6 +84,7 @@
   "route": null,
   "payment": null,
   "distance": "37.8 km",
+  "status": null,
   "types": [],
   "type_icons": [],
   "remark": null,

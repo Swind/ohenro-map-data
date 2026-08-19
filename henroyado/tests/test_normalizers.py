@@ -2,6 +2,11 @@
 
 import unittest
 
+from bs4 import BeautifulSoup
+
+from henroyado.geocode import embed_url, is_in_shikoku, parse_place
+from henroyado.html_parser.inn import _source_context
+
 from henroyado.normalize.facility import facility_type
 from henroyado.normalize.image import split_image_url
 from henroyado.normalize.map import parse_coordinates
@@ -173,14 +178,69 @@ class TestImage(unittest.TestCase):
 
 class TestMap(unittest.TestCase):
     def test_coordinates(self):
-        url = "https://www.google.com/maps/embed?pb=!1m18!2d134.4996533152179!3d34.159698980576884!5e0"
+        url = "https://www.google.com/maps/data=!8m2!3d34.159699!4d134.501842!16s%2Fg"
         c = parse_coordinates(url)
-        self.assertEqual(c["longitude"], 134.4996533152179)
-        self.assertEqual(c["latitude"], 34.159698980576884)
+        self.assertEqual(c["longitude"], 134.501842)
+        self.assertEqual(c["latitude"], 34.159699)
+
+    def test_viewport_is_not_coordinates(self):
+        url = "https://www.google.com/maps/embed?pb=!2d134.4996533152179!3d34.159698980576884"
+        self.assertIsNone(parse_coordinates(url))
 
     def test_missing(self):
         self.assertIsNone(parse_coordinates(None))
         self.assertIsNone(parse_coordinates("https://example.com/embed"))
+
+    def test_google_embed_place(self):
+        content = ('[["0x3553716e3f5f7783:0x2a32cfd2665058f9",'
+                   '"徳島県鳴門市大麻町板東西山田33-4",'
+                   '[34.159699,134.501842],"3040721200995129593"],'
+                   '"旅館 大鳥居苑"]')
+        place = parse_place(content)
+        self.assertEqual(place["latitude"], 34.159699)
+        self.assertEqual(place["longitude"], 134.501842)
+        self.assertEqual(place["name"], "旅館 大鳥居苑")
+
+    def test_google_marker_url(self):
+        place = parse_place("", "https://google.com/maps/data=!8m2!3d34.159699!4d134.501842!16s%2Fg")
+        self.assertEqual(place["latitude"], 34.159699)
+        self.assertEqual(place["longitude"], 134.501842)
+
+    def test_google_map_center_is_not_a_place(self):
+        self.assertIsNone(parse_place('[[3301.4,134.499653,34.159699]]'))
+
+    def test_google_place_must_be_in_shikoku(self):
+        self.assertTrue(is_in_shikoku({"latitude": 34.159699, "longitude": 134.501842}))
+        self.assertFalse(is_in_shikoku({"latitude": 42.984043, "longitude": 144.3882965}))
+
+    def test_embed_url(self):
+        url = embed_url("http://maps.google.com/maps?q=旅館+徳島県")
+        self.assertEqual(
+            url,
+            "https://maps.google.com/maps?q=%E6%97%85%E9%A4%A8+%E5%BE%B3%E5%B3%B6%E7%9C%8C&output=embed&hl=ja",
+        )
+
+
+class TestBusinessStatus(unittest.TestCase):
+    def test_front_row_status(self):
+        soup = BeautifulSoup(
+            "<table><tr class='bl_table_row_frontInfo'>"
+            "<td>宿</td><td>1 km</td><td></td><td>休業</td><td></td>"
+            "</tr></table>",
+            "html.parser",
+        )
+        context = _source_context(soup.select_one("tr"))
+        self.assertEqual(context["row_status"], "休業")
+
+    def test_detail_button_is_not_status(self):
+        soup = BeautifulSoup(
+            "<table><tr class='bl_table_row_frontInfo'>"
+            "<td>宿</td><td>1 km</td><td></td><td>詳細</td><td></td>"
+            "</tr></table>",
+            "html.parser",
+        )
+        context = _source_context(soup.select_one("tr"))
+        self.assertIsNone(context["row_status"])
 
 
 class TestText(unittest.TestCase):

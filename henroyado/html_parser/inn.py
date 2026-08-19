@@ -90,6 +90,9 @@ def _source_context(front_row):
     tds = front_row.find_all("td")
     name = _collapsed(tds[0]) if tds else ""
     distance = _opt(_collapsed(tds[1])) if len(tds) > 1 else None
+    status = _opt(_collapsed(tds[3])) if len(tds) > 3 else None
+    if status == "詳細":
+        status = None
     types = [_collapsed(t) for t in front_row.select("span.bl_icon_set_txt")]
     type_icons = []
     for img in front_row.select("img.bl_icon_set_img"):
@@ -105,6 +108,7 @@ def _source_context(front_row):
         "row_data_types": data_types,
         "front_row_name": name,
         "row_distance": distance,
+        "row_status": status,
         "row_types": types,
         "row_type_icons": type_icons,
         "row_remark": remark,

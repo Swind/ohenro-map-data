@@ -1,11 +1,10 @@
-"""Google Maps coordinates from embed URL (plan §16).
-
-Pattern: !2d<longitude>!3d<latitude>
-"""
+"""Google Maps place-marker coordinates from a resolved URL."""
 
 import re
 
-COORD_RE = re.compile(r"!2d(-?\d+(?:\.\d+)?)!3d(-?\d+(?:\.\d+)?)")
+COORD_RE = re.compile(
+    r"!8m2!3d(?P<latitude>-?\d+(?:\.\d+)?)!4d(?P<longitude>-?\d+(?:\.\d+)?)"
+)
 
 
 def parse_coordinates(embed_url):
@@ -16,6 +15,6 @@ def parse_coordinates(embed_url):
     if not m:
         return None
     return {
-        "longitude": float(m.group(1)),
-        "latitude": float(m.group(2)),
+        "longitude": float(m.group("longitude")),
+        "latitude": float(m.group("latitude")),
     }

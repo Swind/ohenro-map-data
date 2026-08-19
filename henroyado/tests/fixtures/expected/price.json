@@ -11,6 +11,7 @@
   "name": "お遍路ハウス一番門前通り",
   "name_kana": null
  },
+ "business_status": null,
  "description": "一番札所霊山寺門前のへんろ宿です。",
  "henro": {
   "from_temple": {
@@ -129,11 +130,8 @@
  "location": {
   "prefecture": "徳島県",
   "address": null,
-  "coordinates": {
-   "longitude": 134.50119405816542,
-   "latitude": 34.15818159514429,
-   "source": "google_maps_embed"
-  },
+  "coordinates": null,
+  "map_data_status": "pending_geocode",
   "google_maps_search_url": "http://maps.google.com/maps?q=お遍路ハウス一番門前通り+徳島県",
   "google_maps_embed_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1650.768580073912!2d134.50119405816542!3d34.15818159514429!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3553716ff4f8cd61%3A0xc62a0c5d558d09ff!2z44GK6YGN6Lev44OP44Km44K55LiA55Wq6ZaA5YmN6YCa44KK!5e0!3m2!1sja!2sjp!4v1661914746734!5m2!1sja!2sjp"
  },
@@ -162,6 +160,7 @@
   "route": "こちらは 1番霊山寺 から 2番極楽寺 へのお宿です。",
   "payment": "現金",
   "distance": "0.3 km",
+  "status": null,
   "types": [
    "個室/食事なし"
   ],

@@ -11,6 +11,7 @@
   "name": "旅館.大鳥居苑",
   "name_kana": null
  },
+ "business_status": null,
  "description": "大鳥居苑は一番札所霊山寺に隣接した荘厳で静寂な宿です。\nこれから始まる遍路旅の情報が得られますよ。",
  "henro": {
   "from_temple": {
@@ -136,11 +137,8 @@
  "location": {
   "prefecture": "徳島県",
   "address": null,
-  "coordinates": {
-   "longitude": 134.4996533152179,
-   "latitude": 34.159698980576884,
-   "source": "google_maps_embed"
-  },
+  "coordinates": null,
+  "map_data_status": "pending_geocode",
   "google_maps_search_url": "http://maps.google.com/maps?q=旅館.大鳥居苑+徳島県",
   "google_maps_embed_url": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3301.4778309016488!2d134.4996533152179!3d34.159698980576884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3553716e3f5f7783%3A0x2a32cfd2665058f9!2z5aSn6bOl5bGF6IuR!5e0!3m2!1sja!2sjp!4v1660132612889!5m2!1sja!2sjp"
  },
@@ -169,6 +167,7 @@
   "route": "こちらは 1番霊山寺 から 2番極楽寺 へのお宿です。",
   "payment": "現金 、 カード （VISA/JCB/Mastercard/UC/AE）",
   "distance": "0.1 km",
+  "status": null,
   "types": [
    "個室/食事あり",
    "個室/食事なし"
