@@ -15,6 +15,9 @@ work/
 source/henroyado.html
 source/henroyado-google-maps/
 
+# min88 lodging raw HTML archive and Google Maps response cache
+source/min88-lodging/
+
 # Shikoku Nature Trail raw archive (re-fetchable via
 # `python3 -m shikoku_nature_trail crawl-all`); keep the crawler code tracked
 source/shikoku-nature-trail/

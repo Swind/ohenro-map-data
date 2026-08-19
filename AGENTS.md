@@ -22,6 +22,8 @@ ohenro-map-data/
 │   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
 ├── henroyado/                 Henroyado 住宿爬蟲（Python package，Phase 1：fetcher→parse→normalize）
 │   └── tests/                 regression fixtures + 單元測試
+├── min88_lodging/             min88 住宿 archive / parser / normalizer / optional geocoder
+│   └── tests/                 parser、normalizer、crawler I/O 與 pipeline regression tests
 ├── shikoku_nature_trail/      四國自然步道網站爬蟲（Python，Phase 1 raw archive；見 reference/shikoku-nature-trail-crawler-plan.md）
 │   ├── crawler/               index / detail / assets / kml / manifest 子命令
 │   ├── parser/                course_list + course_detail HTML parser
@@ -38,6 +40,8 @@ ohenro-map-data/
 住宿資料管線詳見 `docs/lodging_data_pipeline.md`（OSM lodging extractor，
 `python3 henro/scripts/extract_lodging.py` → `output/lodging.geojson` + `lodging-report.json`）。
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
+min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
+`reference/min88-lodging-parser-standardization-plan.md`）。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
 
 ## GSI DEM（Phase 1-6：Inspector + Raster correctness + DEM5 merge + DEM10B fallback + Final tiling + SQLite）
@@ -247,6 +251,36 @@ python3 -m unittest discover henroyado/tests
 **Phase 1 狀態**：Step 1–8 全完成（fetch / detect / parse / normalize /
 warnings / writers / fixtures+tests），另有 Google embed geocode enrichment；產出
 `source/henroyado.html`、`output/henroyado/{detect,raw,v1,v1-geocoded}.jsonl`。
+
+## min88 Lodging（archive + offline normalization）
+
+```bash
+python3 -m min88_lodging crawl-all
+python3 -m min88_lodging parse
+python3 -m min88_lodging normalize
+python3 -m min88_lodging verify
+python3 -m min88_lodging report
+# optional, 尚未對 2026-08-19 archive 執行：python3 -m min88_lodging geocode
+```
+
+- 架構：日文列表 → `index.json` → 逐 post ID 的 immutable detail HTML archive →
+  offline Raw JSONL → conservative `Min88LodgingV1`；Google Maps geocode 是獨立可選 enrichment。
+- 預設 archive：`source/min88-lodging/`（`index/page.html`、`records/<id>/page.html`、
+  `index.json`、`manifest.json`）；產出：
+  `output/min88-lodging/{raw,v1,v1-geocoded}.jsonl` 與 `report.json`。
+- crawler 預設 timeout 30 秒、單 worker、request delay 0.3 秒；有效 archive 會 resume 跳過，
+  `--force` 才重抓。manifest 保存 URL/local path/status、retrieval/HTTP metadata、SHA-256、
+  parser version 與完整 detail accounting；失敗不覆蓋既有有效頁。
+- parser 優先讀 `.min88-basicdata-kv` hidden textarea，也支援舊版「基本情報」table；
+  Raw/V1 保留來源文字，不能安全結構化的值只記 warning，不猜測、不丟 record。
+- **2026-08-19 live 結果**：650 筆 list、650 張可解析 detail；tokushima 124 /
+  kochi 239 / ehime 182 / kagawa 105。647 筆有 structured basic data，3 筆 source 缺資料。
+  Raw/V1 各 650 筆，`verify: OK`。
+- 尚餘 98 個保守 warning：3 `MISSING_REQUIRED_FIELD`、10 list/detail
+  `SOURCE_NAME_MISMATCH`、85 `UNRECOGNIZED_FORMAT`（60 pricing、13 laundry、7 payment、
+  4 malformed route distance、1 partial Wi-Fi state）；原值均保留，未強行推斷。
+- optional geocode 尚未執行：base V1 為 647 `pending_geocode` + 3
+  `source_data_incomplete`，目前沒有 `v1-geocoded.jsonl` live 結果。
 
 ## Shikoku Nature Trail（Phase 1 raw archive + Phase 2 normalization）
 

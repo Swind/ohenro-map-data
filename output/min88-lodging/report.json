@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "records": {
+    "index": 650,
+    "raw": 650,
+    "v1": 650,
+    "mapped": 650,
+    "by_prefecture": {
+      "ehime": 182,
+      "kagawa": 105,
+      "kochi": 239,
+      "tokushima": 124
+    },
+    "by_type": {
+      "campground": 19,
+      "guesthouse": 315,
+      "hotel": 266,
+      "pilgrim_shelter": 31,
+      "ryokan": 151,
+      "temple_lodging": 20
+    },
+    "by_status": {
+      "closed_or_suspended": 55,
+      "not_provided": 595
+    }
+  },
+  "source_field_coverage": {
+    "address": 647,
+    "tel": 646,
+    "website": 643,
+    "email": 0,
+    "parking": 647,
+    "rooms": 647,
+    "price": 647,
+    "checkin": 647,
+    "checkout": 647,
+    "wifi": 647,
+    "laundry": 647,
+    "payment": 647,
+    "emoney": 48
+  },
+  "normalization_coverage": {
+    "room_count": 523,
+    "check_in": 543,
+    "check_out": 528,
+    "pricing": 638,
+    "payment": 646,
+    "facilities_available": 572
+  },
+  "map_status": {
+    "pending_geocode": 647,
+    "source_data_incomplete": 3
+  },
+  "coordinate_sources": {},
+  "warnings": {
+    "total": 98,
+    "by_code": {
+      "MISSING_REQUIRED_FIELD": 3,
+      "SOURCE_NAME_MISMATCH": 10,
+      "UNRECOGNIZED_FORMAT": 85
+    },
+    "example_source_ids": {
+      "MISSING_REQUIRED_FIELD": [
+        "25590",
+        "780",
+        "25646"
+      ],
+      "SOURCE_NAME_MISMATCH": [
+        "185",
+        "701",
+        "20803",
+        "17075",
+        "13669"
+      ],
+      "UNRECOGNIZED_FORMAT": [
+        "640",
+        "28501",
+        "8281",
+        "291",
+        "650"
+      ]
+    }
+  },
+  "issues": {
+    "missing_detail_pages": 0,
+    "name_mismatches": 10,
+    "unknown_basic_data_keys": 0,
+    "unknown_taxonomies": 0
+  },
+  "drift": {
+    "added_ids": [],
+    "removed_ids": [],
+    "changed_ids": []
+  },
+  "verify": {
+    "ok": true,
+    "errors": [],
+    "warnings": [],
+    "index_records": 650,
+    "detail_parseable": 650,
+    "raw_records": 650,
+    "v1_records": 650,
+    "geocoded_records": 0
+  }
+}
