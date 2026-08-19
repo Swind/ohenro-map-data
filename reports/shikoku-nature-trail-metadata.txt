@@ -1,0 +1,26 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 132.497178, lat: 32.723501) (long: 134.749422, lat: 34.353260)
+min zoom: 0
+max zoom: 14
+center: (long: 134.505615, lat: 33.970698)
+center zoom: 14
+addressed tiles count: 1215
+tile entries count: 1215
+tile contents count: 1215
+clustered: true
+internal compression: gzip
+tile compression: gzip
+maxzoom 14
+name /home/swind/Data/Program/ohenro-map-data/work/shikoku-nature-trail/trail.mbtiles
+vector_layers <object, use --metadata to view full JSON metadata>
+version 2
+antimeridian_adjusted_bounds 132.497178,32.723501,134.749422,34.353260
+format pbf
+generator tippecanoe v2.82.0
+minzoom 0
+tilestats <object, use --metadata to view full JSON metadata>
+type overlay
+attribution Shikoku Nature Trail (四国自然歩道) © shikoku-nature-trail.com
+description /home/swind/Data/Program/ohenro-map-data/work/shikoku-nature-trail/trail.mbtiles
+generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/shikoku-nature-trail/trail.mbtiles --minimum-zoom 0 --maximum-zoom 14 --drop-densest-as-needed --no-line-simplification -L shikoku_nature_trail:/home/swind/Data/Program/ohenro-map-data/output/shikoku-nature-trail.geojson -L shikoku_nature_trail_pois:/home/swind/Data/Program/ohenro-map-data/output/shikoku-nature-trail-pois.geojson

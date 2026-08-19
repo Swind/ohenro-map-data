@@ -9,6 +9,7 @@ Commands (plan §26):
   verify             check archive completeness
   report             write the crawl report (JSON + Markdown)
   normalize          build the deterministic Phase 2 dataset offline
+  export-map         export normalized routes and POIs for vector tiles
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ from shikoku_nature_trail.crawler.index import crawl_index
 from shikoku_nature_trail.crawler.kml import download_kml
 from shikoku_nature_trail.crawler.manifest import build_manifest
 from shikoku_nature_trail.http import HttpClient
+from shikoku_nature_trail.export_map import export_map
 from shikoku_nature_trail.normalize import normalize_archive
 from shikoku_nature_trail.report import generate_report
 from shikoku_nature_trail.verify import verify
@@ -58,6 +60,15 @@ def build_parser():
     normalize = sub.add_parser("normalize", help="build normalized JSON offline")
     normalize.add_argument("--output", default="output/shikoku-nature-trail.json",
                            help="normalized JSON path (default: %(default)s)")
+    export = sub.add_parser("export-map", help="export normalized routes and POIs offline")
+    export.add_argument("--input", default="output/shikoku-nature-trail.json",
+                        help="normalized JSON path (default: %(default)s)")
+    export.add_argument("--routes", default="output/shikoku-nature-trail.geojson",
+                        help="routes GeoJSON path (default: %(default)s)")
+    export.add_argument("--pois", default="output/shikoku-nature-trail-pois.geojson",
+                        help="POIs GeoJSON path (default: %(default)s)")
+    export.add_argument("--report", default="output/shikoku-nature-trail-report.json",
+                        help="export report path (default: %(default)s)")
     return p
 
 
@@ -67,6 +78,14 @@ def _make_client(args):
 
 
 def _run(args):
+    if args.command == "export-map":
+        result = export_map(args.input, args.routes, args.pois, args.report)
+        print("export-map: routes=%(route_ids)d segments=%(route_segments)d "
+              "route_points=%(route_coordinate_points)d pois=%(kml_pois)d "
+              "linked=%(linked_tourism_spots)d unmatched_spots=%(unmatched_tourism_spots)d "
+              "unmatched_pois=%(unmatched_pois)d ambiguous=%(ambiguous_names)d" % result)
+        return 0
+
     if args.command == "normalize":
         result = normalize_archive(args.data_dir, args.output)
         print("normalize: courses=%(course_count)d photo_points=%(photo_point_count)d "

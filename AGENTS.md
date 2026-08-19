@@ -9,14 +9,14 @@ shikoku-latest.osm.pbf
         |
         +--> Custom Henro profile        --> shikoku-henro.pmtiles  (遍路 overlay)
         |
-        +--> Henro 自行? no：shikoku-trail.pmtiles 由官方 GPX/KML 產生（見下）
+        +--> Official Nature Trail pipeline --> shikoku-nature-trail.pmtiles（見下）
 ```
 
 ## 目錄結構
 
 ```text
 ohenro-map-data/
-├── source/                    原始資料（immutable）：OSM PBF、seichijunrei spots.json、henroyado.html 快照、GSI DEM ZIPs、shikoku_trail/ 四國自然步道官方 KML/GPX
+├── source/                    原始資料（immutable）：OSM PBF、網站快照、GSI DEM ZIPs、shikoku-nature-trail/ 官方 archive
 ├── basemaps/                  Protomaps Basemaps repo（外部 git clone，勿放入自訂檔案）
 ├── henro/                     自訂 Henro Planetiler 專案（schema 見 henro/schema.md）
 │   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
@@ -27,7 +27,7 @@ ohenro-map-data/
 │   ├── parser/                course_list + course_detail HTML parser
 │   └── tests/                 fixtures + parser 單元測試
 ├── gsi-dem/                   GSI DEM 轉換工具（Rust，Phase 1 Inspector 完成）
-├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、shikoku-trail.*、五份 PMTiles（basemap/henro/contours/terrain/trail）
+├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、shikoku-nature-trail.*、五份 PMTiles（basemap/henro/contours/terrain/nature-trail）
 ├── scripts/                   build / validate 腳本
 ├── docs/                      操作文件（lodging_data_pipeline.md 等）
 ├── reference/                 計畫與操作文件
@@ -269,27 +269,25 @@ GeometryCollection；單 course malformed HTML/assets/KML 記 warning 後繼續�
 - Maven 3.8+
 - git
 - PMTiles CLI（`go install github.com/protomaps/go-pmtiles@latest`，binary 為 `go-pmtiles`）
-- Docker（build-shikoku-trail.sh 用 `ohenro-elevation-visuals` image 內的 tippecanoe）
+- Docker（build-shikoku-nature-trail.sh 用 `ohenro-elevation-visuals` image 內的 tippecanoe）
 
-## Build Shikoku Trail（四國自然步道）
+## Build Shikoku Nature Trail（四國自然步道 Phase 3）
 
 ```bash
-./scripts/build-shikoku-trail.sh   # -> output/shikoku-trail.pmtiles + shikoku-trail.geojson
+./scripts/build-shikoku-nature-trail.sh
+# -> output/shikoku-nature-trail.pmtiles + shikoku-nature-trail.geojson
+#    + shikoku-nature-trail-pois.geojson + shikoku-nature-trail-report.json
 ```
 
-- 來源：`source/shikoku_trail/` 四縣官方 KML（每 `<Placemark>` = 一段路線）。
-  KML 的 name/description 已拆好、geometry 與同目錄 GPX 一致，故以 KML 為來源。
-- 流程：KML → GeoJSON（`henro/scripts/extract_shikoku_trail.py`，每段一個 LineString
-  feature）→ tippecanoe（Docker，`--no-line-simplification` 保留官方幾何）→ PMTiles。
-- Layer `shikoku_trail`，zoom 0–14，attribution 寫入 metadata。
-- 每個 feature 屬性讓 App 可「選段顯示」：
-  - `route_id`：`SHIKOKU_TKS_01` 等官方編號；無編號者合成 `SHIKOKU_KCH_神峯のみち`
-    （高知 4 條、愛媛 1 條共用前綴，需以名稱區分）。
-  - `name`：中文名（`渦潮の見えるみち`）；接続/連絡コース為 null。
-  - `pref`：tokushima / kagawa / ehime / kochi。
-  - `kind`：main / connector（接続コース）/ link（連絡コース）。
-  - `seg` / `seg_count`：同名多段路線的分段序號與總段數（如 TKS_13 有 4 段）。
-- 驗證結果（2026-08-18）：158 段（125 條主路線 + 14 connector + 3 link）、38,878 點。
+- 唯一來源：`source/shikoku-nature-trail/` 的 `shikoku-nature-trail.com` 官方 archive。
+- 流程：offline normalize → `export-map` → tippecanoe（`--no-line-simplification`）→ PMTiles。
+- Layers：`shikoku_nature_trail`（route LineString）與 `shikoku_nature_trail_pois`（Point，z10+）。
+- Route ID：`SNT_<source_post_id>`；POI ID：`SNT_<source_post_id>_P####`。
+- 觀光內容只在同 course 正規化名稱一對一相等時連結為 `SNT_<source_post_id>_S###`；
+  不做 fuzzy matching，unmatched/ambiguous 全寫入 report。
+- attribution：`shikoku-nature-trail.com`，寫入 PMTiles metadata。
+- 2026-08-19 實際產出：123 routes / 145 segments / 65,753 route points /
+  1,568 POIs；394/686 tourism spots 一對一連結，34 組名稱 ambiguous。
 
 ## Build Basemap
 

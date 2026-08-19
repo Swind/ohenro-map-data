@@ -1,0 +1,8192 @@
+{
+  "schema_version": 1,
+  "source": "https://shikoku-nature-trail.com/",
+  "totals": {
+    "photo_points": 123,
+    "courses": 123,
+    "route_ids": 123,
+    "route_segments": 145,
+    "route_coordinate_points": 65753,
+    "kml_pois": 1568,
+    "linked_tourism_spots": 394,
+    "unmatched_tourism_spots": 292,
+    "unmatched_pois": 1174,
+    "matched_photo_points": 13,
+    "ambiguous_names": 34
+  },
+  "by_prefecture": {
+    "tokushima": {
+      "courses": 24,
+      "route_ids": 24,
+      "route_segments": 31,
+      "route_coordinate_points": 17768,
+      "kml_pois": 131,
+      "linked_tourism_spots": 99,
+      "unmatched_tourism_spots": 27,
+      "unmatched_pois": 32,
+      "ambiguous_names": 0,
+      "photo_points": 24,
+      "matched_photo_points": 2
+    },
+    "kagawa": {
+      "courses": 28,
+      "route_ids": 28,
+      "route_segments": 30,
+      "route_coordinate_points": 13354,
+      "kml_pois": 542,
+      "linked_tourism_spots": 92,
+      "unmatched_tourism_spots": 49,
+      "unmatched_pois": 450,
+      "ambiguous_names": 21,
+      "photo_points": 28,
+      "matched_photo_points": 1
+    },
+    "ehime": {
+      "courses": 33,
+      "route_ids": 33,
+      "route_segments": 36,
+      "route_coordinate_points": 16116,
+      "kml_pois": 405,
+      "linked_tourism_spots": 110,
+      "unmatched_tourism_spots": 130,
+      "unmatched_pois": 295,
+      "ambiguous_names": 0,
+      "photo_points": 33,
+      "matched_photo_points": 10
+    },
+    "kochi": {
+      "courses": 38,
+      "route_ids": 38,
+      "route_segments": 48,
+      "route_coordinate_points": 18515,
+      "kml_pois": 490,
+      "linked_tourism_spots": 93,
+      "unmatched_tourism_spots": 86,
+      "unmatched_pois": 397,
+      "ambiguous_names": 13,
+      "photo_points": 38,
+      "matched_photo_points": 0
+    }
+  },
+  "unmatched_tourism_spots": [
+    {
+      "content_id": "SNT_415_S002",
+      "route_id": "SNT_415",
+      "number": "2",
+      "name": "名勝 鳴門"
+    },
+    {
+      "content_id": "SNT_415_S005",
+      "route_id": "SNT_415",
+      "number": "5",
+      "name": "飛鳥のイブキ群落"
+    },
+    {
+      "content_id": "SNT_1079_S004",
+      "route_id": "SNT_1079",
+      "number": "4",
+      "name": "土御門上皇火葬塚"
+    },
+    {
+      "content_id": "SNT_1079_S005",
+      "route_id": "SNT_1079",
+      "number": null,
+      "name": "天河別神社古墳群"
+    },
+    {
+      "content_id": "SNT_2063_S001",
+      "route_id": "SNT_2063",
+      "number": "1",
+      "name": "安楽寺"
+    },
+    {
+      "content_id": "SNT_2063_S002",
+      "route_id": "SNT_2063",
+      "number": "2",
+      "name": "十楽寺"
+    },
+    {
+      "content_id": "SNT_2063_S003",
+      "route_id": "SNT_2063",
+      "number": "3",
+      "name": "ブドウ園"
+    },
+    {
+      "content_id": "SNT_2063_S005",
+      "route_id": "SNT_2063",
+      "number": "5",
+      "name": "宮川内ダムと休憩所"
+    },
+    {
+      "content_id": "SNT_442_S003",
+      "route_id": "SNT_442",
+      "number": "3",
+      "name": "川島城"
+    },
+    {
+      "content_id": "SNT_442_S004",
+      "route_id": "SNT_442",
+      "number": "4",
+      "name": "藤井寺"
+    },
+    {
+      "content_id": "SNT_3805_S002",
+      "route_id": "SNT_3805",
+      "number": "2",
+      "name": "一本杉庵"
+    },
+    {
+      "content_id": "SNT_4949_S001",
+      "route_id": "SNT_4949",
+      "number": "1",
+      "name": "天岩戸別神社（あまのいわとわけじんじゃ）"
+    },
+    {
+      "content_id": "SNT_4949_S003",
+      "route_id": "SNT_4949",
+      "number": "3",
+      "name": "嵯峨峡（さがきょう）"
+    },
+    {
+      "content_id": "SNT_4949_S004",
+      "route_id": "SNT_4949",
+      "number": "4",
+      "name": "嵯峨天一神社（さがてんいちじんじゃ）"
+    },
+    {
+      "content_id": "SNT_1496_S002",
+      "route_id": "SNT_1496",
+      "number": "2",
+      "name": "徳円寺のシャクナゲ"
+    },
+    {
+      "content_id": "SNT_1496_S004",
+      "route_id": "SNT_1496",
+      "number": "4",
+      "name": "婆羅尾峠"
+    },
+    {
+      "content_id": "SNT_1123_S002",
+      "route_id": "SNT_1123",
+      "number": "2",
+      "name": "水呑大師（みずのみだいし）"
+    },
+    {
+      "content_id": "SNT_1123_S003",
+      "route_id": "SNT_1123",
+      "number": "3",
+      "name": "鶴林寺（かくりんじ）"
+    },
+    {
+      "content_id": "SNT_3801_S002",
+      "route_id": "SNT_3801",
+      "number": "2",
+      "name": "若杉山辰砂採掘遺跡"
+    },
+    {
+      "content_id": "SNT_458_S004",
+      "route_id": "SNT_458",
+      "number": "4",
+      "name": "轟神社"
+    },
+    {
+      "content_id": "SNT_1501_S004",
+      "route_id": "SNT_1501",
+      "number": "4",
+      "name": "蒲生田岬"
+    },
+    {
+      "content_id": "SNT_479_S002",
+      "route_id": "SNT_479",
+      "number": "2",
+      "name": "大島・津島・出羽島"
+    },
+    {
+      "content_id": "SNT_479_S005",
+      "route_id": "SNT_479",
+      "number": "5",
+      "name": "鯖大師（八坂寺）"
+    },
+    {
+      "content_id": "SNT_1504_S001",
+      "route_id": "SNT_1504",
+      "number": "1",
+      "name": "大里の松原"
+    },
+    {
+      "content_id": "SNT_1504_S006",
+      "route_id": "SNT_1504",
+      "number": "6",
+      "name": "海南文化村"
+    },
+    {
+      "content_id": "SNT_1504_S009",
+      "route_id": "SNT_1504",
+      "number": "9",
+      "name": "妙見山公園"
+    },
+    {
+      "content_id": "SNT_3797_S003",
+      "route_id": "SNT_3797",
+      "number": "3",
+      "name": "化石漣痕"
+    },
+    {
+      "content_id": "SNT_182_S001",
+      "route_id": "SNT_182",
+      "number": "1",
+      "name": "雲辺寺"
+    },
+    {
+      "content_id": "SNT_182_S004",
+      "route_id": "SNT_182",
+      "number": "4",
+      "name": "逆瀬池(さかせいけ)"
+    },
+    {
+      "content_id": "SNT_182_S005",
+      "route_id": "SNT_182",
+      "number": "5",
+      "name": "大興寺(だいこうじ)"
+    },
+    {
+      "content_id": "SNT_1511_S001",
+      "route_id": "SNT_1511",
+      "number": "1",
+      "name": "逆瀬池"
+    },
+    {
+      "content_id": "SNT_1511_S002",
+      "route_id": "SNT_1511",
+      "number": "2",
+      "name": "もみじ橋"
+    },
+    {
+      "content_id": "SNT_1514_S001",
+      "route_id": "SNT_1514",
+      "number": "1",
+      "name": "JRさぬきさいだ駅"
+    },
+    {
+      "content_id": "SNT_1514_S002",
+      "route_id": "SNT_1514",
+      "number": "2",
+      "name": "百丁石"
+    },
+    {
+      "content_id": "SNT_1514_S003",
+      "route_id": "SNT_1514",
+      "number": "3",
+      "name": "石仏"
+    },
+    {
+      "content_id": "SNT_1514_S004",
+      "route_id": "SNT_1514",
+      "number": "4",
+      "name": "二軒茶屋"
+    },
+    {
+      "content_id": "SNT_258_S001",
+      "route_id": "SNT_258",
+      "number": "1",
+      "name": "JR讃岐財田駅"
+    },
+    {
+      "content_id": "SNT_258_S002",
+      "route_id": "SNT_258",
+      "number": "2",
+      "name": "鷲尾神社社叢（自然記念物）"
+    },
+    {
+      "content_id": "SNT_290_S001",
+      "route_id": "SNT_290",
+      "number": "1",
+      "name": "長炭橋"
+    },
+    {
+      "content_id": "SNT_290_S002",
+      "route_id": "SNT_290",
+      "number": "2",
+      "name": "満濃池"
+    },
+    {
+      "content_id": "SNT_290_S003",
+      "route_id": "SNT_290",
+      "number": "3",
+      "name": "満濃池森林公園"
+    },
+    {
+      "content_id": "SNT_290_S004",
+      "route_id": "SNT_290",
+      "number": "4",
+      "name": "白鳥神社社叢"
+    },
+    {
+      "content_id": "SNT_5543_S002",
+      "route_id": "SNT_5543",
+      "number": "2",
+      "name": "金剛寺"
+    },
+    {
+      "content_id": "SNT_5543_S006",
+      "route_id": "SNT_5543",
+      "number": "6",
+      "name": "椎野八幡神社"
+    },
+    {
+      "content_id": "SNT_2826_S001",
+      "route_id": "SNT_2826",
+      "number": "1",
+      "name": "首切地蔵付近"
+    },
+    {
+      "content_id": "SNT_2826_S005",
+      "route_id": "SNT_2826",
+      "number": null,
+      "name": "冠纓神社（かんえいじんじゃ）社叢（香川県自然記念物）"
+    },
+    {
+      "content_id": "SNT_4248_S005",
+      "route_id": "SNT_4248",
+      "number": "5",
+      "name": "展望台"
+    },
+    {
+      "content_id": "SNT_315_S001",
+      "route_id": "SNT_315",
+      "number": "1",
+      "name": "大窪寺"
+    },
+    {
+      "content_id": "SNT_315_S002",
+      "route_id": "SNT_315",
+      "number": "2",
+      "name": "女体山"
+    },
+    {
+      "content_id": "SNT_315_S003",
+      "route_id": "SNT_315",
+      "number": "3",
+      "name": "来栖渓谷"
+    },
+    {
+      "content_id": "SNT_315_S004",
+      "route_id": "SNT_315",
+      "number": "4",
+      "name": "前山ダム"
+    },
+    {
+      "content_id": "SNT_315_S005",
+      "route_id": "SNT_315",
+      "number": "5",
+      "name": "前山おへんろ交流サロン"
+    },
+    {
+      "content_id": "SNT_2843_S003",
+      "route_id": "SNT_2843",
+      "number": "3",
+      "name": "展望休けい所"
+    },
+    {
+      "content_id": "SNT_5739_S003",
+      "route_id": "SNT_5739",
+      "number": "3",
+      "name": "道の駅「空の夢もみの木パーク」"
+    },
+    {
+      "content_id": "SNT_5199_S001",
+      "route_id": "SNT_5199",
+      "number": "1",
+      "name": "大水上神社（香川県緑地環境保全地域）"
+    },
+    {
+      "content_id": "SNT_790_S001",
+      "route_id": "SNT_790",
+      "number": "1",
+      "name": "紫雲出山"
+    },
+    {
+      "content_id": "SNT_790_S002",
+      "route_id": "SNT_790",
+      "number": "2",
+      "name": "新田の城あと"
+    },
+    {
+      "content_id": "SNT_790_S003",
+      "route_id": "SNT_790",
+      "number": null,
+      "name": "浦島太郎伝説の里"
+    },
+    {
+      "content_id": "SNT_790_S004",
+      "route_id": "SNT_790",
+      "number": null,
+      "name": "生里"
+    },
+    {
+      "content_id": "SNT_790_S005",
+      "route_id": "SNT_790",
+      "number": null,
+      "name": "箱"
+    },
+    {
+      "content_id": "SNT_3106_S001",
+      "route_id": "SNT_3106",
+      "number": "1",
+      "name": "仁老浜（香川県自然海浜保全地区）"
+    },
+    {
+      "content_id": "SNT_3106_S003",
+      "route_id": "SNT_3106",
+      "number": "3",
+      "name": "立石休けい所"
+    },
+    {
+      "content_id": "SNT_3106_S006",
+      "route_id": "SNT_3106",
+      "number": "6",
+      "name": "讃岐三埼灯台"
+    },
+    {
+      "content_id": "SNT_1518_S001",
+      "route_id": "SNT_1518",
+      "number": null,
+      "name": "長炭橋"
+    },
+    {
+      "content_id": "SNT_1518_S002",
+      "route_id": "SNT_1518",
+      "number": "1",
+      "name": "金剛寺"
+    },
+    {
+      "content_id": "SNT_1518_S003",
+      "route_id": "SNT_1518",
+      "number": "2",
+      "name": "西行法師像"
+    },
+    {
+      "content_id": "SNT_1518_S004",
+      "route_id": "SNT_1518",
+      "number": "3",
+      "name": "菩提院光貴寺"
+    },
+    {
+      "content_id": "SNT_1518_S005",
+      "route_id": "SNT_1518",
+      "number": "4",
+      "name": "滝宮天満宮"
+    },
+    {
+      "content_id": "SNT_5551_S006",
+      "route_id": "SNT_5551",
+      "number": "6",
+      "name": "椎野八幡神社"
+    },
+    {
+      "content_id": "SNT_1521_S001",
+      "route_id": "SNT_1521",
+      "number": "1",
+      "name": "滝宮天満宮"
+    },
+    {
+      "content_id": "SNT_1521_S002",
+      "route_id": "SNT_1521",
+      "number": "2",
+      "name": "府中湖"
+    },
+    {
+      "content_id": "SNT_1521_S003",
+      "route_id": "SNT_1521",
+      "number": "3",
+      "name": "府中山内瓦窯跡"
+    },
+    {
+      "content_id": "SNT_1521_S004",
+      "route_id": "SNT_1521",
+      "number": "4",
+      "name": "國分寺"
+    },
+    {
+      "content_id": "SNT_810_S001",
+      "route_id": "SNT_810",
+      "number": "1",
+      "name": "白峯寺"
+    },
+    {
+      "content_id": "SNT_810_S002",
+      "route_id": "SNT_810",
+      "number": null,
+      "name": "足尾大明神"
+    },
+    {
+      "content_id": "SNT_810_S004",
+      "route_id": "SNT_810",
+      "number": "4",
+      "name": "国分寺"
+    },
+    {
+      "content_id": "SNT_95_S001",
+      "route_id": "SNT_95",
+      "number": "1",
+      "name": "松尾峠休憩所"
+    },
+    {
+      "content_id": "SNT_95_S002",
+      "route_id": "SNT_95",
+      "number": "2",
+      "name": "札掛け篠山神社"
+    },
+    {
+      "content_id": "SNT_95_S003",
+      "route_id": "SNT_95",
+      "number": "3",
+      "name": "観自在寺(かんじざいじ)"
+    },
+    {
+      "content_id": "SNT_95_S004",
+      "route_id": "SNT_95",
+      "number": "4",
+      "name": "南レク御荘公園"
+    },
+    {
+      "content_id": "SNT_1_S001",
+      "route_id": "SNT_1",
+      "number": "1",
+      "name": "柳水大師・柏坂休憩所"
+    },
+    {
+      "content_id": "SNT_1_S002",
+      "route_id": "SNT_1",
+      "number": "2",
+      "name": "清水大師"
+    },
+    {
+      "content_id": "SNT_1_S003",
+      "route_id": "SNT_1",
+      "number": "3",
+      "name": "接待松"
+    },
+    {
+      "content_id": "SNT_1_S004",
+      "route_id": "SNT_1",
+      "number": "4",
+      "name": "つわな奥展望台"
+    },
+    {
+      "content_id": "SNT_1_S005",
+      "route_id": "SNT_1",
+      "number": "5",
+      "name": "茶堂大師・茶堂休憩所"
+    },
+    {
+      "content_id": "SNT_119_S001",
+      "route_id": "SNT_119",
+      "number": "1",
+      "name": "龍光寺(りゅうこうじ)"
+    },
+    {
+      "content_id": "SNT_119_S002",
+      "route_id": "SNT_119",
+      "number": "2",
+      "name": "中山池"
+    },
+    {
+      "content_id": "SNT_119_S003",
+      "route_id": "SNT_119",
+      "number": "3",
+      "name": "佛木寺(ぶつもくじ)"
+    },
+    {
+      "content_id": "SNT_119_S004",
+      "route_id": "SNT_119",
+      "number": "4",
+      "name": "歯長峠休憩地"
+    },
+    {
+      "content_id": "SNT_5511_S003",
+      "route_id": "SNT_5511",
+      "number": "3",
+      "name": "法華津峠"
+    },
+    {
+      "content_id": "SNT_137_S001",
+      "route_id": "SNT_137",
+      "number": "1",
+      "name": "歯長峠(はながとうげ)トンネル休憩地"
+    },
+    {
+      "content_id": "SNT_137_S002",
+      "route_id": "SNT_137",
+      "number": "2",
+      "name": "歯長橋休憩地"
+    },
+    {
+      "content_id": "SNT_137_S003",
+      "route_id": "SNT_137",
+      "number": "3",
+      "name": "明石寺"
+    },
+    {
+      "content_id": "SNT_137_S007",
+      "route_id": "SNT_137",
+      "number": "7",
+      "name": "宇和米博物館(旧宇和町小学校)"
+    },
+    {
+      "content_id": "SNT_137_S009",
+      "route_id": "SNT_137",
+      "number": "9",
+      "name": "高野長英の隠れ家"
+    },
+    {
+      "content_id": "SNT_3840_S001",
+      "route_id": "SNT_3840",
+      "number": "1",
+      "name": "起点 上宇和駅"
+    },
+    {
+      "content_id": "SNT_3840_S007",
+      "route_id": "SNT_3840",
+      "number": "7",
+      "name": "日天社"
+    },
+    {
+      "content_id": "SNT_2674_S001",
+      "route_id": "SNT_2674",
+      "number": "1",
+      "name": "少彦名温泉 大洲「臥龍の湯」（すくなひこなおんせん おおずがりゅうのゆ）"
+    },
+    {
+      "content_id": "SNT_2674_S002",
+      "route_id": "SNT_2674",
+      "number": "2",
+      "name": "臥龍山荘（がりゅうさんそう）"
+    },
+    {
+      "content_id": "SNT_2674_S003",
+      "route_id": "SNT_2674",
+      "number": "3",
+      "name": "大洲城（おおずじょう）"
+    },
+    {
+      "content_id": "SNT_2674_S004",
+      "route_id": "SNT_2674",
+      "number": "4",
+      "name": "十夜ヶ橋（とよがはし）"
+    },
+    {
+      "content_id": "SNT_2674_S005",
+      "route_id": "SNT_2674",
+      "number": "5",
+      "name": "矢落川と松山自動車道（やおちがわとまつやまじどうしゃどう）"
+    },
+    {
+      "content_id": "SNT_2674_S006",
+      "route_id": "SNT_2674",
+      "number": null,
+      "name": "新谷（にいや）"
+    },
+    {
+      "content_id": "SNT_2678_S001",
+      "route_id": "SNT_2678",
+      "number": "1",
+      "name": "内子運動公園（うちこうんどうこうえん）"
+    },
+    {
+      "content_id": "SNT_2678_S002",
+      "route_id": "SNT_2678",
+      "number": "2",
+      "name": "内子座（うちこざ）"
+    },
+    {
+      "content_id": "SNT_2678_S003",
+      "route_id": "SNT_2678",
+      "number": "3",
+      "name": "八日市護国伝統的建造物群保存地区（ようかいちごこくでんとうてきけんぞうぶつぐんほぞんちく）"
+    },
+    {
+      "content_id": "SNT_2678_S004",
+      "route_id": "SNT_2678",
+      "number": "4",
+      "name": "木蝋資料館 上芳我邸（もくろうしりょうかん かみはがてい）"
+    },
+    {
+      "content_id": "SNT_2678_S005",
+      "route_id": "SNT_2678",
+      "number": "5",
+      "name": "松山自動車道を望む（まつやまじどうしゃどうをのぞむ）"
+    },
+    {
+      "content_id": "SNT_2678_S006",
+      "route_id": "SNT_2678",
+      "number": "6",
+      "name": "旧へんろ道 水戸森峠（きゅうへんろみち みともりとうげ）"
+    },
+    {
+      "content_id": "SNT_2678_S007",
+      "route_id": "SNT_2678",
+      "number": "7",
+      "name": "四季の詩公園（しきのうたこうえん）"
+    },
+    {
+      "content_id": "SNT_4800_S001",
+      "route_id": "SNT_4800",
+      "number": "1",
+      "name": "起点 宮成（案内板）"
+    },
+    {
+      "content_id": "SNT_4800_S003",
+      "route_id": "SNT_4800",
+      "number": "3",
+      "name": "鴇田峠（ひわだとうげ）休憩地"
+    },
+    {
+      "content_id": "SNT_4800_S008",
+      "route_id": "SNT_4800",
+      "number": "8",
+      "name": "終点 河合休憩地"
+    },
+    {
+      "content_id": "SNT_3845_S006",
+      "route_id": "SNT_3845",
+      "number": "6",
+      "name": "逼割禅定（せりわりぜんじょう）"
+    },
+    {
+      "content_id": "SNT_3849_S008",
+      "route_id": "SNT_3849",
+      "number": "8",
+      "name": "終点 仰西バス停"
+    },
+    {
+      "content_id": "SNT_2953_S001",
+      "route_id": "SNT_2953",
+      "number": "1",
+      "name": "起点 国道33号との交差点"
+    },
+    {
+      "content_id": "SNT_2953_S002",
+      "route_id": "SNT_2953",
+      "number": "2",
+      "name": "三坂峠からの眺め（みさかとうげからのながめ）"
+    },
+    {
+      "content_id": "SNT_2953_S003",
+      "route_id": "SNT_2953",
+      "number": "3",
+      "name": "久万街道（くまかいどう）"
+    },
+    {
+      "content_id": "SNT_2953_S004",
+      "route_id": "SNT_2953",
+      "number": "4",
+      "name": "桜休憩地（一ノ王子社跡休憩地）（さくらきゅうけいち（いちのおうじしゃあときゅうけいち））"
+    },
+    {
+      "content_id": "SNT_2953_S005",
+      "route_id": "SNT_2953",
+      "number": "5",
+      "name": "杉林のトンネル（すぎばやしのとんねる）"
+    },
+    {
+      "content_id": "SNT_2953_S006",
+      "route_id": "SNT_2953",
+      "number": "6",
+      "name": "旧遍路宿 坂本屋（きゅうへんろやど さかもとや）"
+    },
+    {
+      "content_id": "SNT_2953_S007",
+      "route_id": "SNT_2953",
+      "number": "7",
+      "name": "網掛け石（あみかけいし）"
+    },
+    {
+      "content_id": "SNT_2953_S008",
+      "route_id": "SNT_2953",
+      "number": "8",
+      "name": "第46番札所浄瑠璃寺（だい46ばんふだしょ じょうるりじ）"
+    },
+    {
+      "content_id": "SNT_2953_S009",
+      "route_id": "SNT_2953",
+      "number": "9",
+      "name": "第47番札所八坂寺（だい47ばんふだしょ やさかじ）"
+    },
+    {
+      "content_id": "SNT_4805_S001",
+      "route_id": "SNT_4805",
+      "number": "1",
+      "name": "起点 第51番札所石手寺"
+    },
+    {
+      "content_id": "SNT_4805_S005",
+      "route_id": "SNT_4805",
+      "number": "5",
+      "name": "終点 菅沢（五明小学校）"
+    },
+    {
+      "content_id": "SNT_3852_S001",
+      "route_id": "SNT_3852",
+      "number": "1",
+      "name": "起点 木地"
+    },
+    {
+      "content_id": "SNT_3852_S009",
+      "route_id": "SNT_3852",
+      "number": "9",
+      "name": "終点 下木地"
+    },
+    {
+      "content_id": "SNT_2682_S001",
+      "route_id": "SNT_2682",
+      "number": "1",
+      "name": "鈍川渓谷（にぶかわけいこく）"
+    },
+    {
+      "content_id": "SNT_2682_S002",
+      "route_id": "SNT_2682",
+      "number": "2",
+      "name": "鈍川温泉（にぶかわおんせん）"
+    },
+    {
+      "content_id": "SNT_2682_S003",
+      "route_id": "SNT_2682",
+      "number": "3",
+      "name": "鈍川せせらぎ交流館（にぶかわせせらぎこうりゅうかん）"
+    },
+    {
+      "content_id": "SNT_2682_S005",
+      "route_id": "SNT_2682",
+      "number": "5",
+      "name": "県道154号と県道163号との交差点"
+    },
+    {
+      "content_id": "SNT_2682_S006",
+      "route_id": "SNT_2682",
+      "number": "6",
+      "name": "玉川とお別れ（たまがわ）"
+    },
+    {
+      "content_id": "SNT_2682_S007",
+      "route_id": "SNT_2682",
+      "number": "7",
+      "name": "窓の峠（まどのとうげ）"
+    },
+    {
+      "content_id": "SNT_2682_S008",
+      "route_id": "SNT_2682",
+      "number": "8",
+      "name": "第57番札所栄福寺（だい57ばんふだしょ えいふくじ）"
+    },
+    {
+      "content_id": "SNT_1934_S009",
+      "route_id": "SNT_1934",
+      "number": "9",
+      "name": "唐子浜（からこはま）"
+    },
+    {
+      "content_id": "SNT_2957_S001",
+      "route_id": "SNT_2957",
+      "number": "1",
+      "name": "大頭交差点（おおとこうさてん）"
+    },
+    {
+      "content_id": "SNT_2957_S002",
+      "route_id": "SNT_2957",
+      "number": "2",
+      "name": "石土神社高灯篭（いしづちじんじゃ たかとうろう）"
+    },
+    {
+      "content_id": "SNT_2957_S003",
+      "route_id": "SNT_2957",
+      "number": "3",
+      "name": "湯浪休憩地（ゆうなみきゅうけいち）"
+    },
+    {
+      "content_id": "SNT_2957_S004",
+      "route_id": "SNT_2957",
+      "number": "4",
+      "name": "国史跡伊予遍路道横峰寺道（くにしせきいよへんろみちよこみねじどう）"
+    },
+    {
+      "content_id": "SNT_2957_S005",
+      "route_id": "SNT_2957",
+      "number": "5",
+      "name": "妙谷川（みょうのたにがわ）"
+    },
+    {
+      "content_id": "SNT_2957_S006",
+      "route_id": "SNT_2957",
+      "number": "6",
+      "name": "四国一番の難所 遍路ころがし（しこくいちばんのなんしょ へんろころがし）"
+    },
+    {
+      "content_id": "SNT_2957_S007",
+      "route_id": "SNT_2957",
+      "number": "7",
+      "name": "古坊休憩地（ふるぼうきゅうけいち）"
+    },
+    {
+      "content_id": "SNT_2957_S008",
+      "route_id": "SNT_2957",
+      "number": "8",
+      "name": "第60番札所横峰寺（だい60ばんふだしょ よこみねじ）"
+    },
+    {
+      "content_id": "SNT_2960_S001",
+      "route_id": "SNT_2960",
+      "number": "1",
+      "name": "林道との分岐点（りんどうとのぶんきてん）"
+    },
+    {
+      "content_id": "SNT_2960_S002",
+      "route_id": "SNT_2960",
+      "number": "2",
+      "name": "尾根沿いの道（おねぞいのみち）"
+    },
+    {
+      "content_id": "SNT_2960_S005",
+      "route_id": "SNT_2960",
+      "number": "5",
+      "name": "香園寺奥の院（こうおんじおくのいん）"
+    },
+    {
+      "content_id": "SNT_2960_S006",
+      "route_id": "SNT_2960",
+      "number": "6",
+      "name": "大谷池（おおたにいけ）"
+    },
+    {
+      "content_id": "SNT_2960_S007",
+      "route_id": "SNT_2960",
+      "number": "7",
+      "name": "第61番札所香園寺（だい61ばんふだしょ こうおんじ）"
+    },
+    {
+      "content_id": "SNT_2960_S008",
+      "route_id": "SNT_2960",
+      "number": "8",
+      "name": "第62番札所宝寿寺（だい62ばんふだしょ ほうじゅじ）"
+    },
+    {
+      "content_id": "SNT_1894_S001",
+      "route_id": "SNT_1894",
+      "number": "1",
+      "name": "近藤篤山旧邸（こんどうとくざんきゅうてい）"
+    },
+    {
+      "content_id": "SNT_1894_S002",
+      "route_id": "SNT_1894",
+      "number": "2",
+      "name": "第63番吉祥寺（きちじょうじ）"
+    },
+    {
+      "content_id": "SNT_1894_S003",
+      "route_id": "SNT_1894",
+      "number": "3",
+      "name": "石鎚神社大鳥居（いしづちじんじゃおおとりい）"
+    },
+    {
+      "content_id": "SNT_1894_S004",
+      "route_id": "SNT_1894",
+      "number": "4",
+      "name": "石鎚神社（いしづちじんじゃ）"
+    },
+    {
+      "content_id": "SNT_1894_S005",
+      "route_id": "SNT_1894",
+      "number": "5",
+      "name": "第64番前神寺（まえがみじ）"
+    },
+    {
+      "content_id": "SNT_1894_S006",
+      "route_id": "SNT_1894",
+      "number": "6",
+      "name": "西条休憩所（さいじょうきゅうけいしょ）"
+    },
+    {
+      "content_id": "SNT_1894_S007",
+      "route_id": "SNT_1894",
+      "number": "7",
+      "name": "湯之谷温泉（ゆのたにおんせん）"
+    },
+    {
+      "content_id": "SNT_1894_S008",
+      "route_id": "SNT_1894",
+      "number": "8",
+      "name": "土居構跡（どいがまえあと）"
+    },
+    {
+      "content_id": "SNT_1894_S009",
+      "route_id": "SNT_1894",
+      "number": "9",
+      "name": "伊曽乃神社（いそのじんじゃ）"
+    },
+    {
+      "content_id": "SNT_1894_S010",
+      "route_id": "SNT_1894",
+      "number": "10",
+      "name": "伊曽の橋（いそのはし）"
+    },
+    {
+      "content_id": "SNT_2685_S001",
+      "route_id": "SNT_2685",
+      "number": "1",
+      "name": "伊曽の橋（いそのばし）"
+    },
+    {
+      "content_id": "SNT_2685_S002",
+      "route_id": "SNT_2685",
+      "number": "2",
+      "name": "武丈公園（ぶじょうこうえん）"
+    },
+    {
+      "content_id": "SNT_2685_S003",
+      "route_id": "SNT_2685",
+      "number": "3",
+      "name": "竹林（ちくりん）"
+    },
+    {
+      "content_id": "SNT_2685_S004",
+      "route_id": "SNT_2685",
+      "number": "4",
+      "name": "地蔵原地蔵庵（じぞうばらじぞうあん）"
+    },
+    {
+      "content_id": "SNT_2685_S005",
+      "route_id": "SNT_2685",
+      "number": "5",
+      "name": "王至森寺（おしもりじ）"
+    },
+    {
+      "content_id": "SNT_2685_S006",
+      "route_id": "SNT_2685",
+      "number": "6",
+      "name": "秋都庵（しゅうとあん）"
+    },
+    {
+      "content_id": "SNT_2964_S002",
+      "route_id": "SNT_2964",
+      "number": "2",
+      "name": "千足神社（ちたるじんじゃ）"
+    },
+    {
+      "content_id": "SNT_2964_S003",
+      "route_id": "SNT_2964",
+      "number": "3",
+      "name": "三度栗大師堂（さんどくりたいしどう）"
+    },
+    {
+      "content_id": "SNT_2964_S004",
+      "route_id": "SNT_2964",
+      "number": "4",
+      "name": "国道11号との交差点"
+    },
+    {
+      "content_id": "SNT_2964_S005",
+      "route_id": "SNT_2964",
+      "number": "5",
+      "name": "延命寺（えんめいじ）"
+    },
+    {
+      "content_id": "SNT_2964_S006",
+      "route_id": "SNT_2964",
+      "number": "6",
+      "name": "近藤篤山の生家跡（こんどうとくざんのせいかあと）"
+    },
+    {
+      "content_id": "SNT_2964_S007",
+      "route_id": "SNT_2964",
+      "number": "7",
+      "name": "村山神社（むらやまじんじゃ）"
+    },
+    {
+      "content_id": "SNT_3857_S001",
+      "route_id": "SNT_3857",
+      "number": "1",
+      "name": "起点 豊田"
+    },
+    {
+      "content_id": "SNT_3857_S002",
+      "route_id": "SNT_3857",
+      "number": "2",
+      "name": "実相寺"
+    },
+    {
+      "content_id": "SNT_3857_S005",
+      "route_id": "SNT_3857",
+      "number": "5",
+      "name": "新長谷寺"
+    },
+    {
+      "content_id": "SNT_3857_S006",
+      "route_id": "SNT_3857",
+      "number": "6",
+      "name": "荒神の森"
+    },
+    {
+      "content_id": "SNT_3857_S007",
+      "route_id": "SNT_3857",
+      "number": "7",
+      "name": "光明寺（山田薬師堂）"
+    },
+    {
+      "content_id": "SNT_3857_S008",
+      "route_id": "SNT_3857",
+      "number": "8",
+      "name": "三島公園"
+    },
+    {
+      "content_id": "SNT_3857_S009",
+      "route_id": "SNT_3857",
+      "number": "9",
+      "name": "戸川（疎水）公園"
+    },
+    {
+      "content_id": "SNT_3857_S010",
+      "route_id": "SNT_3857",
+      "number": "10",
+      "name": "第65番札所三角寺"
+    },
+    {
+      "content_id": "SNT_4808_S001",
+      "route_id": "SNT_4808",
+      "number": "1",
+      "name": "起点 第65番札所三角寺"
+    },
+    {
+      "content_id": "SNT_4808_S005",
+      "route_id": "SNT_4808",
+      "number": "5",
+      "name": "終点 国道192号線"
+    },
+    {
+      "content_id": "SNT_1183_S001",
+      "route_id": "SNT_1183",
+      "number": "1",
+      "name": "起点"
+    },
+    {
+      "content_id": "SNT_1183_S002",
+      "route_id": "SNT_1183",
+      "number": "2",
+      "name": "金生川"
+    },
+    {
+      "content_id": "SNT_1183_S003",
+      "route_id": "SNT_1183",
+      "number": "3",
+      "name": "誘導標"
+    },
+    {
+      "content_id": "SNT_1183_S004",
+      "route_id": "SNT_1183",
+      "number": "4",
+      "name": "指導標と雲辺寺の行先"
+    },
+    {
+      "content_id": "SNT_1183_S005",
+      "route_id": "SNT_1183",
+      "number": "5",
+      "name": "終点"
+    },
+    {
+      "content_id": "SNT_1183_S006",
+      "route_id": "SNT_1183",
+      "number": "6",
+      "name": "3県境"
+    },
+    {
+      "content_id": "SNT_4811_S006",
+      "route_id": "SNT_4811",
+      "number": "6",
+      "name": "終点 惣津山"
+    },
+    {
+      "content_id": "SNT_4813_S001",
+      "route_id": "SNT_4813",
+      "number": "1",
+      "name": "起点 指導標"
+    },
+    {
+      "content_id": "SNT_4813_S007",
+      "route_id": "SNT_4813",
+      "number": "7",
+      "name": "終点 旧美川スキー場休憩地"
+    },
+    {
+      "content_id": "SNT_1973_S005",
+      "route_id": "SNT_1973",
+      "number": "4",
+      "name": "小田スキー場分岐"
+    },
+    {
+      "content_id": "SNT_1973_S010",
+      "route_id": "SNT_1973",
+      "number": "9",
+      "name": "駐車場"
+    },
+    {
+      "content_id": "SNT_951_S001",
+      "route_id": "SNT_951",
+      "number": "1",
+      "name": "大野ヶ原休憩地"
+    },
+    {
+      "content_id": "SNT_951_S002",
+      "route_id": "SNT_951",
+      "number": "2",
+      "name": "大野ヶ原（おおのがはら）"
+    },
+    {
+      "content_id": "SNT_951_S003",
+      "route_id": "SNT_951",
+      "number": "3",
+      "name": "大野ヶ原のカルスト地形"
+    },
+    {
+      "content_id": "SNT_951_S004",
+      "route_id": "SNT_951",
+      "number": "4",
+      "name": "源氏ヶ駄場（げんじがだば）"
+    },
+    {
+      "content_id": "SNT_951_S005",
+      "route_id": "SNT_951",
+      "number": "5",
+      "name": "ポニー牧場"
+    },
+    {
+      "content_id": "SNT_951_S006",
+      "route_id": "SNT_951",
+      "number": "6",
+      "name": "地芳峠（じよしとうげ）"
+    },
+    {
+      "content_id": "SNT_949_S001",
+      "route_id": "SNT_949",
+      "number": "1",
+      "name": "姫鶴平（めづるだいら）"
+    },
+    {
+      "content_id": "SNT_949_S002",
+      "route_id": "SNT_949",
+      "number": "2",
+      "name": "姫鶴荘（めづるそう）"
+    },
+    {
+      "content_id": "SNT_949_S003",
+      "route_id": "SNT_949",
+      "number": "3",
+      "name": "姫鶴平キャンプ場"
+    },
+    {
+      "content_id": "SNT_949_S004",
+      "route_id": "SNT_949",
+      "number": "4",
+      "name": "五段高原（ごだんこうげん）"
+    },
+    {
+      "content_id": "SNT_949_S005",
+      "route_id": "SNT_949",
+      "number": "5",
+      "name": "猪伏（いぶし）大トチ遊歩道"
+    },
+    {
+      "content_id": "SNT_949_S006",
+      "route_id": "SNT_949",
+      "number": "6",
+      "name": "天狗荘（てんぐそう）"
+    },
+    {
+      "content_id": "SNT_949_S007",
+      "route_id": "SNT_949",
+      "number": "7",
+      "name": "四国カルストレンタサイクル"
+    },
+    {
+      "content_id": "SNT_4815_S004",
+      "route_id": "SNT_4815",
+      "number": "4",
+      "name": "地藏峠（じぞうとうげ）"
+    },
+    {
+      "content_id": "SNT_4817_S001",
+      "route_id": "SNT_4817",
+      "number": "1",
+      "name": "加奈木の崩え（かなぎのつえ）"
+    },
+    {
+      "content_id": "SNT_4817_S002",
+      "route_id": "SNT_4817",
+      "number": "2",
+      "name": "装束峠（しょうぞくとうげ）"
+    },
+    {
+      "content_id": "SNT_4817_S003",
+      "route_id": "SNT_4817",
+      "number": "3",
+      "name": "熊笹峠（くまざさとうげ）"
+    },
+    {
+      "content_id": "SNT_2380_S002",
+      "route_id": "SNT_2380",
+      "number": "2",
+      "name": "神峯寺（四国霊場27番札所）"
+    },
+    {
+      "content_id": "SNT_2380_S004",
+      "route_id": "SNT_2380",
+      "number": "4",
+      "name": "燈明岩（とうみょういわ）"
+    },
+    {
+      "content_id": "SNT_2428_S004",
+      "route_id": "SNT_2428",
+      "number": "4",
+      "name": "安芸広域公園"
+    },
+    {
+      "content_id": "SNT_2428_S005",
+      "route_id": "SNT_2428",
+      "number": "5",
+      "name": "内原野陶芸館"
+    },
+    {
+      "content_id": "SNT_337_S001",
+      "route_id": "SNT_337",
+      "number": "1",
+      "name": "赤野休憩所"
+    },
+    {
+      "content_id": "SNT_337_S002",
+      "route_id": "SNT_337",
+      "number": "2",
+      "name": "琴ヶ浜松原"
+    },
+    {
+      "content_id": "SNT_369_S001",
+      "route_id": "SNT_369",
+      "number": "1",
+      "name": "香南市サイクリングターミナル"
+    },
+    {
+      "content_id": "SNT_369_S002",
+      "route_id": "SNT_369",
+      "number": "2",
+      "name": "夫婦岩"
+    },
+    {
+      "content_id": "SNT_369_S003",
+      "route_id": "SNT_369",
+      "number": "3",
+      "name": "手結港"
+    },
+    {
+      "content_id": "SNT_374_S001",
+      "route_id": "SNT_374",
+      "number": "1",
+      "name": "月見山こどもの森"
+    },
+    {
+      "content_id": "SNT_374_S002",
+      "route_id": "SNT_374",
+      "number": "2",
+      "name": "宝鏡寺跡"
+    },
+    {
+      "content_id": "SNT_374_S003",
+      "route_id": "SNT_374",
+      "number": "3",
+      "name": "香宗城跡"
+    },
+    {
+      "content_id": "SNT_374_S004",
+      "route_id": "SNT_374",
+      "number": "4",
+      "name": "高知県立のいち動物公園"
+    },
+    {
+      "content_id": "SNT_397_S001",
+      "route_id": "SNT_397",
+      "number": "1",
+      "name": "大日寺"
+    },
+    {
+      "content_id": "SNT_397_S002",
+      "route_id": "SNT_397",
+      "number": "2",
+      "name": "龍河洞"
+    },
+    {
+      "content_id": "SNT_397_S003",
+      "route_id": "SNT_397",
+      "number": "3",
+      "name": "鏡野公園"
+    },
+    {
+      "content_id": "SNT_2579_S002",
+      "route_id": "SNT_2579",
+      "number": "2",
+      "name": "双名島（ふたなじま）"
+    },
+    {
+      "content_id": "SNT_2582_S001",
+      "route_id": "SNT_2582",
+      "number": "1",
+      "name": "久礼の町並み"
+    },
+    {
+      "content_id": "SNT_3815_S001",
+      "route_id": "SNT_3815",
+      "number": "1",
+      "name": "擂鉢轟の滝（すりばちとどろのたき）"
+    },
+    {
+      "content_id": "SNT_3815_S007",
+      "route_id": "SNT_3815",
+      "number": "7",
+      "name": "鹿島ヶ浦（かしまがうら）"
+    },
+    {
+      "content_id": "SNT_5556_S001",
+      "route_id": "SNT_5556",
+      "number": "1",
+      "name": "天狗の鼻"
+    },
+    {
+      "content_id": "SNT_5556_S002",
+      "route_id": "SNT_5556",
+      "number": "2",
+      "name": "金剛福寺"
+    },
+    {
+      "content_id": "SNT_5556_S003",
+      "route_id": "SNT_5556",
+      "number": "3",
+      "name": "椿のトンネル"
+    },
+    {
+      "content_id": "SNT_5556_S004",
+      "route_id": "SNT_5556",
+      "number": "4",
+      "name": "足摺岬展望台"
+    },
+    {
+      "content_id": "SNT_5556_S005",
+      "route_id": "SNT_5556",
+      "number": "5",
+      "name": "足摺岬のビロウ群落"
+    },
+    {
+      "content_id": "SNT_5562_S001",
+      "route_id": "SNT_5562",
+      "number": "1",
+      "name": "足摺岬灯台"
+    },
+    {
+      "content_id": "SNT_5562_S002",
+      "route_id": "SNT_5562",
+      "number": "2",
+      "name": "足摺七不思議"
+    },
+    {
+      "content_id": "SNT_5562_S003",
+      "route_id": "SNT_5562",
+      "number": "3",
+      "name": "白山洞門"
+    },
+    {
+      "content_id": "SNT_5562_S004",
+      "route_id": "SNT_5562",
+      "number": "4",
+      "name": "松尾のアコウ"
+    },
+    {
+      "content_id": "SNT_5562_S005",
+      "route_id": "SNT_5562",
+      "number": "5",
+      "name": "鵜ノ岬展望台"
+    },
+    {
+      "content_id": "SNT_5562_S006",
+      "route_id": "SNT_5562",
+      "number": "6",
+      "name": "臼碆"
+    },
+    {
+      "content_id": "SNT_5567_S001",
+      "route_id": "SNT_5567",
+      "number": "1",
+      "name": "臼碆灯台"
+    },
+    {
+      "content_id": "SNT_5567_S002",
+      "route_id": "SNT_5567",
+      "number": "2",
+      "name": "清水の名水"
+    },
+    {
+      "content_id": "SNT_889_S001",
+      "route_id": "SNT_889",
+      "number": "1",
+      "name": "見残し"
+    },
+    {
+      "content_id": "SNT_889_S002",
+      "route_id": "SNT_889",
+      "number": "2",
+      "name": "海のギャラリー"
+    },
+    {
+      "content_id": "SNT_889_S003",
+      "route_id": "SNT_889",
+      "number": "3",
+      "name": "桜浜"
+    },
+    {
+      "content_id": "SNT_889_S004",
+      "route_id": "SNT_889",
+      "number": "4",
+      "name": "足摺宇和海国立公園竜串ビジターセンター うみのわ"
+    },
+    {
+      "content_id": "SNT_889_S005",
+      "route_id": "SNT_889",
+      "number": "5",
+      "name": "足摺海洋館 SATOUMI"
+    },
+    {
+      "content_id": "SNT_889_S006",
+      "route_id": "SNT_889",
+      "number": "6",
+      "name": "足摺海底館"
+    },
+    {
+      "content_id": "SNT_891_S001",
+      "route_id": "SNT_891",
+      "number": "1",
+      "name": "叶崎"
+    },
+    {
+      "content_id": "SNT_891_S002",
+      "route_id": "SNT_891",
+      "number": "2",
+      "name": "土佐サンゴ発祥の地"
+    },
+    {
+      "content_id": "SNT_4979_S001",
+      "route_id": "SNT_4979",
+      "number": "1",
+      "name": "小才角（こさいつの）休憩所"
+    },
+    {
+      "content_id": "SNT_4979_S002",
+      "route_id": "SNT_4979",
+      "number": "2",
+      "name": "朴崎（ほうざき）休憩所"
+    },
+    {
+      "content_id": "SNT_4820_S003",
+      "route_id": "SNT_4820",
+      "number": "3",
+      "name": "千万滝（せんまんだき）休憩所"
+    },
+    {
+      "content_id": "SNT_4826_S006",
+      "route_id": "SNT_4826",
+      "number": "6",
+      "name": "柏島（かしわじま）"
+    },
+    {
+      "content_id": "SNT_5573_S001",
+      "route_id": "SNT_5573",
+      "number": "1",
+      "name": "一切休憩所"
+    },
+    {
+      "content_id": "SNT_5573_S002",
+      "route_id": "SNT_5573",
+      "number": "2",
+      "name": "一切漁港"
+    },
+    {
+      "content_id": "SNT_5573_S003",
+      "route_id": "SNT_5573",
+      "number": "3",
+      "name": "一切休憩所"
+    },
+    {
+      "content_id": "SNT_5582_S001",
+      "route_id": "SNT_5582",
+      "number": "1",
+      "name": "岡﨑の浜休憩所"
+    },
+    {
+      "content_id": "SNT_5582_S002",
+      "route_id": "SNT_5582",
+      "number": "2",
+      "name": "養殖筏"
+    },
+    {
+      "content_id": "SNT_5582_S003",
+      "route_id": "SNT_5582",
+      "number": "3",
+      "name": "ウバメガシ樹林"
+    },
+    {
+      "content_id": "SNT_5586_S001",
+      "route_id": "SNT_5586",
+      "number": "1",
+      "name": "竜ヶ迫休憩所"
+    },
+    {
+      "content_id": "SNT_5586_S002",
+      "route_id": "SNT_5586",
+      "number": "2",
+      "name": "雲雀小島"
+    },
+    {
+      "content_id": "SNT_5586_S003",
+      "route_id": "SNT_5586",
+      "number": "3",
+      "name": "白浜"
+    },
+    {
+      "content_id": "SNT_841_S001",
+      "route_id": "SNT_841",
+      "number": "1",
+      "name": "松尾坂口番所跡"
+    },
+    {
+      "content_id": "SNT_841_S002",
+      "route_id": "SNT_841",
+      "number": "2",
+      "name": "松並木の跡"
+    },
+    {
+      "content_id": "SNT_841_S003",
+      "route_id": "SNT_841",
+      "number": "3",
+      "name": "街道の石畳"
+    },
+    {
+      "content_id": "SNT_841_S004",
+      "route_id": "SNT_841",
+      "number": "4",
+      "name": "茶屋跡"
+    },
+    {
+      "content_id": "SNT_841_S005",
+      "route_id": "SNT_841",
+      "number": "5",
+      "name": "大師堂跡"
+    },
+    {
+      "content_id": "SNT_841_S006",
+      "route_id": "SNT_841",
+      "number": "6",
+      "name": "松尾峠"
+    },
+    {
+      "content_id": "SNT_841_S007",
+      "route_id": "SNT_841",
+      "number": "7",
+      "name": "純友城址"
+    },
+    {
+      "content_id": "SNT_841_S008",
+      "route_id": "SNT_841",
+      "number": "8",
+      "name": "子安地蔵"
+    },
+    {
+      "content_id": "SNT_1750_S001",
+      "route_id": "SNT_1750",
+      "number": "1",
+      "name": "城八幡宮"
+    },
+    {
+      "content_id": "SNT_1750_S002",
+      "route_id": "SNT_1750",
+      "number": "2",
+      "name": "猿田洞"
+    },
+    {
+      "content_id": "SNT_1750_S003",
+      "route_id": "SNT_1750",
+      "number": "3",
+      "name": "佐川ナウマンカルスト休憩所"
+    },
+    {
+      "content_id": "SNT_1750_S004",
+      "route_id": "SNT_1750",
+      "number": "4",
+      "name": "酒蔵の街"
+    },
+    {
+      "content_id": "SNT_1750_S005",
+      "route_id": "SNT_1750",
+      "number": "5",
+      "name": "木造金剛力士像"
+    },
+    {
+      "content_id": "SNT_1750_S006",
+      "route_id": "SNT_1750",
+      "number": "6",
+      "name": "牧野公園"
+    },
+    {
+      "content_id": "SNT_1750_S007",
+      "route_id": "SNT_1750",
+      "number": "7",
+      "name": "青源寺"
+    },
+    {
+      "content_id": "SNT_1774_S001",
+      "route_id": "SNT_1774",
+      "number": "1",
+      "name": "脱藩志士集合の地"
+    },
+    {
+      "content_id": "SNT_1777_S001",
+      "route_id": "SNT_1777",
+      "number": null,
+      "name": "カブト嶽"
+    },
+    {
+      "content_id": "SNT_1777_S002",
+      "route_id": "SNT_1777",
+      "number": "1",
+      "name": "横倉宮"
+    },
+    {
+      "content_id": "SNT_1777_S003",
+      "route_id": "SNT_1777",
+      "number": "2",
+      "name": "安徳天皇御陵参考地"
+    },
+    {
+      "content_id": "SNT_1777_S004",
+      "route_id": "SNT_1777",
+      "number": "3",
+      "name": "馬鹿だめし"
+    },
+    {
+      "content_id": "SNT_1777_S005",
+      "route_id": "SNT_1777",
+      "number": null,
+      "name": "安徳水"
+    },
+    {
+      "content_id": "SNT_1777_S006",
+      "route_id": "SNT_1777",
+      "number": "4",
+      "name": "夫婦杉"
+    },
+    {
+      "content_id": "SNT_1777_S007",
+      "route_id": "SNT_1777",
+      "number": "5",
+      "name": "杉原神社"
+    },
+    {
+      "content_id": "SNT_1777_S008",
+      "route_id": "SNT_1777",
+      "number": "6",
+      "name": "織田公園休憩所"
+    },
+    {
+      "content_id": "SNT_1807_S001",
+      "route_id": "SNT_1807",
+      "number": "1",
+      "name": "桐見川流域の集落"
+    },
+    {
+      "content_id": "SNT_1807_S002",
+      "route_id": "SNT_1807",
+      "number": null,
+      "name": "田代の大松"
+    },
+    {
+      "content_id": "SNT_1807_S003",
+      "route_id": "SNT_1807",
+      "number": "2",
+      "name": "田代への山道"
+    },
+    {
+      "content_id": "SNT_1807_S004",
+      "route_id": "SNT_1807",
+      "number": "3",
+      "name": "星ガ窪休憩所"
+    }
+  ],
+  "unmatched_pois": [
+    {
+      "poi_id": "SNT_415_P0002",
+      "route_id": "SNT_415",
+      "name": "名勝「鳴門」碑"
+    },
+    {
+      "poi_id": "SNT_415_P0005",
+      "route_id": "SNT_415",
+      "name": "飛島のイブキ群落"
+    },
+    {
+      "poi_id": "SNT_3161_P0001",
+      "route_id": "SNT_3161",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_1079_P0005",
+      "route_id": "SNT_1079",
+      "name": "土御門天皇火葬塚"
+    },
+    {
+      "poi_id": "SNT_2063_P0001",
+      "route_id": "SNT_2063",
+      "name": "宮川ぶどう園"
+    },
+    {
+      "poi_id": "SNT_2063_P0002",
+      "route_id": "SNT_2063",
+      "name": "安楽寺(第6番札所)"
+    },
+    {
+      "poi_id": "SNT_2063_P0003",
+      "route_id": "SNT_2063",
+      "name": "宮川内ダム"
+    },
+    {
+      "poi_id": "SNT_2063_P0006",
+      "route_id": "SNT_2063",
+      "name": "十楽寺(第7番札所)"
+    },
+    {
+      "poi_id": "SNT_442_P0003",
+      "route_id": "SNT_442",
+      "name": "川島城(阿波九城)跡"
+    },
+    {
+      "poi_id": "SNT_442_P0004",
+      "route_id": "SNT_442",
+      "name": "四国霊場第１１番札所 金剛山 一乗院 藤井寺"
+    },
+    {
+      "poi_id": "SNT_3805_P0002",
+      "route_id": "SNT_3805",
+      "name": "一本杉"
+    },
+    {
+      "poi_id": "SNT_4949_P0001",
+      "route_id": "SNT_4949",
+      "name": "天岩戸別神社"
+    },
+    {
+      "poi_id": "SNT_4949_P0003",
+      "route_id": "SNT_4949",
+      "name": "嵯峨峡"
+    },
+    {
+      "poi_id": "SNT_4949_P0004",
+      "route_id": "SNT_4949",
+      "name": "嵯峨天一神社"
+    },
+    {
+      "poi_id": "SNT_1496_P0003",
+      "route_id": "SNT_1496",
+      "name": "徳円寺（とくえんじ）のシャクナゲ"
+    },
+    {
+      "poi_id": "SNT_1496_P0004",
+      "route_id": "SNT_1496",
+      "name": "婆羅尾峠（ばらおとうげ）"
+    },
+    {
+      "poi_id": "SNT_3166_P0001",
+      "route_id": "SNT_3166",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_1123_P0002",
+      "route_id": "SNT_1123",
+      "name": "水呑大師"
+    },
+    {
+      "poi_id": "SNT_1123_P0003",
+      "route_id": "SNT_1123",
+      "name": "鶴林寺"
+    },
+    {
+      "poi_id": "SNT_3801_P0002",
+      "route_id": "SNT_3801",
+      "name": "若杉山採掘場"
+    },
+    {
+      "poi_id": "SNT_458_P0004",
+      "route_id": "SNT_458",
+      "name": "轟神社(阿南市新野町)"
+    },
+    {
+      "poi_id": "SNT_1501_P0005",
+      "route_id": "SNT_1501",
+      "name": "蒲生田岬灯台"
+    },
+    {
+      "poi_id": "SNT_3170_P0001",
+      "route_id": "SNT_3170",
+      "name": "阿瀬比ノ鼻休憩所"
+    },
+    {
+      "poi_id": "SNT_3174_P0001",
+      "route_id": "SNT_3174",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_3174_P0006",
+      "route_id": "SNT_3174",
+      "name": "通行止め"
+    },
+    {
+      "poi_id": "SNT_479_P0002",
+      "route_id": "SNT_479",
+      "name": "大島"
+    },
+    {
+      "poi_id": "SNT_479_P0003",
+      "route_id": "SNT_479",
+      "name": "津島"
+    },
+    {
+      "poi_id": "SNT_479_P0004",
+      "route_id": "SNT_479",
+      "name": "出羽島"
+    },
+    {
+      "poi_id": "SNT_479_P0007",
+      "route_id": "SNT_479",
+      "name": "鯖大師"
+    },
+    {
+      "poi_id": "SNT_1504_P0002",
+      "route_id": "SNT_1504",
+      "name": "阿波海南文化村"
+    },
+    {
+      "poi_id": "SNT_1504_P0006",
+      "route_id": "SNT_1504",
+      "name": "大里松原"
+    },
+    {
+      "poi_id": "SNT_3797_P0003",
+      "route_id": "SNT_3797",
+      "name": "化石連痕"
+    },
+    {
+      "poi_id": "SNT_767_P0001",
+      "route_id": "SNT_767",
+      "name": "01境目"
+    },
+    {
+      "poi_id": "SNT_767_P0002",
+      "route_id": "SNT_767",
+      "name": "02ベンチ、指導標"
+    },
+    {
+      "poi_id": "SNT_767_P0003",
+      "route_id": "SNT_767",
+      "name": "03指導標"
+    },
+    {
+      "poi_id": "SNT_767_P0004",
+      "route_id": "SNT_767",
+      "name": "04解説板"
+    },
+    {
+      "poi_id": "SNT_767_P0005",
+      "route_id": "SNT_767",
+      "name": "05撮影スポット（旧曼荼峠）"
+    },
+    {
+      "poi_id": "SNT_767_P0006",
+      "route_id": "SNT_767",
+      "name": "06解説板"
+    },
+    {
+      "poi_id": "SNT_767_P0007",
+      "route_id": "SNT_767",
+      "name": "07案内板"
+    },
+    {
+      "poi_id": "SNT_767_P0008",
+      "route_id": "SNT_767",
+      "name": "08解説板"
+    },
+    {
+      "poi_id": "SNT_767_P0009",
+      "route_id": "SNT_767",
+      "name": "09解説板"
+    },
+    {
+      "poi_id": "SNT_767_P0011",
+      "route_id": "SNT_767",
+      "name": "トイレ"
+    },
+    {
+      "poi_id": "SNT_182_P0001",
+      "route_id": "SNT_182",
+      "name": "01雲辺寺門"
+    },
+    {
+      "poi_id": "SNT_182_P0002",
+      "route_id": "SNT_182",
+      "name": "02雲辺寺本堂"
+    },
+    {
+      "poi_id": "SNT_182_P0003",
+      "route_id": "SNT_182",
+      "name": "03入口"
+    },
+    {
+      "poi_id": "SNT_182_P0004",
+      "route_id": "SNT_182",
+      "name": "04指導標"
+    },
+    {
+      "poi_id": "SNT_182_P0005",
+      "route_id": "SNT_182",
+      "name": "06指導標"
+    },
+    {
+      "poi_id": "SNT_182_P0006",
+      "route_id": "SNT_182",
+      "name": "07指導標"
+    },
+    {
+      "poi_id": "SNT_182_P0007",
+      "route_id": "SNT_182",
+      "name": "08ベンチ"
+    },
+    {
+      "poi_id": "SNT_182_P0008",
+      "route_id": "SNT_182",
+      "name": "09ベンチ"
+    },
+    {
+      "poi_id": "SNT_182_P0009",
+      "route_id": "SNT_182",
+      "name": "10 解説板"
+    },
+    {
+      "poi_id": "SNT_182_P0010",
+      "route_id": "SNT_182",
+      "name": "11指導標"
+    },
+    {
+      "poi_id": "SNT_182_P0011",
+      "route_id": "SNT_182",
+      "name": "12解説板"
+    },
+    {
+      "poi_id": "SNT_182_P0012",
+      "route_id": "SNT_182",
+      "name": "13みち"
+    },
+    {
+      "poi_id": "SNT_182_P0013",
+      "route_id": "SNT_182",
+      "name": "14解説板、風景"
+    },
+    {
+      "poi_id": "SNT_182_P0014",
+      "route_id": "SNT_182",
+      "name": "15解説板"
+    },
+    {
+      "poi_id": "SNT_182_P0015",
+      "route_id": "SNT_182",
+      "name": "16一升水"
+    },
+    {
+      "poi_id": "SNT_182_P0016",
+      "route_id": "SNT_182",
+      "name": "17登山口"
+    },
+    {
+      "poi_id": "SNT_182_P0017",
+      "route_id": "SNT_182",
+      "name": "18指導標"
+    },
+    {
+      "poi_id": "SNT_182_P0018",
+      "route_id": "SNT_182",
+      "name": "19案内板"
+    },
+    {
+      "poi_id": "SNT_182_P0019",
+      "route_id": "SNT_182",
+      "name": "20粟井ダム"
+    },
+    {
+      "poi_id": "SNT_182_P0020",
+      "route_id": "SNT_182",
+      "name": "21逆瀬池入口"
+    },
+    {
+      "poi_id": "SNT_182_P0021",
+      "route_id": "SNT_182",
+      "name": "22案内板、逆瀬池"
+    },
+    {
+      "poi_id": "SNT_182_P0022",
+      "route_id": "SNT_182",
+      "name": "23粟井ダム"
+    },
+    {
+      "poi_id": "SNT_182_P0025",
+      "route_id": "SNT_182",
+      "name": "大興寺"
+    },
+    {
+      "poi_id": "SNT_182_P0026",
+      "route_id": "SNT_182",
+      "name": "05みち"
+    },
+    {
+      "poi_id": "SNT_1511_P0001",
+      "route_id": "SNT_1511",
+      "name": "001案内板（県道5号）"
+    },
+    {
+      "poi_id": "SNT_1511_P0002",
+      "route_id": "SNT_1511",
+      "name": "002指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0003",
+      "route_id": "SNT_1511",
+      "name": "003指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0004",
+      "route_id": "SNT_1511",
+      "name": "004案内板（分岐）"
+    },
+    {
+      "poi_id": "SNT_1511_P0005",
+      "route_id": "SNT_1511",
+      "name": "005指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0006",
+      "route_id": "SNT_1511",
+      "name": "006指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0007",
+      "route_id": "SNT_1511",
+      "name": "007指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0008",
+      "route_id": "SNT_1511",
+      "name": "008指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0009",
+      "route_id": "SNT_1511",
+      "name": "009指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0010",
+      "route_id": "SNT_1511",
+      "name": "010指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0011",
+      "route_id": "SNT_1511",
+      "name": "011指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0012",
+      "route_id": "SNT_1511",
+      "name": "012案内板（若狭峰）"
+    },
+    {
+      "poi_id": "SNT_1511_P0013",
+      "route_id": "SNT_1511",
+      "name": "013解説板（野鳥）"
+    },
+    {
+      "poi_id": "SNT_1511_P0014",
+      "route_id": "SNT_1511",
+      "name": "014指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0015",
+      "route_id": "SNT_1511",
+      "name": "015指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0016",
+      "route_id": "SNT_1511",
+      "name": "016解説板（中蓮寺越えの道）"
+    },
+    {
+      "poi_id": "SNT_1511_P0017",
+      "route_id": "SNT_1511",
+      "name": "017指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0018",
+      "route_id": "SNT_1511",
+      "name": "018指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0019",
+      "route_id": "SNT_1511",
+      "name": "019休憩所"
+    },
+    {
+      "poi_id": "SNT_1511_P0020",
+      "route_id": "SNT_1511",
+      "name": "020指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0021",
+      "route_id": "SNT_1511",
+      "name": "021ベンチ"
+    },
+    {
+      "poi_id": "SNT_1511_P0022",
+      "route_id": "SNT_1511",
+      "name": "022指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0023",
+      "route_id": "SNT_1511",
+      "name": "023もみじ橋"
+    },
+    {
+      "poi_id": "SNT_1511_P0024",
+      "route_id": "SNT_1511",
+      "name": "024指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0025",
+      "route_id": "SNT_1511",
+      "name": "025指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0026",
+      "route_id": "SNT_1511",
+      "name": "026指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0027",
+      "route_id": "SNT_1511",
+      "name": "027解説板、ベンチ"
+    },
+    {
+      "poi_id": "SNT_1511_P0028",
+      "route_id": "SNT_1511",
+      "name": "028指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0029",
+      "route_id": "SNT_1511",
+      "name": "029指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0030",
+      "route_id": "SNT_1511",
+      "name": "030案内板、解説板"
+    },
+    {
+      "poi_id": "SNT_1511_P0031",
+      "route_id": "SNT_1511",
+      "name": "031指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0032",
+      "route_id": "SNT_1511",
+      "name": "032指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0033",
+      "route_id": "SNT_1511",
+      "name": "033指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0034",
+      "route_id": "SNT_1511",
+      "name": "034指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0035",
+      "route_id": "SNT_1511",
+      "name": "035指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0036",
+      "route_id": "SNT_1511",
+      "name": "036指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0037",
+      "route_id": "SNT_1511",
+      "name": "037石柱"
+    },
+    {
+      "poi_id": "SNT_1511_P0038",
+      "route_id": "SNT_1511",
+      "name": "038指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0039",
+      "route_id": "SNT_1511",
+      "name": "039指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0040",
+      "route_id": "SNT_1511",
+      "name": "040指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0041",
+      "route_id": "SNT_1511",
+      "name": "041指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0042",
+      "route_id": "SNT_1511",
+      "name": "042解説板（かくれ里）"
+    },
+    {
+      "poi_id": "SNT_1511_P0043",
+      "route_id": "SNT_1511",
+      "name": "043指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0044",
+      "route_id": "SNT_1511",
+      "name": "044指導標、石柱"
+    },
+    {
+      "poi_id": "SNT_1511_P0045",
+      "route_id": "SNT_1511",
+      "name": "045指導標"
+    },
+    {
+      "poi_id": "SNT_1511_P0046",
+      "route_id": "SNT_1511",
+      "name": "046案内板（逆瀬池）"
+    },
+    {
+      "poi_id": "SNT_1511_P0047",
+      "route_id": "SNT_1511",
+      "name": "047案内板"
+    },
+    {
+      "poi_id": "SNT_1514_P0001",
+      "route_id": "SNT_1514",
+      "name": "01案内板（猪ノ鼻峠）"
+    },
+    {
+      "poi_id": "SNT_1514_P0002",
+      "route_id": "SNT_1514",
+      "name": "02案内板（中蓮寺峰分岐）"
+    },
+    {
+      "poi_id": "SNT_1514_P0003",
+      "route_id": "SNT_1514",
+      "name": "03指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0004",
+      "route_id": "SNT_1514",
+      "name": "04指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0005",
+      "route_id": "SNT_1514",
+      "name": "05指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0006",
+      "route_id": "SNT_1514",
+      "name": "06ベンチ"
+    },
+    {
+      "poi_id": "SNT_1514_P0007",
+      "route_id": "SNT_1514",
+      "name": "07指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0008",
+      "route_id": "SNT_1514",
+      "name": "08解説版"
+    },
+    {
+      "poi_id": "SNT_1514_P0009",
+      "route_id": "SNT_1514",
+      "name": "09指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0010",
+      "route_id": "SNT_1514",
+      "name": "10二軒茶屋"
+    },
+    {
+      "poi_id": "SNT_1514_P0011",
+      "route_id": "SNT_1514",
+      "name": "11指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0012",
+      "route_id": "SNT_1514",
+      "name": "12石柱"
+    },
+    {
+      "poi_id": "SNT_1514_P0013",
+      "route_id": "SNT_1514",
+      "name": "13分岐"
+    },
+    {
+      "poi_id": "SNT_1514_P0014",
+      "route_id": "SNT_1514",
+      "name": "14指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0015",
+      "route_id": "SNT_1514",
+      "name": "15解説版、ベンチ"
+    },
+    {
+      "poi_id": "SNT_1514_P0016",
+      "route_id": "SNT_1514",
+      "name": "16石仏"
+    },
+    {
+      "poi_id": "SNT_1514_P0017",
+      "route_id": "SNT_1514",
+      "name": "17解説、指導標（薬師さん）"
+    },
+    {
+      "poi_id": "SNT_1514_P0018",
+      "route_id": "SNT_1514",
+      "name": "18休憩所"
+    },
+    {
+      "poi_id": "SNT_1514_P0019",
+      "route_id": "SNT_1514",
+      "name": "19指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0020",
+      "route_id": "SNT_1514",
+      "name": "20指導標"
+    },
+    {
+      "poi_id": "SNT_1514_P0021",
+      "route_id": "SNT_1514",
+      "name": "21林道"
+    },
+    {
+      "poi_id": "SNT_1514_P0022",
+      "route_id": "SNT_1514",
+      "name": "22入口"
+    },
+    {
+      "poi_id": "SNT_1514_P0023",
+      "route_id": "SNT_1514",
+      "name": "23解説版"
+    },
+    {
+      "poi_id": "SNT_258_P0001",
+      "route_id": "SNT_258",
+      "name": "01 さぬきさいだ駅（讃岐財田駅）"
+    },
+    {
+      "poi_id": "SNT_258_P0002",
+      "route_id": "SNT_258",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_258_P0003",
+      "route_id": "SNT_258",
+      "name": "03 鷲尾神社"
+    },
+    {
+      "poi_id": "SNT_258_P0004",
+      "route_id": "SNT_258",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_258_P0005",
+      "route_id": "SNT_258",
+      "name": "05 休憩所"
+    },
+    {
+      "poi_id": "SNT_258_P0006",
+      "route_id": "SNT_258",
+      "name": "06 塩入駅"
+    },
+    {
+      "poi_id": "SNT_290_P0001",
+      "route_id": "SNT_290",
+      "name": "01 長炭橋案内板"
+    },
+    {
+      "poi_id": "SNT_290_P0002",
+      "route_id": "SNT_290",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_290_P0003",
+      "route_id": "SNT_290",
+      "name": "03 解説板"
+    },
+    {
+      "poi_id": "SNT_290_P0004",
+      "route_id": "SNT_290",
+      "name": "かりん亭"
+    },
+    {
+      "poi_id": "SNT_290_P0005",
+      "route_id": "SNT_290",
+      "name": "05 神野神社"
+    },
+    {
+      "poi_id": "SNT_290_P0006",
+      "route_id": "SNT_290",
+      "name": "06 まんのう池撮影スポット"
+    },
+    {
+      "poi_id": "SNT_290_P0007",
+      "route_id": "SNT_290",
+      "name": "07 ミニ88カ所"
+    },
+    {
+      "poi_id": "SNT_290_P0008",
+      "route_id": "SNT_290",
+      "name": "08 満濃池森林公園入口"
+    },
+    {
+      "poi_id": "SNT_290_P0009",
+      "route_id": "SNT_290",
+      "name": "09 休憩所"
+    },
+    {
+      "poi_id": "SNT_290_P0010",
+      "route_id": "SNT_290",
+      "name": "10 案内板"
+    },
+    {
+      "poi_id": "SNT_290_P0011",
+      "route_id": "SNT_290",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_290_P0012",
+      "route_id": "SNT_290",
+      "name": "12 指導標"
+    },
+    {
+      "poi_id": "SNT_290_P0013",
+      "route_id": "SNT_290",
+      "name": "13 指導標"
+    },
+    {
+      "poi_id": "SNT_290_P0014",
+      "route_id": "SNT_290",
+      "name": "14 指導標"
+    },
+    {
+      "poi_id": "SNT_290_P0015",
+      "route_id": "SNT_290",
+      "name": "15 塩入駅"
+    },
+    {
+      "poi_id": "SNT_290_P0016",
+      "route_id": "SNT_290",
+      "name": "白鳥神社"
+    },
+    {
+      "poi_id": "SNT_5543_P0002",
+      "route_id": "SNT_5543",
+      "name": "金剛院"
+    },
+    {
+      "poi_id": "SNT_5543_P0006",
+      "route_id": "SNT_5543",
+      "name": "椎尾八幡神社"
+    },
+    {
+      "poi_id": "SNT_5543_P0007",
+      "route_id": "SNT_5543",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5543_P0008",
+      "route_id": "SNT_5543",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5543_P0009",
+      "route_id": "SNT_5543",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5543_P0010",
+      "route_id": "SNT_5543",
+      "name": "大水島神社"
+    },
+    {
+      "poi_id": "SNT_5543_P0011",
+      "route_id": "SNT_5543",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5543_P0012",
+      "route_id": "SNT_5543",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5543_P0013",
+      "route_id": "SNT_5543",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5543_P0014",
+      "route_id": "SNT_5543",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5543_P0015",
+      "route_id": "SNT_5543",
+      "name": "指導標(椎野八幡神社前)"
+    },
+    {
+      "poi_id": "SNT_5717_P0006",
+      "route_id": "SNT_5717",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5717_P0007",
+      "route_id": "SNT_5717",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5717_P0008",
+      "route_id": "SNT_5717",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5717_P0009",
+      "route_id": "SNT_5717",
+      "name": "迂回案内"
+    },
+    {
+      "poi_id": "SNT_5717_P0010",
+      "route_id": "SNT_5717",
+      "name": "迂回案内"
+    },
+    {
+      "poi_id": "SNT_5717_P0011",
+      "route_id": "SNT_5717",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2826_P0001",
+      "route_id": "SNT_2826",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2826_P0002",
+      "route_id": "SNT_2826",
+      "name": "赤い橋渡る"
+    },
+    {
+      "poi_id": "SNT_2826_P0003",
+      "route_id": "SNT_2826",
+      "name": "県道横切る"
+    },
+    {
+      "poi_id": "SNT_2826_P0004",
+      "route_id": "SNT_2826",
+      "name": "池横のみち"
+    },
+    {
+      "poi_id": "SNT_2826_P0005",
+      "route_id": "SNT_2826",
+      "name": "首切り地蔵"
+    },
+    {
+      "poi_id": "SNT_2826_P0006",
+      "route_id": "SNT_2826",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2826_P0007",
+      "route_id": "SNT_2826",
+      "name": "池前からの景色"
+    },
+    {
+      "poi_id": "SNT_2826_P0008",
+      "route_id": "SNT_2826",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2826_P0009",
+      "route_id": "SNT_2826",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2826_P0010",
+      "route_id": "SNT_2826",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2826_P0011",
+      "route_id": "SNT_2826",
+      "name": "「音谷池」の地名板"
+    },
+    {
+      "poi_id": "SNT_2826_P0012",
+      "route_id": "SNT_2826",
+      "name": "夫婦池"
+    },
+    {
+      "poi_id": "SNT_2826_P0014",
+      "route_id": "SNT_2826",
+      "name": "岡集会所横の土のみち"
+    },
+    {
+      "poi_id": "SNT_2826_P0015",
+      "route_id": "SNT_2826",
+      "name": "ブロッコリー畑越しに"
+    },
+    {
+      "poi_id": "SNT_2826_P0017",
+      "route_id": "SNT_2826",
+      "name": "川東八幡神社"
+    },
+    {
+      "poi_id": "SNT_2826_P0018",
+      "route_id": "SNT_2826",
+      "name": "油山休憩所"
+    },
+    {
+      "poi_id": "SNT_2826_P0021",
+      "route_id": "SNT_2826",
+      "name": "冠纓神社（かんえいじんじゃ）の叢"
+    },
+    {
+      "poi_id": "SNT_2831_P0008",
+      "route_id": "SNT_2831",
+      "name": "【スタート】竜満池"
+    },
+    {
+      "poi_id": "SNT_2831_P0009",
+      "route_id": "SNT_2831",
+      "name": "（みちの状況）新池横"
+    },
+    {
+      "poi_id": "SNT_2831_P0010",
+      "route_id": "SNT_2831",
+      "name": "（みちの状況）分岐"
+    },
+    {
+      "poi_id": "SNT_2831_P0011",
+      "route_id": "SNT_2831",
+      "name": "（みちの状況）自然歩道2　竹林"
+    },
+    {
+      "poi_id": "SNT_2831_P0012",
+      "route_id": "SNT_2831",
+      "name": "神内上池休憩所"
+    },
+    {
+      "poi_id": "SNT_2831_P0013",
+      "route_id": "SNT_2831",
+      "name": "藤尾神社休憩所"
+    },
+    {
+      "poi_id": "SNT_2831_P0014",
+      "route_id": "SNT_2831",
+      "name": "藤尾神社藤尾会館北からの景色"
+    },
+    {
+      "poi_id": "SNT_2831_P0015",
+      "route_id": "SNT_2831",
+      "name": "（指導標）加茂神社大グスへの分岐"
+    },
+    {
+      "poi_id": "SNT_2831_P0016",
+      "route_id": "SNT_2831",
+      "name": "松尾池休けい所への入口"
+    },
+    {
+      "poi_id": "SNT_2831_P0017",
+      "route_id": "SNT_2831",
+      "name": "松尾池休けい所（第１広場）"
+    },
+    {
+      "poi_id": "SNT_2831_P0018",
+      "route_id": "SNT_2831",
+      "name": "（風景）松尾池周辺の茶畑"
+    },
+    {
+      "poi_id": "SNT_2831_P0019",
+      "route_id": "SNT_2831",
+      "name": "（指導標）惣天満池へのみち"
+    },
+    {
+      "poi_id": "SNT_2831_P0020",
+      "route_id": "SNT_2831",
+      "name": "（みちの状況）水路横"
+    },
+    {
+      "poi_id": "SNT_2831_P0021",
+      "route_id": "SNT_2831",
+      "name": "（指導標）アカマツのある尾根みち"
+    },
+    {
+      "poi_id": "SNT_2831_P0022",
+      "route_id": "SNT_2831",
+      "name": "（地名板）城池"
+    },
+    {
+      "poi_id": "SNT_2831_P0023",
+      "route_id": "SNT_2831",
+      "name": "公渕森林公園芝生広場"
+    },
+    {
+      "poi_id": "SNT_2831_P0024",
+      "route_id": "SNT_2831",
+      "name": "分岐（墓）嶽山望む"
+    },
+    {
+      "poi_id": "SNT_2831_P0025",
+      "route_id": "SNT_2831",
+      "name": "（地名板）山大寺池"
+    },
+    {
+      "poi_id": "SNT_2831_P0026",
+      "route_id": "SNT_2831",
+      "name": "（みちの状況）大谷池の堤　分岐"
+    },
+    {
+      "poi_id": "SNT_2831_P0027",
+      "route_id": "SNT_2831",
+      "name": "【ゴール】諏訪神社休憩所"
+    },
+    {
+      "poi_id": "SNT_4248_P0001",
+      "route_id": "SNT_4248",
+      "name": "諏訪神社休けい所"
+    },
+    {
+      "poi_id": "SNT_4248_P0003",
+      "route_id": "SNT_4248",
+      "name": "三宝荒神の大フジ"
+    },
+    {
+      "poi_id": "SNT_4248_P0004",
+      "route_id": "SNT_4248",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4248_P0005",
+      "route_id": "SNT_4248",
+      "name": "静薬師（石塔）"
+    },
+    {
+      "poi_id": "SNT_4248_P0006",
+      "route_id": "SNT_4248",
+      "name": "鍛治池からの眺め"
+    },
+    {
+      "poi_id": "SNT_4248_P0007",
+      "route_id": "SNT_4248",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4248_P0008",
+      "route_id": "SNT_4248",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4248_P0009",
+      "route_id": "SNT_4248",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4248_P0010",
+      "route_id": "SNT_4248",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4248_P0011",
+      "route_id": "SNT_4248",
+      "name": "展望所"
+    },
+    {
+      "poi_id": "SNT_4248_P0012",
+      "route_id": "SNT_4248",
+      "name": "急坂"
+    },
+    {
+      "poi_id": "SNT_4248_P0013",
+      "route_id": "SNT_4248",
+      "name": "展望"
+    },
+    {
+      "poi_id": "SNT_4248_P0014",
+      "route_id": "SNT_4248",
+      "name": "大石神社古墳"
+    },
+    {
+      "poi_id": "SNT_4248_P0015",
+      "route_id": "SNT_4248",
+      "name": "大石神社"
+    },
+    {
+      "poi_id": "SNT_4248_P0016",
+      "route_id": "SNT_4248",
+      "name": "分岐（奥へ）"
+    },
+    {
+      "poi_id": "SNT_4248_P0017",
+      "route_id": "SNT_4248",
+      "name": "分岐（左へ）"
+    },
+    {
+      "poi_id": "SNT_4248_P0018",
+      "route_id": "SNT_4248",
+      "name": "公衆便所"
+    },
+    {
+      "poi_id": "SNT_4248_P0019",
+      "route_id": "SNT_4248",
+      "name": "みちの様子（階段登り口）"
+    },
+    {
+      "poi_id": "SNT_4248_P0020",
+      "route_id": "SNT_4248",
+      "name": "前山ダム休けい所"
+    },
+    {
+      "poi_id": "SNT_315_P0001",
+      "route_id": "SNT_315",
+      "name": "01 大窪寺"
+    },
+    {
+      "poi_id": "SNT_315_P0002",
+      "route_id": "SNT_315",
+      "name": "02 案内板"
+    },
+    {
+      "poi_id": "SNT_315_P0003",
+      "route_id": "SNT_315",
+      "name": "03 休憩所"
+    },
+    {
+      "poi_id": "SNT_315_P0004",
+      "route_id": "SNT_315",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_315_P0005",
+      "route_id": "SNT_315",
+      "name": "05 解説板"
+    },
+    {
+      "poi_id": "SNT_315_P0006",
+      "route_id": "SNT_315",
+      "name": "06 案内板"
+    },
+    {
+      "poi_id": "SNT_315_P0007",
+      "route_id": "SNT_315",
+      "name": "07 女体山山頂"
+    },
+    {
+      "poi_id": "SNT_315_P0008",
+      "route_id": "SNT_315",
+      "name": "08 休憩所"
+    },
+    {
+      "poi_id": "SNT_315_P0009",
+      "route_id": "SNT_315",
+      "name": "09 解説板"
+    },
+    {
+      "poi_id": "SNT_315_P0010",
+      "route_id": "SNT_315",
+      "name": "10 来栖神社"
+    },
+    {
+      "poi_id": "SNT_315_P0011",
+      "route_id": "SNT_315",
+      "name": "11 蛍の里"
+    },
+    {
+      "poi_id": "SNT_315_P0012",
+      "route_id": "SNT_315",
+      "name": "12 ミニ88ヶ所"
+    },
+    {
+      "poi_id": "SNT_315_P0013",
+      "route_id": "SNT_315",
+      "name": "13 前山ダム"
+    },
+    {
+      "poi_id": "SNT_2850_P0005",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0006",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0007",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0008",
+      "route_id": "SNT_2850",
+      "name": "ヒノキ林内"
+    },
+    {
+      "poi_id": "SNT_2850_P0009",
+      "route_id": "SNT_2850",
+      "name": "中尾休憩所"
+    },
+    {
+      "poi_id": "SNT_2850_P0010",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0011",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0012",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0013",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0014",
+      "route_id": "SNT_2850",
+      "name": "木橋渡る"
+    },
+    {
+      "poi_id": "SNT_2850_P0015",
+      "route_id": "SNT_2850",
+      "name": "あかの渕"
+    },
+    {
+      "poi_id": "SNT_2850_P0016",
+      "route_id": "SNT_2850",
+      "name": "風景"
+    },
+    {
+      "poi_id": "SNT_2850_P0017",
+      "route_id": "SNT_2850",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2850_P0018",
+      "route_id": "SNT_2850",
+      "name": "沢渡る"
+    },
+    {
+      "poi_id": "SNT_2850_P0019",
+      "route_id": "SNT_2850",
+      "name": "旧白鳥温泉"
+    },
+    {
+      "poi_id": "SNT_4253_P0002",
+      "route_id": "SNT_4253",
+      "name": "沈下橋"
+    },
+    {
+      "poi_id": "SNT_4253_P0003",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0004",
+      "route_id": "SNT_4253",
+      "name": "虎丸山を望む"
+    },
+    {
+      "poi_id": "SNT_4253_P0006",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0007",
+      "route_id": "SNT_4253",
+      "name": "みちの様子（ダム堤体を渡る）"
+    },
+    {
+      "poi_id": "SNT_4253_P0009",
+      "route_id": "SNT_4253",
+      "name": "那智山を望む"
+    },
+    {
+      "poi_id": "SNT_4253_P0010",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0011",
+      "route_id": "SNT_4253",
+      "name": "分岐（左：橋を渡らない）"
+    },
+    {
+      "poi_id": "SNT_4253_P0012",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0013",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0014",
+      "route_id": "SNT_4253",
+      "name": "みちの様子（小川を渡る）"
+    },
+    {
+      "poi_id": "SNT_4253_P0016",
+      "route_id": "SNT_4253",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4253_P0017",
+      "route_id": "SNT_4253",
+      "name": "イノシシゲート①（県道に合流）"
+    },
+    {
+      "poi_id": "SNT_4253_P0018",
+      "route_id": "SNT_4253",
+      "name": "分岐（左下へ）"
+    },
+    {
+      "poi_id": "SNT_4253_P0019",
+      "route_id": "SNT_4253",
+      "name": "イノシシゲート②"
+    },
+    {
+      "poi_id": "SNT_4256_P0001",
+      "route_id": "SNT_4256",
+      "name": "JR讃岐相生駅"
+    },
+    {
+      "poi_id": "SNT_4256_P0002",
+      "route_id": "SNT_4256",
+      "name": "分岐"
+    },
+    {
+      "poi_id": "SNT_4256_P0003",
+      "route_id": "SNT_4256",
+      "name": "保田池"
+    },
+    {
+      "poi_id": "SNT_4256_P0004",
+      "route_id": "SNT_4256",
+      "name": "【写真２枚】分岐"
+    },
+    {
+      "poi_id": "SNT_4256_P0005",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0006",
+      "route_id": "SNT_4256",
+      "name": "下内池（しもうちいけ）"
+    },
+    {
+      "poi_id": "SNT_4256_P0007",
+      "route_id": "SNT_4256",
+      "name": "地蔵堂"
+    },
+    {
+      "poi_id": "SNT_4256_P0009",
+      "route_id": "SNT_4256",
+      "name": "さとうきび畑"
+    },
+    {
+      "poi_id": "SNT_4256_P0011",
+      "route_id": "SNT_4256",
+      "name": "川沿いの道"
+    },
+    {
+      "poi_id": "SNT_4256_P0012",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0013",
+      "route_id": "SNT_4256",
+      "name": "虎丸山を望む"
+    },
+    {
+      "poi_id": "SNT_4256_P0014",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0015",
+      "route_id": "SNT_4256",
+      "name": "イノシシゲート①"
+    },
+    {
+      "poi_id": "SNT_4256_P0016",
+      "route_id": "SNT_4256",
+      "name": "イノシシゲート②"
+    },
+    {
+      "poi_id": "SNT_4256_P0017",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0018",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0019",
+      "route_id": "SNT_4256",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4256_P0020",
+      "route_id": "SNT_4256",
+      "name": "梨木神社"
+    },
+    {
+      "poi_id": "SNT_4256_P0022",
+      "route_id": "SNT_4256",
+      "name": "原間池休けい所"
+    },
+    {
+      "poi_id": "SNT_2843_P0002",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0003",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0004",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0005",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0006",
+      "route_id": "SNT_2843",
+      "name": "展望休憩所"
+    },
+    {
+      "poi_id": "SNT_2843_P0007",
+      "route_id": "SNT_2843",
+      "name": "みちの状況"
+    },
+    {
+      "poi_id": "SNT_2843_P0008",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0009",
+      "route_id": "SNT_2843",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2843_P0010",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0011",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0012",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0013",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0014",
+      "route_id": "SNT_2843",
+      "name": "みち（線路沿い）"
+    },
+    {
+      "poi_id": "SNT_2843_P0015",
+      "route_id": "SNT_2843",
+      "name": "池"
+    },
+    {
+      "poi_id": "SNT_2843_P0017",
+      "route_id": "SNT_2843",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2843_P0018",
+      "route_id": "SNT_2843",
+      "name": "国道11号線の標識"
+    },
+    {
+      "poi_id": "SNT_5739_P0003",
+      "route_id": "SNT_5739",
+      "name": "道の駅　もみのきパーク"
+    },
+    {
+      "poi_id": "SNT_5739_P0006",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5739_P0007",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5739_P0008",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5739_P0009",
+      "route_id": "SNT_5739",
+      "name": "竜王展望休憩所"
+    },
+    {
+      "poi_id": "SNT_5739_P0010",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5739_P0011",
+      "route_id": "SNT_5739",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5739_P0012",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5739_P0013",
+      "route_id": "SNT_5739",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_4259_P0001",
+      "route_id": "SNT_4259",
+      "name": "県道からの分岐"
+    },
+    {
+      "poi_id": "SNT_4259_P0002",
+      "route_id": "SNT_4259",
+      "name": "香川県自然記念物「二宮のネズ」"
+    },
+    {
+      "poi_id": "SNT_4259_P0004",
+      "route_id": "SNT_4259",
+      "name": "二ノ宮の瓦窯跡"
+    },
+    {
+      "poi_id": "SNT_4259_P0005",
+      "route_id": "SNT_4259",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4259_P0006",
+      "route_id": "SNT_4259",
+      "name": "広域農道からの分岐（右へ）"
+    },
+    {
+      "poi_id": "SNT_4259_P0007",
+      "route_id": "SNT_4259",
+      "name": "長峰神社休けい所"
+    },
+    {
+      "poi_id": "SNT_4259_P0008",
+      "route_id": "SNT_4259",
+      "name": "みち際の茶畑"
+    },
+    {
+      "poi_id": "SNT_4259_P0010",
+      "route_id": "SNT_4259",
+      "name": "茶畑"
+    },
+    {
+      "poi_id": "SNT_4259_P0011",
+      "route_id": "SNT_4259",
+      "name": "大麻山を望む"
+    },
+    {
+      "poi_id": "SNT_4259_P0013",
+      "route_id": "SNT_4259",
+      "name": "細いみちへの分岐"
+    },
+    {
+      "poi_id": "SNT_4259_P0014",
+      "route_id": "SNT_4259",
+      "name": "麻部神社"
+    },
+    {
+      "poi_id": "SNT_4259_P0015",
+      "route_id": "SNT_4259",
+      "name": "分岐（左へ）①"
+    },
+    {
+      "poi_id": "SNT_4259_P0017",
+      "route_id": "SNT_4259",
+      "name": "分岐（左へ）②"
+    },
+    {
+      "poi_id": "SNT_4259_P0018",
+      "route_id": "SNT_4259",
+      "name": "イノシシゲート"
+    },
+    {
+      "poi_id": "SNT_4259_P0019",
+      "route_id": "SNT_4259",
+      "name": "みちの様子"
+    },
+    {
+      "poi_id": "SNT_4259_P0022",
+      "route_id": "SNT_4259",
+      "name": "分岐（右へ）"
+    },
+    {
+      "poi_id": "SNT_4259_P0023",
+      "route_id": "SNT_4259",
+      "name": "旧伊予土佐街道"
+    },
+    {
+      "poi_id": "SNT_4259_P0024",
+      "route_id": "SNT_4259",
+      "name": "金刀比羅宮石段に合流"
+    },
+    {
+      "poi_id": "SNT_5199_P0001",
+      "route_id": "SNT_5199",
+      "name": "大水上神社"
+    },
+    {
+      "poi_id": "SNT_5199_P0002",
+      "route_id": "SNT_5199",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5199_P0003",
+      "route_id": "SNT_5199",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5199_P0004",
+      "route_id": "SNT_5199",
+      "name": "指導標(細道へ)"
+    },
+    {
+      "poi_id": "SNT_5199_P0005",
+      "route_id": "SNT_5199",
+      "name": "解説板(向谷遺跡)"
+    },
+    {
+      "poi_id": "SNT_5199_P0006",
+      "route_id": "SNT_5199",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5199_P0007",
+      "route_id": "SNT_5199",
+      "name": "分岐(奥に進み右)"
+    },
+    {
+      "poi_id": "SNT_5199_P0008",
+      "route_id": "SNT_5199",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5199_P0009",
+      "route_id": "SNT_5199",
+      "name": "指導標(森側を通る)"
+    },
+    {
+      "poi_id": "SNT_5199_P0010",
+      "route_id": "SNT_5199",
+      "name": "指導標(矢印の方向に進む)"
+    },
+    {
+      "poi_id": "SNT_5199_P0015",
+      "route_id": "SNT_5199",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5199_P0018",
+      "route_id": "SNT_5199",
+      "name": "指導標(道路の下を通過)"
+    },
+    {
+      "poi_id": "SNT_5202_P0003",
+      "route_id": "SNT_5202",
+      "name": "みち(七宝山方面)"
+    },
+    {
+      "poi_id": "SNT_5202_P0004",
+      "route_id": "SNT_5202",
+      "name": "みち"
+    },
+    {
+      "poi_id": "SNT_5202_P0005",
+      "route_id": "SNT_5202",
+      "name": "解説板(なつめの木の貝塚)"
+    },
+    {
+      "poi_id": "SNT_5202_P0007",
+      "route_id": "SNT_5202",
+      "name": "みち(鳩八幡神社へ)"
+    },
+    {
+      "poi_id": "SNT_5202_P0010",
+      "route_id": "SNT_5202",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5202_P0011",
+      "route_id": "SNT_5202",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0001",
+      "route_id": "SNT_5204",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5204_P0004",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0005",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0007",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0008",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0011",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0012",
+      "route_id": "SNT_5204",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5204_P0013",
+      "route_id": "SNT_5204",
+      "name": "吉池"
+    },
+    {
+      "poi_id": "SNT_5204_P0014",
+      "route_id": "SNT_5204",
+      "name": "大麻荒神"
+    },
+    {
+      "poi_id": "SNT_5206_P0003",
+      "route_id": "SNT_5206",
+      "name": "みち(県道21号を左へ)"
+    },
+    {
+      "poi_id": "SNT_5206_P0005",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0006",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0007",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0008",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0011",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0012",
+      "route_id": "SNT_5206",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5206_P0014",
+      "route_id": "SNT_5206",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_790_P0001",
+      "route_id": "SNT_790",
+      "name": "01案内板"
+    },
+    {
+      "poi_id": "SNT_790_P0002",
+      "route_id": "SNT_790",
+      "name": "02乳薬師"
+    },
+    {
+      "poi_id": "SNT_790_P0003",
+      "route_id": "SNT_790",
+      "name": "03指導票"
+    },
+    {
+      "poi_id": "SNT_790_P0004",
+      "route_id": "SNT_790",
+      "name": "04指導票"
+    },
+    {
+      "poi_id": "SNT_790_P0005",
+      "route_id": "SNT_790",
+      "name": "05看板"
+    },
+    {
+      "poi_id": "SNT_790_P0006",
+      "route_id": "SNT_790",
+      "name": "06展望台"
+    },
+    {
+      "poi_id": "SNT_790_P0007",
+      "route_id": "SNT_790",
+      "name": "07駐車場案内板"
+    },
+    {
+      "poi_id": "SNT_790_P0008",
+      "route_id": "SNT_790",
+      "name": "08遺跡館"
+    },
+    {
+      "poi_id": "SNT_790_P0009",
+      "route_id": "SNT_790",
+      "name": "09展望台"
+    },
+    {
+      "poi_id": "SNT_790_P0010",
+      "route_id": "SNT_790",
+      "name": "トイレ"
+    },
+    {
+      "poi_id": "SNT_790_P0011",
+      "route_id": "SNT_790",
+      "name": "10紫雲山看板"
+    },
+    {
+      "poi_id": "SNT_790_P0012",
+      "route_id": "SNT_790",
+      "name": "11新田の城あと"
+    },
+    {
+      "poi_id": "SNT_790_P0013",
+      "route_id": "SNT_790",
+      "name": "12解説板"
+    },
+    {
+      "poi_id": "SNT_790_P0014",
+      "route_id": "SNT_790",
+      "name": "13登り口、箱"
+    },
+    {
+      "poi_id": "SNT_790_P0015",
+      "route_id": "SNT_790",
+      "name": "荘内自然休養村センター"
+    },
+    {
+      "poi_id": "SNT_3106_P0001",
+      "route_id": "SNT_3106",
+      "name": "讃岐三崎灯台"
+    },
+    {
+      "poi_id": "SNT_3106_P0002",
+      "route_id": "SNT_3106",
+      "name": "仁老浜海岸"
+    },
+    {
+      "poi_id": "SNT_3106_P0004",
+      "route_id": "SNT_3106",
+      "name": "立石休憩所"
+    },
+    {
+      "poi_id": "SNT_3106_P0007",
+      "route_id": "SNT_3106",
+      "name": "讃岐三崎灯台"
+    },
+    {
+      "poi_id": "SNT_3106_P0009",
+      "route_id": "SNT_3106",
+      "name": "【スタート】箱峠"
+    },
+    {
+      "poi_id": "SNT_3106_P0010",
+      "route_id": "SNT_3106",
+      "name": "県道からの入口"
+    },
+    {
+      "poi_id": "SNT_3106_P0011",
+      "route_id": "SNT_3106",
+      "name": "歩道の状況"
+    },
+    {
+      "poi_id": "SNT_3106_P0012",
+      "route_id": "SNT_3106",
+      "name": "仁老浜の街並み（焼き杉板）"
+    },
+    {
+      "poi_id": "SNT_3106_P0013",
+      "route_id": "SNT_3106",
+      "name": "アロエの花"
+    },
+    {
+      "poi_id": "SNT_3106_P0014",
+      "route_id": "SNT_3106",
+      "name": "仁老浜キャンプ場からの登り口"
+    },
+    {
+      "poi_id": "SNT_3106_P0015",
+      "route_id": "SNT_3106",
+      "name": "歩道の状況"
+    },
+    {
+      "poi_id": "SNT_3106_P0016",
+      "route_id": "SNT_3106",
+      "name": "室浜への分岐点"
+    },
+    {
+      "poi_id": "SNT_3106_P0017",
+      "route_id": "SNT_3106",
+      "name": "ウバメガシ林"
+    },
+    {
+      "poi_id": "SNT_3106_P0018",
+      "route_id": "SNT_3106",
+      "name": "室浜集落へ降りる道"
+    },
+    {
+      "poi_id": "SNT_3106_P0019",
+      "route_id": "SNT_3106",
+      "name": "室浜から粟島を望む"
+    },
+    {
+      "poi_id": "SNT_3106_P0020",
+      "route_id": "SNT_3106",
+      "name": "歩道の状況"
+    },
+    {
+      "poi_id": "SNT_3106_P0021",
+      "route_id": "SNT_3106",
+      "name": "箱バス停"
+    },
+    {
+      "poi_id": "SNT_3106_P0022",
+      "route_id": "SNT_3106",
+      "name": "分岐（県道から）"
+    },
+    {
+      "poi_id": "SNT_1518_P0001",
+      "route_id": "SNT_1518",
+      "name": "01案内板（長炭橋）"
+    },
+    {
+      "poi_id": "SNT_1518_P0002",
+      "route_id": "SNT_1518",
+      "name": "02指導標"
+    },
+    {
+      "poi_id": "SNT_1518_P0003",
+      "route_id": "SNT_1518",
+      "name": "03指導標（分岐、あぜ道）"
+    },
+    {
+      "poi_id": "SNT_1518_P0004",
+      "route_id": "SNT_1518",
+      "name": "04指導標（分岐、あぜ道）"
+    },
+    {
+      "poi_id": "SNT_1518_P0005",
+      "route_id": "SNT_1518",
+      "name": "05指導標（大柞池）"
+    },
+    {
+      "poi_id": "SNT_1518_P0006",
+      "route_id": "SNT_1518",
+      "name": "06地名版（金剛寺）"
+    },
+    {
+      "poi_id": "SNT_1518_P0007",
+      "route_id": "SNT_1518",
+      "name": "07指導標（分岐）"
+    },
+    {
+      "poi_id": "SNT_1518_P0008",
+      "route_id": "SNT_1518",
+      "name": "08あぜ道"
+    },
+    {
+      "poi_id": "SNT_1518_P0009",
+      "route_id": "SNT_1518",
+      "name": "09指導標（分岐）"
+    },
+    {
+      "poi_id": "SNT_1518_P0010",
+      "route_id": "SNT_1518",
+      "name": "10指導標（分岐）"
+    },
+    {
+      "poi_id": "SNT_1518_P0011",
+      "route_id": "SNT_1518",
+      "name": "11地名版（法師越）"
+    },
+    {
+      "poi_id": "SNT_1518_P0012",
+      "route_id": "SNT_1518",
+      "name": "12指導標（分岐）"
+    },
+    {
+      "poi_id": "SNT_1518_P0013",
+      "route_id": "SNT_1518",
+      "name": "13西行法師の石像"
+    },
+    {
+      "poi_id": "SNT_1518_P0014",
+      "route_id": "SNT_1518",
+      "name": "14案内板（３コースの分岐点）"
+    },
+    {
+      "poi_id": "SNT_1518_P0015",
+      "route_id": "SNT_1518",
+      "name": "15指導標（下に降りる）"
+    },
+    {
+      "poi_id": "SNT_1518_P0016",
+      "route_id": "SNT_1518",
+      "name": "16立石神社"
+    },
+    {
+      "poi_id": "SNT_1518_P0017",
+      "route_id": "SNT_1518",
+      "name": "17木橋"
+    },
+    {
+      "poi_id": "SNT_1518_P0018",
+      "route_id": "SNT_1518",
+      "name": "18指導標（直進）"
+    },
+    {
+      "poi_id": "SNT_1518_P0019",
+      "route_id": "SNT_1518",
+      "name": "19指導標（光貴寺）"
+    },
+    {
+      "poi_id": "SNT_1518_P0020",
+      "route_id": "SNT_1518",
+      "name": "20案内板（滝宮天満宮）"
+    },
+    {
+      "poi_id": "SNT_5551_P0006",
+      "route_id": "SNT_5551",
+      "name": "椎尾八幡神社"
+    },
+    {
+      "poi_id": "SNT_5551_P0007",
+      "route_id": "SNT_5551",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5551_P0008",
+      "route_id": "SNT_5551",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5551_P0009",
+      "route_id": "SNT_5551",
+      "name": "みち（左へ）"
+    },
+    {
+      "poi_id": "SNT_5551_P0010",
+      "route_id": "SNT_5551",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_5551_P0011",
+      "route_id": "SNT_5551",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_5551_P0012",
+      "route_id": "SNT_5551",
+      "name": "指導標(椎野八幡神社前)"
+    },
+    {
+      "poi_id": "SNT_1521_P0001",
+      "route_id": "SNT_1521",
+      "name": "01案内板（滝宮天満宮）"
+    },
+    {
+      "poi_id": "SNT_1521_P0002",
+      "route_id": "SNT_1521",
+      "name": "02赤橋"
+    },
+    {
+      "poi_id": "SNT_1521_P0003",
+      "route_id": "SNT_1521",
+      "name": "03にごり池"
+    },
+    {
+      "poi_id": "SNT_1521_P0004",
+      "route_id": "SNT_1521",
+      "name": "04山田池"
+    },
+    {
+      "poi_id": "SNT_1521_P0005",
+      "route_id": "SNT_1521",
+      "name": "05指導標（分岐）"
+    },
+    {
+      "poi_id": "SNT_1521_P0006",
+      "route_id": "SNT_1521",
+      "name": "06四手池"
+    },
+    {
+      "poi_id": "SNT_1521_P0007",
+      "route_id": "SNT_1521",
+      "name": "07橋"
+    },
+    {
+      "poi_id": "SNT_1521_P0008",
+      "route_id": "SNT_1521",
+      "name": "08案内板（府中湖休憩所）"
+    },
+    {
+      "poi_id": "SNT_1521_P0009",
+      "route_id": "SNT_1521",
+      "name": "09指導標"
+    },
+    {
+      "poi_id": "SNT_1521_P0010",
+      "route_id": "SNT_1521",
+      "name": "10府中山内瓦窯跡"
+    },
+    {
+      "poi_id": "SNT_1521_P0011",
+      "route_id": "SNT_1521",
+      "name": "11案内板（JR国分駅）"
+    },
+    {
+      "poi_id": "SNT_1521_P0012",
+      "route_id": "SNT_1521",
+      "name": "12案内板（国分寺）"
+    },
+    {
+      "poi_id": "SNT_1521_P0013",
+      "route_id": "SNT_1521",
+      "name": "香川県埋蔵文化財センター"
+    },
+    {
+      "poi_id": "SNT_810_P0001",
+      "route_id": "SNT_810",
+      "name": "01ベンチ"
+    },
+    {
+      "poi_id": "SNT_810_P0002",
+      "route_id": "SNT_810",
+      "name": "02解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0003",
+      "route_id": "SNT_810",
+      "name": "03解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0004",
+      "route_id": "SNT_810",
+      "name": "04休憩所"
+    },
+    {
+      "poi_id": "SNT_810_P0005",
+      "route_id": "SNT_810",
+      "name": "05ベンチ"
+    },
+    {
+      "poi_id": "SNT_810_P0006",
+      "route_id": "SNT_810",
+      "name": "06ベンチ"
+    },
+    {
+      "poi_id": "SNT_810_P0007",
+      "route_id": "SNT_810",
+      "name": "07トイレ"
+    },
+    {
+      "poi_id": "SNT_810_P0008",
+      "route_id": "SNT_810",
+      "name": "08石鎚神社"
+    },
+    {
+      "poi_id": "SNT_810_P0009",
+      "route_id": "SNT_810",
+      "name": "09石鎚休憩所"
+    },
+    {
+      "poi_id": "SNT_810_P0010",
+      "route_id": "SNT_810",
+      "name": "10白い崖"
+    },
+    {
+      "poi_id": "SNT_810_P0011",
+      "route_id": "SNT_810",
+      "name": "11神埼池"
+    },
+    {
+      "poi_id": "SNT_810_P0012",
+      "route_id": "SNT_810",
+      "name": "12国分寺僧房跡"
+    },
+    {
+      "poi_id": "SNT_810_P0013",
+      "route_id": "SNT_810",
+      "name": "13案内板"
+    },
+    {
+      "poi_id": "SNT_810_P0014",
+      "route_id": "SNT_810",
+      "name": "14国分寺"
+    },
+    {
+      "poi_id": "SNT_810_P0015",
+      "route_id": "SNT_810",
+      "name": "01解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0016",
+      "route_id": "SNT_810",
+      "name": "02解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0017",
+      "route_id": "SNT_810",
+      "name": "03小川"
+    },
+    {
+      "poi_id": "SNT_810_P0018",
+      "route_id": "SNT_810",
+      "name": "04八丁目"
+    },
+    {
+      "poi_id": "SNT_810_P0019",
+      "route_id": "SNT_810",
+      "name": "05神在口"
+    },
+    {
+      "poi_id": "SNT_810_P0020",
+      "route_id": "SNT_810",
+      "name": "01案内板"
+    },
+    {
+      "poi_id": "SNT_810_P0021",
+      "route_id": "SNT_810",
+      "name": "トイレ"
+    },
+    {
+      "poi_id": "SNT_810_P0022",
+      "route_id": "SNT_810",
+      "name": "02指導標"
+    },
+    {
+      "poi_id": "SNT_810_P0023",
+      "route_id": "SNT_810",
+      "name": "03指導標"
+    },
+    {
+      "poi_id": "SNT_810_P0024",
+      "route_id": "SNT_810",
+      "name": "04入口"
+    },
+    {
+      "poi_id": "SNT_810_P0025",
+      "route_id": "SNT_810",
+      "name": "05中山園地"
+    },
+    {
+      "poi_id": "SNT_810_P0026",
+      "route_id": "SNT_810",
+      "name": "トイレ"
+    },
+    {
+      "poi_id": "SNT_810_P0027",
+      "route_id": "SNT_810",
+      "name": "06指導標"
+    },
+    {
+      "poi_id": "SNT_810_P0028",
+      "route_id": "SNT_810",
+      "name": "07十九丁"
+    },
+    {
+      "poi_id": "SNT_810_P0029",
+      "route_id": "SNT_810",
+      "name": "08ヒサカキのトンネル"
+    },
+    {
+      "poi_id": "SNT_810_P0030",
+      "route_id": "SNT_810",
+      "name": "09解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0031",
+      "route_id": "SNT_810",
+      "name": "10解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0032",
+      "route_id": "SNT_810",
+      "name": "11解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0033",
+      "route_id": "SNT_810",
+      "name": "12白峯寺"
+    },
+    {
+      "poi_id": "SNT_810_P0034",
+      "route_id": "SNT_810",
+      "name": "トイレ"
+    },
+    {
+      "poi_id": "SNT_810_P0035",
+      "route_id": "SNT_810",
+      "name": "13白峯陵"
+    },
+    {
+      "poi_id": "SNT_810_P0036",
+      "route_id": "SNT_810",
+      "name": "14解説板"
+    },
+    {
+      "poi_id": "SNT_810_P0037",
+      "route_id": "SNT_810",
+      "name": "15案内板"
+    },
+    {
+      "poi_id": "SNT_810_P0038",
+      "route_id": "SNT_810",
+      "name": "16高屋バス停"
+    },
+    {
+      "poi_id": "SNT_95_P0001",
+      "route_id": "SNT_95",
+      "name": "01 一本松公園休憩地"
+    },
+    {
+      "poi_id": "SNT_95_P0002",
+      "route_id": "SNT_95",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0003",
+      "route_id": "SNT_95",
+      "name": "03 誘導標"
+    },
+    {
+      "poi_id": "SNT_95_P0004",
+      "route_id": "SNT_95",
+      "name": "04 小山公衆便所"
+    },
+    {
+      "poi_id": "SNT_95_P0005",
+      "route_id": "SNT_95",
+      "name": "05 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0006",
+      "route_id": "SNT_95",
+      "name": "06 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0007",
+      "route_id": "SNT_95",
+      "name": "07 誘導標"
+    },
+    {
+      "poi_id": "SNT_95_P0008",
+      "route_id": "SNT_95",
+      "name": "08 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0009",
+      "route_id": "SNT_95",
+      "name": "09 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0010",
+      "route_id": "SNT_95",
+      "name": "10 誘導標"
+    },
+    {
+      "poi_id": "SNT_95_P0011",
+      "route_id": "SNT_95",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0012",
+      "route_id": "SNT_95",
+      "name": "12 指導標、ベンチ"
+    },
+    {
+      "poi_id": "SNT_95_P0013",
+      "route_id": "SNT_95",
+      "name": "13 指導標、路傍サイン、風景"
+    },
+    {
+      "poi_id": "SNT_95_P0014",
+      "route_id": "SNT_95",
+      "name": "14 指導標、ベンチ、風景"
+    },
+    {
+      "poi_id": "SNT_95_P0015",
+      "route_id": "SNT_95",
+      "name": "15 指導標+風景"
+    },
+    {
+      "poi_id": "SNT_95_P0016",
+      "route_id": "SNT_95",
+      "name": "16 誘導標、ベンチ2個"
+    },
+    {
+      "poi_id": "SNT_95_P0017",
+      "route_id": "SNT_95",
+      "name": "17 松尾峠"
+    },
+    {
+      "poi_id": "SNT_95_P0018",
+      "route_id": "SNT_95",
+      "name": "18 純友城跡"
+    },
+    {
+      "poi_id": "SNT_95_P0019",
+      "route_id": "SNT_95",
+      "name": "19 案内標識、指導標、サイン"
+    },
+    {
+      "poi_id": "SNT_95_P0020",
+      "route_id": "SNT_95",
+      "name": "20 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0021",
+      "route_id": "SNT_95",
+      "name": "21 指導標、解説版"
+    },
+    {
+      "poi_id": "SNT_95_P0022",
+      "route_id": "SNT_95",
+      "name": "23 誘導標"
+    },
+    {
+      "poi_id": "SNT_95_P0023",
+      "route_id": "SNT_95",
+      "name": "24 指導標、解説版"
+    },
+    {
+      "poi_id": "SNT_95_P0024",
+      "route_id": "SNT_95",
+      "name": "25 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0025",
+      "route_id": "SNT_95",
+      "name": "26 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0026",
+      "route_id": "SNT_95",
+      "name": "27 指導標、サイン"
+    },
+    {
+      "poi_id": "SNT_95_P0027",
+      "route_id": "SNT_95",
+      "name": "28 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0028",
+      "route_id": "SNT_95",
+      "name": "101 標識とベンチ"
+    },
+    {
+      "poi_id": "SNT_95_P0029",
+      "route_id": "SNT_95",
+      "name": "102 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0030",
+      "route_id": "SNT_95",
+      "name": "103 看板"
+    },
+    {
+      "poi_id": "SNT_95_P0031",
+      "route_id": "SNT_95",
+      "name": "104 標識"
+    },
+    {
+      "poi_id": "SNT_95_P0032",
+      "route_id": "SNT_95",
+      "name": "105 標識"
+    },
+    {
+      "poi_id": "SNT_95_P0033",
+      "route_id": "SNT_95",
+      "name": "106 指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0034",
+      "route_id": "SNT_95",
+      "name": "107 標識"
+    },
+    {
+      "poi_id": "SNT_95_P0035",
+      "route_id": "SNT_95",
+      "name": "108 案内標識+サイン、指導標"
+    },
+    {
+      "poi_id": "SNT_95_P0036",
+      "route_id": "SNT_95",
+      "name": "109 標識"
+    },
+    {
+      "poi_id": "SNT_95_P0037",
+      "route_id": "SNT_95",
+      "name": "110 札掛け篠山神社"
+    },
+    {
+      "poi_id": "SNT_95_P0038",
+      "route_id": "SNT_95",
+      "name": "四国霊場第４０番札所 観自在寺"
+    },
+    {
+      "poi_id": "SNT_95_P0039",
+      "route_id": "SNT_95",
+      "name": "御荘公園"
+    },
+    {
+      "poi_id": "SNT_1_P0001",
+      "route_id": "SNT_1",
+      "name": "01指導標位置"
+    },
+    {
+      "poi_id": "SNT_1_P0002",
+      "route_id": "SNT_1",
+      "name": "02 指導標位置"
+    },
+    {
+      "poi_id": "SNT_1_P0003",
+      "route_id": "SNT_1",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0004",
+      "route_id": "SNT_1",
+      "name": "05 指導標位置"
+    },
+    {
+      "poi_id": "SNT_1_P0005",
+      "route_id": "SNT_1",
+      "name": "07 誘導標と俳句"
+    },
+    {
+      "poi_id": "SNT_1_P0006",
+      "route_id": "SNT_1",
+      "name": "08 ベンチ、マーク、俳句"
+    },
+    {
+      "poi_id": "SNT_1_P0007",
+      "route_id": "SNT_1",
+      "name": "09 指導標と俳句"
+    },
+    {
+      "poi_id": "SNT_1_P0008",
+      "route_id": "SNT_1",
+      "name": "10 俳句"
+    },
+    {
+      "poi_id": "SNT_1_P0009",
+      "route_id": "SNT_1",
+      "name": "11 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0010",
+      "route_id": "SNT_1",
+      "name": "12 誘導標と俳句"
+    },
+    {
+      "poi_id": "SNT_1_P0011",
+      "route_id": "SNT_1",
+      "name": "13 指導標とベンチ"
+    },
+    {
+      "poi_id": "SNT_1_P0012",
+      "route_id": "SNT_1",
+      "name": "14 柏坂休憩地"
+    },
+    {
+      "poi_id": "SNT_1_P0013",
+      "route_id": "SNT_1",
+      "name": "15 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0014",
+      "route_id": "SNT_1",
+      "name": "16 俳句、誘導標、トイレ"
+    },
+    {
+      "poi_id": "SNT_1_P0015",
+      "route_id": "SNT_1",
+      "name": "17 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0016",
+      "route_id": "SNT_1",
+      "name": "19 解説板"
+    },
+    {
+      "poi_id": "SNT_1_P0017",
+      "route_id": "SNT_1",
+      "name": "20 水準点"
+    },
+    {
+      "poi_id": "SNT_1_P0018",
+      "route_id": "SNT_1",
+      "name": "22 つなわ展望台"
+    },
+    {
+      "poi_id": "SNT_1_P0019",
+      "route_id": "SNT_1",
+      "name": "24 解説板"
+    },
+    {
+      "poi_id": "SNT_1_P0020",
+      "route_id": "SNT_1",
+      "name": "25 誘導標と解説板"
+    },
+    {
+      "poi_id": "SNT_1_P0021",
+      "route_id": "SNT_1",
+      "name": "26 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0022",
+      "route_id": "SNT_1",
+      "name": "27 解説板"
+    },
+    {
+      "poi_id": "SNT_1_P0023",
+      "route_id": "SNT_1",
+      "name": "28 解説板　鼻掛け"
+    },
+    {
+      "poi_id": "SNT_1_P0024",
+      "route_id": "SNT_1",
+      "name": "33 茶道休憩地"
+    },
+    {
+      "poi_id": "SNT_1_P0025",
+      "route_id": "SNT_1",
+      "name": "34 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0026",
+      "route_id": "SNT_1",
+      "name": "35 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0027",
+      "route_id": "SNT_1",
+      "name": "36 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0028",
+      "route_id": "SNT_1",
+      "name": "38 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0029",
+      "route_id": "SNT_1",
+      "name": "39 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0030",
+      "route_id": "SNT_1",
+      "name": "40 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0031",
+      "route_id": "SNT_1",
+      "name": "41 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0032",
+      "route_id": "SNT_1",
+      "name": "42 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0033",
+      "route_id": "SNT_1",
+      "name": "43 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0034",
+      "route_id": "SNT_1",
+      "name": "44 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0035",
+      "route_id": "SNT_1",
+      "name": "45 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0036",
+      "route_id": "SNT_1",
+      "name": "46 指導標"
+    },
+    {
+      "poi_id": "SNT_1_P0037",
+      "route_id": "SNT_1",
+      "name": "47 誘導標"
+    },
+    {
+      "poi_id": "SNT_1_P0038",
+      "route_id": "SNT_1",
+      "name": "48 路傍サイン"
+    },
+    {
+      "poi_id": "SNT_1_P0039",
+      "route_id": "SNT_1",
+      "name": "清水大師(大師水)"
+    },
+    {
+      "poi_id": "SNT_1_P0040",
+      "route_id": "SNT_1",
+      "name": "03 誘導標位置"
+    },
+    {
+      "poi_id": "SNT_1_P0041",
+      "route_id": "SNT_1",
+      "name": "06 標識位置"
+    },
+    {
+      "poi_id": "SNT_119_P0001",
+      "route_id": "SNT_119",
+      "name": "01 務田駅"
+    },
+    {
+      "poi_id": "SNT_119_P0002",
+      "route_id": "SNT_119",
+      "name": "02 誘導標"
+    },
+    {
+      "poi_id": "SNT_119_P0003",
+      "route_id": "SNT_119",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0004",
+      "route_id": "SNT_119",
+      "name": "05 遍路標識"
+    },
+    {
+      "poi_id": "SNT_119_P0005",
+      "route_id": "SNT_119",
+      "name": "06 路傍サイン"
+    },
+    {
+      "poi_id": "SNT_119_P0006",
+      "route_id": "SNT_119",
+      "name": "07 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0007",
+      "route_id": "SNT_119",
+      "name": "08 案内標識、指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0008",
+      "route_id": "SNT_119",
+      "name": "四国霊場第41番札所 龍光寺"
+    },
+    {
+      "poi_id": "SNT_119_P0009",
+      "route_id": "SNT_119",
+      "name": "10 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0010",
+      "route_id": "SNT_119",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0011",
+      "route_id": "SNT_119",
+      "name": "12 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0012",
+      "route_id": "SNT_119",
+      "name": "14 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0013",
+      "route_id": "SNT_119",
+      "name": "15 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0014",
+      "route_id": "SNT_119",
+      "name": "16 誘導標"
+    },
+    {
+      "poi_id": "SNT_119_P0015",
+      "route_id": "SNT_119",
+      "name": "17 路傍サイン"
+    },
+    {
+      "poi_id": "SNT_119_P0016",
+      "route_id": "SNT_119",
+      "name": "21 ベンチ、誘導標、解説版"
+    },
+    {
+      "poi_id": "SNT_119_P0017",
+      "route_id": "SNT_119",
+      "name": "22 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0018",
+      "route_id": "SNT_119",
+      "name": "23 展望台、ベンチ"
+    },
+    {
+      "poi_id": "SNT_119_P0019",
+      "route_id": "SNT_119",
+      "name": "24 指導標、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_119_P0020",
+      "route_id": "SNT_119",
+      "name": "25 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0021",
+      "route_id": "SNT_119",
+      "name": "26 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0022",
+      "route_id": "SNT_119",
+      "name": "27 誘導標"
+    },
+    {
+      "poi_id": "SNT_119_P0023",
+      "route_id": "SNT_119",
+      "name": "28 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0024",
+      "route_id": "SNT_119",
+      "name": "29 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0025",
+      "route_id": "SNT_119",
+      "name": "30 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0026",
+      "route_id": "SNT_119",
+      "name": "31 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0027",
+      "route_id": "SNT_119",
+      "name": "32 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0028",
+      "route_id": "SNT_119",
+      "name": "33 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0029",
+      "route_id": "SNT_119",
+      "name": "34 佛木寺、路傍サイン、解説版"
+    },
+    {
+      "poi_id": "SNT_119_P0030",
+      "route_id": "SNT_119",
+      "name": "35 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0031",
+      "route_id": "SNT_119",
+      "name": "36 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0032",
+      "route_id": "SNT_119",
+      "name": "37 誘導標"
+    },
+    {
+      "poi_id": "SNT_119_P0033",
+      "route_id": "SNT_119",
+      "name": "39 指導標、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_119_P0034",
+      "route_id": "SNT_119",
+      "name": "40 路肩注意"
+    },
+    {
+      "poi_id": "SNT_119_P0035",
+      "route_id": "SNT_119",
+      "name": "43 指導標"
+    },
+    {
+      "poi_id": "SNT_119_P0036",
+      "route_id": "SNT_119",
+      "name": "44 歯長峠休憩所"
+    },
+    {
+      "poi_id": "SNT_119_P0037",
+      "route_id": "SNT_119",
+      "name": "45 終点　案内看板"
+    },
+    {
+      "poi_id": "SNT_119_P0038",
+      "route_id": "SNT_119",
+      "name": "中山池自然公園"
+    },
+    {
+      "poi_id": "SNT_119_P0040",
+      "route_id": "SNT_119",
+      "name": "38 指導標"
+    },
+    {
+      "poi_id": "SNT_5511_P0003",
+      "route_id": "SNT_5511",
+      "name": "法華津峠展望台"
+    },
+    {
+      "poi_id": "SNT_137_P0001",
+      "route_id": "SNT_137",
+      "name": "四国霊場第４３番札所 明石寺"
+    },
+    {
+      "poi_id": "SNT_137_P0003",
+      "route_id": "SNT_137",
+      "name": "宇和米博物館"
+    },
+    {
+      "poi_id": "SNT_137_P0005",
+      "route_id": "SNT_137",
+      "name": "高野長英の隠家"
+    },
+    {
+      "poi_id": "SNT_137_P0008",
+      "route_id": "SNT_137",
+      "name": "01 案内標識、指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0009",
+      "route_id": "SNT_137",
+      "name": "02 歯長峠トンネル休憩地"
+    },
+    {
+      "poi_id": "SNT_137_P0010",
+      "route_id": "SNT_137",
+      "name": "03 ベンチ、路傍サイン、指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0011",
+      "route_id": "SNT_137",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0012",
+      "route_id": "SNT_137",
+      "name": "05 歯長橋休憩地"
+    },
+    {
+      "poi_id": "SNT_137_P0013",
+      "route_id": "SNT_137",
+      "name": "06 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0014",
+      "route_id": "SNT_137",
+      "name": "07 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0015",
+      "route_id": "SNT_137",
+      "name": "08 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0016",
+      "route_id": "SNT_137",
+      "name": "09 指導標、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_137_P0017",
+      "route_id": "SNT_137",
+      "name": "10 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0018",
+      "route_id": "SNT_137",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0019",
+      "route_id": "SNT_137",
+      "name": "12 指導標、ベンチ"
+    },
+    {
+      "poi_id": "SNT_137_P0020",
+      "route_id": "SNT_137",
+      "name": "13 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0021",
+      "route_id": "SNT_137",
+      "name": "14 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0022",
+      "route_id": "SNT_137",
+      "name": "15 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0023",
+      "route_id": "SNT_137",
+      "name": "16 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0024",
+      "route_id": "SNT_137",
+      "name": "17 誘導標、解説版、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_137_P0025",
+      "route_id": "SNT_137",
+      "name": "18 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0026",
+      "route_id": "SNT_137",
+      "name": "19 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0027",
+      "route_id": "SNT_137",
+      "name": "20 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0028",
+      "route_id": "SNT_137",
+      "name": "21 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0029",
+      "route_id": "SNT_137",
+      "name": "22 指導標、解説版、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_137_P0030",
+      "route_id": "SNT_137",
+      "name": "23 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0031",
+      "route_id": "SNT_137",
+      "name": "24 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0032",
+      "route_id": "SNT_137",
+      "name": "25 銘板、風景"
+    },
+    {
+      "poi_id": "SNT_137_P0033",
+      "route_id": "SNT_137",
+      "name": "26 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0034",
+      "route_id": "SNT_137",
+      "name": "27 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0035",
+      "route_id": "SNT_137",
+      "name": "28 誘導標"
+    },
+    {
+      "poi_id": "SNT_137_P0036",
+      "route_id": "SNT_137",
+      "name": "29 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0037",
+      "route_id": "SNT_137",
+      "name": "30 指導標、路傍サイン"
+    },
+    {
+      "poi_id": "SNT_137_P0038",
+      "route_id": "SNT_137",
+      "name": "31 指導標"
+    },
+    {
+      "poi_id": "SNT_137_P0039",
+      "route_id": "SNT_137",
+      "name": "32 案内標識、指導標"
+    },
+    {
+      "poi_id": "SNT_3840_P0001",
+      "route_id": "SNT_3840",
+      "name": "上宇和駅（きてん　かみうわえき）"
+    },
+    {
+      "poi_id": "SNT_3840_P0007",
+      "route_id": "SNT_3840",
+      "name": "日天社（にちてんしゃ）"
+    },
+    {
+      "poi_id": "SNT_2674_P0001",
+      "route_id": "SNT_2674",
+      "name": "少彦名温泉　大洲「臥龍の湯」"
+    },
+    {
+      "poi_id": "SNT_2674_P0002",
+      "route_id": "SNT_2674",
+      "name": "肱川休憩所[案内板]"
+    },
+    {
+      "poi_id": "SNT_2674_P0003",
+      "route_id": "SNT_2674",
+      "name": "臥龍山荘"
+    },
+    {
+      "poi_id": "SNT_2674_P0004",
+      "route_id": "SNT_2674",
+      "name": "大洲城"
+    },
+    {
+      "poi_id": "SNT_2674_P0005",
+      "route_id": "SNT_2674",
+      "name": "十夜ヶ橋"
+    },
+    {
+      "poi_id": "SNT_2674_P0006",
+      "route_id": "SNT_2674",
+      "name": "矢落川と松山自動車道"
+    },
+    {
+      "poi_id": "SNT_2674_P0007",
+      "route_id": "SNT_2674",
+      "name": "新谷"
+    },
+    {
+      "poi_id": "SNT_2678_P0001",
+      "route_id": "SNT_2678",
+      "name": "内子運動公園"
+    },
+    {
+      "poi_id": "SNT_2678_P0002",
+      "route_id": "SNT_2678",
+      "name": "内子座"
+    },
+    {
+      "poi_id": "SNT_2678_P0003",
+      "route_id": "SNT_2678",
+      "name": "八日市護国伝統的建造物群保存地区"
+    },
+    {
+      "poi_id": "SNT_2678_P0004",
+      "route_id": "SNT_2678",
+      "name": "八日市町並[木蝋記念館]"
+    },
+    {
+      "poi_id": "SNT_2678_P0005",
+      "route_id": "SNT_2678",
+      "name": "木蝋記念館　上芳我邸"
+    },
+    {
+      "poi_id": "SNT_2678_P0006",
+      "route_id": "SNT_2678",
+      "name": "松山自動車道を望む"
+    },
+    {
+      "poi_id": "SNT_2678_P0007",
+      "route_id": "SNT_2678",
+      "name": "旧へんろ道　水戸森峠"
+    },
+    {
+      "poi_id": "SNT_2678_P0008",
+      "route_id": "SNT_2678",
+      "name": "四季の詩公園"
+    },
+    {
+      "poi_id": "SNT_4800_P0001",
+      "route_id": "SNT_4800",
+      "name": "宮成（案内板）"
+    },
+    {
+      "poi_id": "SNT_4800_P0003",
+      "route_id": "SNT_4800",
+      "name": "鴇田峠休憩地"
+    },
+    {
+      "poi_id": "SNT_4800_P0008",
+      "route_id": "SNT_4800",
+      "name": "河合休憩地"
+    },
+    {
+      "poi_id": "SNT_3845_P0007",
+      "route_id": "SNT_3845",
+      "name": "逼割禅定"
+    },
+    {
+      "poi_id": "SNT_3849_P0008",
+      "route_id": "SNT_3849",
+      "name": "仰西バス停"
+    },
+    {
+      "poi_id": "SNT_2953_P0001",
+      "route_id": "SNT_2953",
+      "name": "網掛け石[解説板]"
+    },
+    {
+      "poi_id": "SNT_2953_P0002",
+      "route_id": "SNT_2953",
+      "name": "終点"
+    },
+    {
+      "poi_id": "SNT_2953_P0003",
+      "route_id": "SNT_2953",
+      "name": "三坂峠からの眺め"
+    },
+    {
+      "poi_id": "SNT_2953_P0004",
+      "route_id": "SNT_2953",
+      "name": "久万街道"
+    },
+    {
+      "poi_id": "SNT_2953_P0005",
+      "route_id": "SNT_2953",
+      "name": "桜休憩地（一ノ王子社跡休憩所）"
+    },
+    {
+      "poi_id": "SNT_2953_P0006",
+      "route_id": "SNT_2953",
+      "name": "杉林のトンネル"
+    },
+    {
+      "poi_id": "SNT_2953_P0007",
+      "route_id": "SNT_2953",
+      "name": "旧遍路宿　坂本屋"
+    },
+    {
+      "poi_id": "SNT_2953_P0008",
+      "route_id": "SNT_2953",
+      "name": "網掛け石"
+    },
+    {
+      "poi_id": "SNT_2953_P0009",
+      "route_id": "SNT_2953",
+      "name": "第46番札所浄瑠璃寺"
+    },
+    {
+      "poi_id": "SNT_2953_P0010",
+      "route_id": "SNT_2953",
+      "name": "第47番札所八坂寺"
+    },
+    {
+      "poi_id": "SNT_2953_P0011",
+      "route_id": "SNT_2953",
+      "name": "起点"
+    },
+    {
+      "poi_id": "SNT_4805_P0001",
+      "route_id": "SNT_4805",
+      "name": "第51番札所石手寺"
+    },
+    {
+      "poi_id": "SNT_4805_P0005",
+      "route_id": "SNT_4805",
+      "name": "菅沢（五明小学校）"
+    },
+    {
+      "poi_id": "SNT_3852_P0001",
+      "route_id": "SNT_3852",
+      "name": "木地"
+    },
+    {
+      "poi_id": "SNT_3852_P0009",
+      "route_id": "SNT_3852",
+      "name": "下木地"
+    },
+    {
+      "poi_id": "SNT_2682_P0001",
+      "route_id": "SNT_2682",
+      "name": "鈍川渓谷"
+    },
+    {
+      "poi_id": "SNT_2682_P0002",
+      "route_id": "SNT_2682",
+      "name": "鈍川温泉"
+    },
+    {
+      "poi_id": "SNT_2682_P0003",
+      "route_id": "SNT_2682",
+      "name": "鈍川せせらぎ交流館"
+    },
+    {
+      "poi_id": "SNT_2682_P0005",
+      "route_id": "SNT_2682",
+      "name": "県道163号線とお別れ"
+    },
+    {
+      "poi_id": "SNT_2682_P0006",
+      "route_id": "SNT_2682",
+      "name": "蒼社川とお別れ"
+    },
+    {
+      "poi_id": "SNT_2682_P0007",
+      "route_id": "SNT_2682",
+      "name": "窓の峠"
+    },
+    {
+      "poi_id": "SNT_2682_P0008",
+      "route_id": "SNT_2682",
+      "name": "第57番栄福寺"
+    },
+    {
+      "poi_id": "SNT_1934_P0009",
+      "route_id": "SNT_1934",
+      "name": "唐子浜"
+    },
+    {
+      "poi_id": "SNT_1966_P0006",
+      "route_id": "SNT_1966",
+      "name": "休暇村瀬戸内東予"
+    },
+    {
+      "poi_id": "SNT_2957_P0001",
+      "route_id": "SNT_2957",
+      "name": "横峰寺（山門）"
+    },
+    {
+      "poi_id": "SNT_2957_P0002",
+      "route_id": "SNT_2957",
+      "name": "大頭交差点"
+    },
+    {
+      "poi_id": "SNT_2957_P0003",
+      "route_id": "SNT_2957",
+      "name": "石土神社高灯篭"
+    },
+    {
+      "poi_id": "SNT_2957_P0004",
+      "route_id": "SNT_2957",
+      "name": "湯浪休憩地"
+    },
+    {
+      "poi_id": "SNT_2957_P0005",
+      "route_id": "SNT_2957",
+      "name": "国史跡伊予遍路道横峰寺道"
+    },
+    {
+      "poi_id": "SNT_2957_P0006",
+      "route_id": "SNT_2957",
+      "name": "妙谷川"
+    },
+    {
+      "poi_id": "SNT_2957_P0007",
+      "route_id": "SNT_2957",
+      "name": "四国一番の難所"
+    },
+    {
+      "poi_id": "SNT_2957_P0008",
+      "route_id": "SNT_2957",
+      "name": "古坊休憩地"
+    },
+    {
+      "poi_id": "SNT_2957_P0009",
+      "route_id": "SNT_2957",
+      "name": "第60番札所横峰寺"
+    },
+    {
+      "poi_id": "SNT_2960_P0001",
+      "route_id": "SNT_2960",
+      "name": "香園寺奥の院休憩所（東屋）"
+    },
+    {
+      "poi_id": "SNT_2960_P0002",
+      "route_id": "SNT_2960",
+      "name": "林道との分岐点"
+    },
+    {
+      "poi_id": "SNT_2960_P0003",
+      "route_id": "SNT_2960",
+      "name": "尾根沿いの道"
+    },
+    {
+      "poi_id": "SNT_2960_P0006",
+      "route_id": "SNT_2960",
+      "name": "香園寺奥の院"
+    },
+    {
+      "poi_id": "SNT_2960_P0007",
+      "route_id": "SNT_2960",
+      "name": "大谷池"
+    },
+    {
+      "poi_id": "SNT_2960_P0008",
+      "route_id": "SNT_2960",
+      "name": "第61番札所香園寺"
+    },
+    {
+      "poi_id": "SNT_2960_P0009",
+      "route_id": "SNT_2960",
+      "name": "第62番札所宝寿寺"
+    },
+    {
+      "poi_id": "SNT_1894_P0001",
+      "route_id": "SNT_1894",
+      "name": "01_近藤篤山旧邸（こんどうとくざんきゅうてい）"
+    },
+    {
+      "poi_id": "SNT_1894_P0002",
+      "route_id": "SNT_1894",
+      "name": "02_第63番吉祥寺（きちじょうじ）"
+    },
+    {
+      "poi_id": "SNT_1894_P0003",
+      "route_id": "SNT_1894",
+      "name": "03_石鎚神社大鳥居（いしづちじんじゃおおとりい）"
+    },
+    {
+      "poi_id": "SNT_1894_P0004",
+      "route_id": "SNT_1894",
+      "name": "04_石鎚神社（いしづちじんじゃ）"
+    },
+    {
+      "poi_id": "SNT_1894_P0005",
+      "route_id": "SNT_1894",
+      "name": "05_第64番前神寺（まえがみじ）"
+    },
+    {
+      "poi_id": "SNT_1894_P0006",
+      "route_id": "SNT_1894",
+      "name": "06_西条休憩所（さいじょうきゅうけいしょ）"
+    },
+    {
+      "poi_id": "SNT_1894_P0007",
+      "route_id": "SNT_1894",
+      "name": "07_湯之谷温泉（ゆのたにおんせん）"
+    },
+    {
+      "poi_id": "SNT_1894_P0008",
+      "route_id": "SNT_1894",
+      "name": "08_土居構跡（どいがまえあと）"
+    },
+    {
+      "poi_id": "SNT_1894_P0009",
+      "route_id": "SNT_1894",
+      "name": "09_伊曽乃神社（いそのじんじゃ）"
+    },
+    {
+      "poi_id": "SNT_1894_P0010",
+      "route_id": "SNT_1894",
+      "name": "10_伊曽の橋（いそのはし）"
+    },
+    {
+      "poi_id": "SNT_2685_P0001",
+      "route_id": "SNT_2685",
+      "name": "伊曽の橋"
+    },
+    {
+      "poi_id": "SNT_2685_P0002",
+      "route_id": "SNT_2685",
+      "name": "武丈公園"
+    },
+    {
+      "poi_id": "SNT_2685_P0003",
+      "route_id": "SNT_2685",
+      "name": "竹林"
+    },
+    {
+      "poi_id": "SNT_2685_P0004",
+      "route_id": "SNT_2685",
+      "name": "地蔵原地蔵庵"
+    },
+    {
+      "poi_id": "SNT_2685_P0005",
+      "route_id": "SNT_2685",
+      "name": "王至森寺"
+    },
+    {
+      "poi_id": "SNT_2685_P0006",
+      "route_id": "SNT_2685",
+      "name": "秋都庵"
+    },
+    {
+      "poi_id": "SNT_2964_P0002",
+      "route_id": "SNT_2964",
+      "name": "千足神社"
+    },
+    {
+      "poi_id": "SNT_2964_P0003",
+      "route_id": "SNT_2964",
+      "name": "三度栗大師"
+    },
+    {
+      "poi_id": "SNT_2964_P0004",
+      "route_id": "SNT_2964",
+      "name": "国道11号"
+    },
+    {
+      "poi_id": "SNT_2964_P0005",
+      "route_id": "SNT_2964",
+      "name": "延命寺"
+    },
+    {
+      "poi_id": "SNT_2964_P0006",
+      "route_id": "SNT_2964",
+      "name": "近藤篤山の生家跡"
+    },
+    {
+      "poi_id": "SNT_2964_P0007",
+      "route_id": "SNT_2964",
+      "name": "村山神社"
+    },
+    {
+      "poi_id": "SNT_2964_P0008",
+      "route_id": "SNT_2964",
+      "name": "平八幡神社"
+    },
+    {
+      "poi_id": "SNT_2964_P0010",
+      "route_id": "SNT_2964",
+      "name": "延命寺休憩所"
+    },
+    {
+      "poi_id": "SNT_3857_P0001",
+      "route_id": "SNT_3857",
+      "name": "起点　豊田（とよた）"
+    },
+    {
+      "poi_id": "SNT_3857_P0002",
+      "route_id": "SNT_3857",
+      "name": "実相寺（じっそうじ）"
+    },
+    {
+      "poi_id": "SNT_3857_P0003",
+      "route_id": "SNT_3857",
+      "name": "新長谷寺（しんはせでら）"
+    },
+    {
+      "poi_id": "SNT_3857_P0006",
+      "route_id": "SNT_3857",
+      "name": "荒神の森（こうじんのもり）"
+    },
+    {
+      "poi_id": "SNT_3857_P0007",
+      "route_id": "SNT_3857",
+      "name": "光明寺（山田薬師堂）（こうみょうじ（やまだやくしどう））"
+    },
+    {
+      "poi_id": "SNT_3857_P0008",
+      "route_id": "SNT_3857",
+      "name": "三島公園（みしまこうえん）"
+    },
+    {
+      "poi_id": "SNT_3857_P0009",
+      "route_id": "SNT_3857",
+      "name": "戸川（疎水）公園（とがわそすいこうえん）"
+    },
+    {
+      "poi_id": "SNT_3857_P0010",
+      "route_id": "SNT_3857",
+      "name": "第65番札所三角寺（さんかくじ）"
+    },
+    {
+      "poi_id": "SNT_4808_P0001",
+      "route_id": "SNT_4808",
+      "name": "第65番札所三角寺"
+    },
+    {
+      "poi_id": "SNT_4808_P0005",
+      "route_id": "SNT_4808",
+      "name": "国道192号線"
+    },
+    {
+      "poi_id": "SNT_1183_P0001",
+      "route_id": "SNT_1183",
+      "name": "01 起点（案内標識、指導標）"
+    },
+    {
+      "poi_id": "SNT_1183_P0002",
+      "route_id": "SNT_1183",
+      "name": "02 金生川"
+    },
+    {
+      "poi_id": "SNT_1183_P0003",
+      "route_id": "SNT_1183",
+      "name": "03 サイン・誘導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0004",
+      "route_id": "SNT_1183",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0005",
+      "route_id": "SNT_1183",
+      "name": "05 誘導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0006",
+      "route_id": "SNT_1183",
+      "name": "06 誘導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0007",
+      "route_id": "SNT_1183",
+      "name": "07 風景"
+    },
+    {
+      "poi_id": "SNT_1183_P0008",
+      "route_id": "SNT_1183",
+      "name": "08 誘導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0009",
+      "route_id": "SNT_1183",
+      "name": "09 誘導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0010",
+      "route_id": "SNT_1183",
+      "name": "10 指導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0011",
+      "route_id": "SNT_1183",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0012",
+      "route_id": "SNT_1183",
+      "name": "12 指導標"
+    },
+    {
+      "poi_id": "SNT_1183_P0013",
+      "route_id": "SNT_1183",
+      "name": "13 終点"
+    },
+    {
+      "poi_id": "SNT_1183_P0014",
+      "route_id": "SNT_1183",
+      "name": "14 ３県境"
+    },
+    {
+      "poi_id": "SNT_4811_P0006",
+      "route_id": "SNT_4811",
+      "name": "惣津山"
+    },
+    {
+      "poi_id": "SNT_4813_P0001",
+      "route_id": "SNT_4813",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_4813_P0007",
+      "route_id": "SNT_4813",
+      "name": "旧美川スキー場休憩地"
+    },
+    {
+      "poi_id": "SNT_1973_P0005",
+      "route_id": "SNT_1973",
+      "name": "小田スキー場分岐（おだすきーじょうぶんき）"
+    },
+    {
+      "poi_id": "SNT_951_P0001",
+      "route_id": "SNT_951",
+      "name": "13 サイン・標識"
+    },
+    {
+      "poi_id": "SNT_951_P0002",
+      "route_id": "SNT_951",
+      "name": "14 指導標"
+    },
+    {
+      "poi_id": "SNT_951_P0003",
+      "route_id": "SNT_951",
+      "name": "15 風景"
+    },
+    {
+      "poi_id": "SNT_951_P0004",
+      "route_id": "SNT_951",
+      "name": "16 誘導標"
+    },
+    {
+      "poi_id": "SNT_951_P0005",
+      "route_id": "SNT_951",
+      "name": "17 指導標"
+    },
+    {
+      "poi_id": "SNT_951_P0006",
+      "route_id": "SNT_951",
+      "name": "18 誘導標"
+    },
+    {
+      "poi_id": "SNT_951_P0007",
+      "route_id": "SNT_951",
+      "name": "19 指導標"
+    },
+    {
+      "poi_id": "SNT_951_P0008",
+      "route_id": "SNT_951",
+      "name": "20 誘導標"
+    },
+    {
+      "poi_id": "SNT_951_P0009",
+      "route_id": "SNT_951",
+      "name": "21 ポニー牧場・源氏が駄馬・風景"
+    },
+    {
+      "poi_id": "SNT_951_P0010",
+      "route_id": "SNT_951",
+      "name": "22 誘導標"
+    },
+    {
+      "poi_id": "SNT_951_P0011",
+      "route_id": "SNT_951",
+      "name": "23 風景・大野ヶ原"
+    },
+    {
+      "poi_id": "SNT_951_P0012",
+      "route_id": "SNT_951",
+      "name": "24 指導標"
+    },
+    {
+      "poi_id": "SNT_951_P0013",
+      "route_id": "SNT_951",
+      "name": "25 休憩所"
+    },
+    {
+      "poi_id": "SNT_949_P0001",
+      "route_id": "SNT_949",
+      "name": "01 風景　牛"
+    },
+    {
+      "poi_id": "SNT_949_P0002",
+      "route_id": "SNT_949",
+      "name": "02 風景"
+    },
+    {
+      "poi_id": "SNT_949_P0003",
+      "route_id": "SNT_949",
+      "name": "03 指導標・看板"
+    },
+    {
+      "poi_id": "SNT_949_P0004",
+      "route_id": "SNT_949",
+      "name": "04 風景"
+    },
+    {
+      "poi_id": "SNT_949_P0005",
+      "route_id": "SNT_949",
+      "name": "05 案内看板・トイレ"
+    },
+    {
+      "poi_id": "SNT_949_P0006",
+      "route_id": "SNT_949",
+      "name": "06 ブナ"
+    },
+    {
+      "poi_id": "SNT_949_P0007",
+      "route_id": "SNT_949",
+      "name": "07 大トチの木"
+    },
+    {
+      "poi_id": "SNT_949_P0008",
+      "route_id": "SNT_949",
+      "name": "08 風景"
+    },
+    {
+      "poi_id": "SNT_949_P0009",
+      "route_id": "SNT_949",
+      "name": "09 姫鶴荘・キャンプ場"
+    },
+    {
+      "poi_id": "SNT_949_P0010",
+      "route_id": "SNT_949",
+      "name": "10 誘導標"
+    },
+    {
+      "poi_id": "SNT_949_P0011",
+      "route_id": "SNT_949",
+      "name": "11 解説版と標識"
+    },
+    {
+      "poi_id": "SNT_949_P0012",
+      "route_id": "SNT_949",
+      "name": "12 誘導標"
+    },
+    {
+      "poi_id": "SNT_949_P0013",
+      "route_id": "SNT_949",
+      "name": "13 サイン・標識"
+    },
+    {
+      "poi_id": "SNT_2403_P0004",
+      "route_id": "SNT_2403",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_4815_P0004",
+      "route_id": "SNT_4815",
+      "name": "地藏峠"
+    },
+    {
+      "poi_id": "SNT_4817_P0001",
+      "route_id": "SNT_4817",
+      "name": "加奈木の崩え"
+    },
+    {
+      "poi_id": "SNT_4817_P0002",
+      "route_id": "SNT_4817",
+      "name": "装束峠"
+    },
+    {
+      "poi_id": "SNT_4817_P0003",
+      "route_id": "SNT_4817",
+      "name": "熊笹峠"
+    },
+    {
+      "poi_id": "SNT_2380_P0002",
+      "route_id": "SNT_2380",
+      "name": "神峯寺"
+    },
+    {
+      "poi_id": "SNT_2380_P0004",
+      "route_id": "SNT_2380",
+      "name": "燈明岩"
+    },
+    {
+      "poi_id": "SNT_2428_P0004",
+      "route_id": "SNT_2428",
+      "name": "安芸広域公園及び内原野陶芸館"
+    },
+    {
+      "poi_id": "SNT_2428_P0008",
+      "route_id": "SNT_2428",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_2428_P0009",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0010",
+      "route_id": "SNT_2428",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2428_P0011",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0012",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0013",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0014",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0015",
+      "route_id": "SNT_2428",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2428_P0016",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0017",
+      "route_id": "SNT_2428",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2428_P0018",
+      "route_id": "SNT_2428",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_337_P0001",
+      "route_id": "SNT_337",
+      "name": "01 案内板、指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0002",
+      "route_id": "SNT_337",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0003",
+      "route_id": "SNT_337",
+      "name": "03 カリヨン広場"
+    },
+    {
+      "poi_id": "SNT_337_P0004",
+      "route_id": "SNT_337",
+      "name": "04 路面表示"
+    },
+    {
+      "poi_id": "SNT_337_P0005",
+      "route_id": "SNT_337",
+      "name": "05 路面表示"
+    },
+    {
+      "poi_id": "SNT_337_P0006",
+      "route_id": "SNT_337",
+      "name": "06 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0007",
+      "route_id": "SNT_337",
+      "name": "07 休憩所"
+    },
+    {
+      "poi_id": "SNT_337_P0008",
+      "route_id": "SNT_337",
+      "name": "08 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0009",
+      "route_id": "SNT_337",
+      "name": "09 補助指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0010",
+      "route_id": "SNT_337",
+      "name": "10 赤野休憩所"
+    },
+    {
+      "poi_id": "SNT_337_P0011",
+      "route_id": "SNT_337",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0012",
+      "route_id": "SNT_337",
+      "name": "12 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0013",
+      "route_id": "SNT_337",
+      "name": "13 展望台"
+    },
+    {
+      "poi_id": "SNT_337_P0014",
+      "route_id": "SNT_337",
+      "name": "15 補助指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0015",
+      "route_id": "SNT_337",
+      "name": "16 琴ヶ浜自転車道"
+    },
+    {
+      "poi_id": "SNT_337_P0016",
+      "route_id": "SNT_337",
+      "name": "17 指導標"
+    },
+    {
+      "poi_id": "SNT_337_P0017",
+      "route_id": "SNT_337",
+      "name": "14 琴ヶ浜休憩所"
+    },
+    {
+      "poi_id": "SNT_369_P0001",
+      "route_id": "SNT_369",
+      "name": "01 案内板"
+    },
+    {
+      "poi_id": "SNT_369_P0002",
+      "route_id": "SNT_369",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0003",
+      "route_id": "SNT_369",
+      "name": "03 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0004",
+      "route_id": "SNT_369",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0005",
+      "route_id": "SNT_369",
+      "name": "05 サイクリングターミナル"
+    },
+    {
+      "poi_id": "SNT_369_P0006",
+      "route_id": "SNT_369",
+      "name": "06 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0007",
+      "route_id": "SNT_369",
+      "name": "07 塩谷海岸"
+    },
+    {
+      "poi_id": "SNT_369_P0008",
+      "route_id": "SNT_369",
+      "name": "08 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0009",
+      "route_id": "SNT_369",
+      "name": "09 夫婦岩"
+    },
+    {
+      "poi_id": "SNT_369_P0010",
+      "route_id": "SNT_369",
+      "name": "10 手結岬灯台"
+    },
+    {
+      "poi_id": "SNT_369_P0011",
+      "route_id": "SNT_369",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0012",
+      "route_id": "SNT_369",
+      "name": "12 仏岬　石柱・地名板"
+    },
+    {
+      "poi_id": "SNT_369_P0013",
+      "route_id": "SNT_369",
+      "name": "13 休憩所"
+    },
+    {
+      "poi_id": "SNT_369_P0014",
+      "route_id": "SNT_369",
+      "name": "14 手結港解説版"
+    },
+    {
+      "poi_id": "SNT_369_P0015",
+      "route_id": "SNT_369",
+      "name": "15 夜須トイレ付近"
+    },
+    {
+      "poi_id": "SNT_369_P0016",
+      "route_id": "SNT_369",
+      "name": "16 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0017",
+      "route_id": "SNT_369",
+      "name": "17 補助指導標、路面標示"
+    },
+    {
+      "poi_id": "SNT_369_P0018",
+      "route_id": "SNT_369",
+      "name": "18 指導標"
+    },
+    {
+      "poi_id": "SNT_369_P0019",
+      "route_id": "SNT_369",
+      "name": "19 道の駅やす"
+    },
+    {
+      "poi_id": "SNT_369_P0020",
+      "route_id": "SNT_369",
+      "name": "20 住吉神社"
+    },
+    {
+      "poi_id": "SNT_374_P0001",
+      "route_id": "SNT_374",
+      "name": "01 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0002",
+      "route_id": "SNT_374",
+      "name": "02 展望台"
+    },
+    {
+      "poi_id": "SNT_374_P0003",
+      "route_id": "SNT_374",
+      "name": "03 すべり山展望台"
+    },
+    {
+      "poi_id": "SNT_374_P0004",
+      "route_id": "SNT_374",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0005",
+      "route_id": "SNT_374",
+      "name": "05 補助指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0006",
+      "route_id": "SNT_374",
+      "name": "06 補助指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0007",
+      "route_id": "SNT_374",
+      "name": "07 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0008",
+      "route_id": "SNT_374",
+      "name": "08 補助指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0009",
+      "route_id": "SNT_374",
+      "name": "09 花散里休憩所"
+    },
+    {
+      "poi_id": "SNT_374_P0010",
+      "route_id": "SNT_374",
+      "name": "10 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0011",
+      "route_id": "SNT_374",
+      "name": "11 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0012",
+      "route_id": "SNT_374",
+      "name": "12 若一王子宮"
+    },
+    {
+      "poi_id": "SNT_374_P0013",
+      "route_id": "SNT_374",
+      "name": "13 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0014",
+      "route_id": "SNT_374",
+      "name": "14 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0015",
+      "route_id": "SNT_374",
+      "name": "15 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0016",
+      "route_id": "SNT_374",
+      "name": "16 解説板"
+    },
+    {
+      "poi_id": "SNT_374_P0017",
+      "route_id": "SNT_374",
+      "name": "17 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0018",
+      "route_id": "SNT_374",
+      "name": "18 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0019",
+      "route_id": "SNT_374",
+      "name": "19 指導標"
+    },
+    {
+      "poi_id": "SNT_374_P0020",
+      "route_id": "SNT_374",
+      "name": "20 香南市役所"
+    },
+    {
+      "poi_id": "SNT_374_P0021",
+      "route_id": "SNT_374",
+      "name": "21 野市休憩所"
+    },
+    {
+      "poi_id": "SNT_374_P0022",
+      "route_id": "SNT_374",
+      "name": "22 香宗城跡"
+    },
+    {
+      "poi_id": "SNT_374_P0023",
+      "route_id": "SNT_374",
+      "name": "23 高知県立のいち動物公園"
+    },
+    {
+      "poi_id": "SNT_374_P0024",
+      "route_id": "SNT_374",
+      "name": "24 高知県立 月見山こどもの森"
+    },
+    {
+      "poi_id": "SNT_374_P0025",
+      "route_id": "SNT_374",
+      "name": "25 宝鏡寺跡"
+    },
+    {
+      "poi_id": "SNT_374_P0026",
+      "route_id": "SNT_374",
+      "name": "26 公衆トイレ、案内板"
+    },
+    {
+      "poi_id": "SNT_397_P0001",
+      "route_id": "SNT_397",
+      "name": "01 路傍サイン・案内板"
+    },
+    {
+      "poi_id": "SNT_397_P0002",
+      "route_id": "SNT_397",
+      "name": "02 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0003",
+      "route_id": "SNT_397",
+      "name": "03 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0004",
+      "route_id": "SNT_397",
+      "name": "04 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0005",
+      "route_id": "SNT_397",
+      "name": "05 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0006",
+      "route_id": "SNT_397",
+      "name": "06 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0007",
+      "route_id": "SNT_397",
+      "name": "07 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0008",
+      "route_id": "SNT_397",
+      "name": "08 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0009",
+      "route_id": "SNT_397",
+      "name": "09 影山（間口バス停）"
+    },
+    {
+      "poi_id": "SNT_397_P0010",
+      "route_id": "SNT_397",
+      "name": "10 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0011",
+      "route_id": "SNT_397",
+      "name": "11 補助指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0012",
+      "route_id": "SNT_397",
+      "name": "12 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0013",
+      "route_id": "SNT_397",
+      "name": "13 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0014",
+      "route_id": "SNT_397",
+      "name": "14 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0015",
+      "route_id": "SNT_397",
+      "name": "15 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0016",
+      "route_id": "SNT_397",
+      "name": "16 案内板"
+    },
+    {
+      "poi_id": "SNT_397_P0017",
+      "route_id": "SNT_397",
+      "name": "17 鏡野休憩所"
+    },
+    {
+      "poi_id": "SNT_397_P0018",
+      "route_id": "SNT_397",
+      "name": "18 補助指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0019",
+      "route_id": "SNT_397",
+      "name": "19 鏡野公園入口指導標・路傍サイン"
+    },
+    {
+      "poi_id": "SNT_397_P0020",
+      "route_id": "SNT_397",
+      "name": "20 指導標"
+    },
+    {
+      "poi_id": "SNT_397_P0021",
+      "route_id": "SNT_397",
+      "name": "21 四国霊場第28番札所 大日寺"
+    },
+    {
+      "poi_id": "SNT_397_P0022",
+      "route_id": "SNT_397",
+      "name": "22 鏡野公園"
+    },
+    {
+      "poi_id": "SNT_397_P0023",
+      "route_id": "SNT_397",
+      "name": "23 龍河洞"
+    },
+    {
+      "poi_id": "SNT_2494_P0006",
+      "route_id": "SNT_2494",
+      "name": "撮影スポット"
+    },
+    {
+      "poi_id": "SNT_2494_P0007",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0008",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0009",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0010",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0011",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0012",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0013",
+      "route_id": "SNT_2494",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2494_P0014",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0015",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0016",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0017",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0018",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0019",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0020",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0021",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0022",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0023",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0024",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0025",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0026",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0027",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0028",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0029",
+      "route_id": "SNT_2494",
+      "name": "石鎚神社"
+    },
+    {
+      "poi_id": "SNT_2494_P0030",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0031",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0032",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0033",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0034",
+      "route_id": "SNT_2494",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2494_P0035",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0036",
+      "route_id": "SNT_2494",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2494_P0037",
+      "route_id": "SNT_2494",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2499_P0009",
+      "route_id": "SNT_2499",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_2499_P0010",
+      "route_id": "SNT_2499",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2499_P0011",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0012",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0013",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0014",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0015",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0016",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0017",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0018",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0019",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0020",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0021",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0022",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0023",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0024",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0025",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0026",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0027",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0028",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0029",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0030",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0031",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0032",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0033",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0034",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0035",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0036",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0037",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0038",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0039",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0040",
+      "route_id": "SNT_2499",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2499_P0041",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0042",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0043",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0044",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0045",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0046",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0047",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0048",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0049",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0050",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0051",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0052",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0053",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0054",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0055",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0056",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2499_P0057",
+      "route_id": "SNT_2499",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0006",
+      "route_id": "SNT_2502",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_2502_P0007",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0008",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0009",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0010",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0011",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0012",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0013",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0014",
+      "route_id": "SNT_2502",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2502_P0015",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0016",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0017",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0018",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0019",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0020",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0021",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0022",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0023",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0024",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0025",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0026",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0027",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0028",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0029",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0030",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0031",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2502_P0032",
+      "route_id": "SNT_2502",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0007",
+      "route_id": "SNT_2576",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_2576_P0008",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0009",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0010",
+      "route_id": "SNT_2576",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2576_P0011",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0012",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0013",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0014",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0015",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0016",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0017",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0018",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0019",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0020",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0021",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0022",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0023",
+      "route_id": "SNT_2576",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2576_P0024",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0025",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0026",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0027",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0028",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0029",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0030",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0031",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0032",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0033",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0034",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0035",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0036",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0037",
+      "route_id": "SNT_2576",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2576_P0038",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2576_P0039",
+      "route_id": "SNT_2576",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2579_P0001",
+      "route_id": "SNT_2579",
+      "name": "双名島"
+    },
+    {
+      "poi_id": "SNT_2579_P0002",
+      "route_id": "SNT_2579",
+      "name": "02安和海岸"
+    },
+    {
+      "poi_id": "SNT_2579_P0004",
+      "route_id": "SNT_2579",
+      "name": "撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_2579_P0005",
+      "route_id": "SNT_2579",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2579_P0006",
+      "route_id": "SNT_2579",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2579_P0007",
+      "route_id": "SNT_2579",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2579_P0008",
+      "route_id": "SNT_2579",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2579_P0009",
+      "route_id": "SNT_2579",
+      "name": "案内板"
+    },
+    {
+      "poi_id": "SNT_2579_P0011",
+      "route_id": "SNT_2579",
+      "name": "03安和海岸"
+    },
+    {
+      "poi_id": "SNT_2582_P0001",
+      "route_id": "SNT_2582",
+      "name": "久礼の町並"
+    },
+    {
+      "poi_id": "SNT_2582_P0007",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0008",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0009",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0010",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0011",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0012",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0013",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0014",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0015",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0016",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0017",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0018",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_2582_P0019",
+      "route_id": "SNT_2582",
+      "name": "指導標"
+    },
+    {
+      "poi_id": "SNT_3815_P0001",
+      "route_id": "SNT_3815",
+      "name": "擂鉢轟の滝"
+    },
+    {
+      "poi_id": "SNT_3815_P0007",
+      "route_id": "SNT_3815",
+      "name": "鹿島ヶ浦"
+    },
+    {
+      "poi_id": "SNT_3825_P0005",
+      "route_id": "SNT_3825",
+      "name": "初崎休憩所"
+    },
+    {
+      "poi_id": "SNT_3828_P0001",
+      "route_id": "SNT_3828",
+      "name": "足摺宇和海国立公園大岐海岸」の石柱"
+    },
+    {
+      "poi_id": "SNT_5556_P0001",
+      "route_id": "SNT_5556",
+      "name": "01 天狗の鼻"
+    },
+    {
+      "poi_id": "SNT_5556_P0002",
+      "route_id": "SNT_5556",
+      "name": "02 金剛福寺"
+    },
+    {
+      "poi_id": "SNT_5556_P0003",
+      "route_id": "SNT_5556",
+      "name": "03 椿のトンネル"
+    },
+    {
+      "poi_id": "SNT_5556_P0004",
+      "route_id": "SNT_5556",
+      "name": "04 足摺岬展望台"
+    },
+    {
+      "poi_id": "SNT_5556_P0005",
+      "route_id": "SNT_5556",
+      "name": "05 足摺岬のビロウ群落"
+    },
+    {
+      "poi_id": "SNT_5562_P0001",
+      "route_id": "SNT_5562",
+      "name": "01 足摺岬灯台"
+    },
+    {
+      "poi_id": "SNT_5562_P0002",
+      "route_id": "SNT_5562",
+      "name": "02 足摺七不思議"
+    },
+    {
+      "poi_id": "SNT_5562_P0003",
+      "route_id": "SNT_5562",
+      "name": "03 白山洞門"
+    },
+    {
+      "poi_id": "SNT_5562_P0004",
+      "route_id": "SNT_5562",
+      "name": "04 松尾のアコウ"
+    },
+    {
+      "poi_id": "SNT_5562_P0005",
+      "route_id": "SNT_5562",
+      "name": "05 鵜ノ鼻岬展望台"
+    },
+    {
+      "poi_id": "SNT_5562_P0006",
+      "route_id": "SNT_5562",
+      "name": "06 臼碆"
+    },
+    {
+      "poi_id": "SNT_5567_P0001",
+      "route_id": "SNT_5567",
+      "name": "01 臼碆灯台"
+    },
+    {
+      "poi_id": "SNT_5567_P0002",
+      "route_id": "SNT_5567",
+      "name": "02 清水の名水"
+    },
+    {
+      "poi_id": "SNT_889_P0001",
+      "route_id": "SNT_889",
+      "name": "00起点：竜串橋・案内板・竜串橋たもと"
+    },
+    {
+      "poi_id": "SNT_889_P0002",
+      "route_id": "SNT_889",
+      "name": "00から01駐車場の案内板（ここから山道）"
+    },
+    {
+      "poi_id": "SNT_889_P0003",
+      "route_id": "SNT_889",
+      "name": "01撮影ポイント"
+    },
+    {
+      "poi_id": "SNT_889_P0004",
+      "route_id": "SNT_889",
+      "name": "02見残し海岸 展望台"
+    },
+    {
+      "poi_id": "SNT_889_P0005",
+      "route_id": "SNT_889",
+      "name": "02-3見残しグラスボートのりば"
+    },
+    {
+      "poi_id": "SNT_889_P0006",
+      "route_id": "SNT_889",
+      "name": "02-4見残し休憩所"
+    },
+    {
+      "poi_id": "SNT_889_P0007",
+      "route_id": "SNT_889",
+      "name": "02-5見残し"
+    },
+    {
+      "poi_id": "SNT_889_P0008",
+      "route_id": "SNT_889",
+      "name": "03-1海のギャラリー"
+    },
+    {
+      "poi_id": "SNT_889_P0009",
+      "route_id": "SNT_889",
+      "name": "03-2海のギャラリー周辺"
+    },
+    {
+      "poi_id": "SNT_889_P0010",
+      "route_id": "SNT_889",
+      "name": "03-04"
+    },
+    {
+      "poi_id": "SNT_889_P0011",
+      "route_id": "SNT_889",
+      "name": "03-04-2"
+    },
+    {
+      "poi_id": "SNT_889_P0012",
+      "route_id": "SNT_889",
+      "name": "04-1桜浜"
+    },
+    {
+      "poi_id": "SNT_889_P0013",
+      "route_id": "SNT_889",
+      "name": "04-05-1桜浜遊歩道"
+    },
+    {
+      "poi_id": "SNT_889_P0014",
+      "route_id": "SNT_889",
+      "name": "04-05-2ぐるっと竜串橋"
+    },
+    {
+      "poi_id": "SNT_889_P0015",
+      "route_id": "SNT_889",
+      "name": "04-05-3"
+    },
+    {
+      "poi_id": "SNT_889_P0016",
+      "route_id": "SNT_889",
+      "name": "05-1ビジターセンターうみのわ"
+    },
+    {
+      "poi_id": "SNT_889_P0017",
+      "route_id": "SNT_889",
+      "name": "06-1SATOUMI"
+    },
+    {
+      "poi_id": "SNT_889_P0018",
+      "route_id": "SNT_889",
+      "name": "06-07"
+    },
+    {
+      "poi_id": "SNT_889_P0019",
+      "route_id": "SNT_889",
+      "name": "07-1足摺海底館"
+    },
+    {
+      "poi_id": "SNT_889_P0020",
+      "route_id": "SNT_889",
+      "name": "07-08-1ここから再び国道321号線へ"
+    },
+    {
+      "poi_id": "SNT_889_P0021",
+      "route_id": "SNT_889",
+      "name": "07-08-2国道321からのながめ"
+    },
+    {
+      "poi_id": "SNT_889_P0022",
+      "route_id": "SNT_889",
+      "name": "08終点　下川口（案内板）"
+    },
+    {
+      "poi_id": "SNT_891_P0001",
+      "route_id": "SNT_891",
+      "name": "01起点　下川口（案内板）"
+    },
+    {
+      "poi_id": "SNT_891_P0002",
+      "route_id": "SNT_891",
+      "name": "01から02-1海辺のみちを行く"
+    },
+    {
+      "poi_id": "SNT_891_P0003",
+      "route_id": "SNT_891",
+      "name": "01から02-2国道321号から海側の旧道へ"
+    },
+    {
+      "poi_id": "SNT_891_P0004",
+      "route_id": "SNT_891",
+      "name": "01から02-4叶崎周辺案内図"
+    },
+    {
+      "poi_id": "SNT_891_P0005",
+      "route_id": "SNT_891",
+      "name": "02-1叶崎休憩所"
+    },
+    {
+      "poi_id": "SNT_891_P0006",
+      "route_id": "SNT_891",
+      "name": "02-2写真ポイント"
+    },
+    {
+      "poi_id": "SNT_891_P0007",
+      "route_id": "SNT_891",
+      "name": "02-4叶崎"
+    },
+    {
+      "poi_id": "SNT_891_P0008",
+      "route_id": "SNT_891",
+      "name": "02-5叶崎休憩所トイレ"
+    },
+    {
+      "poi_id": "SNT_891_P0009",
+      "route_id": "SNT_891",
+      "name": "03-1叶崎灯台へ向かうｳﾊﾞﾒｶﾞｼのﾄﾝﾈﾙ"
+    },
+    {
+      "poi_id": "SNT_891_P0010",
+      "route_id": "SNT_891",
+      "name": "03-2叶崎灯台付近の眺め"
+    },
+    {
+      "poi_id": "SNT_891_P0011",
+      "route_id": "SNT_891",
+      "name": "03-3叶崎灯台"
+    },
+    {
+      "poi_id": "SNT_891_P0012",
+      "route_id": "SNT_891",
+      "name": "03から04-1旧道から国道321へ戻る"
+    },
+    {
+      "poi_id": "SNT_891_P0013",
+      "route_id": "SNT_891",
+      "name": "03から04-2ショートカットしてトンネルを通ることもできます"
+    },
+    {
+      "poi_id": "SNT_891_P0014",
+      "route_id": "SNT_891",
+      "name": "04-1終点　小才角"
+    },
+    {
+      "poi_id": "SNT_891_P0015",
+      "route_id": "SNT_891",
+      "name": "04-2土佐サンゴ発祥の地"
+    },
+    {
+      "poi_id": "SNT_4979_P0001",
+      "route_id": "SNT_4979",
+      "name": "小才角休憩所"
+    },
+    {
+      "poi_id": "SNT_4979_P0002",
+      "route_id": "SNT_4979",
+      "name": "朴崎休憩所"
+    },
+    {
+      "poi_id": "SNT_4979_P0004",
+      "route_id": "SNT_4979",
+      "name": "月山へのみち　行程表"
+    },
+    {
+      "poi_id": "SNT_4820_P0003",
+      "route_id": "SNT_4820",
+      "name": "千万滝休憩所"
+    },
+    {
+      "poi_id": "SNT_4820_P0004",
+      "route_id": "SNT_4820",
+      "name": "樫西海岸へのみち　行程表"
+    },
+    {
+      "poi_id": "SNT_4826_P0006",
+      "route_id": "SNT_4826",
+      "name": "柏島"
+    },
+    {
+      "poi_id": "SNT_4826_P0007",
+      "route_id": "SNT_4826",
+      "name": "お猿の絵"
+    },
+    {
+      "poi_id": "SNT_4826_P0008",
+      "route_id": "SNT_4826",
+      "name": "大堂猿のみち　行程表"
+    },
+    {
+      "poi_id": "SNT_5573_P0001",
+      "route_id": "SNT_5573",
+      "name": "01 一切休憩所"
+    },
+    {
+      "poi_id": "SNT_5573_P0002",
+      "route_id": "SNT_5573",
+      "name": "02 一切漁港"
+    },
+    {
+      "poi_id": "SNT_5573_P0003",
+      "route_id": "SNT_5573",
+      "name": "03 一切休憩所"
+    },
+    {
+      "poi_id": "SNT_5582_P0001",
+      "route_id": "SNT_5582",
+      "name": "01 岡崎の浜休憩所"
+    },
+    {
+      "poi_id": "SNT_5582_P0002",
+      "route_id": "SNT_5582",
+      "name": "02 養殖筏"
+    },
+    {
+      "poi_id": "SNT_5582_P0003",
+      "route_id": "SNT_5582",
+      "name": "03 ウバメガシ樹林"
+    },
+    {
+      "poi_id": "SNT_5586_P0001",
+      "route_id": "SNT_5586",
+      "name": "01 龍ヶ迫休憩所"
+    },
+    {
+      "poi_id": "SNT_5586_P0002",
+      "route_id": "SNT_5586",
+      "name": "02 雲雀小島"
+    },
+    {
+      "poi_id": "SNT_5586_P0003",
+      "route_id": "SNT_5586",
+      "name": "03 白浜"
+    },
+    {
+      "poi_id": "SNT_841_P0001",
+      "route_id": "SNT_841",
+      "name": "01起点"
+    },
+    {
+      "poi_id": "SNT_841_P0002",
+      "route_id": "SNT_841",
+      "name": "02"
+    },
+    {
+      "poi_id": "SNT_841_P0003",
+      "route_id": "SNT_841",
+      "name": "03"
+    },
+    {
+      "poi_id": "SNT_841_P0004",
+      "route_id": "SNT_841",
+      "name": "04"
+    },
+    {
+      "poi_id": "SNT_841_P0005",
+      "route_id": "SNT_841",
+      "name": "05松尾坂口番所跡"
+    },
+    {
+      "poi_id": "SNT_841_P0006",
+      "route_id": "SNT_841",
+      "name": "06登り口"
+    },
+    {
+      "poi_id": "SNT_841_P0007",
+      "route_id": "SNT_841",
+      "name": "07"
+    },
+    {
+      "poi_id": "SNT_841_P0008",
+      "route_id": "SNT_841",
+      "name": "08"
+    },
+    {
+      "poi_id": "SNT_841_P0009",
+      "route_id": "SNT_841",
+      "name": "09登山口"
+    },
+    {
+      "poi_id": "SNT_841_P0010",
+      "route_id": "SNT_841",
+      "name": "10松並木の跡"
+    },
+    {
+      "poi_id": "SNT_841_P0011",
+      "route_id": "SNT_841",
+      "name": "11街道の石畳"
+    },
+    {
+      "poi_id": "SNT_841_P0012",
+      "route_id": "SNT_841",
+      "name": "12"
+    },
+    {
+      "poi_id": "SNT_841_P0013",
+      "route_id": "SNT_841",
+      "name": "13"
+    },
+    {
+      "poi_id": "SNT_841_P0014",
+      "route_id": "SNT_841",
+      "name": "14休憩所"
+    },
+    {
+      "poi_id": "SNT_841_P0015",
+      "route_id": "SNT_841",
+      "name": "15"
+    },
+    {
+      "poi_id": "SNT_841_P0016",
+      "route_id": "SNT_841",
+      "name": "16茶屋跡"
+    },
+    {
+      "poi_id": "SNT_841_P0017",
+      "route_id": "SNT_841",
+      "name": "17トイレ"
+    },
+    {
+      "poi_id": "SNT_841_P0018",
+      "route_id": "SNT_841",
+      "name": "18大師堂"
+    },
+    {
+      "poi_id": "SNT_841_P0019",
+      "route_id": "SNT_841",
+      "name": "19松尾峠"
+    },
+    {
+      "poi_id": "SNT_841_P0020",
+      "route_id": "SNT_841",
+      "name": "20"
+    },
+    {
+      "poi_id": "SNT_841_P0021",
+      "route_id": "SNT_841",
+      "name": "21写真ポイント（純友城址地名板）"
+    },
+    {
+      "poi_id": "SNT_841_P0022",
+      "route_id": "SNT_841",
+      "name": "22純友城址展望台"
+    },
+    {
+      "poi_id": "SNT_841_P0023",
+      "route_id": "SNT_841",
+      "name": "23子安地蔵"
+    },
+    {
+      "poi_id": "SNT_1750_P0001",
+      "route_id": "SNT_1750",
+      "name": "2.城八幡宮"
+    },
+    {
+      "poi_id": "SNT_1750_P0002",
+      "route_id": "SNT_1750",
+      "name": "3.忍者　日下茂平の屋敷跡"
+    },
+    {
+      "poi_id": "SNT_1750_P0003",
+      "route_id": "SNT_1750",
+      "name": "5.猿田洞"
+    },
+    {
+      "poi_id": "SNT_1750_P0004",
+      "route_id": "SNT_1750",
+      "name": "6.法華寺跡（仁王門）"
+    },
+    {
+      "poi_id": "SNT_1750_P0005",
+      "route_id": "SNT_1750",
+      "name": "7.佐川ナウマンカルスト東登り口"
+    },
+    {
+      "poi_id": "SNT_1750_P0006",
+      "route_id": "SNT_1750",
+      "name": "8.佐川ナウマンカルスト休憩所"
+    },
+    {
+      "poi_id": "SNT_1750_P0007",
+      "route_id": "SNT_1750",
+      "name": "9.酒蔵の街"
+    },
+    {
+      "poi_id": "SNT_1750_P0008",
+      "route_id": "SNT_1750",
+      "name": "10.牧野公園"
+    },
+    {
+      "poi_id": "SNT_1750_P0009",
+      "route_id": "SNT_1750",
+      "name": "11.清源寺"
+    },
+    {
+      "poi_id": "SNT_1750_P0010",
+      "route_id": "SNT_1750",
+      "name": "12.佐川町役場"
+    },
+    {
+      "poi_id": "SNT_1750_P0011",
+      "route_id": "SNT_1750",
+      "name": "4.馬越休憩所"
+    },
+    {
+      "poi_id": "SNT_1750_P0012",
+      "route_id": "SNT_1750",
+      "name": "8.ナウマンカルスト"
+    },
+    {
+      "poi_id": "SNT_1750_P0013",
+      "route_id": "SNT_1750",
+      "name": "1.日下大橋"
+    },
+    {
+      "poi_id": "SNT_1774_P0001",
+      "route_id": "SNT_1774",
+      "name": "13.斗賀野駅"
+    },
+    {
+      "poi_id": "SNT_1774_P0002",
+      "route_id": "SNT_1774",
+      "name": "14.柏原"
+    },
+    {
+      "poi_id": "SNT_1774_P0003",
+      "route_id": "SNT_1774",
+      "name": "15.佐川変電所"
+    },
+    {
+      "poi_id": "SNT_1774_P0004",
+      "route_id": "SNT_1774",
+      "name": "16.赤土峠（脱藩志士集合の地）"
+    },
+    {
+      "poi_id": "SNT_1774_P0005",
+      "route_id": "SNT_1774",
+      "name": "17.中山"
+    },
+    {
+      "poi_id": "SNT_1774_P0006",
+      "route_id": "SNT_1774",
+      "name": "7.佐川ナウマンカルスト東登り口"
+    },
+    {
+      "poi_id": "SNT_1777_P0001",
+      "route_id": "SNT_1777",
+      "name": "1.横倉山登山口"
+    },
+    {
+      "poi_id": "SNT_1777_P0002",
+      "route_id": "SNT_1777",
+      "name": "2.横倉宮石段登口"
+    },
+    {
+      "poi_id": "SNT_1777_P0003",
+      "route_id": "SNT_1777",
+      "name": "3.織田公園休憩所"
+    },
+    {
+      "poi_id": "SNT_1777_P0004",
+      "route_id": "SNT_1777",
+      "name": "4.表参道石段登口"
+    },
+    {
+      "poi_id": "SNT_1777_P0005",
+      "route_id": "SNT_1777",
+      "name": "5.夫婦杉"
+    },
+    {
+      "poi_id": "SNT_1777_P0006",
+      "route_id": "SNT_1777",
+      "name": "6.杉原神社"
+    },
+    {
+      "poi_id": "SNT_1777_P0007",
+      "route_id": "SNT_1777",
+      "name": "7.トイレ Restroom"
+    },
+    {
+      "poi_id": "SNT_1777_P0008",
+      "route_id": "SNT_1777",
+      "name": "8.安徳水"
+    },
+    {
+      "poi_id": "SNT_1777_P0009",
+      "route_id": "SNT_1777",
+      "name": "9.横倉宮休憩所"
+    },
+    {
+      "poi_id": "SNT_1777_P0010",
+      "route_id": "SNT_1777",
+      "name": "10.安徳天皇御陵参考地"
+    },
+    {
+      "poi_id": "SNT_1777_P0011",
+      "route_id": "SNT_1777",
+      "name": "11.馬鹿だめし"
+    },
+    {
+      "poi_id": "SNT_1777_P0012",
+      "route_id": "SNT_1777",
+      "name": "12.カブト嶽"
+    },
+    {
+      "poi_id": "SNT_1807_P0002",
+      "route_id": "SNT_1807",
+      "name": "星ヶ窪キャンプ場"
+    },
+    {
+      "poi_id": "SNT_1807_P0003",
+      "route_id": "SNT_1807",
+      "name": "桐見川バス停"
+    },
+    {
+      "poi_id": "SNT_4829_P0001",
+      "route_id": "SNT_4829",
+      "name": "秋葉口"
+    }
+  ],
+  "ambiguous_names": [
+    {
+      "route_id": "SNT_5543",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5543",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_5717",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5717",
+      "normalized_name": "迂回案内",
+      "tourism_spots": [],
+      "pois": [
+        "迂回案内",
+        "迂回案内"
+      ]
+    },
+    {
+      "route_id": "SNT_2826",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_4248",
+      "normalized_name": "みちの様子",
+      "tourism_spots": [],
+      "pois": [
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子"
+      ]
+    },
+    {
+      "route_id": "SNT_2850",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_4253",
+      "normalized_name": "みちの様子",
+      "tourism_spots": [],
+      "pois": [
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子"
+      ]
+    },
+    {
+      "route_id": "SNT_4256",
+      "normalized_name": "みちの様子",
+      "tourism_spots": [],
+      "pois": [
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子",
+        "みちの様子"
+      ]
+    },
+    {
+      "route_id": "SNT_2843",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5739",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_4259",
+      "normalized_name": "みちの様子",
+      "tourism_spots": [],
+      "pois": [
+        "みちの様子",
+        "みちの様子"
+      ]
+    },
+    {
+      "route_id": "SNT_5199",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5202",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5204",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5206",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_3106",
+      "normalized_name": "歩道の状況",
+      "tourism_spots": [],
+      "pois": [
+        "歩道の状況",
+        "歩道の状況",
+        "歩道の状況"
+      ]
+    },
+    {
+      "route_id": "SNT_3106",
+      "normalized_name": "讃岐三崎灯台",
+      "tourism_spots": [],
+      "pois": [
+        "讃岐三崎灯台",
+        "讃岐三崎灯台"
+      ]
+    },
+    {
+      "route_id": "SNT_5551",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_810",
+      "normalized_name": "02解説板",
+      "tourism_spots": [],
+      "pois": [
+        "02解説板",
+        "02解説板"
+      ]
+    },
+    {
+      "route_id": "SNT_810",
+      "normalized_name": "トイレ",
+      "tourism_spots": [],
+      "pois": [
+        "トイレ",
+        "トイレ",
+        "トイレ"
+      ]
+    },
+    {
+      "route_id": "SNT_2428",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2428",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_2494",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2494",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_2499",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2499",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_2502",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2576",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2576",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_2579",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_2579",
+      "normalized_name": "案内板",
+      "tourism_spots": [],
+      "pois": [
+        "案内板",
+        "案内板"
+      ]
+    },
+    {
+      "route_id": "SNT_2582",
+      "normalized_name": "指導標",
+      "tourism_spots": [],
+      "pois": [
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標",
+        "指導標"
+      ]
+    },
+    {
+      "route_id": "SNT_5573",
+      "normalized_name": "一切休憩所",
+      "tourism_spots": [
+        "一切休憩所",
+        "一切休憩所"
+      ],
+      "pois": []
+    }
+  ]
+}

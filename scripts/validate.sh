@@ -66,7 +66,7 @@ else
 fi
 
 # ---- Shikoku Nature Trail ----
-TRAIL="$ROOT/output/shikoku-trail.pmtiles"
+TRAIL="$ROOT/output/shikoku-nature-trail.pmtiles"
 echo "==> Trail: $TRAIL"
 if [ -f "$TRAIL" ]; then
   [ -s "$TRAIL" ] || fail "trail pmtiles is empty"
@@ -78,20 +78,22 @@ import json,sys
 d=json.load(sys.stdin)
 layers=json.loads(d['vector_layers']) if isinstance(d['vector_layers'],str) else d['vector_layers']
 ids={l['id'] for l in layers}
-sys.exit(0 if 'shikoku_trail' in ids else 1)
-" || fail "shikoku_trail layer missing"
+required={'shikoku_nature_trail','shikoku_nature_trail_pois'}
+sys.exit(0 if required <= ids else 1)
+" || fail "trail required layers missing (shikoku_nature_trail, shikoku_nature_trail_pois)"
 
   # bounds must cover Shikoku trail extent (roughly 132-135E, 32.5-34.5N)
   header=$(pmtiles show --header-json "$TRAIL" 2>/dev/null) || fail "trail header unreadable"
+  b=$(echo "$header" | python3 -c "import json,sys; print(json.load(sys.stdin)['bounds'])")
   echo "$header" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)
 lon_min,lat_min,lon_max,lat_max=d['bounds']
-ok = lon_min > 131.0 and lon_max < 136.0 and lat_min > 31.5 and lat_max < 35.5
+ok = 131.0 < lon_min < lon_max < 136.0 and 31.5 < lat_min < lat_max < 35.5
 sys.exit(0 if ok else 1)
-" || fail "trail bounds not within Shikoku: $lon_min,$lat_min,$lon_max,$lat_max"
+" || fail "trail bounds not within Shikoku: $b"
 else
-  echo "WARN: shikoku-trail pmtiles not built yet, skipping trail checks"
+  echo "WARN: shikoku-nature-trail pmtiles not built yet, skipping trail checks"
 fi
 
 # ---- Elevation visualization ----

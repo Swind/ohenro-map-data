@@ -1,5 +1,6 @@
 import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
 import { createMap, type HenroLayers } from "./map";
+import { prefLabel, type TrailRoute } from "./trail";
 
 function toggleLayer(
   map: MapLibreMap,
@@ -69,10 +70,45 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   bindToggle("toggle-route", (v) =>
     toggleLayer(map, [henro.routeCasing, henro.routeForeground], v),
   );
-  bindToggle("toggle-trail", (v) => toggleLayer(map, henro.trail, v));
-  bindToggle("toggle-trail-labels", (v) =>
-    toggleLayer(map, henro.trailLabel, v),
-  );
+  const routeCheckboxes = new Map<TrailRoute, HTMLInputElement>();
+  const applyTrailVisibility = (): void => {
+    const master = (document.getElementById("toggle-trail") as HTMLInputElement).checked;
+    const labels = (document.getElementById("toggle-trail-labels") as HTMLInputElement).checked;
+    if (routeCheckboxes.size === 0) {
+      toggleLayer(map, [henro.trailFallback], master);
+      toggleLayer(map, [henro.trailFallbackLabel], master && labels);
+    }
+    for (const [route, checkbox] of routeCheckboxes) {
+      toggleLayer(map, [route.layerId], master && checkbox.checked);
+      toggleLayer(map, [route.labelLayerId], master && labels && checkbox.checked);
+    }
+  };
+  bindToggle("toggle-trail", applyTrailVisibility);
+  bindToggle("toggle-trail-labels", applyTrailVisibility);
+  bindToggle("toggle-trail-pois", (v) => toggleLayer(map, [henro.trailPoi], v));
+
+  void henro.trailReady.then((groups) => {
+    const container = document.getElementById("trail-routes");
+    if (!container) return;
+    for (const group of groups) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `${prefLabel(group.pref)} (${group.routes.length})`;
+      details.append(summary);
+      for (const route of group.routes) {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = true;
+        checkbox.addEventListener("change", applyTrailVisibility);
+        routeCheckboxes.set(route, checkbox);
+        label.append(checkbox, ` ${route.courseNumber ?? "-"} ${route.name ?? route.routeId}`);
+        details.append(label);
+      }
+      container.append(details);
+    }
+    applyTrailVisibility();
+  });
   bindToggle("toggle-lodging", (v) =>
     toggleLayer(map, [henro.lodgingMarker, henro.lodgingLabel], v),
   );

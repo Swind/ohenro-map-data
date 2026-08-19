@@ -62,7 +62,8 @@ ln -s ../../../output/shikoku-basemap.pmtiles map-preview/public/data/shikoku-ba
 ln -s ../../../output/shikoku-henro.pmtiles map-preview/public/data/shikoku-henro.pmtiles
 ln -s ../../../output/shikoku-contours.pmtiles map-preview/public/data/shikoku-contours.pmtiles
 ln -s ../../../output/shikoku-terrain.pmtiles map-preview/public/data/shikoku-terrain.pmtiles
-ln -s ../../../output/shikoku-trail.pmtiles map-preview/public/data/shikoku-trail.pmtiles
+ln -s ../../../output/shikoku-nature-trail.pmtiles map-preview/public/data/shikoku-nature-trail.pmtiles
+ln -s ../../../output/shikoku-nature-trail.geojson map-preview/public/data/shikoku-nature-trail.geojson
 ln -s ../../../output/temples.geojson map-preview/public/data/temples.geojson
 ln -s ../../../output/lodging.geojson map-preview/public/data/lodging.geojson
 cp map-preview/.env.example map-preview/.env.development
@@ -90,7 +91,8 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_BASEMAP_URL` | `/data/shikoku-basemap.pmtiles` | basemap 位置，可改遠端 URL，如 `http://localhost:8080/shikoku-basemap.pmtiles` |
 | `VITE_TEMPLES_URL` | `/data/temples.geojson` | 寺廟 GeoJSON |
 | `VITE_HENRO_URL` | `/data/shikoku-henro.pmtiles` | Henro 路線 PMTiles（`henro_routes` vector layer）；留空停用 |
-| `VITE_TRAIL_URL` | `/data/shikoku-trail.pmtiles` | 四國自然步道 PMTiles（`shikoku_trail` vector layer）；留空停用 |
+| `VITE_TRAIL_URL` | `/data/shikoku-nature-trail.pmtiles` | 四國自然步道 PMTiles（`shikoku_nature_trail` vector layer）；留空停用 |
+| `VITE_TRAIL_LIST_URL` | `/data/shikoku-nature-trail.geojson` | 官方路線索引，用於依縣與課程選擇；留空停用 selector |
 | `VITE_LODGING_URL` | `/data/lodging.geojson` | 住宿 QA GeoJSON（`extract_lodging.py` 產出）；留空停用 |
 | `VITE_CONTOURS_URL` | `/data/shikoku-contours.pmtiles` | 20m 等高線 PMTiles（`contours` vector layer）；留空停用 |
 | `VITE_TERRAIN_URL` | `/data/shikoku-terrain.pmtiles` | Terrain-RGB 高程 PMTiles（`raster-dem`）；留空停用 |
@@ -106,7 +108,7 @@ http://localhost:5173/?lat=34.191403&lon=134.206799&zoom=14
 - **basemap**：由 `@protomaps/basemaps` 產生（light flavor、ja lang、71 layers），source 為 `pmtiles://` protocol。
 - **寺廟**：GeoJSON source，紅色圓點 marker；z9+ 顯示 `番号 + 寺名` label。
 - **遍路路線**：`shikoku-henro.pmtiles` 的 `henro_routes` layer（filter `route_kind=henro_candidate`），白色 casing + 赭色（`#8f4b32`）前景，位於 basemap 之上。
-- **四國自然步道**：`shikoku-trail.pmtiles` 的 `shikoku_trail` layer（`scripts/build-shikoku-trail.sh` 產出），綠色（`#2a7d4f`）線段；與遍路 overlay 分別開關。
+- **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（z10+）。路線可依縣與課程選擇，並與遍路 overlay、標籤及 POI 分別開關。
 - **住宿（QA）**：`lodging.geojson` GeoJSON source。依 subtype 著色（hotel 紅 / hostel 橘 / guest_house 綠 / camp_site 紫 / motel 灰 / apartment 藍 / chalet 深灰），z11+ 顯示名稱 label。點擊 feature 可檢視完整 properties 含 `raw_tags`、`address`、`point_method`。
 - **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。

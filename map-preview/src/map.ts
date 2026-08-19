@@ -5,6 +5,11 @@ import maplibregl, {
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Protocol } from "pmtiles";
 import basemapStyle from "./style/style.json";
+import {
+  addTrailRouteLayers,
+  loadTrailRoutes,
+  type TrailGroup,
+} from "./trail";
 
 export interface HenroLayers {
   labels: string[];
@@ -14,8 +19,11 @@ export interface HenroLayers {
   routeForeground: string;
   lodgingMarker: string;
   lodgingLabel: string;
-  trail: string[];
-  trailLabel: string[];
+  trail: TrailGroup[];
+  trailReady: Promise<TrailGroup[]>;
+  trailFallback: string;
+  trailFallbackLabel: string;
+  trailPoi: string;
   elevation: ElevationLayers;
 }
 
@@ -279,6 +287,12 @@ export function createMap(container: HTMLElement): {
     style,
   });
 
+  const trailGroups: TrailGroup[] = [];
+  let resolveTrail: (groups: TrailGroup[]) => void = () => undefined;
+  const trailReady = new Promise<TrailGroup[]>((resolve) => {
+    resolveTrail = resolve;
+  });
+
   const terrainUrl = import.meta.env.VITE_TERRAIN_URL;
   const contoursUrl = import.meta.env.VITE_CONTOURS_URL;
   const elevation = {
@@ -317,7 +331,7 @@ export function createMap(container: HTMLElement): {
     }
   });
 
-  map.on("load", () => {
+  map.on("load", async () => {
     // Sources/layers must be added after the style is loaded (calling
     // map.addSource before load throws "Style is not done loading").
     addElevationSources(map, terrainUrl, contoursUrl);
@@ -364,42 +378,62 @@ export function createMap(container: HTMLElement): {
 
     if (map.getSource("trail")) {
       map.addLayer({
-        id: "trail",
-        type: "line",
+        id: "trail-pois",
+        type: "circle",
         source: "trail",
-        "source-layer": "shikoku_trail",
-        layout: {
-          "line-cap": "round",
-          "line-join": "round",
-        },
+        "source-layer": "shikoku_nature_trail_pois",
+        minzoom: 10,
         paint: {
-          "line-color": "#2a7d4f",
-          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 5],
-          "line-opacity": 0.9,
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 14, 6],
+          "circle-color": ["match", ["get", "kind"], "tourism_spot", "#d9822b", "#4c7f68"],
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 1.2,
         },
       });
 
-      map.addLayer({
-        id: "trail-label",
-        type: "symbol",
-        source: "trail",
-        "source-layer": "shikoku_trail",
-        layout: {
-          "symbol-placement": "line",
-          "text-field": ["coalesce", ["get", "name"], ""],
-          "text-font": ["Noto Sans Regular"],
-          "text-size": 11,
-          "text-letter-spacing": 0.05,
-          "text-rotation-alignment": "map",
-          "symbol-spacing": 400,
-        },
-        paint: {
-          "text-color": "#1b5e38",
-          "text-halo-color": "#ffffff",
-          "text-halo-width": 1.4,
-        },
-      });
+      const listUrl = import.meta.env.VITE_TRAIL_LIST_URL;
+      if (listUrl) {
+        try {
+          trailGroups.push(...await loadTrailRoutes(listUrl));
+          addTrailRouteLayers(map, trailGroups, "trail-pois");
+        } catch (error) {
+          console.error("trail route index error:", error);
+        }
+      }
+      if (trailGroups.length === 0) {
+        map.addLayer({
+          id: "trail",
+          type: "line",
+          source: "trail",
+          "source-layer": "shikoku_nature_trail",
+          layout: { "line-cap": "round", "line-join": "round" },
+          paint: {
+            "line-color": "#2a7d4f",
+            "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 5],
+            "line-opacity": 0.9,
+          },
+        }, "trail-pois");
+        map.addLayer({
+          id: "trail-label",
+          type: "symbol",
+          source: "trail",
+          "source-layer": "shikoku_nature_trail",
+          layout: {
+            "symbol-placement": "line",
+            "text-field": ["coalesce", ["get", "name"], ""],
+            "text-font": ["Noto Sans Regular"],
+            "text-size": 11,
+            "symbol-spacing": 400,
+          },
+          paint: {
+            "text-color": "#1b5e38",
+            "text-halo-color": "#ffffff",
+            "text-halo-width": 1.4,
+          },
+        }, "trail-pois");
+      }
     }
+    resolveTrail(trailGroups);
 
     if (map.getSource("lodging")) {
       map.addLayer({
@@ -515,8 +549,11 @@ export function createMap(container: HTMLElement): {
     routeForeground: "henro-route",
     lodgingMarker: "lodging",
     lodgingLabel: "lodging-label",
-    trail: ["trail"],
-    trailLabel: ["trail-label"],
+    trail: trailGroups,
+    trailReady,
+    trailFallback: "trail",
+    trailFallbackLabel: "trail-label",
+    trailPoi: "trail-pois",
     elevation: elevationLayers,
   };
 

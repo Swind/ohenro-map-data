@@ -5,8 +5,8 @@ Reproducible crawler for the Shikoku Nature Trail official site
 saves the four prefecture course lists, every course detail HTML page, its
 content images, and the embedded Google My Maps KML, together with source
 metadata and SHA-256 checksums. Phase 2 normalizes that archive into one
-deterministic offline JSON dataset. GIS processing and App DB import remain
-separate future work.
+deterministic offline JSON dataset. Phase 3 exports routes and POIs and builds
+the MapLibre-ready PMTiles archive.
 
 Plan: `reference/shikoku-nature-trail-crawler-plan.md`
 
@@ -21,6 +21,8 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-all
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail verify
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize --output output/shikoku-nature-trail.json
+python3 -m shikoku_nature_trail export-map --input output/shikoku-nature-trail.json --routes output/shikoku-nature-trail.geojson --pois output/shikoku-nature-trail-pois.geojson --report output/shikoku-nature-trail-report.json
+./scripts/build-shikoku-nature-trail.sh
 ```
 
 `crawl-all` runs index -> details -> assets -> kml -> report in sequence.
@@ -28,6 +30,8 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize
 atomically creates the output parent directory and file. A missing
 `course-index.json` is fatal; a malformed or missing per-course HTML, assets
 manifest, or KML adds a warning while other courses continue.
+`export-map` is also strictly offline and reads only the normalized JSON. It
+atomically writes deterministic route/POI GeoJSON and a data-quality report.
 
 Flags: `--force` to refetch already-downloaded files, `--concurrency`,
 `--delay` (rate limit, seconds), `--timeout`, `--log-level`.
@@ -82,6 +86,22 @@ byte-identical JSON.
 Full archive result (2026-08-19): 123 courses, 123 photo points, 686 tourism
 spots, 1,713 Placemarks, and 0 warnings. All 672 tourism spot images resolved
 to archived local paths. The reproducible ~9.6 MB output is gitignored.
+
+## Map export (Phase 3)
+
+Each course has stable route ID `SNT_<source_post_id>` and one feature per KML
+LineString. Point IDs are `SNT_<source_post_id>_P####` in source order. Tourism
+content IDs are `SNT_<source_post_id>_S###`; a POI receives one only when NFKC,
+whitespace, bracket, and conservative punctuation normalization produces a
+unique one-to-one name match inside that course. Fuzzy and duplicate matches
+are intentionally left unresolved in `shikoku-nature-trail-report.json`.
+
+The build creates `shikoku_nature_trail` routes at z0-14 and `shikoku_nature_trail_pois`
+points at z10-14 in `output/shikoku-nature-trail.pmtiles`, with official
+`shikoku-nature-trail.com` attribution. Real-data result: 123 route IDs, 145
+segments, 65,753 route coordinates, 1,568 POIs, and 394/686 linked tourism
+spots. There are 292 unmatched tourism spots, 1,174 unmatched POIs, and 34
+ambiguous name groups for manual resolution.
 
 ## Design notes
 
