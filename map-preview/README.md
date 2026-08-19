@@ -108,7 +108,7 @@ http://localhost:5173/?lat=34.191403&lon=134.206799&zoom=14
 - **basemap**：由 `@protomaps/basemaps` 產生（light flavor、ja lang、71 layers），source 為 `pmtiles://` protocol。
 - **寺廟**：GeoJSON source，紅色圓點 marker；z9+ 顯示 `番号 + 寺名` label。
 - **遍路路線**：`shikoku-henro.pmtiles` 的 `henro_routes` layer（filter `route_kind=henro_candidate`），白色 casing + 赭色（`#8f4b32`）前景，位於 basemap 之上。
-- **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（z10+）。路線可依縣與課程選擇，並與遍路 overlay、標籤及 POI 分別開關。
+- **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（圓點與名稱標籤皆為 z10+）。路線可依縣與課程選擇；每條路線與所屬 POI 一起顯示或隱藏，路線標籤及全體 POI 仍可獨立關閉。
 - **住宿（QA）**：`lodging.geojson` GeoJSON source。依 subtype 著色（hotel 紅 / hostel 橘 / guest_house 綠 / camp_site 紫 / motel 灰 / apartment 藍 / chalet 深灰），z11+ 顯示名稱 label。點擊 feature 可檢視完整 properties 含 `raw_tags`、`address`、`point_method`。
 - **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。

@@ -74,18 +74,37 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   const applyTrailVisibility = (): void => {
     const master = (document.getElementById("toggle-trail") as HTMLInputElement).checked;
     const labels = (document.getElementById("toggle-trail-labels") as HTMLInputElement).checked;
+    const showPois = (document.getElementById("toggle-trail-pois") as HTMLInputElement).checked;
     if (routeCheckboxes.size === 0) {
       toggleLayer(map, [henro.trailFallback], master);
       toggleLayer(map, [henro.trailFallbackLabel], master && labels);
+      toggleLayer(map, [henro.trailPoi, henro.trailPoiLabel], master && showPois);
+      for (const id of [henro.trailPoi, henro.trailPoiLabel]) {
+        if (map.getLayer(id)) map.setFilter(id, null);
+      }
     }
+    const visibleRouteIds: string[] = [];
     for (const [route, checkbox] of routeCheckboxes) {
       toggleLayer(map, [route.layerId], master && checkbox.checked);
       toggleLayer(map, [route.labelLayerId], master && labels && checkbox.checked);
+      if (checkbox.checked) visibleRouteIds.push(route.routeId);
+    }
+    if (routeCheckboxes.size > 0) {
+      toggleLayer(map, [henro.trailPoi, henro.trailPoiLabel], master && showPois);
+      for (const id of [henro.trailPoi, henro.trailPoiLabel]) {
+        if (map.getLayer(id)) {
+          map.setFilter(id, [
+            "in",
+            ["get", "route_id"],
+            ["literal", visibleRouteIds],
+          ]);
+        }
+      }
     }
   };
   bindToggle("toggle-trail", applyTrailVisibility);
   bindToggle("toggle-trail-labels", applyTrailVisibility);
-  bindToggle("toggle-trail-pois", (v) => toggleLayer(map, [henro.trailPoi], v));
+  bindToggle("toggle-trail-pois", applyTrailVisibility);
 
   void henro.trailReady.then((groups) => {
     const container = document.getElementById("trail-routes");

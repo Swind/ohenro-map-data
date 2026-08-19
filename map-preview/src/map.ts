@@ -24,6 +24,7 @@ export interface HenroLayers {
   trailFallback: string;
   trailFallbackLabel: string;
   trailPoi: string;
+  trailPoiLabel: string;
   elevation: ElevationLayers;
 }
 
@@ -390,6 +391,26 @@ export function createMap(container: HTMLElement): {
           "circle-stroke-width": 1.2,
         },
       });
+      map.addLayer({
+        id: "trail-poi-labels",
+        type: "symbol",
+        source: "trail",
+        "source-layer": "shikoku_nature_trail_pois",
+        minzoom: 10,
+        layout: {
+          "text-field": ["coalesce", ["get", "name"], ""],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 11,
+          "text-offset": [0, 0.9],
+          "text-anchor": "top",
+          "text-max-width": 10,
+        },
+        paint: {
+          "text-color": "#274c3a",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.3,
+        },
+      });
 
       const listUrl = import.meta.env.VITE_TRAIL_LIST_URL;
       if (listUrl) {
@@ -554,6 +575,7 @@ export function createMap(container: HTMLElement): {
     trailFallback: "trail",
     trailFallbackLabel: "trail-label",
     trailPoi: "trail-pois",
+    trailPoiLabel: "trail-poi-labels",
     elevation: elevationLayers,
   };
 
