@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-19T15:03:27+08:00",
+  "source": "shikoku-nature-trail.com",
+  "data_dir": "source/shikoku-nature-trail",
+  "course_count": 123,
+  "prefectures": {
+    "tokushima": 24,
+    "kagawa": 28,
+    "ehime": 33,
+    "kochi": 38
+  },
+  "detail_html_ok": 123,
+  "courses_with_map": 123,
+  "kml_ok": 123,
+  "images_downloaded": 1040,
+  "images_pending": 0,
+  "verify_ok": true,
+  "verify_errors": [],
+  "verify_warnings": []
+}

@@ -14,6 +14,10 @@ work/
 # Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
 source/henroyado.html
 
+# Shikoku Nature Trail raw archive (re-fetchable via
+# `python3 -m shikoku_nature_trail crawl-all`); keep the crawler code tracked
+source/shikoku-nature-trail/
+
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/
 

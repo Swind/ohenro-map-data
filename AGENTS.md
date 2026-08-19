@@ -22,6 +22,10 @@ ohenro-map-data/
 │   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
 ├── henroyado/                 Henroyado 住宿爬蟲（Python package，Phase 1：fetcher→parse→normalize）
 │   └── tests/                 regression fixtures + 單元測試
+├── shikoku_nature_trail/      四國自然步道網站爬蟲（Python，Phase 1 raw archive；見 reference/shikoku-nature-trail-crawler-plan.md）
+│   ├── crawler/               index / detail / assets / kml / manifest 子命令
+│   ├── parser/                course_list + course_detail HTML parser
+│   └── tests/                 fixtures + parser 單元測試
 ├── gsi-dem/                   GSI DEM 轉換工具（Rust，Phase 1 Inspector 完成）
 ├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、shikoku-trail.*、五份 PMTiles（basemap/henro/contours/terrain/trail）
 ├── scripts/                   build / validate 腳本
@@ -218,6 +222,36 @@ python3 -m unittest discover henroyado/tests
 **Phase 1 狀態**：Step 1–8 全完成（fetch / detect / parse / normalize /
 warnings / writers / fixtures+tests），產出 `source/henroyado.html`、
 `output/henroyado/{detect,raw,v1}.jsonl`。
+
+## Shikoku Nature Trail Crawler（Phase 1：raw archive）
+
+```bash
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-index   # 四縣列表 + course-index.json
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-details # 每 course 的 page.html + metadata/assets.json
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-assets # 內容圖片
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-kml   # Google My Maps KML
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-all      # index→details→assets→kml→report
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail verify
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
+```
+
+- 計畫：`reference/shikoku-nature-trail-crawler-plan.md`；詳見 `shikoku_nature_trail/README.md`。
+- 網站結構實測：列表頁是 **div-based table**（`.courselist` + `a.row_line` + `.cel`），
+  非 `<table>`；詳細頁 `iframe[src*="google.com/maps/d/"]` 的 `mid` query → KML。
+- 列表欄位由 header row 建立 class→field mapping（`cel1`..`cel7`），不依賴位置。
+- 詳細頁圖片只抓 `/wp-content/uploads/`（排除 theme/logo/icon）；hero background 也收。
+- Phase 1 只存 raw archive：page.html + metadata.json + assets.json + images/ + map/map.kml。
+- 重要檔案以 SHA-256 記錄；atomic write（temp→fsync→rename）；失敗不覆蓋有效檔。
+- KML 驗證：HTTP 200 + 非空 + 內容含 `<kml>`（不信 Content-Type）；無效 body 存 `map.kml.failed`。
+- resume：已存在檔案跳過，`--force` 才重抓；`crawl-state.json` 非唯一真相。
+- 限速：預設 3 並發 + 0.3s delay；retry 429/5xx/timeout（exponential backoff）。
+- `source/shikoku-nature-trail/` 已 gitignore（可重抓），僅爬蟲程式碼進 repo。
+- Tests：`python3 -m unittest discover shikoku_nature_trail/tests`（parser fixtures）。
+
+**Phase 1 狀態（2026-08-19）**：完整 archive 完成 —— 123 courses
+（tokushima 24 / kagawa 28 / ehime 33 / kochi 38），123 張 detail HTML、
+123 個 Google My Maps（全有 KML）、1040 張圖片，`verify: OK`。
+Crawl report：`reports/shikoku-nature-trail-crawl-report.{json,md}`。
 
 ## 環境需求
 
