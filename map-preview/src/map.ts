@@ -48,7 +48,10 @@ const BASEMAP_LABEL_IDS = [
 ];
 
 // Stable basemap layer IDs to insert elevation layers between (spec §11.3).
-const RELIEF_BEFORE = ["landcover", "earth"]; // color-relief + hillshade
+// color-relief + hillshade must render ABOVE the land fills (earth/landcover/
+// landuse) or the opaque fills hide the shading; keep them below `water` so
+// the sea stays unshaded.
+const RELIEF_BEFORE = ["water", "roads_runway"]; // color-relief + hillshade
 const CONTOUR_BEFORE = ["roads_tunnels_other_casing", "roads_runway"]; // contours
 // Fallback target when the preferred beforeId is missing (first label layer).
 const LABEL_FALLBACK = [

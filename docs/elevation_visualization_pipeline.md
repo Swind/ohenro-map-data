@@ -501,15 +501,20 @@ Layer insertion order：
 
 ```text
 basemap background/earth
+basemap landcover/landuse fills
 elevation-color-relief
 elevation-hillshade
-basemap landcover/water
+basemap water
 elevation contours
 basemap roads/buildings
 basemap labels
 henro route
 temples/lodging
 ```
+
+color-relief 與 hillshade 必須插在 land fills（earth/landcover/landuse）**之上**，
+否則不透明的 `earth`（`#e2dfda`）與綠地 fill 會完全蓋住陰影；同時保持在 `water`
+之下，避免海面被陰影著色。
 
 不可只用 `map.addLayer()` 全部加在 style 最上層。找一個穩定的 basemap layer ID 作
 `beforeId`；若該 ID 不存在，fallback 到第一個 label layer 前。
