@@ -1,9 +1,7 @@
 """Parse a course detail page.
 
-Phase 1 extracts only what's needed to download assets plus easy-to-spot
-fields (plan §12/§13): title, Google My Maps map id / embed URL, and content
-image URLs. Full description / 撮影ポイント / 観光 SPOT parsing is deferred to
-phase 2 — the raw HTML is already archived.
+Phase 1 fields (title, map and images) remain unchanged. Phase 2 additionally
+extracts the archived introduction, photo point and nearby tourism spots.
 
 Image selection: only images hosted under the WordPress uploads directory
 (`/wp-content/uploads/`) are content images. Theme chrome (icons, logos,
@@ -45,14 +43,43 @@ def _is_content_image(src: str) -> bool:
     return ext not in IGNORE_EXTENSIONS
 
 
+def _text(node):
+    """Conservatively collapse HTML layout whitespace without changing text."""
+    if node is None:
+        return None
+    return " ".join(node.get_text(" ", strip=True).split()) or None
+
+
 def parse_course_detail(html: str, source_url: str):
-    """Return {title, google_my_maps, images} for a course detail page."""
+    """Return normalized content and Phase 1 download fields for a detail page."""
     soup = BeautifulSoup(html, "html.parser")
 
     title = None
     h1 = soup.find("h1")
     if h1 is not None:
-        title = h1.get_text(" ", strip=True) or None
+        title = _text(h1)
+
+    about = soup.select_one(".sectionAbout .map-content .wrap")
+    description = _text(about.find("p")) if about else None
+
+    photo = soup.select_one(".photo-point")
+    photo_point = None
+    if photo is not None:
+        photo_point = {
+            "title": _text(photo.select_one(".sub-title")),
+            "description": _text(photo.find("p")),
+        }
+
+    tourism_spots = []
+    for item in soup.select(".sectionSpot .number-list > li"):
+        image = item.find("img")
+        image_url = urljoin(source_url, image.get("src")) if image and image.get("src") else None
+        tourism_spots.append({
+            "number": _text(item.select_one(".midashi")),
+            "title": _text(item.select_one(".title")),
+            "description": _text(item.find("p")),
+            "image_url": image_url,
+        })
 
     map_info = None
     for iframe in soup.find_all("iframe"):
@@ -95,6 +122,9 @@ def parse_course_detail(html: str, source_url: str):
 
     return {
         "title": title,
+        "description": description,
+        "photo_point": photo_point,
+        "tourism_spots": tourism_spots,
         "google_my_maps": map_info,
         "images": images,
     }

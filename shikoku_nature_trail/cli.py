@@ -8,6 +8,7 @@ Commands (plan §26):
   crawl-all          run everything (index -> details -> assets -> kml -> report)
   verify             check archive completeness
   report             write the crawl report (JSON + Markdown)
+  normalize          build the deterministic Phase 2 dataset offline
 """
 
 from __future__ import annotations
@@ -23,6 +24,7 @@ from shikoku_nature_trail.crawler.index import crawl_index
 from shikoku_nature_trail.crawler.kml import download_kml
 from shikoku_nature_trail.crawler.manifest import build_manifest
 from shikoku_nature_trail.http import HttpClient
+from shikoku_nature_trail.normalize import normalize_archive
 from shikoku_nature_trail.report import generate_report
 from shikoku_nature_trail.verify import verify
 
@@ -30,7 +32,7 @@ from shikoku_nature_trail.verify import verify
 def build_parser():
     p = argparse.ArgumentParser(
         prog="python3 -m shikoku_nature_trail",
-        description="Shikoku Nature Trail crawler (Phase 1 raw archive)",
+        description="Shikoku Nature Trail archive and normalization pipeline",
     )
     p.add_argument("--data-dir", default=config.DEFAULT_DATA_DIR,
                    help="raw archive directory (default: %(default)s)")
@@ -53,6 +55,9 @@ def build_parser():
     sub.add_parser("crawl-all", help="run the full crawl pipeline")
     sub.add_parser("verify", help="check archive completeness")
     sub.add_parser("report", help="write the crawl report")
+    normalize = sub.add_parser("normalize", help="build normalized JSON offline")
+    normalize.add_argument("--output", default="output/shikoku-nature-trail.json",
+                           help="normalized JSON path (default: %(default)s)")
     return p
 
 
@@ -62,6 +67,13 @@ def _make_client(args):
 
 
 def _run(args):
+    if args.command == "normalize":
+        result = normalize_archive(args.data_dir, args.output)
+        print("normalize: courses=%(course_count)d photo_points=%(photo_point_count)d "
+              "tourism_spots=%(tourism_spot_count)d placemarks=%(placemark_count)d "
+              "warnings=%(warning_count)d" % result)
+        return 0
+
     client = _make_client(args)
     if args.command == "crawl-index":
         result = crawl_index(client, args.data_dir, force=args.force)
@@ -135,6 +147,6 @@ def main(argv=None):
     except KeyboardInterrupt:
         print("interrupted", file=sys.stderr)
         return 130
-    except FileNotFoundError as e:
+    except (OSError, ValueError) as e:
         print("error: %s" % e, file=sys.stderr)
         return 1

@@ -223,7 +223,7 @@ python3 -m unittest discover henroyado/tests
 warnings / writers / fixtures+tests），產出 `source/henroyado.html`、
 `output/henroyado/{detect,raw,v1}.jsonl`。
 
-## Shikoku Nature Trail Crawler（Phase 1：raw archive）
+## Shikoku Nature Trail（Phase 1 raw archive + Phase 2 normalization）
 
 ```bash
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-index   # 四縣列表 + course-index.json
@@ -233,6 +233,7 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-all      # index→details→assets→kml→report
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail verify
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize --output output/shikoku-nature-trail.json
 ```
 
 - 計畫：`reference/shikoku-nature-trail-crawler-plan.md`；詳見 `shikoku_nature_trail/README.md`。
@@ -252,6 +253,15 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
 （tokushima 24 / kagawa 28 / ehime 33 / kochi 38），123 張 detail HTML、
 123 個 Google My Maps（全有 KML）、1040 張圖片，`verify: OK`。
 Crawl report：`reports/shikoku-nature-trail-crawl-report.{json,md}`。
+
+**Phase 2 狀態（2026-08-19）**：offline normalization 完成。輸出 schema v1
+`output/shikoku-nature-trail.json`（deterministic、無 timestamp、atomic write，約 9.6MB，
+已 gitignore）。每 course 合併 index 欄位、HTML introduction、`photo_point`、依來源順序的
+`tourism_spots`（source URL + `assets.json` local path）、Google Maps metadata 與 KML。
+KML 保留 Placemark name/description，以及 GeoJSON-compatible Point / LineString /
+GeometryCollection；單 course malformed HTML/assets/KML 記 warning 後繼續，缺 index 才 fatal。
+全量結果：123 courses / 123 photo points / 686 tourism spots / 1,713 Placemarks /
+0 warnings；672/672 tourism spot images 成功對應 archive local path。
 
 ## 環境需求
 

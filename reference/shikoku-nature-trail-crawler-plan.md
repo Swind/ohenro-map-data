@@ -1133,9 +1133,9 @@ KML / HTML / image 保存 SHA-256
 
 可以執行 verify 確認 archive 完整性
 
-38. 第二階段預留方向
+38. 第二階段（已完成，2026-08-19）
 
-第一階段完成後再設計：
+已實作 deterministic offline normalization：
 
 Raw Archive
     │
@@ -1154,6 +1154,18 @@ Raw Archive
           │
           ▼
 Normalized Dataset
+
+執行：
+
+```bash
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize \
+  --output output/shikoku-nature-trail.json
+```
+
+Schema v1 合併 course index、detail introduction、撮影ポイント、依來源順序的観光 SPOT、
+assets local path 與 KML Placemark/Point/LineString/MultiGeometry。單 course 解析失敗記 warning
+並繼續，不產生 timestamp。2026-08-19 全量：123 courses、123 photo points、686 tourism
+spots、1,713 Placemarks、0 warnings；詳見 `shikoku_nature_trail/README.md`。
 
 之後再考慮：
 

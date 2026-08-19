@@ -17,6 +17,8 @@ source/henroyado.html
 # Shikoku Nature Trail raw archive (re-fetchable via
 # `python3 -m shikoku_nature_trail crawl-all`); keep the crawler code tracked
 source/shikoku-nature-trail/
+# Deterministic Phase 2 dataset (~9.6MB, rebuilt from the raw archive)
+output/shikoku-nature-trail.json
 
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/

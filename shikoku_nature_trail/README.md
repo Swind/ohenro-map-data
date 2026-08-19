@@ -1,11 +1,12 @@
-# Shikoku Nature Trail Crawler (Phase 1)
+# Shikoku Nature Trail Archive Pipeline
 
 Reproducible crawler for the Shikoku Nature Trail official site
 (https://shikoku-nature-trail.com/). Phase 1 is a **raw archive only** — it
 saves the four prefecture course lists, every course detail HTML page, its
 content images, and the embedded Google My Maps KML, together with source
-metadata and SHA-256 checksums. No normalization, GIS processing, or App DB
-import yet (that's phase 2).
+metadata and SHA-256 checksums. Phase 2 normalizes that archive into one
+deterministic offline JSON dataset. GIS processing and App DB import remain
+separate future work.
 
 Plan: `reference/shikoku-nature-trail-crawler-plan.md`
 
@@ -19,9 +20,14 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-all
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail verify
 python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
+python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize --output output/shikoku-nature-trail.json
 ```
 
 `crawl-all` runs index -> details -> assets -> kml -> report in sequence.
+`normalize` is strictly offline and does not construct an HTTP client. It
+atomically creates the output parent directory and file. A missing
+`course-index.json` is fatal; a malformed or missing per-course HTML, assets
+manifest, or KML adds a warning while other courses continue.
 
 Flags: `--force` to refetch already-downloaded files, `--concurrency`,
 `--delay` (rate limit, seconds), `--timeout`, `--log-level`.
@@ -45,6 +51,37 @@ source/shikoku-nature-trail/
 ```
 
 Course directories use the site's own `post_id` (`/archives/119` -> `119`).
+
+## Normalized schema (version 1)
+
+`output/shikoku-nature-trail.json` has stable top-level keys:
+
+```text
+schema_version: 1
+source: official site URL
+summary: course/photo-point/tourism-spot/placemark/warning counts
+warnings: ordered per-course warning strings
+courses: source index fields plus the normalized fields below
+```
+
+Each course preserves all `course-index.json` fields and adds `title`,
+`description`, nullable `photo_point`, ordered `tourism_spots`,
+`google_my_maps`, `images`, and `kml`. A tourism spot contains nullable
+`number`, `title`, `description`, and `image`; image objects retain
+`source_url` and resolve `local_path` relative to the raw archive when listed
+in `assets.json`. `kml` contains document `name`/`description` and ordered
+Placemarks with nullable `name`/`description`/`geometry`. Geometries use
+GeoJSON-compatible `Point`, `LineString`, or `GeometryCollection` structures,
+with `[longitude, latitude, optional altitude]` coordinates.
+
+Missing scalar values are `null`; missing collections are empty arrays. HTML
+layout whitespace and plain KML description markup are conservatively
+collapsed. No generated timestamp is included, so identical archives produce
+byte-identical JSON.
+
+Full archive result (2026-08-19): 123 courses, 123 photo points, 686 tourism
+spots, 1,713 Placemarks, and 0 warnings. All 672 tourism spot images resolved
+to archived local paths. The reproducible ~9.6 MB output is gitignored.
 
 ## Design notes
 
