@@ -66,6 +66,7 @@ ln -s ../../../output/shikoku-nature-trail.pmtiles map-preview/public/data/shiko
 ln -s ../../../output/shikoku-nature-trail.geojson map-preview/public/data/shikoku-nature-trail.geojson
 ln -s ../../../output/temples.geojson map-preview/public/data/temples.geojson
 ln -s ../../../output/lodging.geojson map-preview/public/data/lodging.geojson
+ln -s ../../../output/min88-lodging/map.geojson map-preview/public/data/min88-lodging.geojson
 cp map-preview/.env.example map-preview/.env.development
 ```
 
@@ -94,6 +95,7 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_TRAIL_URL` | `/data/shikoku-nature-trail.pmtiles` | 四國自然步道 PMTiles（`shikoku_nature_trail` vector layer）；留空停用 |
 | `VITE_TRAIL_LIST_URL` | `/data/shikoku-nature-trail.geojson` | 官方路線索引，用於依縣與課程選擇；留空停用 selector |
 | `VITE_LODGING_URL` | `/data/lodging.geojson` | 住宿 QA GeoJSON（`extract_lodging.py` 產出）；留空停用 |
+| `VITE_MIN88_LODGING_URL` | `/data/min88-lodging.geojson` | 已驗證座標的 min88 住宿 GeoJSON；留空停用 |
 | `VITE_CONTOURS_URL` | `/data/shikoku-contours.pmtiles` | 20m 等高線 PMTiles（`contours` vector layer）；留空停用 |
 | `VITE_TERRAIN_URL` | `/data/shikoku-terrain.pmtiles` | Terrain-RGB 高程 PMTiles（`raster-dem`）；留空停用 |
 
@@ -110,10 +112,11 @@ http://localhost:5173/?lat=34.191403&lon=134.206799&zoom=14
 - **遍路路線**：`shikoku-henro.pmtiles` 的 `henro_routes` layer（filter `route_kind=henro_candidate`），白色 casing + 赭色（`#8f4b32`）前景，位於 basemap 之上。
 - **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（圓點與名稱標籤皆為 z10+）。路線可依縣與課程選擇；每條路線與所屬 POI 一起顯示或隱藏，路線標籤及全體 POI 仍可獨立關閉。
 - **住宿（QA）**：`lodging.geojson` GeoJSON source。依 subtype 著色（hotel 紅 / hostel 橘 / guest_house 綠 / camp_site 紫 / motel 灰 / apartment 藍 / chalet 深灰），z11+ 顯示名稱 label。點擊 feature 可檢視完整 properties 含 `raw_tags`、`address`、`point_method`。
+- **min88 住宿**：先執行 `python3 -m min88_lodging geocode` 與 `python3 -m min88_lodging export-map`。只輸出有 Google place provenance 的座標，使用獨立圖層與開關，避免和 OSM 住宿混為同一來源。
 - **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。
   - **hillshade**：同一 source 的 `hillshade` 圖層，預設可見。
-  - **等高線**：`shikoku-contours.pmtiles` 的 `contours` layer（`elevation_m`），z12–z15；100m 主線較粗，另可切換 `elevation_m % 100 == 0` 的標籤。
+  - **等高線**：`shikoku-contours.pmtiles` 的 `contours` layer（`elevation_m`），預設隱藏；z12–z15 可手動開啟，100m 主線較粗，標籤可獨立切換。
   - **3D terrain**：`elevation-dem-terrain` source 經 `map.setTerrain()` 啟用（exaggeration 1）；啟用後點擊地圖顯示該點高程（`map.queryTerrainElevation`），無資料顯示 `elevation: unavailable`。
   - 資料 attribution 為國土地理院（GSI），寫在 PMTiles metadata 與 MapLibre source。
   - 未設定 `VITE_CONTOURS_URL` / `VITE_TERRAIN_URL` 時對應 toggle 停用，basemap 與 Henro 圖層照常載入。

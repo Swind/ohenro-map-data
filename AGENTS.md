@@ -260,7 +260,8 @@ python3 -m min88_lodging parse
 python3 -m min88_lodging normalize
 python3 -m min88_lodging verify
 python3 -m min88_lodging report
-# optional, 尚未對 2026-08-19 archive 執行：python3 -m min88_lodging geocode
+python3 -m min88_lodging geocode       # optional Google place enrichment
+python3 -m min88_lodging export-map    # -> map.geojson（WebUI）
 ```
 
 - 架構：日文列表 → `index.json` → 逐 post ID 的 immutable detail HTML archive →
@@ -279,8 +280,9 @@ python3 -m min88_lodging report
 - 尚餘 98 個保守 warning：3 `MISSING_REQUIRED_FIELD`、10 list/detail
   `SOURCE_NAME_MISMATCH`、85 `UNRECOGNIZED_FORMAT`（60 pricing、13 laundry、7 payment、
   4 malformed route distance、1 partial Wi-Fi state）；原值均保留，未強行推斷。
-- optional geocode 尚未執行：base V1 為 647 `pending_geocode` + 3
-  `source_data_incomplete`，目前沒有 `v1-geocoded.jsonl` live 結果。
+- 2026-08-19 optional geocode 結果：640 `resolved`、7 `place_not_found`、3
+  `source_data_incomplete`、0 fetch errors；`export-map` 產生 640 點
+  `output/min88-lodging/map.geojson`，供 WebUI 的獨立 min88 lodging layer 使用。
 
 ## Shikoku Nature Trail（Phase 1 raw archive + Phase 2 normalization）
 

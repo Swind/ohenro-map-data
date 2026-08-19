@@ -48,18 +48,29 @@
     "facilities_available": 572
   },
   "map_status": {
-    "pending_geocode": 647,
+    "place_not_found": 7,
+    "resolved": 640,
     "source_data_incomplete": 3
   },
-  "coordinate_sources": {},
+  "coordinate_sources": {
+    "google_maps_embed_place": 640
+  },
   "warnings": {
-    "total": 98,
+    "total": 105,
     "by_code": {
+      "GOOGLE_MAPS_PLACE_NOT_FOUND": 7,
       "MISSING_REQUIRED_FIELD": 3,
       "SOURCE_NAME_MISMATCH": 10,
       "UNRECOGNIZED_FORMAT": 85
     },
     "example_source_ids": {
+      "GOOGLE_MAPS_PLACE_NOT_FOUND": [
+        "29474",
+        "478",
+        "23555",
+        "552",
+        "1055"
+      ],
       "MISSING_REQUIRED_FIELD": [
         "25590",
         "780",
@@ -100,6 +111,6 @@
     "detail_parseable": 650,
     "raw_records": 650,
     "v1_records": 650,
-    "geocoded_records": 0
+    "geocoded_records": 650
   }
 }

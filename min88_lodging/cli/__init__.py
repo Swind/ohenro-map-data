@@ -7,6 +7,7 @@ import os
 import sys
 
 from min88_lodging.geocode import enrich_file
+from min88_lodging.export_map import export_map
 from min88_lodging.pipeline import (crawl_all, crawl_detail_archive,
                                     crawl_index_archive, normalize_file,
                                     parse_archive)
@@ -58,6 +59,10 @@ def build_parser():
     geocode.add_argument("--delay", type=float, default=0.3)
     geocode.add_argument("--force", action="store_true")
 
+    export = commands.add_parser("export-map", help="export geocoded V1 as compact GeoJSON")
+    export.add_argument("input", nargs="?", default=os.path.join(DEFAULT_OUTPUT_DIR, "v1-geocoded.jsonl"))
+    export.add_argument("--output", default=os.path.join(DEFAULT_OUTPUT_DIR, "map.geojson"))
+
     for name, help_text in (("verify", "verify archive and generated outputs offline"),
                             ("report", "write deterministic coverage and warning report")):
         command = commands.add_parser(name, help=help_text)
@@ -103,6 +108,10 @@ def _run(args):
         print("geocode: %d/%d resolved, %d fetch errors -> %s" %
               (result["geocoded"], result["records"], fetch_errors, args.output))
         return 0 if not fetch_errors else 1
+    if args.command == "export-map":
+        result = export_map(args.input, args.output)
+        print("export-map: %(features)d/%(records)d features -> " % result + args.output)
+        return 0
     if args.command == "verify":
         result = verify(args.data_dir, args.output_dir)
         print("verify: %s (index=%d detail=%d raw=%d v1=%d)" %

@@ -19,6 +19,8 @@ export interface HenroLayers {
   routeForeground: string;
   lodgingMarker: string;
   lodgingLabel: string;
+  min88LodgingMarker: string;
+  min88LodgingLabel: string;
   trail: TrailGroup[];
   trailReady: Promise<TrailGroup[]>;
   trailFallback: string;
@@ -176,7 +178,7 @@ function addElevationLayers(
       source: "elevation-contours",
       "source-layer": "contours",
       filter: ["==", ["%", ["get", "elevation_m"], 100], 0],
-      layout: { "line-join": "round", "line-cap": "round" },
+      layout: { "line-join": "round", "line-cap": "round", visibility: "none" },
       paint: {
         "line-color": "#7a4a2b",
         "line-width": 1.4,
@@ -193,7 +195,7 @@ function addElevationLayers(
       source: "elevation-contours",
       "source-layer": "contours",
       filter: ["!=", ["%", ["get", "elevation_m"], 100], 0],
-      layout: { "line-join": "round", "line-cap": "round" },
+      layout: { "line-join": "round", "line-cap": "round", visibility: "none" },
       paint: {
         "line-color": "#b08d6f",
         "line-width": 0.7,
@@ -211,6 +213,7 @@ function addElevationLayers(
       "source-layer": "contours",
       filter: ["==", ["%", ["get", "elevation_m"], 100], 0],
       layout: {
+        visibility: "none",
         "symbol-placement": "line",
         "text-field": ["to-string", ["get", "elevation_m"]],
         "text-font": ["Noto Sans Regular"],
@@ -236,6 +239,11 @@ function applyHenroSources(map: MapLibreMap): void {
   const lodgingUrl = import.meta.env.VITE_LODGING_URL;
   if (lodgingUrl) {
     map.addSource("lodging", { type: "geojson", data: lodgingUrl });
+  }
+
+  const min88LodgingUrl = import.meta.env.VITE_MIN88_LODGING_URL;
+  if (min88LodgingUrl) {
+    map.addSource("min88-lodging", { type: "geojson", data: min88LodgingUrl });
   }
 
   const henroUrl = import.meta.env.VITE_HENRO_URL;
@@ -510,6 +518,48 @@ export function createMap(container: HTMLElement): {
       });
     }
 
+    if (map.getSource("min88-lodging")) {
+      map.addLayer({
+        id: "min88-lodging",
+        type: "circle",
+        source: "min88-lodging",
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 4, 13, 7],
+          "circle-color": [
+            "match", ["get", "lodging_type"],
+            "hotel", "#2962a3",
+            "ryokan", "#7451a8",
+            "guesthouse", "#148f77",
+            "temple_lodging", "#b7791f",
+            "pilgrim_shelter", "#7b6d5d",
+            "campground", "#4f772d",
+            "#287d8e",
+          ],
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 1.5,
+        },
+      });
+      map.addLayer({
+        id: "min88-lodging-label",
+        type: "symbol",
+        source: "min88-lodging",
+        minzoom: 11,
+        layout: {
+          "text-field": ["coalesce", ["get", "name"], ""],
+          "text-font": ["Noto Sans Regular"],
+          "text-size": 11,
+          "text-offset": [0, 1.1],
+          "text-anchor": "top",
+          "text-max-width": 8,
+        },
+        paint: {
+          "text-color": "#174c55",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.2,
+        },
+      });
+    }
+
     if (map.getSource("henro-temples")) {
       map.addLayer({
         id: "henro-temples",
@@ -570,6 +620,8 @@ export function createMap(container: HTMLElement): {
     routeForeground: "henro-route",
     lodgingMarker: "lodging",
     lodgingLabel: "lodging-label",
+    min88LodgingMarker: "min88-lodging",
+    min88LodgingLabel: "min88-lodging-label",
     trail: trailGroups,
     trailReady,
     trailFallback: "trail",

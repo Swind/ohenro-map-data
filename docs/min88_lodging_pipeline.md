@@ -17,6 +17,7 @@ python3 -m min88_lodging crawl-all
 python3 -m min88_lodging parse
 python3 -m min88_lodging normalize
 python3 -m min88_lodging geocode       # optional, uses network/cache
+python3 -m min88_lodging export-map    # geocoded V1 -> map.geojson
 python3 -m min88_lodging verify
 python3 -m min88_lodging report
 ```
@@ -101,3 +102,8 @@ python3 -m unittest discover henroyado/tests
 Base V1 不含推測座標。Geocode 只接受 Google single-place record 或 resolved
 `!8m2!3d...!4d...` marker，且結果必須位於四國 bounds；viewport 與 Street View
 camera coordinates 不會使用。圖片只保存 URL，不下載 binary。
+
+`export-map` 只輸出 `map_data_status=resolved` 的住宿為精簡 GeoJSON，供
+`map-preview` 的 `VITE_MIN88_LODGING_URL` 載入；未 geocode 或無可靠座標的 record 會略過。
+2026-08-19 archive 實際輸出 640 個 map features（另有 7 筆找不到單一 Google place、
+3 筆來源資料不足）。

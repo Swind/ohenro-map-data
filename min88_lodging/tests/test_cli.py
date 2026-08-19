@@ -39,6 +39,12 @@ class CliTests(unittest.TestCase):
         with mock.patch("min88_lodging.cli.enrich_file", return_value=stats):
             self.assertEqual(main(["geocode", "input.jsonl", "--output", "out.jsonl"]), 1)
 
+    def test_export_map_dispatch(self):
+        with mock.patch("min88_lodging.cli.export_map",
+                        return_value={"records": 2, "features": 1, "skipped": 1}) as function:
+            self.assertEqual(main(["export-map", "input.jsonl", "--output", "map.geojson"]), 0)
+        function.assert_called_once_with("input.jsonl", "map.geojson")
+
 
 if __name__ == "__main__":
     unittest.main()

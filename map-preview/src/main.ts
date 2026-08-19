@@ -131,6 +131,9 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   bindToggle("toggle-lodging", (v) =>
     toggleLayer(map, [henro.lodgingMarker, henro.lodgingLabel], v),
   );
+  bindToggle("toggle-min88-lodging", (v) =>
+    toggleLayer(map, [henro.min88LodgingMarker, henro.min88LodgingLabel], v),
+  );
 
   bindToggle("toggle-elevation-color", (v) =>
     toggleLayer(map, elevation.colorRelief, v),
@@ -185,16 +188,22 @@ function setupClickPopup(map: MapLibreMap, elevationAvailable: boolean): void {
         : g.type;
 
     const props = f.properties ?? {};
+    const escapeHtml = (value: unknown): string => String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
     const propLines = Object.entries(props)
-      .map(([k, v]) => `${k}: ${String(v)}`)
+      .map(([k, v]) => `${escapeHtml(k)}: ${escapeHtml(v)}`)
       .join("<br/>");
 
     const content = [
-      `<b>${f.layer.id}</b>`,
-      `id: ${f.id ?? "(none)"}`,
-      `source: ${f.source}`,
-      `source-layer: ${f.sourceLayer ?? "(geojson)"}`,
-      `coords: ${coords}`,
+      `<b>${escapeHtml(f.layer.id)}</b>`,
+      `id: ${escapeHtml(f.id ?? "(none)")}`,
+      `source: ${escapeHtml(f.source)}`,
+      `source-layer: ${escapeHtml(f.sourceLayer ?? "(geojson)")}`,
+      `coords: ${escapeHtml(coords)}`,
       props && Object.keys(props).length > 0
         ? `<hr/>${propLines}`
         : "",
