@@ -113,6 +113,16 @@ cargo run --release -- build --tiles work/tiles --grid /tmp/tile-report.json \
 cargo run --release -- query-db output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
 # => Elevation: 335.0 m  (layer=DEM10, source=DEM10B)
 
+# 批次查詢：JSONL 每行至少含 {"lat": ..., "lon": ...}；原始欄位會保留
+cargo run --release -- query-batch output/shikoku-elevation.sqlite \
+  --input points.jsonl --output points-with-elevation.jsonl
+
+# 路線高程剖面：輸入 GeoJSON FeatureCollection 的 LineString features
+# （如 output/shikoku-nature-trail.geojson）
+cargo run --release -- profile output/shikoku-elevation.sqlite \
+  --input output/shikoku-nature-trail.geojson \
+  --output output/shikoku-nature-trail-elevation.json --interval-m 20
+
 # Phase 7：golden coordinates regression + coverage/source report
 cargo run --release -- validate-db output/shikoku-elevation.sqlite \
   --golden gsi-dem/tests/golden/elevation.json --report /tmp/validate-report.json
@@ -313,6 +323,10 @@ DEM10B 是獨立的 10m 解析度層（275 archives、每 region 一張 1125×75
   `data` = zstd(int16[65536] LE)；`layer` 5 = DEM5、10 = DEM10。
 - `source_tiles(layer, tile_x, tile_y, data)`：zstd(u8[65536] source codes)。
 
+`ElevationDb::sample()` 是共用 runtime 查詢 API；它維持單一 SQLite connection，並快取
+最近使用的 64 個解壓 tile。`query-db`、JSONL `query-batch` 與 GeoJSON `profile` 都只做
+各自的 input/output 包裝，使用同一個 DEM5→DEM10 fallback 邏輯。
+
 `query-db` 實作 runtime 查詢（規劃 §25）：
 
 ```
@@ -349,6 +363,8 @@ DEM5 nodata/缺 tile → DEM10 tile → 回傳或 no data
 - coverage DEM10：2,889 tiles，151,126,794 valid，全為 DEM10 來源。
 
 Phase 8 預告：Android 整合（SQLite + tile cache + zstd + lookup，§42）。
-`query` 仍用 nearest-cell；bilinear interpolation（§26）與 route elevation
-profile（§27）尚未實作。
+`query`、`query-db` 與 `profile` 目前都用 nearest-cell；bilinear interpolation（§26）
+尚未實作。`profile` 會將每個 GeoJSON LineString 以距離（預設 20m）重採樣，輸出高度、
+各 segment 的最低/最高高度、raw cumulative ascent/descent 及無資料距離；多個 segment
+不會自動接合或跨缺口計算爬升。
 - Phase 2 完成前**不要開始 bulk build**（規劃 §42）。

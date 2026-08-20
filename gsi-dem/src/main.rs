@@ -27,6 +27,10 @@ enum Command {
     Query(cli::query::QueryArgs),
     /// Query elevation at a lat/lon (against the SQLite database).
     QueryDb(cli::query_db::QueryDbArgs),
+    /// Query newline-delimited JSON points against the SQLite database.
+    QueryBatch(cli::query_batch::QueryBatchArgs),
+    /// Build elevation profiles for GeoJSON LineString route features.
+    Profile(cli::profile::ProfileArgs),
     /// Render a mesh raster as a debug PNG.
     Render(cli::render::RenderArgs),
     /// Re-cut merged rasters into 256x256 zstd tiles.
@@ -46,6 +50,8 @@ fn main() -> anyhow::Result<()> {
         Command::Merge(args) => cli::merge::run(&args),
         Command::Query(args) => cli::query::run(&args),
         Command::QueryDb(args) => cli::query_db::run(&args),
+        Command::QueryBatch(args) => cli::query_batch::run(&args),
+        Command::Profile(args) => cli::profile::run(&args),
         Command::Render(args) => cli::render::run(&args),
         Command::Tile(args) => cli::tile::run(&args),
         Command::Validate(args) => cli::validate::run(&args),

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Args;
 
-use crate::db::query_db;
+use crate::db::ElevationDb;
 
 /// Query the SQLite elevation database at a lat/lon (DEM5 then DEM10 fallback).
 #[derive(Debug, Args)]
@@ -20,7 +20,8 @@ pub struct QueryDbArgs {
 }
 
 pub fn run(args: &QueryDbArgs) -> anyhow::Result<()> {
-    let r = query_db(&args.db, args.lat, args.lon)?;
+    let mut db = ElevationDb::open(&args.db)?;
+    let r = db.sample(args.lat, args.lon)?;
     match (r.meters, r.layer) {
         (Some(m), Some(layer)) => {
             let layer_name = if layer == 5 { "DEM5" } else { "DEM10" };

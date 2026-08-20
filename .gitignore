@@ -23,6 +23,8 @@ source/min88-lodging/
 source/shikoku-nature-trail/
 # Deterministic Phase 2 dataset (~9.6MB, rebuilt from the raw archive)
 output/shikoku-nature-trail.json
+# Route profile samples are large but can be rebuilt from the GeoJSON + DEM SQLite.
+output/shikoku-nature-trail-elevation.json
 
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/

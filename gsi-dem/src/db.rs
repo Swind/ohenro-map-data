@@ -7,6 +7,7 @@
 //! - `source_tiles(layer, tile_x, tile_y, data)` — `data` = zstd(u8[65536]
 //!   plan §16 source codes).
 
+use std::collections::{HashMap, VecDeque};
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -205,6 +206,9 @@ pub struct QueryResult {
     pub source_code: Option<u8>,
 }
 
+/// A reusable point lookup result. `None` means neither DEM layer has data.
+pub type ElevationSample = QueryResult;
+
 /// Golden coordinate spec (plan §36).
 #[derive(Debug, Clone, Deserialize)]
 pub struct GoldenSpec {
@@ -294,50 +298,7 @@ pub fn validate_golden(db_path: &Path, spec: &GoldenSpec) -> DemResult<Vec<Golde
 
 /// Runtime lookup: DEM5 first, DEM10B fallback (plan §17/§25).
 pub fn query_db(path: &Path, lat: f64, lon: f64) -> DemResult<QueryResult> {
-    let conn = open(path)?;
-    let meta = |k: &str| -> DemResult<Option<String>> {
-        conn.query_row(
-            "SELECT value FROM metadata WHERE key = ?1",
-            params![k],
-            |r| r.get(0),
-        )
-        .optional()
-        .map_err(db_err("read metadata"))
-    };
-
-    let g5 = TileGrid::new(
-        meta("dem5.origin_lat")?.and_then(parse).unwrap_or(f64::NAN),
-        meta("dem5.origin_lon")?.and_then(parse).unwrap_or(f64::NAN),
-        meta("dem5.step_lat")?.and_then(parse).unwrap_or(f64::NAN),
-        meta("dem5.step_lon")?.and_then(parse).unwrap_or(f64::NAN),
-    );
-    if g5.step_lat.is_nan() {
-        // no DEM5 grid metadata
-    } else if let Some(r) = sample_layer(&conn, LAYER_DEM5, &g5, lat, lon)? {
-        return Ok(r);
-    }
-
-    let g10 = TileGrid::new(
-        meta("dem10.origin_lat")?
-            .and_then(parse)
-            .unwrap_or(f64::NAN),
-        meta("dem10.origin_lon")?
-            .and_then(parse)
-            .unwrap_or(f64::NAN),
-        meta("dem10.step_lat")?.and_then(parse).unwrap_or(f64::NAN),
-        meta("dem10.step_lon")?.and_then(parse).unwrap_or(f64::NAN),
-    );
-    if g10.step_lat.is_nan() {
-        // no DEM10 grid metadata
-    } else if let Some(r) = sample_layer(&conn, LAYER_DEM10, &g10, lat, lon)? {
-        return Ok(r);
-    }
-
-    Ok(QueryResult {
-        meters: None,
-        layer: None,
-        source_code: None,
-    })
+    ElevationDb::open(path)?.sample(lat, lon)
 }
 
 /// Rectangle of tiles (inclusive) covered by a layer.
@@ -361,7 +322,16 @@ pub struct ElevationDb {
     tile_size: usize,
     dem5: Option<GridInfo>,
     dem10: Option<GridInfo>,
+    tile_cache: HashMap<(i64, i64, i64), CachedTile>,
+    cache_order: VecDeque<(i64, i64, i64)>,
 }
+
+struct CachedTile {
+    elevation: Vec<i16>,
+    source: Option<Vec<u8>>,
+}
+
+const TILE_CACHE_CAPACITY: usize = 64;
 
 impl ElevationDb {
     /// Open the database and load its grid + tile-size metadata.
@@ -377,7 +347,40 @@ impl ElevationDb {
             tile_size,
             dem5,
             dem10,
+            tile_cache: HashMap::new(),
+            cache_order: VecDeque::new(),
         })
+    }
+
+    /// Query one point using a persistent SQLite connection and decompressed
+    /// tile cache. DEM5 takes precedence; DEM10B is a no-data fallback.
+    pub fn sample(&mut self, lat: f64, lon: f64) -> DemResult<ElevationSample> {
+        if let Some(grid) = self.dem5.clone() {
+            if let Some(result) = self.sample_layer(LAYER_DEM5, &grid, lat, lon)? {
+                return Ok(result);
+            }
+        }
+        if let Some(grid) = self.dem10.clone() {
+            if let Some(result) = self.sample_layer(LAYER_DEM10, &grid, lat, lon)? {
+                return Ok(result);
+            }
+        }
+        Ok(QueryResult {
+            meters: None,
+            layer: None,
+            source_code: None,
+        })
+    }
+
+    /// Query many points in input order, sharing the connection and tile cache.
+    pub fn sample_many<I>(&mut self, points: I) -> DemResult<Vec<ElevationSample>>
+    where
+        I: IntoIterator<Item = (f64, f64)>,
+    {
+        points
+            .into_iter()
+            .map(|(lat, lon)| self.sample(lat, lon))
+            .collect()
     }
 
     /// Read a single `metadata` key.
@@ -453,9 +456,13 @@ impl ElevationDb {
         let Some(blob) = blob else {
             return Ok(None);
         };
-        let expected = self.tile_size.checked_mul(self.tile_size).and_then(|n| n.checked_mul(2)).ok_or_else(|| {
-            DemError::Parse { context: format!("tile size overflow: {}", self.tile_size) }
-        })?;
+        let expected = self
+            .tile_size
+            .checked_mul(self.tile_size)
+            .and_then(|n| n.checked_mul(2))
+            .ok_or_else(|| DemError::Parse {
+                context: format!("tile size overflow: {}", self.tile_size),
+            })?;
         let raw = decompress(&blob, expected)?;
         if raw.len() != expected {
             return Err(DemError::Parse {
@@ -470,6 +477,75 @@ impl ElevationDb {
             .map(|c| i16::from_le_bytes([c[0], c[1]]))
             .collect();
         Ok(Some(cells))
+    }
+
+    fn sample_layer(
+        &mut self,
+        layer: i64,
+        grid: &GridInfo,
+        lat: f64,
+        lon: f64,
+    ) -> DemResult<Option<QueryResult>> {
+        let grid = TileGrid::new(
+            grid.origin_lat,
+            grid.origin_lon,
+            grid.step_lat,
+            grid.step_lon,
+        );
+        let (gx, gy) = grid.global_cell(lat, lon);
+        if gx < 0 || gy < 0 {
+            return Ok(None);
+        }
+        let (tx, ty, px, py) = grid.tile_of(gx, gy);
+        let key = (layer, tx, ty);
+        self.load_tile(key)?;
+        let tile = match self.tile_cache.get(&key) {
+            Some(tile) => tile,
+            None => return Ok(None),
+        };
+        let index = py * self.tile_size + px;
+        let Some(meters) = dequantize(tile.elevation[index]) else {
+            return Ok(None);
+        };
+        Ok(Some(QueryResult {
+            meters: Some(meters),
+            layer: Some(layer as u8),
+            source_code: tile.source.as_ref().and_then(|s| s.get(index).copied()),
+        }))
+    }
+
+    fn load_tile(&mut self, key: (i64, i64, i64)) -> DemResult<()> {
+        if self.tile_cache.contains_key(&key) {
+            if let Some(index) = self.cache_order.iter().position(|k| *k == key) {
+                self.cache_order.remove(index);
+            }
+            self.cache_order.push_back(key);
+            return Ok(());
+        }
+        let (layer, tx, ty) = key;
+        let Some(elevation) = self.read_elevation_tile(layer, tx, ty)? else {
+            return Ok(());
+        };
+        let source = self
+            .conn
+            .query_row(
+                "SELECT data FROM source_tiles WHERE layer = ?1 AND tile_x = ?2 AND tile_y = ?3",
+                params![layer, tx, ty],
+                |r| r.get::<_, Vec<u8>>(0),
+            )
+            .optional()
+            .map_err(db_err("read source tile"))?
+            .map(|blob| decompress(&blob, self.tile_size * self.tile_size))
+            .transpose()?;
+        if self.tile_cache.len() == TILE_CACHE_CAPACITY {
+            if let Some(oldest) = self.cache_order.pop_front() {
+                self.tile_cache.remove(&oldest);
+            }
+        }
+        self.cache_order.push_back(key);
+        self.tile_cache
+            .insert(key, CachedTile { elevation, source });
+        Ok(())
     }
 }
 
@@ -509,55 +585,6 @@ fn load_grid(conn: &Connection, prefix: &str) -> DemResult<Option<GridInfo>> {
             .and_then(parse)
             .unwrap_or(f64::NAN),
         tile_size,
-    }))
-}
-
-fn sample_layer(
-    conn: &Connection,
-    layer: i64,
-    grid: &TileGrid,
-    lat: f64,
-    lon: f64,
-) -> DemResult<Option<QueryResult>> {
-    let (gx, gy) = grid.global_cell(lat, lon);
-    if gx < 0 || gy < 0 {
-        return Ok(None);
-    }
-    let (tx, ty, px, py) = grid.tile_of(gx, gy);
-
-    let blob: Option<Vec<u8>> = conn
-        .query_row(
-            "SELECT data FROM elevation_tiles WHERE layer = ?1 AND tile_x = ?2 AND tile_y = ?3",
-            params![layer, tx, ty],
-            |r| r.get(0),
-        )
-        .optional()
-        .map_err(db_err("read elevation tile"))?;
-    let Some(blob) = blob else {
-        return Ok(None);
-    };
-    let raw = decompress(&blob, TILE_SIZE * TILE_SIZE * 2)?;
-    let idx = py * TILE_SIZE + px;
-    let cell = i16::from_le_bytes([raw[idx * 2], raw[idx * 2 + 1]]);
-    let Some(meters) = dequantize(cell) else {
-        return Ok(None); // DEM5/10 nodata -> try next layer
-    };
-
-    let source_code = conn
-        .query_row(
-            "SELECT data FROM source_tiles WHERE layer = ?1 AND tile_x = ?2 AND tile_y = ?3",
-            params![layer, tx, ty],
-            |r| r.get(0),
-        )
-        .optional()
-        .map_err(db_err("read source tile"))?
-        .and_then(|s: Vec<u8>| decompress(&s, TILE_SIZE * TILE_SIZE).ok())
-        .and_then(|d| d.get(idx).copied());
-
-    Ok(Some(QueryResult {
-        meters: Some(meters),
-        layer: Some(layer as u8),
-        source_code,
     }))
 }
 
@@ -638,6 +665,17 @@ mod tests {
         assert_eq!(r.layer, Some(5));
         assert_eq!(r.source_code, Some(4));
 
+        let mut reader = ElevationDb::open(&db_path).unwrap();
+        let batch = reader
+            .sample_many([
+                (lat, lon),
+                (origin_lat - 50.25 * step, origin_lon + 50.25 * step),
+            ])
+            .unwrap();
+        assert_eq!(batch[0].meters, Some(123.0));
+        assert_eq!(batch[1].meters, Some(99.0));
+        assert_eq!(batch[1].layer, Some(10));
+
         // A nodata cell in DEM5 -> DEM10 fallback. The center of DEM10 cell
         // (100,100) is at 50.25 DEM5 steps below the origin -> inside DEM5
         // cell (50,50) which is nodata; DEM10 holds 99 there.
@@ -706,10 +744,7 @@ mod tests {
         let t10 = db.read_elevation_tile(LAYER_DEM10, 1, 0).unwrap().unwrap();
         assert_eq!(t10[0], 6);
         // missing tile -> Ok(None)
-        assert_eq!(
-            db.read_elevation_tile(LAYER_DEM10, 0, 1).unwrap(),
-            None
-        );
+        assert_eq!(db.read_elevation_tile(LAYER_DEM10, 0, 1).unwrap(), None);
     }
 
     #[test]
