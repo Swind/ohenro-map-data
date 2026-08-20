@@ -14,10 +14,7 @@ use gsi_dem::tile::grid::{ELEV_NODATA, TILE_SIZE};
 use gsi_dem::tile::tilefile::TileFile;
 
 fn temp_dir(tag: &str) -> PathBuf {
-    let d = std::env::temp_dir().join(format!(
-        "gsi-dem-export-vrt-{tag}-{}",
-        std::process::id()
-    ));
+    let d = std::env::temp_dir().join(format!("gsi-dem-export-vrt-{tag}-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&d);
     std::fs::create_dir_all(&d).unwrap();
     d
@@ -131,11 +128,7 @@ fn exports_tiles_across_four_coordinates_north_up() {
     // cell (0,0) of each tile sits at raw (ty*256+0, tx*256+0).
     assert_eq!(data[0 * width + 0], 1000, "tile (0,0) top-left");
     assert_eq!(data[0 * width + TILE_SIZE], 2000, "tile (1,0) top-right");
-    assert_eq!(
-        data[TILE_SIZE * width + 0],
-        3000,
-        "tile (0,1) bottom-left"
-    );
+    assert_eq!(data[TILE_SIZE * width + 0], 3000, "tile (0,1) bottom-left");
     assert_eq!(
         data[TILE_SIZE * width + TILE_SIZE],
         4000,
@@ -227,7 +220,10 @@ fn malformed_blob_returns_error_not_panic() {
         srs: "EPSG:6668".to_string(),
         force: false,
     });
-    assert!(res.is_err(), "malformed blob must produce an error, not panic");
+    assert!(
+        res.is_err(),
+        "malformed blob must produce an error, not panic"
+    );
 }
 
 #[test]

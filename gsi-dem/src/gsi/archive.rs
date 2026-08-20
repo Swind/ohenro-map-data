@@ -14,11 +14,10 @@ pub fn open_archive<P: AsRef<Path>>(path: P) -> Result<ZipArchive<BufReader<File
         context: format!("open {}", path.as_ref().display()),
         source: e,
     })?;
-    ZipArchive::new(BufReader::new(file))
-        .map_err(|e| DemError::Zip {
-            context: format!("read {}", path.as_ref().display()),
-            source: e,
-        })
+    ZipArchive::new(BufReader::new(file)).map_err(|e| DemError::Zip {
+        context: format!("read {}", path.as_ref().display()),
+        source: e,
+    })
 }
 
 /// Names of all entries that look like an XML document (case-insensitive `.xml`).
@@ -71,19 +70,15 @@ pub fn read_entry_to_bytes<R: Read + std::io::Seek>(
         });
     }
     let mut buf = Vec::with_capacity(size as usize);
-    entry
-        .read_to_end(&mut buf)
-        .map_err(|e| DemError::Io {
-            context: format!("read entry {name}"),
-            source: e,
-        })?;
+    entry.read_to_end(&mut buf).map_err(|e| DemError::Io {
+        context: format!("read entry {name}"),
+        source: e,
+    })?;
     Ok(buf)
 }
 
 /// Open a nested ZIP from an in-memory buffer.
-pub fn open_inner_zip(
-    bytes: Vec<u8>,
-) -> Result<ZipArchive<Cursor<Vec<u8>>>, DemError> {
+pub fn open_inner_zip(bytes: Vec<u8>) -> Result<ZipArchive<Cursor<Vec<u8>>>, DemError> {
     ZipArchive::new(Cursor::new(bytes)).map_err(|e| DemError::Zip {
         context: "open inner zip".to_string(),
         source: e,

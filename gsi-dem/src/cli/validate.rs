@@ -73,12 +73,15 @@ impl RasterSet {
     }
 
     fn bounds(&self) -> Option<GridBounds> {
-        self.rasters.iter().map(GridBounds::from_raster).reduce(|a, b| GridBounds {
-            min_lat: a.min_lat.min(b.min_lat),
-            min_lon: a.min_lon.min(b.min_lon),
-            max_lat: a.max_lat.max(b.max_lat),
-            max_lon: a.max_lon.max(b.max_lon),
-        })
+        self.rasters
+            .iter()
+            .map(GridBounds::from_raster)
+            .reduce(|a, b| GridBounds {
+                min_lat: a.min_lat.min(b.min_lat),
+                min_lon: a.min_lon.min(b.min_lon),
+                max_lat: a.max_lat.max(b.max_lat),
+                max_lon: a.max_lon.max(b.max_lon),
+            })
     }
 
     fn mesh_at(&self, lat: f64, lon: f64) -> Option<&str> {
@@ -209,7 +212,11 @@ pub fn run(args: &ValidateArgs) -> anyhow::Result<()> {
     };
 
     let n = diffs.len();
-    let median = if n > 0 { sorted(diffs.clone())[n / 2] } else { 0.0 };
+    let median = if n > 0 {
+        sorted(diffs.clone())[n / 2]
+    } else {
+        0.0
+    };
     let p90 = if n > 0 {
         sorted(diffs.clone())[(((n as f64) * 0.9) as usize).min(n - 1)]
     } else {
@@ -248,14 +255,20 @@ pub fn run(args: &ValidateArgs) -> anyhow::Result<()> {
         ok = false;
     }
     if median > args.tolerance {
-        println!("FAIL: median |diff| {median:.2}m exceeds tolerance {}m", args.tolerance);
+        println!(
+            "FAIL: median |diff| {median:.2}m exceeds tolerance {}m",
+            args.tolerance
+        );
         ok = false;
     }
     // Land agreement is judged where both rasters have data; for 5m-vs-10m
     // cross-resolution comparisons, steep slopes inflate the tail, so use
     // a relaxed rate threshold (the median is the primary signal).
     if land_agreement < 0.6 {
-        println!("FAIL: land agreement {:.1}% below 60%", land_agreement * 100.0);
+        println!(
+            "FAIL: land agreement {:.1}% below 60%",
+            land_agreement * 100.0
+        );
         ok = false;
     }
     if sea_ratio < args.sea_consistency {

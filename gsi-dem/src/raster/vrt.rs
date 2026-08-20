@@ -36,9 +36,9 @@ impl RawWriter {
     /// Create the raw file, pre-filling every row with `ELEV_NODATA` so
     /// tiles missing from the database are explicitly NODATA, not zeros.
     pub fn create(path: &Path, width: usize, height: usize, tile_size: usize) -> DemResult<Self> {
-        let row_bytes = width
-            .checked_mul(2)
-            .ok_or_else(|| DemError::Parse { context: "row bytes overflow".into() })?;
+        let row_bytes = width.checked_mul(2).ok_or_else(|| DemError::Parse {
+            context: "row bytes overflow".into(),
+        })?;
         let file = File::create(path).map_err(io_err(&format!("create {}", path.display())))?;
         let mut writer = BufWriter::with_capacity(1 << 20, file);
 
@@ -58,18 +58,20 @@ impl RawWriter {
             file: writer,
             tile_size,
             row_bytes,
-            tile_row_bytes: tile_size
-                .checked_mul(2)
-                .ok_or_else(|| DemError::Parse { context: "tile row bytes overflow".into() })?,
+            tile_row_bytes: tile_size.checked_mul(2).ok_or_else(|| DemError::Parse {
+                context: "tile row bytes overflow".into(),
+            })?,
         })
     }
 
     /// Overwrite one tile's 256 rows at their grid offsets.
     pub fn write_tile(&mut self, tile_x: i64, tile_y: i64, cells: &[i16]) -> DemResult<()> {
-        let expected = self
-            .tile_size
-            .checked_mul(self.tile_size)
-            .ok_or_else(|| DemError::Parse { context: "tile cell count overflow".into() })?;
+        let expected =
+            self.tile_size
+                .checked_mul(self.tile_size)
+                .ok_or_else(|| DemError::Parse {
+                    context: "tile cell count overflow".into(),
+                })?;
         if cells.len() != expected {
             return Err(DemError::Parse {
                 context: format!(
@@ -78,26 +80,36 @@ impl RawWriter {
                 ),
             });
         }
-        let tile_x = usize::try_from(tile_x)
-            .map_err(|_| DemError::Parse { context: "negative tile_x".into() })?;
-        let tile_y = usize::try_from(tile_y)
-            .map_err(|_| DemError::Parse { context: "negative tile_y".into() })?;
+        let tile_x = usize::try_from(tile_x).map_err(|_| DemError::Parse {
+            context: "negative tile_x".into(),
+        })?;
+        let tile_y = usize::try_from(tile_y).map_err(|_| DemError::Parse {
+            context: "negative tile_y".into(),
+        })?;
         let x_off = tile_x
             .checked_mul(self.tile_row_bytes)
-            .ok_or_else(|| DemError::Parse { context: "x offset overflow".into() })?;
-        let tile_stride = self
-            .tile_size
-            .checked_mul(self.row_bytes)
-            .ok_or_else(|| DemError::Parse { context: "tile stride overflow".into() })?;
+            .ok_or_else(|| DemError::Parse {
+                context: "x offset overflow".into(),
+            })?;
+        let tile_stride =
+            self.tile_size
+                .checked_mul(self.row_bytes)
+                .ok_or_else(|| DemError::Parse {
+                    context: "tile stride overflow".into(),
+                })?;
         let y_off = tile_y
             .checked_mul(tile_stride)
-            .ok_or_else(|| DemError::Parse { context: "y offset overflow".into() })?;
+            .ok_or_else(|| DemError::Parse {
+                context: "y offset overflow".into(),
+            })?;
 
         for row in 0..self.tile_size {
             let base = y_off
                 .checked_add(row.checked_mul(self.row_bytes).unwrap())
                 .and_then(|b| b.checked_add(x_off))
-                .ok_or_else(|| DemError::Parse { context: "row offset overflow".into() })?;
+                .ok_or_else(|| DemError::Parse {
+                    context: "row offset overflow".into(),
+                })?;
             let start = row * self.tile_size;
             let mut bytes = Vec::with_capacity(self.tile_row_bytes);
             for cell in &cells[start..start + self.tile_size] {
@@ -146,9 +158,9 @@ pub fn write_vrt(
     geo_transform: [f64; 6],
     raw_filename: &str,
 ) -> DemResult<()> {
-    let line_offset = width
-        .checked_mul(2)
-        .ok_or_else(|| DemError::Parse { context: "line offset overflow".into() })?;
+    let line_offset = width.checked_mul(2).ok_or_else(|| DemError::Parse {
+        context: "line offset overflow".into(),
+    })?;
     let xml = format!(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
          <VRTDataset rasterXSize=\"{width}\" rasterYSize=\"{height}\">\n\

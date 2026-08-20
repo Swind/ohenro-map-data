@@ -52,7 +52,10 @@ pub fn run(args: &QueryArgs) -> anyhow::Result<()> {
         println!("mesh:        {}", raster.mesh);
         println!("source:      {}", raster.source);
         println!("survey_date: {}", raster.survey_date);
-        println!("cell:        row={} col={} center=({:.6}, {:.6})", row, col, cell_lat, cell_lon);
+        println!(
+            "cell:        row={} col={} center=({:.6}, {:.6})",
+            row, col, cell_lat, cell_lon
+        );
         match sample {
             Some(s) => {
                 let meters = s

@@ -51,20 +51,25 @@ pub fn run(args: &InspectArgs) -> anyhow::Result<()> {
     }
 
     println!();
-    println!("Summary: {} rasters, {} samples total, {} partial-coverage meshes", total_rasters, total_samples, partial);
+    println!(
+        "Summary: {} rasters, {} samples total, {} partial-coverage meshes",
+        total_rasters, total_samples, partial
+    );
     Ok(())
 }
 
 fn print_raster(r: &crate::gsi::model::GsiDemRaster, verbose: bool) {
-    println!(
-        "mesh:       {}  ({})",
-        r.mesh, r.entry_name
-    );
+    println!("mesh:       {}  ({})", r.mesh, r.entry_name);
     println!("  source:   {}", r.source);
     println!("  date:     {}", r.survey_date);
     println!(
         "  bounds:   {} {} -> {} {}  ({} x {})",
-        r.lower_lat, r.lower_lon, r.upper_lat, r.upper_lon, r.width(), r.height()
+        r.lower_lat,
+        r.lower_lon,
+        r.upper_lat,
+        r.upper_lon,
+        r.width(),
+        r.height()
     );
     println!(
         "  grid:     low ({},{}) high ({},{})",

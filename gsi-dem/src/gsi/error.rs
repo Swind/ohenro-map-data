@@ -20,11 +20,7 @@ pub enum DemError {
     Xml { context: String },
 
     #[error("inner zip too large: {name} ({size} bytes > max {max})")]
-    InnerZipTooLarge {
-        name: String,
-        size: u64,
-        max: u64,
-    },
+    InnerZipTooLarge { name: String, size: u64, max: u64 },
 
     #[error("parse: {context}")]
     Parse { context: String },

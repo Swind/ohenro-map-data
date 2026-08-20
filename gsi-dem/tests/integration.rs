@@ -74,7 +74,10 @@ fn real_archive_counts_match_known_values() {
     }
 
     // Known values computed independently with Python across all 69 meshes.
-    assert!(terrain_total > 100_000, "expected substantial terrain, got {terrain_total}");
+    assert!(
+        terrain_total > 100_000,
+        "expected substantial terrain, got {terrain_total}"
+    );
     assert!(sea_total > 0, "expected some sea cells");
     assert!(nodata_total > 0, "expected some nodata cells");
 
@@ -95,8 +98,7 @@ fn real_archive_lookup_matches_known_landmark() {
         return;
     };
     let mut zip = archive::open_archive(&path).unwrap();
-    let reader =
-        archive::read_entry(&mut zip, "FG-GML-5134-62-00-DEM5A-20251208.xml").unwrap();
+    let reader = archive::read_entry(&mut zip, "FG-GML-5134-62-00-DEM5A-20251208.xml").unwrap();
     let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", reader).unwrap();
 
     // 寒霞渓 area on Shodoshima (34.508, 134.296) is land. Mesh 51346200
@@ -106,7 +108,10 @@ fn real_archive_lookup_matches_known_landmark() {
     let (row, col) = gsi_dem::raster::grid::nearest_cell(&r, 34.503, 134.256).unwrap();
     let s = sample_at(&r, row, col).unwrap();
     assert_eq!(s.kind, SampleKind::Terrain);
-    assert!(s.meters.unwrap() > 100.0, "expected Shodoshima terrain ~200m");
+    assert!(
+        s.meters.unwrap() > 100.0,
+        "expected Shodoshima terrain ~200m"
+    );
 
     // grid_to_tuple_index must be consistent (round-trip).
     let idx = grid_to_tuple_index(&r, row, col).unwrap();
@@ -124,8 +129,7 @@ fn real_archive_no_xml_on_disk() {
         return;
     };
     let mut zip = archive::open_archive(&path).unwrap();
-    let reader =
-        archive::read_entry(&mut zip, "FG-GML-5134-62-00-DEM5A-20251208.xml").unwrap();
+    let reader = archive::read_entry(&mut zip, "FG-GML-5134-62-00-DEM5A-20251208.xml").unwrap();
     let r = parse_dem("FG-GML-5134-62-00-DEM5A-20251208.xml", reader).unwrap();
     assert_eq!(r.mesh, "51346200");
     assert_eq!(r.sample_count(), 33750);
@@ -162,8 +166,15 @@ fn real_dem10b_archive() {
     assert_eq!(r.sample_count(), 843750);
     assert!(!r.is_partial());
     // DEM10B uses `その他` labels; valid terrain should be substantial
-    let terrain = r.mask.iter().filter(|&&m| m == SampleKind::Terrain as u8).count();
-    assert!(terrain > 400_000, "expected most DEM10B cells valid, got {terrain}");
+    let terrain = r
+        .mask
+        .iter()
+        .filter(|&&m| m == SampleKind::Terrain as u8)
+        .count();
+    assert!(
+        terrain > 400_000,
+        "expected most DEM10B cells valid, got {terrain}"
+    );
 }
 
 /// Phase 2 acceptance: DEM5 and DEM10B must agree on terrain direction and
@@ -188,11 +199,7 @@ fn real_dem5_dem10b_cross_validation() {
     let dem5 = load(&p5);
     let dem10 = load(&p10);
 
-    fn sample(
-        rasters: &[gsi_dem::gsi::model::GsiDemRaster],
-        lat: f64,
-        lon: f64,
-    ) -> Option<f32> {
+    fn sample(rasters: &[gsi_dem::gsi::model::GsiDemRaster], lat: f64, lon: f64) -> Option<f32> {
         for r in rasters {
             let b = gsi_dem::raster::grid::GridBounds::from_raster(r);
             if b.contains(lat, lon) {
@@ -328,7 +335,10 @@ fn real_dem5b_mixed_schema() {
     }
 
     assert!(saw_other_label);
-    assert!(total_terrain > 100_000, "expected substantial terrain, got {total_terrain}");
+    assert!(
+        total_terrain > 100_000,
+        "expected substantial terrain, got {total_terrain}"
+    );
     assert!(total_nodata > 0);
 }
 
@@ -371,11 +381,7 @@ fn real_dem5b_dem10b_cross_validation() {
     let dem5 = load(&p5);
     let dem10 = load(&p10);
 
-    fn sample(
-        rasters: &[gsi_dem::gsi::model::GsiDemRaster],
-        lat: f64,
-        lon: f64,
-    ) -> Option<f32> {
+    fn sample(rasters: &[gsi_dem::gsi::model::GsiDemRaster], lat: f64, lon: f64) -> Option<f32> {
         for r in rasters {
             let b = gsi_dem::raster::grid::GridBounds::from_raster(r);
             if b.contains(lat, lon) {

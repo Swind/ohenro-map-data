@@ -79,7 +79,11 @@ pub fn run(args: &ExportVrtArgs) -> anyhow::Result<()> {
     let db = ElevationDb::open(&args.database)?;
     validate_metadata(&db)?;
 
-    let layer_name = if args.layer == LAYER_DEM10 { "dem10" } else { "dem5" };
+    let layer_name = if args.layer == LAYER_DEM10 {
+        "dem10"
+    } else {
+        "dem5"
+    };
     let grid = db
         .grid(args.layer)?
         .ok_or_else(|| fail(format!("{layer_name} grid metadata missing in database")))?;
@@ -116,9 +120,8 @@ pub fn run(args: &ExportVrtArgs) -> anyhow::Result<()> {
         }
     }
     if let Some(parent) = args.output.parent() {
-        std::fs::create_dir_all(parent).map_err(|e| {
-            anyhow::anyhow!("create {}: {e}", parent.display())
-        })?;
+        std::fs::create_dir_all(parent)
+            .map_err(|e| anyhow::anyhow!("create {}: {e}", parent.display()))?;
     }
 
     let raw_filename = raw_path
@@ -157,24 +160,22 @@ pub fn run(args: &ExportVrtArgs) -> anyhow::Result<()> {
         "wrote {} tiles to {} ({:.1} MB raw)",
         written,
         raw_path.display(),
-        std::fs::metadata(&raw_path).map(|m| m.len() as f64 / 1e6).unwrap_or(0.0)
+        std::fs::metadata(&raw_path)
+            .map(|m| m.len() as f64 / 1e6)
+            .unwrap_or(0.0)
     );
     Ok(())
 }
 
 /// Validate DB metadata the exporter depends on (spec §6.2).
 fn validate_metadata(db: &ElevationDb) -> anyhow::Result<()> {
-    let compression = db
-        .metadata("compression")?
-        .unwrap_or_default();
+    let compression = db.metadata("compression")?.unwrap_or_default();
     if compression != "zstd" {
         return Err(fail(format!(
             "metadata compression must be 'zstd' (got {compression:?})"
         )));
     }
-    let encoding = db
-        .metadata("encoding")?
-        .unwrap_or_default();
+    let encoding = db.metadata("encoding")?.unwrap_or_default();
     if encoding != "int16_meters" {
         return Err(fail(format!(
             "metadata encoding must be 'int16_meters' (got {encoding:?})"

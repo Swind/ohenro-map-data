@@ -37,7 +37,8 @@ pub fn run(args: &RenderArgs) -> anyhow::Result<()> {
         }
     }
 
-    let raster = matched.ok_or_else(|| anyhow::anyhow!("mesh {} not found in archive", args.mesh))?;
+    let raster =
+        matched.ok_or_else(|| anyhow::anyhow!("mesh {} not found in archive", args.mesh))?;
 
     let width = raster.width();
     let height = raster.height();
