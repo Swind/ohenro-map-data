@@ -128,8 +128,8 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     }
     applyTrailVisibility();
   });
-  bindToggle("toggle-lodging", (v) =>
-    toggleLayer(map, [henro.lodgingMarker, henro.lodgingLabel], v),
+  bindToggle("toggle-henroyado-lodging", (v) =>
+    toggleLayer(map, [henro.henroyadoLodgingMarker, henro.henroyadoLodgingLabel], v),
   );
   bindToggle("toggle-min88-lodging", (v) =>
     toggleLayer(map, [henro.min88LodgingMarker, henro.min88LodgingLabel], v),
@@ -200,7 +200,7 @@ function setupClickPopup(map: MapLibreMap, elevationAvailable: boolean): void {
 
     const content = [
       `<b>${escapeHtml(f.layer.id)}</b>`,
-      `id: ${escapeHtml(f.id ?? "(none)")}`,
+      `id: ${escapeHtml(f.id ?? props.source_id ?? "(none)")}`,
       `source: ${escapeHtml(f.source)}`,
       `source-layer: ${escapeHtml(f.sourceLayer ?? "(geojson)")}`,
       `coords: ${escapeHtml(coords)}`,

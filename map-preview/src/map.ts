@@ -17,8 +17,8 @@ export interface HenroLayers {
   templeLabel: string;
   routeCasing: string;
   routeForeground: string;
-  lodgingMarker: string;
-  lodgingLabel: string;
+  henroyadoLodgingMarker: string;
+  henroyadoLodgingLabel: string;
   min88LodgingMarker: string;
   min88LodgingLabel: string;
   trail: TrailGroup[];
@@ -236,14 +236,20 @@ function applyHenroSources(map: MapLibreMap): void {
     map.addSource("henro-temples", { type: "geojson", data: templesUrl });
   }
 
-  const lodgingUrl = import.meta.env.VITE_LODGING_URL;
-  if (lodgingUrl) {
-    map.addSource("lodging", { type: "geojson", data: lodgingUrl });
+  const henroyadoLodgingUrl = import.meta.env.VITE_HENROYADO_LODGING_URL;
+  if (henroyadoLodgingUrl) {
+    map.addSource("henroyado-lodging", {
+      type: "vector",
+      url: `pmtiles://${henroyadoLodgingUrl}`,
+    });
   }
 
   const min88LodgingUrl = import.meta.env.VITE_MIN88_LODGING_URL;
   if (min88LodgingUrl) {
-    map.addSource("min88-lodging", { type: "geojson", data: min88LodgingUrl });
+    map.addSource("min88-lodging", {
+      type: "vector",
+      url: `pmtiles://${min88LodgingUrl}`,
+    });
   }
 
   const henroUrl = import.meta.env.VITE_HENRO_URL;
@@ -464,46 +470,29 @@ export function createMap(container: HTMLElement): {
     }
     resolveTrail(trailGroups);
 
-    if (map.getSource("lodging")) {
+    if (map.getSource("henroyado-lodging")) {
       map.addLayer({
-        id: "lodging",
+        id: "henroyado-lodging",
         type: "circle",
-        source: "lodging",
-        minzoom: 0,
+        source: "henroyado-lodging",
+        "source-layer": "lodging",
+        minzoom: 6,
         paint: {
-          "circle-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            6,
-            4,
-            13,
-            7,
-          ],
-          "circle-color": [
-            "match",
-            ["get", "subtype"],
-            "hotel", "#e74c3c",
-            "hostel", "#e67e22",
-            "guest_house", "#16a085",
-            "camp_site", "#8e44ad",
-            "motel", "#95a5a6",
-            "apartment", "#3498db",
-            "chalet", "#2c3e50",
-            "#7f8c8d",
-          ],
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 4, 13, 7],
+          "circle-color": "#b45309",
           "circle-stroke-color": "#ffffff",
           "circle-stroke-width": 1.5,
         },
       });
 
       map.addLayer({
-        id: "lodging-label",
+        id: "henroyado-lodging-label",
         type: "symbol",
-        source: "lodging",
+        source: "henroyado-lodging",
+        "source-layer": "lodging",
         minzoom: 11,
         layout: {
-          "text-field": ["coalesce", ["get", "name_ja"], ["get", "name"]],
+          "text-field": ["coalesce", ["get", "name"], ""],
           "text-font": ["Noto Sans Regular"],
           "text-size": 11,
           "text-offset": [0, 1.1],
@@ -511,7 +500,7 @@ export function createMap(container: HTMLElement): {
           "text-max-width": 8,
         },
         paint: {
-          "text-color": "#3a2a1e",
+          "text-color": "#6b3410",
           "text-halo-color": "#ffffff",
           "text-halo-width": 1.2,
         },
@@ -523,6 +512,8 @@ export function createMap(container: HTMLElement): {
         id: "min88-lodging",
         type: "circle",
         source: "min88-lodging",
+        "source-layer": "lodging",
+        minzoom: 6,
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 4, 13, 7],
           "circle-color": [
@@ -543,6 +534,7 @@ export function createMap(container: HTMLElement): {
         id: "min88-lodging-label",
         type: "symbol",
         source: "min88-lodging",
+        "source-layer": "lodging",
         minzoom: 11,
         layout: {
           "text-field": ["coalesce", ["get", "name"], ""],
@@ -618,8 +610,8 @@ export function createMap(container: HTMLElement): {
     templeLabel: "henro-temple-label",
     routeCasing: "henro-route-casing",
     routeForeground: "henro-route",
-    lodgingMarker: "lodging",
-    lodgingLabel: "lodging-label",
+    henroyadoLodgingMarker: "henroyado-lodging",
+    henroyadoLodgingLabel: "henroyado-lodging-label",
     min88LodgingMarker: "min88-lodging",
     min88LodgingLabel: "min88-lodging-label",
     trail: trailGroups,
