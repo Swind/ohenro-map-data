@@ -30,7 +30,6 @@ def _feature(record):
     source_id = str(source.get("source_id") or "")
     return {
         "type": "Feature",
-        "id": "min88-" + source_id,
         "geometry": {"type": "Point", "coordinates": [longitude, latitude]},
         "properties": {
             "provider": "min88",

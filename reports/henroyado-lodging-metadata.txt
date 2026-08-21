@@ -1,0 +1,27 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 132.465814, lat: 32.724330) (long: 134.604292, lat: 34.353065)
+min zoom: 6
+max zoom: 14
+center: (long: 133.538818, lat: 33.568861)
+center zoom: 14
+addressed tiles count: 720
+tile entries count: 720
+tile contents count: 720
+clustered: true
+internal compression: gzip
+tile compression: gzip
+antimeridian_adjusted_bounds 132.465814,32.724330,134.604292,34.353065
+attribution Henroyado lodging data © henroyado.com
+generator tippecanoe v2.82.0
+generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/henroyado.mbtiles --minimum-zoom 6 --maximum-zoom 14 --drop-densest-as-needed -L lodging:/home/swind/Data/Program/ohenro-map-data/output/henroyado/map.geojson
+maxzoom 14
+minzoom 6
+name /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/henroyado.mbtiles
+strategies [{},{},{},{},{},{},{"dropped_by_rate":570},{"dropped_by_rate":633},{"dropped_by_rate":602},{"dropped_by_rate":588},{"dropped_by_rate":559},{"dropped_by_rate":508},{"dropped_by_rate":402},{"dropped_by_rate":245},{}]
+description /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/henroyado.mbtiles
+format pbf
+tilestats <object, use --metadata to view full JSON metadata>
+type overlay
+vector_layers <object, use --metadata to view full JSON metadata>
+version 2

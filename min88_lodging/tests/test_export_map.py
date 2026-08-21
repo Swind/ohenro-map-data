@@ -27,6 +27,6 @@ class ExportMapTests(unittest.TestCase):
             result = json.loads(output_path.read_text())
 
         self.assertEqual(stats, {"records": 2, "features": 1, "skipped": 1})
-        self.assertEqual(result["features"][0]["id"], "min88-85")
+        self.assertEqual(result["features"][0]["properties"]["source_id"], "85")
         self.assertEqual(result["features"][0]["geometry"]["coordinates"], [134.2, 34.1])
         self.assertEqual(result["features"][0]["properties"]["lodging_type"], "guesthouse")

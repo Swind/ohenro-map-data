@@ -5,6 +5,7 @@ import sys
 from datetime import datetime, timezone
 
 from henroyado.fetcher import DEFAULT_RAW_FILENAME, fetch
+from henroyado.export_map import export_map
 from henroyado.geocode import enrich_file
 from henroyado.html_parser import detect_records, extract_all
 from henroyado.normalize import normalize_inn
@@ -55,6 +56,12 @@ def build_parser():
     g.add_argument("--timeout", type=int, default=30, help="HTTP timeout seconds (default: %(default)s)")
     g.add_argument("--delay", type=float, default=0.3, help="delay after uncached requests (default: %(default)s)")
     g.add_argument("--force", action="store_true", help="replace cached responses")
+
+    export = sub.add_parser("export-map", help="export geocoded V1 as compact GeoJSON")
+    export.add_argument("input", nargs="?", default=os.path.join(OUTPUT_DIR, "v1-geocoded.jsonl"),
+                        help="geocoded V1 JSONL input (default: %(default)s)")
+    export.add_argument("--output", default=os.path.join(OUTPUT_DIR, "map.geojson"),
+                        help="GeoJSON output (default: %(default)s)")
     return p
 
 
@@ -138,6 +145,11 @@ def main(argv=None):
         print("  no URL: %d | place not found: %d | errors: %d" % (
             stats["no_url"], stats["not_found"], stats["errors"]))
         return 0 if stats["errors"] == 0 else 1
+
+    if args.command == "export-map":
+        stats = export_map(args.input, args.output)
+        print("export-map: %(features)d/%(records)d features, %(duplicates)d duplicate places -> " % stats + args.output)
+        return 0
 
     return 1
 

@@ -1,0 +1,27 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 132.478039, lat: 32.724330) (long: 134.606167, lat: 34.359197)
+min zoom: 6
+max zoom: 14
+center: (long: 133.538818, lat: 33.568861)
+center zoom: 14
+addressed tiles count: 768
+tile entries count: 768
+tile contents count: 768
+clustered: true
+internal compression: gzip
+tile compression: gzip
+generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/min88.mbtiles --minimum-zoom 6 --maximum-zoom 14 --drop-densest-as-needed -L lodging:/home/swind/Data/Program/ohenro-map-data/output/min88-lodging/map.geojson
+strategies [{},{},{},{},{},{},{"dropped_by_rate":639},{"dropped_by_rate":704},{"dropped_by_rate":683},{"dropped_by_rate":675},{"dropped_by_rate":638},{"dropped_by_rate":582},{"dropped_by_rate":457},{"dropped_by_rate":275},{}]
+tilestats <object, use --metadata to view full JSON metadata>
+vector_layers <object, use --metadata to view full JSON metadata>
+version 2
+attribution min88 lodging data © min88.jp
+description /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/min88.mbtiles
+format pbf
+generator tippecanoe v2.82.0
+maxzoom 14
+minzoom 6
+name /home/swind/Data/Program/ohenro-map-data/work/lodging-pmtiles/min88.mbtiles
+type overlay
+antimeridian_adjusted_bounds 132.478039,32.724330,134.606167,34.359197

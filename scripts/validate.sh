@@ -110,6 +110,29 @@ else
   echo "WARN: elevation visualization artifacts not built, skipping (strict validation runs in build-elevation-visuals.sh)"
 fi
 
+# ---- Provider-specific lodging overlays ----
+for LODGING in "$ROOT/output/shikoku-henroyado-lodging.pmtiles" "$ROOT/output/shikoku-min88-lodging.pmtiles"; do
+  echo "==> Lodging: $LODGING"
+  if [ -f "$LODGING" ]; then
+    [ -s "$LODGING" ] || fail "lodging PMTiles is empty: $LODGING"
+    meta=$(pmtiles show --metadata "$LODGING" 2>/dev/null) || fail "lodging metadata unreadable: $LODGING"
+    header=$(pmtiles show --header-json "$LODGING" 2>/dev/null) || fail "lodging header unreadable: $LODGING"
+    echo "$meta" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+layers=json.loads(d['vector_layers']) if isinstance(d['vector_layers'],str) else d['vector_layers']
+sys.exit(0 if {layer['id'] for layer in layers} == {'lodging'} else 1)
+" || fail "lodging layer missing: $LODGING"
+    echo "$header" | python3 -c "
+import json,sys
+west,south,east,north=json.load(sys.stdin)['bounds']
+sys.exit(0 if 131 < west < east < 136 and 31.5 < south < north < 35.5 else 1)
+" || fail "lodging bounds outside Shikoku: $LODGING"
+  else
+    echo "WARN: lodging PMTiles not built yet, skipping: $LODGING"
+  fi
+done
+
 if [ "$FAIL" -eq 1 ]; then
   echo "==> VALIDATION FAILED"
   exit 1

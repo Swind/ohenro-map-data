@@ -1,0 +1,43 @@
+==> lodging PMTiles build 2026-08-21T08:13:43Z
+export-map: 571/702 features, 11 duplicate places -> /home/swind/Data/Program/ohenro-map-data/output/henroyado/map.geojson
+==> tippecanoe henroyado
+2026/08/21 16:13:43 convert.go:158: Pass 1: Assembling TileID set
+2026/08/21 16:13:43 convert.go:189: Pass 2: writing tiles
+
+   0% |                                              | (0/720, 0 it/hr) [0s:0s]
+
+
+ 100% |█████████████████████████████████████████| (720/720, 90361 it/s)
+2026/08/21 16:13:43 convert.go:243: # of addressed tiles:  720
+2026/08/21 16:13:43 convert.go:244: # of tile entries (after RLE):  720
+2026/08/21 16:13:43 convert.go:245: # of tile contents:  720
+2026/08/21 16:13:43 convert.go:268: Total dir bytes:  1679
+2026/08/21 16:13:43 convert.go:269: Average bytes per addressed tile: 2.33
+2026/08/21 16:13:43 convert.go:238: Finished in  11.16438ms
+
+writing file   0% |                                     | ( 0 B/375 kB) [0s:0s]
+
+
+writing file 100% |████████████████████████████| (375/375 kB, 743 MB/s)
+==> Done: /home/swind/Data/Program/ohenro-map-data/output/shikoku-henroyado-lodging.pmtiles
+export-map: 640/650 features -> /home/swind/Data/Program/ohenro-map-data/output/min88-lodging/map.geojson
+==> tippecanoe min88
+2026/08/21 16:13:44 convert.go:158: Pass 1: Assembling TileID set
+2026/08/21 16:13:44 convert.go:189: Pass 2: writing tiles
+
+   0% |                                              | (0/768, 0 it/hr) [0s:0s]
+
+
+ 100% |█████████████████████████████████████████| (768/768, 86385 it/s)
+2026/08/21 16:13:44 convert.go:243: # of addressed tiles:  768
+2026/08/21 16:13:44 convert.go:244: # of tile entries (after RLE):  768
+2026/08/21 16:13:44 convert.go:245: # of tile contents:  768
+2026/08/21 16:13:44 convert.go:268: Total dir bytes:  1785
+2026/08/21 16:13:44 convert.go:269: Average bytes per addressed tile: 2.32
+2026/08/21 16:13:44 convert.go:238: Finished in  12.116159ms
+
+writing file   0% |                                     | ( 0 B/468 kB) [0s:0s]
+
+
+writing file 100% |████████████████████████████| (468/468 kB, 882 MB/s)
+==> Done: /home/swind/Data/Program/ohenro-map-data/output/shikoku-min88-lodging.pmtiles
