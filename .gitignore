@@ -26,9 +26,18 @@ output/shikoku-nature-trail.json
 # Route profile samples are large but can be rebuilt from the GeoJSON + DEM SQLite.
 output/shikoku-nature-trail-elevation.json
 
+# Mizutani Henro Guide Map raw KML snapshots and derived personal-use data
+source/mizutani-henro-map/
+output/mizutani-henro-map.json
+output/mizutani-henro-routes.geojson
+output/mizutani-henro-pois.geojson
+output/mizutani-henro-report.json
+output/mizutani-henro-style-inventory.json
+output/mizutani-henro-update-report.json
 
 # Arukihenro walking-route pages and Google My Maps KML archive
 source/arukihenro-routes/
+
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/
 

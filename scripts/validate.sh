@@ -11,7 +11,9 @@ HENRO="$ROOT/output/shikoku-henro.pmtiles"
 FAIL=0
 fail() { echo "FAIL: $*" >&2; FAIL=1; }
 
-command -v pmtiles >/dev/null 2>&1 || { echo "FAIL: pmtiles CLI not found" >&2; exit 1; }
+PMTILES="$(command -v pmtiles || command -v go-pmtiles || true)"
+[ -n "$PMTILES" ] || { echo "FAIL: pmtiles or go-pmtiles CLI not found" >&2; exit 1; }
+pmtiles() { "$PMTILES" "$@"; }
 
 # ---- Basemap ----
 echo "==> Basemap: $BASEMAP"
@@ -94,6 +96,32 @@ sys.exit(0 if ok else 1)
 " || fail "trail bounds not within Shikoku: $b"
 else
   echo "WARN: shikoku-nature-trail pmtiles not built yet, skipping trail checks"
+fi
+
+# ---- Mizutani Henro Guide Map ----
+MIZUTANI="$ROOT/output/shikoku-mizutani-henro.pmtiles"
+echo "==> Mizutani Henro Guide Map: $MIZUTANI"
+if [ -f "$MIZUTANI" ]; then
+  [ -s "$MIZUTANI" ] || fail "Mizutani PMTiles is empty"
+  meta=$(pmtiles show --metadata "$MIZUTANI" 2>/dev/null) || fail "Mizutani metadata unreadable"
+  header=$(pmtiles show --header-json "$MIZUTANI" 2>/dev/null) || fail "Mizutani header unreadable"
+  python3 - "$meta" "$header" <<'PY' || fail "Mizutani PMTiles validation failed"
+import json, sys
+metadata, header = map(json.loads, sys.argv[1:])
+layers = metadata["vector_layers"]
+if isinstance(layers, str):
+    layers = json.loads(layers)
+if {layer["id"] for layer in layers} != {"mizutani_henro_routes", "mizutani_henro_pois"}:
+    raise SystemExit("unexpected layers")
+west, south, east, north = header["bounds"]
+if not (131 < west < east < 136 and 31.5 < south < north < 35.5):
+    raise SystemExit("bounds outside Shikoku")
+required = {"dataset_id", "source_map_id", "source_sha256", "source_url", "usage", "attribution"}
+if any(not metadata.get(key) for key in required) or metadata["usage"] != "personal-use":
+    raise SystemExit("missing personal-use metadata")
+PY
+else
+  echo "WARN: Mizutani PMTiles not built yet, skipping Mizutani checks"
 fi
 
 # ---- Elevation visualization ----

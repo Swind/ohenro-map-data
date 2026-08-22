@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Fixture map</name>
+    <Style id="icon-1602-C2185B-normal"><IconStyle><color>ff5b18c2</color><Icon><href>https://example.test/icon.png</href></Icon></IconStyle></Style>
+    <Style id="line-blue"><LineStyle><color>ffff0000</color><width>4</width></LineStyle></Style>
+    <StyleMap id="icon-1602-C2185B"><Pair><key>normal</key><styleUrl>#icon-1602-C2185B-normal</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#icon-1602-C2185B-highlight</styleUrl></Pair></StyleMap>
+    <Folder><name>Outer</name><Folder><name>Inner</name>
+      <Placemark><name>Point A</name><description><![CDATA[<b>Example</b>]]></description><styleUrl>#icon-1602-C2185B</styleUrl><Point><coordinates>133.5,33.5,10</coordinates></Point></Placemark>
+      <Placemark><name>Line A</name><styleUrl>#line-blue</styleUrl><LineString><coordinates>133.5,33.5 133.6,33.6</coordinates></LineString></Placemark>
+    </Folder></Folder>
+  </Document>
+</kml>
