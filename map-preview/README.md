@@ -9,7 +9,7 @@
 ## 架構
 
 ```
-shikoku-basemap.pmtiles + temples.geojson + shikoku-henro.pmtiles + lodging PMTiles
+shikoku-basemap.pmtiles + temples.geojson + shikoku-henro.pmtiles + lodging + Mizutani PMTiles
                         │
                    style.json
                   /          \
@@ -17,8 +17,8 @@ shikoku-basemap.pmtiles + temples.geojson + shikoku-henro.pmtiles + lodging PMTi
              Web              Android
 ```
 
-basemap、henro 路線與兩個住宿來源皆直接以 PMTiles 載入（`pmtiles://` protocol）；寺廟維持
-GeoJSON。Henroyado 與 min88 的 archive 保持分離，可各自更新與開關。
+basemap、henro 路線、住宿與水谷遍路導覽圖皆直接以 PMTiles 載入（`pmtiles://` protocol）；寺廟維持
+GeoJSON。所有 overlay 都可獨立更新及開關。
 
 ## 目錄結構
 
@@ -39,6 +39,7 @@ map-preview/
         ├── temples.geojson
         ├── shikoku-henroyado-lodging.pmtiles
         ├── shikoku-min88-lodging.pmtiles
+        ├── shikoku-mizutani-henro.pmtiles
         └── shikoku-basemap.pmtiles
 ```
 
@@ -68,6 +69,7 @@ ln -s ../../../output/shikoku-nature-trail.geojson map-preview/public/data/shiko
 ln -s ../../../output/temples.geojson map-preview/public/data/temples.geojson
 ln -s ../../../output/shikoku-henroyado-lodging.pmtiles map-preview/public/data/shikoku-henroyado-lodging.pmtiles
 ln -s ../../../output/shikoku-min88-lodging.pmtiles map-preview/public/data/shikoku-min88-lodging.pmtiles
+ln -s ../../../output/shikoku-mizutani-henro.pmtiles map-preview/public/data/shikoku-mizutani-henro.pmtiles
 cp map-preview/.env.example map-preview/.env.development
 ```
 
@@ -97,6 +99,7 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_TRAIL_LIST_URL` | `/data/shikoku-nature-trail.geojson` | 官方路線索引，用於依縣與課程選擇；留空停用 selector |
 | `VITE_HENROYADO_LODGING_URL` | `/data/shikoku-henroyado-lodging.pmtiles` | Henroyado 住宿 PMTiles（`lodging` vector layer）；留空停用 |
 | `VITE_MIN88_LODGING_URL` | `/data/shikoku-min88-lodging.pmtiles` | min88 住宿 PMTiles（`lodging` vector layer）；留空停用 |
+| `VITE_MIZUTANI_HENRO_URL` | `/data/shikoku-mizutani-henro.pmtiles` | 水谷遍路導覽圖 PMTiles（routes + POIs layers）；留空停用 |
 | `VITE_CONTOURS_URL` | `/data/shikoku-contours.pmtiles` | 20m 等高線 PMTiles（`contours` vector layer）；留空停用 |
 | `VITE_TERRAIN_URL` | `/data/shikoku-terrain.pmtiles` | Terrain-RGB 高程 PMTiles（`raster-dem`）；留空停用 |
 
@@ -114,6 +117,7 @@ http://localhost:5173/?lat=34.191403&lon=134.206799&zoom=14
 - **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（圓點與名稱標籤皆為 z10+）。路線可依縣與課程選擇；每條路線與所屬 POI 一起顯示或隱藏，路線標籤及全體 POI 仍可獨立關閉。
 - **Henroyado 住宿**：`shikoku-henroyado-lodging.pmtiles` 的 `lodging` layer。只含 resolved Google Place 座標；同一 Place 的重複 listing 只在地圖層收斂。使用琥珀色 marker，z11+ 顯示名稱。
 - **min88 住宿**：`shikoku-min88-lodging.pmtiles` 的 `lodging` layer。只含 resolved Google Place 座標，依住宿類型著色，z11+ 顯示名稱。兩來源各有獨立圖層開關，不做跨來源合併。
+- **水谷遍路導覽圖**：`shikoku-mizutani-henro.pmtiles` 的 `mizutani_henro_routes` 與 `mizutani_henro_pois` layers。路線與 POI 可分別開關；POI 從 z10 顯示，並可依 10 個 `category` 值個別篩選。此資料僅供個人使用，詳見 `docs/mizutani_henro_map_pipeline.md`。
 - **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。
   - **hillshade**：同一 source 的 `hillshade` 圖層，預設可見。
@@ -159,7 +163,12 @@ npm run build   # tsc + vite build
    - 100m 主線較粗且有標籤。
    - 3D terrain 開關可恢復平面地圖。
    - terrain 啟用後點擊可取得合理高程。
-   - 海面沒有低高程彩色方塊或尖峰。
+    - 海面沒有低高程彩色方塊或尖峰。
+
+7. 水谷遍路導覽圖（需 `output/shikoku-mizutani-henro.pmtiles`）：
+   - routes 與 POIs 可分別開關。
+   - 關閉任一 POI category 後，該類別 marker 消失，其餘類別保持顯示。
+   - 點擊 marker popup 顯示 `category`、`icon_id`、來源 style 與純文字 description。
 
 ## 後續（依 reference 計畫 Phase 5–6）
 

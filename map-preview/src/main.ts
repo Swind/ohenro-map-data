@@ -135,6 +135,33 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     toggleLayer(map, [henro.min88LodgingMarker, henro.min88LodgingLabel], v),
   );
 
+  const mizutaniControls = document.getElementById("mizutani-controls");
+  if (!henro.mizutaniAvailable) {
+    for (const input of mizutaniControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    mizutaniControls?.classList.add("disabled");
+  }
+  const applyMizutaniPois = (): void => {
+    const master = (document.getElementById("toggle-mizutani-pois") as HTMLInputElement).checked;
+    const categories = [...document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")]
+      .filter((input) => input.checked)
+      .map((input) => input.dataset.mizutaniCategory as string);
+    toggleLayer(map, [henro.mizutaniPoi], master && categories.length > 0);
+    if (map.getLayer(henro.mizutaniPoi)) {
+      map.setFilter(henro.mizutaniPoi, ["in", ["get", "category"], ["literal", categories]]);
+    }
+  };
+  bindToggle("toggle-mizutani-routes", (v) =>
+    toggleLayer(map, [henro.mizutaniRouteCasing, henro.mizutaniRoute], v),
+  );
+  bindToggle("toggle-mizutani-pois", applyMizutaniPois);
+  for (const input of document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")) {
+    input.addEventListener("change", applyMizutaniPois);
+  }
+  applyMizutaniPois();
+
   bindToggle("toggle-elevation-color", (v) =>
     toggleLayer(map, elevation.colorRelief, v),
   );

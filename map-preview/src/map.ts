@@ -27,6 +27,10 @@ export interface HenroLayers {
   trailFallbackLabel: string;
   trailPoi: string;
   trailPoiLabel: string;
+  mizutaniAvailable: boolean;
+  mizutaniRouteCasing: string;
+  mizutaniRoute: string;
+  mizutaniPoi: string;
   elevation: ElevationLayers;
 }
 
@@ -267,6 +271,14 @@ function applyHenroSources(map: MapLibreMap): void {
       url: `pmtiles://${trailUrl}`,
     });
   }
+
+  const mizutaniUrl = import.meta.env.VITE_MIZUTANI_HENRO_URL;
+  if (mizutaniUrl) {
+    map.addSource("mizutani-henro", {
+      type: "vector",
+      url: `pmtiles://${mizutaniUrl}`,
+    });
+  }
 }
 
 export function createMap(container: HTMLElement): {
@@ -387,6 +399,52 @@ export function createMap(container: HTMLElement): {
           "line-color": "#8f4b32",
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 4, 14, 8],
           "line-opacity": 0.9,
+        },
+      });
+    }
+
+    if (map.getSource("mizutani-henro")) {
+      map.addLayer({
+        id: "mizutani-henro-route-casing",
+        type: "line",
+        source: "mizutani-henro",
+        "source-layer": "mizutani_henro_routes",
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 3.5, 14, 7],
+          "line-opacity": 0.8,
+        },
+      });
+      map.addLayer({
+        id: "mizutani-henro-route",
+        type: "line",
+        source: "mizutani-henro",
+        "source-layer": "mizutani_henro_routes",
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: {
+          "line-color": ["coalesce", ["get", "color"], "#765b30"],
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 4.5],
+          "line-opacity": 0.9,
+        },
+      });
+      map.addLayer({
+        id: "mizutani-henro-pois",
+        type: "circle",
+        source: "mizutani-henro",
+        "source-layer": "mizutani_henro_pois",
+        minzoom: 10,
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 14, 6],
+          "circle-color": [
+            "match", ["get", "category"],
+            "temple", "#8e3b37", "lodging", "#744f8f", "food", "#ca6f1e",
+            "shop_supply", "#386f50", "transport", "#266ca8", "wayfinding", "#765b30",
+            "warning_hazard", "#c5443e", "water_toilet_rest", "#31889c",
+            "experience_note", "#7763aa", "#6d6d6d",
+          ],
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 1.2,
         },
       });
     }
@@ -620,6 +678,10 @@ export function createMap(container: HTMLElement): {
     trailFallbackLabel: "trail-label",
     trailPoi: "trail-pois",
     trailPoiLabel: "trail-poi-labels",
+    mizutaniAvailable: Boolean(import.meta.env.VITE_MIZUTANI_HENRO_URL),
+    mizutaniRouteCasing: "mizutani-henro-route-casing",
+    mizutaniRoute: "mizutani-henro-route",
+    mizutaniPoi: "mizutani-henro-pois",
     elevation: elevationLayers,
   };
 
