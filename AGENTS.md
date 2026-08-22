@@ -40,6 +40,8 @@ ohenro-map-data/
 住宿資料管線詳見 `docs/lodging_data_pipeline.md`（OSM lodging extractor，
 `python3 henro/scripts/extract_lodging.py` → `output/lodging.geojson` + `lodging-report.json`）。
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
+步行遍路路線 archive：`python3 -m arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
+路線 HTML 與內嵌 Google My Maps KML 到 `source/arukihenro-routes/`；可用 `--force` 重抓。
 min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
 `reference/min88-lodging-parser-standardization-plan.md`）。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
