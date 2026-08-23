@@ -28,12 +28,17 @@ output/shikoku-nature-trail-elevation.json
 
 # Mizutani Henro Guide Map raw KML snapshots and derived personal-use data
 source/mizutani-henro-map/
+source/omotenashi-henro-inspection/
+source/88sekaiisan-henro/
 output/mizutani-henro-map.json
 output/mizutani-henro-routes.geojson
 output/mizutani-henro-pois.geojson
 output/mizutani-henro-report.json
 output/mizutani-henro-style-inventory.json
 output/mizutani-henro-update-report.json
+# 88sekaiisan Phase 1 normalization + Phase 2A inventory (re-built from archive)
+output/sekaiisan-henro-normalized.json
+output/sekaiisan-henro-topology-inventory.json
 
 # Arukihenro walking-route pages and Google My Maps KML archive
 source/arukihenro-routes/

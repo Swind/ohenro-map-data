@@ -42,6 +42,15 @@ ohenro-map-data/
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
 步行遍路路線 archive：`python3 -m arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
 路線 HTML 與內嵌 Google My Maps KML 到 `source/arukihenro-routes/`；可用 `--force` 重抓。
+一日一斉おもてなし遍路道ウォーク點檢路線 archive：
+`python3 -m omotenashi_henro_inspection`，下載 KML immutable snapshot 至
+`source/omotenashi-henro-inspection/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
+四國遍路世界遺產登錄推進協議會 KML archive：`python3 -m sekaiisan_henro`，下載四縣
+引導路線、札所及廁所共 12 份 KML 的完整 immutable snapshot 至
+`source/88sekaiisan-henro/`。`python3 -m sekaiisan_henro normalize` 會嚴格解析四縣路線與
+88 札所至 `output/sekaiisan-henro-normalized.json`；
+`python3 -m sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
+近距候選及 endpoint-only components）。目前尚未建立 graph 或 PMTiles。
 min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
 `reference/min88-lodging-parser-standardization-plan.md`）。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
