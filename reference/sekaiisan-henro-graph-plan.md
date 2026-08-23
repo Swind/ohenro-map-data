@@ -186,7 +186,13 @@ accounted 1,494 Placemarks、1,506 LineStrings、36,350 個座標點與 88 札�
 `output/sekaiisan-henro-topology-inventory.json`。它只盤點 exact/proximity 端點、T 接點、
 內部交叉、重疊及 endpoint-only components，不移動、切分或連接任何 source geometry。
 目前 live 結果為 1m/5m/10m 各 82/72/67 components，另有 21 個 ambiguous crossings。
-實際 graph construction 與 snapping 仍未實作。
+該命令本身不建立 graph；graph foundation 狀態如下。
+
+**Phase 2B 狀態：exact-only graph 已實作。** 執行
+`python3 -m sekaiisan_henro build-graph`，輸出 `output/sekaiisan-henro-graph.json`。
+目前 live graph 為 1,953 nodes / 1,617 edges / 372 components；只連接 canonical shared
+vertices 與 11 個明確 endpoint-on-line T 接點，21 個 ambiguous crossings 全數保持不連接，
+`proximity_connections_applied=0`。Phase 2C 才會評估 5m 內保守 proximity connections。
 
 ### 2.1 度量變換
 

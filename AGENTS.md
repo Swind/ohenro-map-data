@@ -50,7 +50,9 @@ Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardiz
 `source/88sekaiisan-henro/`。`python3 -m sekaiisan_henro normalize` 會嚴格解析四縣路線與
 88 札所至 `output/sekaiisan-henro-normalized.json`；
 `python3 -m sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
-近距候選及 endpoint-only components）。目前尚未建立 graph 或 PMTiles。
+近距候選及 endpoint-only components）；`python3 -m sekaiisan_henro build-graph` 建立只含
+exact source evidence 的無向 graph（共享頂點及零距離 T 接點，不套用 proximity snapping）。
+目前尚未建立寺廟 anchors、區間路徑或 PMTiles。
 min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
 `reference/min88-lodging-parser-standardization-plan.md`）。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。

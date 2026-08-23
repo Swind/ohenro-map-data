@@ -12,7 +12,7 @@ import urllib.request
 import xml.etree.ElementTree as ElementTree
 from datetime import UTC, datetime
 
-from sekaiisan_henro import normalize, topology
+from sekaiisan_henro import graph, normalize, topology
 
 SOURCE_PAGE_URL = "https://88sekaiisan.org/restroommap/"
 DATA_URL = "https://88sekaiisan.org/map/data/"
@@ -128,6 +128,11 @@ def build_parser() -> argparse.ArgumentParser:
         "topology-inventory", help="Phase 2A read-only diagnostic topology inventory")
     inventory_parser.add_argument("--input", default="output/sekaiisan-henro-normalized.json")
     inventory_parser.add_argument("--output", default="output/sekaiisan-henro-topology-inventory.json")
+    graph_parser = sub.add_parser(
+        "build-graph", help="Phase 2B exact-only route graph construction")
+    graph_parser.add_argument("--input", default="output/sekaiisan-henro-normalized.json")
+    graph_parser.add_argument("--inventory", default="output/sekaiisan-henro-topology-inventory.json")
+    graph_parser.add_argument("--output", default="output/sekaiisan-henro-graph.json")
     return parser
 
 
@@ -137,6 +142,8 @@ def dispatch(args: argparse.Namespace) -> dict:
         return normalize.run_normalize(args.data_dir, args.snapshot, args.output)
     if args.command == "topology-inventory":
         return topology.run_inventory(args.input, args.output)
+    if args.command == "build-graph":
+        return graph.run_graph(args.input, args.inventory, args.output)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -153,6 +160,14 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "topology-inventory":
         print("topology-inventory: routes=%d output=%s" % (
             result["analysis_accounting"]["route_records"], args.output))
+    elif args.command == "build-graph":
+        acct = result["accounting"]
+        print("build-graph: nodes=%d edges=%d components=%d isolated=%d "
+              "exact_t=%d len_err=%.3e output=%s" % (
+                  acct["nodes"], acct["edges"], acct["components"],
+                  acct["isolated_components"],
+                  acct["exact_connections_consumed"]["endpoint_touches_applied"],
+                  acct["lengths"]["max_absolute_error_m"], args.output))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0
