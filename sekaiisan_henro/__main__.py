@@ -12,7 +12,7 @@ import urllib.request
 import xml.etree.ElementTree as ElementTree
 from datetime import UTC, datetime
 
-from sekaiisan_henro import graph, normalize, topology
+from sekaiisan_henro import anchors, corridors, graph, normalize, proximity, review, sections, topology
 
 SOURCE_PAGE_URL = "https://88sekaiisan.org/restroommap/"
 DATA_URL = "https://88sekaiisan.org/map/data/"
@@ -133,6 +133,34 @@ def build_parser() -> argparse.ArgumentParser:
     graph_parser.add_argument("--input", default="output/sekaiisan-henro-normalized.json")
     graph_parser.add_argument("--inventory", default="output/sekaiisan-henro-topology-inventory.json")
     graph_parser.add_argument("--output", default="output/sekaiisan-henro-graph.json")
+    proximity_parser = sub.add_parser(
+        "apply-proximity", help="Phase 2C conservative proximity connections (new graph)")
+    proximity_parser.add_argument("--graph", default="output/sekaiisan-henro-graph.json")
+    proximity_parser.add_argument("--inventory", default="output/sekaiisan-henro-topology-inventory.json")
+    proximity_parser.add_argument("--input", default="output/sekaiisan-henro-normalized.json")
+    proximity_parser.add_argument("--output", default="output/sekaiisan-henro-graph-proximity.json")
+    anchors_parser = sub.add_parser(
+        "build-anchors", help="Phase 3 temple anchors + derived traversal segmentation")
+    anchors_parser.add_argument("--graph", default="output/sekaiisan-henro-graph-proximity.json")
+    anchors_parser.add_argument("--input", default="output/sekaiisan-henro-normalized.json")
+    anchors_parser.add_argument("--output", default="output/sekaiisan-henro-graph-anchors.json")
+    sections_parser = sub.add_parser(
+        "build-sections", help="Phase 4 temple interval candidate inference")
+    sections_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
+    sections_parser.add_argument("--output", default="output/sekaiisan-henro-temple-sections.json")
+    corridors_parser = sub.add_parser(
+        "build-section-corridors", help="Phase 4b parallel section-corridor classification")
+    corridors_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
+    corridors_parser.add_argument("--output", default="output/sekaiisan-henro-section-corridors.json")
+    corridors_parser.add_argument("--geojson", default="output/sekaiisan-henro-section-corridor-edges.geojson")
+    review_parser = sub.add_parser(
+        "build-review-pack", help="QGIS review-pack / report exporter")
+    review_parser.add_argument("--normalized", default="output/sekaiisan-henro-normalized.json")
+    review_parser.add_argument("--inventory", default="output/sekaiisan-henro-topology-inventory.json")
+    review_parser.add_argument("--proximity", default="output/sekaiisan-henro-graph-proximity.json")
+    review_parser.add_argument("--anchored", default="output/sekaiisan-henro-graph-anchors.json")
+    review_parser.add_argument("--sections", default="output/sekaiisan-henro-temple-sections.json")
+    review_parser.add_argument("--output-dir", default="output/sekaiisan-henro-review")
     return parser
 
 
@@ -144,6 +172,17 @@ def dispatch(args: argparse.Namespace) -> dict:
         return topology.run_inventory(args.input, args.output)
     if args.command == "build-graph":
         return graph.run_graph(args.input, args.inventory, args.output)
+    if args.command == "apply-proximity":
+        return proximity.run_proximity(args.graph, args.inventory, args.input, args.output)
+    if args.command == "build-anchors":
+        return anchors.run_anchors(args.graph, args.input, args.output)
+    if args.command == "build-sections":
+        return sections.run_sections(args.input, args.output)
+    if args.command == "build-section-corridors":
+        return corridors.run_corridors(args.input, args.output, args.geojson)
+    if args.command == "build-review-pack":
+        return review.run_review(args.normalized, args.inventory, args.proximity,
+                                 args.anchored, args.sections, args.output_dir)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -168,6 +207,65 @@ def main(argv: list[str] | None = None) -> int:
                   acct["isolated_components"],
                   acct["exact_connections_consumed"]["endpoint_touches_applied"],
                   acct["lengths"]["max_absolute_error_m"], args.output))
+    elif args.command == "apply-proximity":
+        acct = result["accounting"]
+        prox = acct["proximity"]
+        applied = prox["endpoint_clusters_applied"] + prox["endpoint_to_line_applied"]
+        print("apply-proximity: synthetic_joins=%d synthetic_nodes=%d "
+              "components %d->%d applied=%d rejected=%d gaps=%d crossings=%d "
+              "output=%s" % (
+                  acct["synthetic_joins"], acct["synthetic_nodes"],
+                  acct["components_before"], acct["components_after"], applied,
+                  prox["endpoint_clusters_rejected_ambiguous"]
+                  + prox["endpoint_to_line_rejected_competing"],
+                  prox["gaps_5_20m_reported"],
+                  prox["ambiguous_crossings_total"], args.output))
+    elif args.command == "build-anchors":
+        acct = result["accounting"]
+        print("build-anchors: temple_anchors=%d usable=%d review=%d "
+              "traversal_edges=%d traversal_nodes=%d components %d->%d "
+              "len_err=%.3e output=%s" % (
+                  acct["temple_anchors"], acct["anchors_usable"],
+                  acct["anchors_review_required"], acct["traversal_edges"],
+                  acct["traversal_nodes"], acct["components_before"],
+                  acct["components_after"],
+                  acct["traversal_lengths"]["max_absolute_error_m"], args.output))
+    elif args.command == "build-sections":
+        acct = result["accounting"]
+        print("build-sections: sections=%d candidate=%d ambiguous=%d "
+              "disconnected=%d review=%d synthetic_paths=%d output=%s" % (
+                  acct["sections_total"], acct["by_status"]["candidate"],
+                  acct["by_status"]["ambiguous"],
+                  acct["by_status"]["disconnected"],
+                  acct["by_status"]["anchor_review_required"],
+                  acct["paths_using_synthetic_joins"], args.output))
+    elif args.command == "build-section-corridors":
+        acct = result["accounting"]
+        print("build-section-corridors: sections=%d corridor=%d branched=%d "
+              "disconnected=%d review=%d edges=%d once=%d multiple=%d "
+              "unassigned=%d shared_conflicts=%d output=%s geojson=%s" % (
+                  acct["sections_total"], acct["by_status"]["corridor"],
+                  acct["by_status"]["branched_corridor"],
+                  acct["by_status"]["disconnected"],
+                  acct["by_status"]["anchor_review_required"],
+                  acct["effective_edges_total"],
+                  acct["edge_classification"]["assigned_once"],
+                  acct["edge_classification"]["assigned_multiple"],
+                  acct["edge_classification"]["unassigned"],
+                  acct["shared_anchor_conflicts_total"],
+                  args.output, args.geojson))
+    elif args.command == "build-review-pack":
+        oc = result["output_counts"]
+        pc = result["review_priority_counts"]["total"]
+        unc = result["unresolved_focal_counts"]
+        print("build-review-pack: source_edges=%d topology=%d anchors=%d "
+              "sections=%d review_items=%d P0=%d P1=%d P2=%d "
+              "review_anchors=%d disconnected=%d ambiguous=%d output_dir=%s" % (
+                  oc["source_edges_features"], oc["topology_features"],
+                  oc["anchors_features"], oc["sections_features"],
+                  oc["review_items_total"], pc["P0"], pc["P1"], pc["P2"],
+                  unc["review_required_anchors"], unc["disconnected_sections"],
+                  unc["ambiguous_sections"], args.output_dir))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0

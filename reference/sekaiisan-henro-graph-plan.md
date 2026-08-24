@@ -192,7 +192,25 @@ accounted 1,494 Placemarks、1,506 LineStrings、36,350 個座標點與 88 札�
 `python3 -m sekaiisan_henro build-graph`，輸出 `output/sekaiisan-henro-graph.json`。
 目前 live graph 為 1,953 nodes / 1,617 edges / 372 components；只連接 canonical shared
 vertices 與 11 個明確 endpoint-on-line T 接點，21 個 ambiguous crossings 全數保持不連接，
-`proximity_connections_applied=0`。Phase 2C 才會評估 5m 內保守 proximity connections。
+`proximity_connections_applied=0`。
+
+**Phase 2C 狀態：apply-proximity 已實作。** 執行
+`python3 -m sekaiisan_henro apply-proximity`，在 exact-only graph 之上只加入保守、無歧義
+的 proximity joins（見 §2.4 / §2.5 的 unambiguous 條件；clustering 與 T 接點規則保持
+現狀，加入時不採 proximity snapping）。目前 live snapshot（`fec95f8d…`）結果：
+
+- **Applied joins：379 = 324 endpoint cluster + 55 endpoint-to-line（T）**。
+- **50 個 synthetic T nodes**（顯式 attached 到 target source edge；source edge 不在
+  Phase 2C 改寫，Phase 3 traversal segmentation 才把 attachment 納入衍生拓撲）。
+- **Rejected：37 cluster + 14 endpoint-to-line**（ambiguous / competing，一律只報告）。
+- **5–20m gaps：76 = 50 endpoint pair + 26 endpoint-line**（只報告不連接）。
+- **21 個 ambiguous crossings 維持不連接。**
+- **components：372 → 53。**
+- **source nodes / edges / provenance / lengths 保持 byte/value 不變**（synthetic joins 以
+  顯式 `synthetic_joins` + `synthetic_nodes` 呈現，source edges/nodes 與 source length
+  accounting 不被改動）。
+
+輸出 `output/sekaiisan-henro-graph-proximity.json`。
 
 ### 2.1 度量變換
 
@@ -296,6 +314,23 @@ vertices 與 11 個明確 endpoint-on-line T 接點，21 個 ambiguous crossings
 
 ## Phase 4 — 寺廟 anchors（`anchors.py`）
 
+**狀態：已實作。** 執行 `python3 -m sekaiisan_henro build-anchors`，把 88 個札所投影到
+最近 source edge 並切分 derived traversal edges；confidence 分 `near`(<=50m) /
+`offset`(>50–150m) / `review_required`(>150m 或最近邊 tied)。目前 live snapshot
+（`fec95f8d…`）結果：
+
+- **88 total anchors，81 usable（near/offset），7 review_required。**
+- **Safe shared-node tie resolution：temples 2 / 21 / 51 的 `shared_node_tie` 解析為既有
+  確切節點；temple 71 維持 true tie（不猜選投影或 anchor node，標 unusable 供審）。**
+- **Traversal topology：1,733 edges / 2,069 nodes；components 53 → 53（不增不減，僅
+  subdivide）。**
+- **最大重建誤差約 4.55e-13m**（derived traversal edge 重建長度 vs source edge weights）。
+- source nodes/edges/synthetic joins/route_sources/source length accounting 保持
+  byte/value 不變；temple 點原樣保留、temple→邊的偏移線絕不作為 edge。
+- review-required anchors 一律排除於自動 pathing（§4.1）。
+
+輸出 `output/sekaiisan-henro-graph-anchors.json`。
+
 對每個札所 Point：
 
 1. 在度量空間以 STRtree 找最近原子邊；把 temple 點投影到該邊，並在投影點**切分邊**以建立
@@ -315,11 +350,77 @@ vertices 與 11 個明確 endpoint-on-line T 接點，21 個 ambiguous crossings
 
 - **自動候選 pathing 只限 `near` / `offset`**；`review_required` 一律排除，直到有明確
   覆寫（§7）才納入。不靜默強制連線。
+- 多條 nearest edge tied 時，只有在**每條候選的最近投影都落在同一個既有 exact graph
+  node** 才以 `shared_node_tie` 安全解析；只共享某個端點但實際投影不同、或投影位於不同
+  interior，仍維持 `review_required`，不任意挑選 edge。
 - 保留距離與 source edge 候選清單供人工審閱。
 - 基線量測（§2）：40 座 `near`、31 座 `offset`（50–100 之間）、17 座 `>100m` 進 `review_required`
   （其中 >150 需特別審）。
 
+## Phase 4b — 區間 corridor（`build-section-corridors`）
+
+**狀態：已實作並為現行 line-classification 主模型。** 執行
+`python3 -m sekaiisan_henro build-section-corridors`，在 effective undirected graph
+（只有 `traversal_edges` + `synthetic_joins`；**不**在 source `edges` 上 routing、
+**不**用 temple 偏移當 edge/cost）上，對 88 個札所兩兩相鄰（1→2 至 87→88）計算
+**section corridor**：
+
+- `SEC_i_(i+1)` = 所有「落在某一條從 temple i anchor 到 temple i+1 anchor 的 SIMPLE
+  path 上」的 effective edge 的 **union**。
+- **其他所有 usable temple anchor node 禁止作為內部 transit node**（forbidden）：任何
+  allowed simple s-t path 都不得通過其他 temple anchor。
+- 保留所有 reconnecting 建議分支（**無 1.15x / 長度門檻**）；排除 dead ends、透過單一
+  articulation 附著的 lollipop cycle、以及會經過其他 temple anchor 的相反環島路線。
+- **不列舉 simple paths**：先移除 forbidden 其他 anchor nodes，用確定性 undirected
+  vertex-biconnected edge blocks（Tarjan edge stack，正確支援 parallel edges）+
+  block-cut forest，找 s/t 之間唯一的 block-cut-tree path 並 union 其上所有 edge blocks
+  —— 即落在某條 allowed simple s-t path 上的精確 edge set。
+- status：`corridor`（cyclomatic E−V+1 == 0）/ `branched_corridor`（>0）/
+  `disconnected`（無 allowed path）/ `anchor_review_required`（任一側 anchor 不可用）。
+  `s==t` 是 zero-edge corridor（shortest length 0）；positive/zero weights 不影響 corridor
+  membership；synthetic joins 保持 explicit。
+
+目前 live snapshot（`fec95f8d…`）結果：
+
+- **28 corridor、23 branched、23 disconnected、13 anchor_review_required**。
+- **2,112 effective edges；718 assigned_once、66 assigned_multiple、1,328 unassigned；
+  850 assignments；無 shared-anchor conflicts。**
+
+輸出 `output/sekaiisan-henro-section-corridors.json` 與
+`output/sekaiisan-henro-section-corridor-edges.geojson`（byte-deterministic、無
+timestamp、atomic write）。另含 global effective-edge classification（每條 effective edge
+的 sorted section_ids、assignment_count、assigned_once/multiple/unassigned、
+`source_edge_id`）與 by-status / by-classification accounting（不宣稱 assignment 是
+exclusive）。
+
 ## Phase 5 — 區間推論（`sections.py`）
+
+**狀態：加權最短路徑已實作並保留為 QA / reference 模型（非 line-classification 主模型；
+主模型為 §Phase 4b corridors）。** 執行 `python3 -m sekaiisan_henro build-sections`
+（在 effective undirected graph 上做加權最短路徑；權重 = `length_m`/`distance_m`，
+**不**在原始 source `edges` 上 routing、**不**用 temple 偏移距離當成本）。目前 live
+snapshot（`fec95f8d…`）結果：
+
+- **34 candidate、17 ambiguous、23 disconnected、13 anchor_review_required**。
+- **38 條 primary path 使用 synthetic joins**。
+- 替代路徑 = 逐一排除 primary 每條邊重跑；`closure_88_1` = `{"status":"not_requested"}`。
+- 永不宣稱 resolved/official/navigable。
+
+輸出 `output/sekaiisan-henro-temple-sections.json`（byte-deterministic，無 timestamp）。
+
+### 5.0 目前無 corridor 的區間
+
+corridor（§Phase 4b）與加權最短路徑是兩套獨立分類模型；下列區間在 corridor 模型下
+**沒有 corridor**（含斷開與 anchor review），屬合法、可交付結果 —— **缺少 corridor
+不代表缺少官方路線**，不得臆造連線：
+
+- **disconnected（23）**：`5→6`、`6→7`、`7→8`、`11→12`、`17→18`、`23→24`、
+  `27→28`、`28→29`、`37→38`、`38→39`、`40→41`、`43→44`、`47→48`、`51→52`、
+  `53→54`、`54→55`、`58→59`、`59→60`、`63→64`、`64→65`、`77→78`、`83→84`、
+  `87→88`。兩端 anchor 可用，但 effective graph 無 allowed path，不推斷跨 component 連線。
+- **anchor_review_required（13）**：`9→10`、`10→11`、`44→45`、`45→46`、`67→68`、
+  `68→69`、`69→70`、`70→71`、`71→72`、`79→80`、`80→81`、`81→82`、`82→83`。
+  由 temples 10 / 45 / 68 / 69 / 71 / 80 / 82 的不可用 anchor 引起，不予自動 pathing。
 
 ### 5.1 最短路徑
 
@@ -399,6 +500,46 @@ byte-deterministic。
 4. 覆寫**永不編輯 raw geometry**；報告列出所有 applied / stale overrides。
 5. `graph_overrides.json` 是唯一可能進版控的圖相關檔案；只有在本階段證明需要後才建立並進版控。
 
+## Phase 8 — QGIS review-pack / report exporter（`build-review-pack`）
+
+**狀態：已實作。** 執行 `python3 -m sekaiisan_henro build-review-pack`，產生給 QGIS 人工
+審閱用的唯讀、確定性 review pack（輸出 `output/sekaiisan-henro-review/`）。先驗證所有
+kind / dataset / snapshot 一致與跨輸入 accounting 基本 identity，全部 payload 在記憶體
+建好後用既有 atomic writer 逐檔寫出（byte-deterministic、無 timestamp）：
+
+- `source-edges.geojson`（anchored source edges，QGIS 底圖用）
+- `topology.geojson`（每個 applied/rejected <=5m candidate、5–20m gap、ambiguous
+  crossing 各一 feature，含 `review_kind` / applied / distance / reason / route IDs /
+  priority / used-by-primary|alternative section IDs）
+- `anchors.geojson`（每座寺廟一個 temple Point；每個已有確定投影的位置另有 offset
+  LineString，`review_visualization_only=true`，**永不是** graph edge；unresolved tied anchor
+  只有 temple Point，resolved `shared_node_tie` 仍有 offset；含 anchor review ID /
+  confidence / usable / candidate+chosen/resolved edge IDs）
+- `sections.geojson`（由 ordered `traversal_edges` + `synthetic_joins` 依方向重建的
+  primary / alternative path LineStrings；宣稱長度 vs effective edge weights 須在 1e-6 m
+  內符合，不符即 fail；disconnected / review-required 無 geometry）
+- `review-items.json`（**產生式的 immutable review queue，不是 decisions 檔**：每 topology
+  record + 每 temple anchor + 每 section 各一筆；含 stable review_id / category / priority /
+  current automated status / references / `allowed_decisions` / `evidence_required` /
+  空的 `decision: null`；rerun 會覆寫產生式 queue，decisions 屬未來獨立的
+  `graph_overrides` / `review-decisions` 檔）
+- `report.json`（snapshot、input accounting、output feature/item 數、review priority 計數、
+  unresolved focal 計數、preservation notes、檔案清單）
+
+Priority policy：**P0** = review_required anchors、ambiguous/disconnected/
+anchor_review_required sections、被 primary path 使用的 applied joins；**P1** = 只被
+alternative 使用的 applied joins、所有 rejected <=5m candidates、5–20m gaps、ambiguous
+crossings；**P2** = 其他 accepted anchors / candidate sections / 未使用的 applied joins。
+
+目前 live snapshot（`fec95f8d…`）結果：
+
+- **Output features：source edges 1,617、topology 527、anchors 175、sections 68、
+  review items 702。**
+- **Priorities：P0 = 168、P1 = 158、P2 = 376。**
+- 產生式輸出確定性；synthetic joins 的 section crossref（primary 與 alternative 分開）
+  由 exporter 交叉比對；本 exporter **不寫 decisions**（人工決定記到未來獨立的
+  `graph_overrides` / `review-decisions` 檔）。
+
 ---
 
 ## 7. 程式模組與 CLI
@@ -451,6 +592,13 @@ python3 -m sekaiisan_henro analyze       --snapshot current   # 便利：全部�
 - 確定性 ID 與輸出：相同 fixture 跑兩次 byte-identical。
 - 最短路徑正確性；`<=1.15x` 替代路徑判 `ambiguous`；失敗/需審 anchor。
 - 可選 live integration report（非單元測試必要，因完整 source 已 gitignore）。
+
+**驗證狀態（live snapshot `fec95f8d…`）：**
+
+- **202 tests pass**（`python3 -m unittest discover sekaiisan_henro/tests`）。
+- **corridor 實作額外以 200 個確定性隨機 multigraph brute-force simple-path oracle cases
+  對照驗證**（Tarjan edge-block / block-cut corridor 與窮舉 simple-path union 一致）。
+- **所有產出 byte-deterministic**（相同 snapshot + config 重跑 byte-identical）。
 
 ## 9. 階段驗收門檻
 

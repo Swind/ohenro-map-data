@@ -36,10 +36,17 @@ output/mizutani-henro-pois.geojson
 output/mizutani-henro-report.json
 output/mizutani-henro-style-inventory.json
 output/mizutani-henro-update-report.json
-# 88sekaiisan Phase 1 normalization + Phase 2A inventory + Phase 2B graph (re-built from archive)
+# 88sekaiisan Phase 1 normalization + Phase 2A inventory + Phase 2B graph + Phase 2C proximity + Phase 3 anchors + Phase 4 sections + Phase 4b corridors (re-built from archive)
 output/sekaiisan-henro-normalized.json
 output/sekaiisan-henro-topology-inventory.json
 output/sekaiisan-henro-graph.json
+output/sekaiisan-henro-graph-proximity.json
+output/sekaiisan-henro-graph-anchors.json
+output/sekaiisan-henro-temple-sections.json
+output/sekaiisan-henro-section-corridors.json
+output/sekaiisan-henro-section-corridor-edges.geojson
+# 88sekaiisan QGIS review-pack / report exporter (rebuilt by build-review-pack)
+output/sekaiisan-henro-review/
 
 # Arukihenro walking-route pages and Google My Maps KML archive
 source/arukihenro-routes/

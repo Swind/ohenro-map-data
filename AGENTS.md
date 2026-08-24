@@ -51,8 +51,117 @@ Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardiz
 88 札所至 `output/sekaiisan-henro-normalized.json`；
 `python3 -m sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
 近距候選及 endpoint-only components）；`python3 -m sekaiisan_henro build-graph` 建立只含
-exact source evidence 的無向 graph（共享頂點及零距離 T 接點，不套用 proximity snapping）。
-目前尚未建立寺廟 anchors、區間路徑或 PMTiles。
+exact source evidence 的無向 graph（共享頂點及零距離 T 接點，不套用 proximity snapping）；
+`python3 -m sekaiisan_henro apply-proximity` 在 exact graph 之上只加入保守、無歧義的
+proximity joins（<=5m 端點 cluster 僅在 unambiguous 時連接；<=5m 端點到線內部 T 僅在
+唯一且無競爭候選時連接），全部以顯式 `synthetic_joins` + `synthetic_nodes` 呈現，source
+edges/nodes 與 source length accounting 保持 byte/value 不變；5–20m 缺口、competing、
+ambiguous cluster 與 ambiguous crossings 一律只報告不連接。
+`python3 -m sekaiisan_henro build-anchors` 把 88 個札所投影到最近 source edge 並切分
+derived traversal edges：confidence 分 `near`(<=50m) / `offset`(>50–150m) /
+`review_required`(>150m 或最近邊真正 tied)；多 edge tied 只有在所有最近投影落到同一個
+existing exact graph node 時才以 `shared_node_tie` 安全解析。只把 usable (near/offset) anchors 與 attached
+synthetic T nodes 插入 traversal topology，review-required 一律排除（unique>150m 仍保留
+投影與 anchor node 供審，但標 unusable）。source nodes/edges/synthetic joins/route_sources/
+source length accounting 保持 byte/value 不變；temple 點原樣保留、temple→邊的偏移線絕不成
+edge；component 數維持與 Phase 2C 相同（僅 subdivide）。產出
+`output/sekaiisan-henro-graph-anchors.json`。
+`python3 -m sekaiisan_henro build-sections` 在 effective undirected graph
+（只有 `traversal_edges` + `synthetic_joins`，weight = `length_m`/`distance_m`；
+**不**在原始 source `edges` 上 routing、**不**用 temple 偏移距離當成本）上對 88 個
+札所兩兩相鄰（1→2 至 87→88）做加權最短路徑（stdlib heapq Dijkstra + 確定性
+lexicographic tie-break），產出 87 條 `SEC_1_2`…`SEC_87_88` 區間候選：
+status 為 `candidate` / `ambiguous`（有 <=1.15x 替代路徑，保留 primary+alternative）/
+`disconnected`（不同 component，不臆造連線）/ `anchor_review_required`（任一側 anchor
+不可用）；替代路徑 = 逐一排除 primary 每條邊重跑。永不宣稱 resolved/official/navigable；
+`closure_88_1` = `{"status":"not_requested"}`。產出
+`output/sekaiisan-henro-temple-sections.json`（byte-deterministic，無 timestamp）。
+目前尚未建立區間路徑的 PMTiles。
+
+`python3 -m sekaiisan_henro build-section-corridors`（Phase 4b parallel section
+corridor classifier）在 effective undirected graph（同樣只有 `traversal_edges` +
+`synthetic_joins`；**不**在 source `edges` 上 routing、**不**用 temple 偏移當
+edge/cost）上，對 88 個札所兩兩相鄰（1→2 至 87→88）計算 **section corridor**：
+`SEC_i_(i+1)` = 所有「落在某一條從 temple i anchor 到 temple i+1 anchor 的 SIMPLE
+path 上」的 effective edge 的 **union**，且**其他所有 usable temple anchor node 禁止
+作為內部 transit node**。保留所有 reconnecting 建議分支（**無 1.15x / 長度門檻**）；
+排除 dead ends、透過單一 articulation 附著的 lollipop cycle、以及會經過其他 temple
+anchor 的相反環島路線。**不列舉 simple paths**：先移除 forbidden 其他 anchor nodes，
+用確定性 undirected vertex-biconnected edge blocks（Tarjan edge stack，正確支援
+parallel edges）+ block-cut forest，找 s/t 之間唯一的 block-cut-tree path 並 union
+其上所有 edge blocks —— 即落在某條 allowed simple s-t path 上的精確 edge set。
+status：`corridor`（cyclomatic E-V+1 == 0）/ `branched_corridor`（>0）/
+`disconnected`（無 allowed path）/ `anchor_review_required`（任一側 anchor 不可用）。
+`s==t` 是 zero-edge corridor（shortest length 0）；positive/zero weights 不影響
+corridor membership；synthetic joins 保持 explicit。每條輸出 sorted `edge_ids`、
+分開的 `traversal_edge_ids` / `synthetic_join_ids`、去重的 `source_edge_ids`、
+sorted `node_ids`、edge/node/source-edge counts、cyclomatic number、anchors summary、
+excluded other anchor node IDs/count，以及**只在 corridor 內**的最短路徑 diagnostic
+（ordered ids/directions/length；只是 diagnostic，非 corridor 定義）。另有 global
+effective-edge classification：每條 effective edge 一筆（kind traversal/synthetic、
+sorted section_ids、assignment_count、`assigned_once`/`assigned_multiple`/
+`unassigned`、`source_edge_id`），並有 by-status 與 by-classification accounting
+（不宣稱 assignment 是 exclusive）。產出
+`output/sekaiisan-henro-section-corridors.json` 與
+`output/sekaiisan-henro-section-corridor-edges.geojson`（byte-deterministic、無
+timestamp、atomic write）。GeoJSON：每 `(section_id, effective_edge_id)` assignment
+一個 LineString feature（props：section_id/status/edge_id/edge_kind/source_edge_id/
+synthetic/applied/assignment_count），外加每條 unassigned edge 一個 feature
+（`section_id=null`、`classification=unassigned`）；synthetic join geometry 由
+anchored node coordinates 推得；offset lines 絕不包含；feature 依 stable id 排序。
+`python3 -m sekaiisan_henro build-sections`（Phase 4 加權最短路徑 QA/reference）不受
+影響、維持原狀。
+
+#### QGIS review-pack / report exporter（`build-review-pack`）
+
+```bash
+python3 -m sekaiisan_henro build-review-pack
+# -> output/sekaiisan-henro-review/
+```
+
+`python3 -m sekaiisan_henro build-review-pack` 產生給 QGIS 人工審閱用的唯讀、確定性
+review pack，輸入為同一 snapshot 的五份文件（預設即 pipeline 產出，可用
+`--normalized` / `--inventory` / `--proximity` / `--anchored` / `--sections`
+覆寫，`--output-dir` 預設 `output/sekaiisan-henro-review`）。先驗證所有 kind /
+dataset / snapshot 一致與跨輸入 accounting 基本 identity，全部 payload 在記憶體建好後
+用既有 atomic writer 逐檔寫出（byte-deterministic、無 timestamp）：
+
+- `source-edges.geojson`：anchored source `edges` 的 LineStrings（穩定 source edge ID +
+  route/provenance 欄位），QGIS 底圖用。
+- `topology.geojson`：每個 applied synthetic join、每個 rejected <=5m candidate、每個
+  5–20m gap、每個 ambiguous crossing 各一個 feature；applied join 用其 `SHJ_` ID，
+  其餘用 `REV_` SHA。LineString（endpoint pair/join/gap、endpoint-to-line connector，
+  由 node coordinates / inventory endpoint+projected coordinates 推得）；crossing 用
+  Point。含 `review_kind` / applied / distance / reason / route IDs / priority /
+  used-by-primary/alternative section IDs。
+- `anchors.geojson`：每座寺廟一個 temple Point；每個已有確定投影的位置另有 offset
+  LineString（`review_visualization_only=true`，**永不是** graph edge）；unresolved tied
+  anchor 只有 temple Point，resolved `shared_node_tie` 仍有 offset。含 anchor review ID /
+  number / confidence / usable / distance / candidate+chosen/resolved edge IDs / priority。
+- `sections.geojson`：由 ordered `traversal_edges` + `synthetic_joins` 依方向重建的
+  primary / alternative path LineStrings（連續性、方向、ID、宣稱長度 vs effective edge
+  weights 須在 1e-6 m 內符合，不符即 fail 而非輸出壞 geometry）；disconnected /
+  review-required section 無 geometry（仍出現在 review-items）。零邊 same-node 可用
+  Point。含 section ID/status/variant/length/synthetic join IDs/priority。
+- `review-items.json`：**產生式的 immutable review queue（不是 decisions 檔）**，每個
+  topology record + 每個 temple anchor + 每個 section 各一筆；含 stable review_id /
+  category/kind / priority / current automated status / references / category-specific
+  `allowed_decisions` / `evidence_required` / 空的 `decision: null`。rerun 會覆寫產生式
+  queue；decisions 屬未來獨立的 `graph_overrides` / `review-decisions` 檔。
+- `report.json`：snapshot、input accounting 摘要、output feature/item 數、review
+  priority 計數、unresolved focal 計數、preservation notes、檔案清單。
+
+Priority policy（寫入 report）：**P0** = review_required anchors、ambiguous/disconnected/
+anchor_review_required sections、被 primary path 使用的 applied joins；**P1** = 只被
+alternative 使用的 applied joins、所有 rejected <=5m candidates、5–20m gaps、ambiguous
+crossings；**P2** = 其他 accepted anchors / candidate sections / 未使用的 applied joins。
+synthetic joins 的 section crossref（sorted section IDs，primary 與 alternative 分開）
+由 `build-review-pack` 交叉比對；`paths_using_synthetic_joins` 在 report 中可分別計 paths
+與 unique joins。QGIS workflow：載入 `source-edges.geojson` 為底圖，疊
+`topology.geojson`（看 rejected/gap/crossing）、`anchors.geojson`（看 offset 與 tied）、
+`sections.geojson`（看候選/替代路徑），`review-items.json` 與 `report.json` 作為審閱清單
+與摘要；人工決定記到未來 `graph_overrides`/`review-decisions`，本 exporter 不寫 decisions。
+
 min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
 `reference/min88-lodging-parser-standardization-plan.md`）。
 GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
