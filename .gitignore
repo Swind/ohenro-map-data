@@ -26,6 +26,9 @@ output/shikoku-nature-trail.json
 # Route profile samples are large but can be rebuilt from the GeoJSON + DEM SQLite.
 output/shikoku-nature-trail-elevation.json
 
+# Phase 2b generated offline assets (rebuilt by scripts/build-app-map-assets.py)
+output/app-map-assets/
+
 # Mizutani Henro Guide Map raw KML snapshots and derived personal-use data
 source/mizutani-henro-map/
 source/omotenashi-henro-inspection/
