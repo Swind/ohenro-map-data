@@ -2236,7 +2236,7 @@
       "layout": {
         "symbol-placement": "point",
         "text-font": [
-          "Noto Sans Italic"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "get",
@@ -2265,7 +2265,7 @@
       "layout": {
         "symbol-placement": "line",
         "text-font": [
-          "Noto Sans Italic"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -2430,13 +2430,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -2615,13 +2615,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -2653,13 +2653,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -2747,13 +2747,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -2804,13 +2804,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -2962,13 +2962,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -3000,13 +3000,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -3038,13 +3038,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -3135,13 +3135,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3173,13 +3173,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3268,13 +3268,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3306,13 +3306,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3363,13 +3363,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3401,13 +3401,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3466,7 +3466,7 @@
         ],
         "symbol-placement": "line",
         "text-font": [
-          "Noto Sans Regular"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -3631,13 +3631,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -3816,13 +3816,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -3854,13 +3854,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -3948,13 +3948,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4005,13 +4005,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4163,13 +4163,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -4201,13 +4201,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -4239,13 +4239,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -4336,13 +4336,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4374,13 +4374,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4469,13 +4469,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4507,13 +4507,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4564,13 +4564,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4602,13 +4602,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4641,7 +4641,7 @@
       ],
       "layout": {
         "text-font": [
-          "Noto Sans Italic"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -4806,13 +4806,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -4991,13 +4991,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -5029,13 +5029,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -5123,13 +5123,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5180,13 +5180,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5338,13 +5338,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -5376,13 +5376,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -5414,13 +5414,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -5511,13 +5511,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5549,13 +5549,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5644,13 +5644,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5682,13 +5682,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5739,13 +5739,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5777,13 +5777,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -5827,7 +5827,7 @@
       ],
       "layout": {
         "text-font": [
-          "Noto Sans Italic"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -5992,13 +5992,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6177,13 +6177,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -6215,13 +6215,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -6309,13 +6309,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6366,13 +6366,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6524,13 +6524,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -6562,13 +6562,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -6600,13 +6600,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -6697,13 +6697,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6735,13 +6735,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6830,13 +6830,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6868,13 +6868,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6925,13 +6925,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -6963,13 +6963,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -7001,7 +7001,7 @@
       ],
       "layout": {
         "text-font": [
-          "Noto Sans Italic"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -7166,13 +7166,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -7351,13 +7351,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -7389,13 +7389,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -7483,13 +7483,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -7540,13 +7540,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -7698,13 +7698,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -7736,13 +7736,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -7774,13 +7774,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -7871,13 +7871,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -7909,13 +7909,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8004,13 +8004,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8042,13 +8042,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8099,13 +8099,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8137,13 +8137,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8264,7 +8264,7 @@
           "shield_text"
         ],
         "text-font": [
-          "Noto Sans Medium"
+          "Noto Sans CJK JP Regular"
         ],
         "text-size": 8,
         "icon-size": 0.8,
@@ -8295,7 +8295,7 @@
         ],
         "symbol-placement": "line",
         "text-font": [
-          "Noto Sans Regular"
+          "Noto Sans CJK JP Regular"
         ],
         "text-field": [
           "case",
@@ -8460,13 +8460,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8645,13 +8645,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -8683,13 +8683,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -8777,13 +8777,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8834,13 +8834,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -8992,13 +8992,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -9030,13 +9030,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -9068,13 +9068,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -9165,13 +9165,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9203,13 +9203,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9298,13 +9298,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9336,13 +9336,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9393,13 +9393,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9431,13 +9431,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9539,7 +9539,7 @@
           ]
         ],
         "text-font": [
-          "Noto Sans Regular"
+          "Noto Sans CJK JP Regular"
         ],
         "text-justify": "auto",
         "text-field": [
@@ -9705,13 +9705,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -9890,13 +9890,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -9928,13 +9928,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -10022,13 +10022,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10079,13 +10079,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10237,13 +10237,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -10275,13 +10275,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -10313,13 +10313,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -10410,13 +10410,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10448,13 +10448,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10543,13 +10543,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10581,13 +10581,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10638,13 +10638,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -10676,13 +10676,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11027,13 +11027,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11212,13 +11212,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -11250,13 +11250,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -11344,13 +11344,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11401,13 +11401,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11559,13 +11559,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -11597,13 +11597,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -11635,13 +11635,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -11732,13 +11732,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11770,13 +11770,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11865,13 +11865,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11903,13 +11903,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11960,13 +11960,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -11998,13 +11998,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12014,7 +12014,7 @@
           ]
         ],
         "text-font": [
-          "Noto Sans Regular"
+          "Noto Sans CJK JP Regular"
         ],
         "text-max-width": 7,
         "text-letter-spacing": 0.1,
@@ -12254,13 +12254,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -12439,13 +12439,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12477,13 +12477,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12571,13 +12571,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -12628,13 +12628,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -12786,13 +12786,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12824,13 +12824,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12862,13 +12862,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -12959,13 +12959,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -12997,13 +12997,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -13092,13 +13092,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -13130,13 +13130,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -13187,13 +13187,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -13225,13 +13225,13 @@
                       [
                         "literal",
                         [
-                          "Noto Sans Devanagari Regular v1"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ],
                       [
                         "literal",
                         [
-                          "Noto Sans Regular"
+                          "Noto Sans CJK JP Regular"
                         ]
                       ]
                     ]
@@ -13242,7 +13242,7 @@
           ]
         ],
         "text-font": [
-          "Noto Sans Regular"
+          "Noto Sans CJK JP Regular"
         ],
         "text-size": [
           "interpolate",
@@ -13463,13 +13463,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -13648,13 +13648,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -13686,13 +13686,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -13780,13 +13780,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -13837,13 +13837,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -13995,13 +13995,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -14033,13 +14033,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -14071,13 +14071,13 @@
                   [
                     "literal",
                     [
-                      "Noto Sans Devanagari Regular v1"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ],
                   [
                     "literal",
                     [
-                      "Noto Sans Regular"
+                      "Noto Sans CJK JP Regular"
                     ]
                   ]
                 ]
@@ -14168,13 +14168,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14206,13 +14206,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14301,13 +14301,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14339,13 +14339,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14396,13 +14396,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14434,13 +14434,13 @@
                     [
                       "literal",
                       [
-                        "Noto Sans Devanagari Regular v1"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ],
                     [
                       "literal",
                       [
-                        "Noto Sans Regular"
+                        "Noto Sans CJK JP Regular"
                       ]
                     ]
                   ]
@@ -14462,13 +14462,13 @@
           [
             "literal",
             [
-              "Noto Sans Medium"
+              "Noto Sans CJK JP Regular"
             ]
           ],
           [
             "literal",
             [
-              "Noto Sans Regular"
+              "Noto Sans CJK JP Regular"
             ]
           ]
         ],
@@ -14741,7 +14741,7 @@
           {}
         ],
         "text-font": [
-          "Noto Sans Medium"
+          "Noto Sans CJK JP Regular"
         ],
         "text-size": [
           "interpolate",
