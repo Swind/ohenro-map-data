@@ -446,6 +446,25 @@ GeometryCollection；單 course malformed HTML/assets/KML 記 warning 後繼續�
 全量結果：123 courses / 123 photo points / 686 tourism spots / 1,713 Placemarks /
 0 warnings；672/672 tourism spot images 成功對應 archive local path。
 
+## App Map Pack（phase 2 / phase 2b：manifest + 離線 assets）
+
+- Manifest generator：`python3 scripts/build-app-map-manifest.py --version <v>`
+  → `output/app-map-manifest.json`（schema_version 2，minimum_app_version_code >= 2）。
+  七個唯一核心 role（style / basemap / mizutani / nature_trail / henroyado /
+  min88 / temples）＋重複 role sprite(4) / glyph(103) / license(2)。glyph 範圍
+  讀自 `scripts/app-map-assets/noto-sans-cjk-jp-required-ranges.txt`。
+- 離線 assets builder：`python3 scripts/build-app-map-assets.py --font-maker <bin>
+  --font-file <NotoRegular.otf>` → `output/app-map-assets/`（sprites/、fonts/、
+  licenses/）。stdlib-only；只呼叫既有 `basemaps/sprites` Cargo spritegen 與外部
+  patched font-maker。font SHA-256 固定為 `68a3fc98…`（Noto Sans CJK JP Regular
+  2.004，Sans2.004 `523d033d`）。font-maker patch 見
+  `scripts/app-map-assets/font-maker-unicode.patch`（對 maplibre/font-maker
+  `714ccaea`，BMP→0x110000），binary 不 vendor。
+- 產生式 assets（`output/app-map-assets/`）已 gitignore；先 build assets 再 build
+  manifest。詳見 `docs/app_map_manifest.md` 與 `docs/app_map_assets.md`。
+- Style：`map-preview/scripts/generate-style.mjs` 會把每層 `text-font` 遞迴正規化為
+  單一 CJK stack `Noto Sans CJK JP Regular`，再產出 `map-preview/src/style/style.json`。
+
 ## 環境需求
 
 - Java 21+
