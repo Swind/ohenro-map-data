@@ -9,8 +9,14 @@ from arukihenro_routes.parser import parse_index, parse_route
 
 class TestParser(unittest.TestCase):
     def test_extracts_only_walking_route_links(self):
-        html = '<a href="/blog/arukihenro/junnro/michi01to02/">route</a><a href="/blog/arukihenro/tera-tokushima/">other</a>'
-        self.assertEqual(parse_index(html, "https://ohenro.jp/blog/arukihenro/tera-tokushima/"), ["https://ohenro.jp/blog/arukihenro/junnro/michi01to02/"])
+        html = '<a href="/blog/arukihenro/junnro/michi01to02/">route</a><a href="/blog/arukihenro/michi45to46/">other form</a><a href="/blog/arukihenro/tera-tokushima/">other</a>'
+        self.assertEqual(
+            parse_index(html, "https://ohenro.jp/blog/arukihenro/tera-tokushima/"),
+            [
+                "https://ohenro.jp/blog/arukihenro/junnro/michi01to02/",
+                "https://ohenro.jp/blog/arukihenro/michi45to46/",
+            ],
+        )
 
     def test_extracts_title_and_unique_google_map_ids(self):
         html = '<h1 class="entry-title">01番札所～02番札所</h1><iframe src="https://www.google.com/maps/d/u/2/embed?mid=abc"></iframe><iframe src="https://www.google.com/maps/d/embed?mid=abc"></iframe>'

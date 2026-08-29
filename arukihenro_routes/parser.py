@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html.parser import HTMLParser
+import re
 from urllib.parse import parse_qs, urljoin, urlparse
 
 
@@ -39,7 +40,9 @@ def parse_index(html: str, page_url: str) -> list[str]:
     routes = []
     for href in parser.links:
         url = urljoin(page_url, href)
-        if "/blog/arukihenro/junnro/michi" in url and url not in routes:
+        # Most routes live under /blog/arukihenro/junnro/michi...; a few use
+        # the bare /blog/arukihenro/michi... form (e.g. michi45to46/).
+        if re.search(r"/blog/arukihenro/(?:junnro/)?michi", url) and url not in routes:
             routes.append(url)
     return routes
 

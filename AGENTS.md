@@ -42,6 +42,33 @@ ohenro-map-data/
 Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
 步行遍路路線 archive：`python3 -m arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
 路線 HTML 與內嵌 Google My Maps KML 到 `source/arukihenro-routes/`；可用 `--force` 重抓。
+
+步行遍路路線 normalize（Phase 2）：
+
+```bash
+python3 -m arukihenro_routes normalize   # -> output/arukihenro-routes.json
+```
+
+- `python3 -m arukihenro_routes` 預設走 fetch；`normalize` 子命令把 archive 的
+  manifest + 各 map KML 正規化為 schema v1（deterministic、無 timestamp、
+  atomic write）。每 route 保留 region/title/url 與札所範圍
+  `from_temple`/`to_temple`/`temple_range`（88 條正規 + 1 條別格為空；
+  `88→01` 閉環為 `[88, 1]`、`79→81` 非連續、`68・69` 合併為
+  `[67, 68, 69]` 等，見 `arukihenro_routes/temple_range.py`）。每 map 保留
+  `map_name`/`map_description`（Document name 常含長度如 `【A:1.4㎞　B:1.6km】`）、
+  各自的 `from_temple`/`to_temple`/`temple_range`、`lines` 與 `points`
+  （均保留來源 Folder 名稱、依文件順序）。
+- `lines`：LineString geometry `[lon, lat]`，`source` 依 Placemark name 判定
+  `google_directions`（`日本,…`/`Unnamed Road,…`，My Maps 導航自動產生）或 `manual`。
+- `points`：統一分類 `category`（見 `arukihenro_routes/classify.py`，12 類：
+  route_endpoint / waymarker / lodging / onsen / food_shop / rest_area / shrine /
+  viewpoint / temple_related / elevation_mileage / route_feature / sightseeing，
+  另有 `other`/`no_name`）。`route_endpoint` = Google 自動起終點（392 個），
+  其餘為手動 POI。照片取自 `gx_media_links`（URL 去重保留原序）。
+- 2026-08-29 全量：90 routes / 91 maps / 324 lines / 933 points /
+  385 個點帶照片，0 warnings。`parse_index` 同時接受
+  `/blog/arukihenro/junnro/michi…` 與罕見的裸 `/blog/arukihenro/michi…`
+  （如 `michi45to46/`）；88 個相鄰札所區間全數覆蓋（40→41 源站無 KML）。
 一日一斉おもてなし遍路道ウォーク點檢路線 archive：
 `python3 -m omotenashi_henro_inspection`，下載 KML immutable snapshot 至
 `source/omotenashi-henro-inspection/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
