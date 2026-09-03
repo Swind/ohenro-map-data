@@ -23,7 +23,8 @@ def export_map(input_path: str = "output/mizutani-henro-map.json", *,
         if feature["geometry_type"] == "LineString":
             route_kind = {"88route": "source_88route", "20route": "source_20route", "sub route": "alternate"}.get(folder, "other")
             routes.append({"type": "Feature", "geometry": feature["geometry"], "properties": {
-                "feature_id": feature["feature_id"], "name": feature["name"], "folder": folder,
+                "feature_id": feature["feature_id"], "route_id": feature["feature_id"], "segment_id": feature["feature_id"],
+                "name": feature["name"], "folder": folder,
                 "route_kind": route_kind, "style_url": feature["style_url"], "color": feature["line_color"],
                 "width": feature["line_width"], "description": feature["description"], "source": normalized["dataset_id"],
             }})

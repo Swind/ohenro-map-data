@@ -17,8 +17,8 @@
     {
       "path": "shikoku-mizutani-henro.pmtiles",
       "role": "mizutani",
-      "sha256": "3ed66bb5461dc707296332e6d1a2162d9a5ebcfaf23838ff5decf6b5f29a8ecd",
-      "size": 2010042,
+      "sha256": "b3051372bbd05d992029a7e70f53330705a0e6f9e7a6b9fe43958bafd660027a",
+      "size": 2036655,
       "url": "shikoku-mizutani-henro.pmtiles"
     },
     {
@@ -48,6 +48,13 @@
       "sha256": "0f046b21d75811da54b0c682064342f89823cf308f0089dca9b1889aecec5c87",
       "size": 35674,
       "url": "temples.geojson"
+    },
+    {
+      "path": "content.sqlite",
+      "role": "content",
+      "sha256": "9b490527b6c7991a1fa4baf3445ac6da58295ce263b387798f7b7759f7261de8",
+      "size": 315392,
+      "url": "content.sqlite"
     },
     {
       "path": "sprites/light.json",
@@ -813,8 +820,8 @@
       "url": "app-map-assets/licenses/Tangram-Icons-MIT.txt"
     }
   ],
-  "minimum_app_version_code": 2,
-  "schema_version": 2,
-  "total_size": 140690209,
-  "version": "dev-20260824-v2"
+  "minimum_app_version_code": 3,
+  "schema_version": 3,
+  "total_size": 141032214,
+  "version": "dev-20260903-v3"
 }

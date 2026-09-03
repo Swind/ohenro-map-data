@@ -29,6 +29,12 @@ class TestNormalize(unittest.TestCase):
             self.assertEqual(normalized["features"][1]["line_color"], "#0000FF")
             self.assertEqual(report["routes"], 1)
             self.assertEqual(report["pois"], 1)
+            with open(os.path.join(directory, "routes.geojson"), encoding="utf-8") as stream:
+                route_features = json.load(stream)["features"]
+            self.assertEqual(len(route_features), 1)
+            route_props = route_features[0]["properties"]
+            self.assertEqual(route_props["route_id"], route_props["feature_id"])
+            self.assertEqual(route_props["segment_id"], route_props["feature_id"])
             checked = verify(directory, snapshot=snapshot, normalized_path=output,
                              routes_path=os.path.join(directory, "routes.geojson"),
                              pois_path=os.path.join(directory, "pois.geojson"))

@@ -99,4 +99,55 @@ PY
   mv -f "$TMP" "$OUTPUT"
   "$PMTILES" show "$OUTPUT" > "$REPORTS/mizutani-henro-metadata.txt"
   echo "==> Done: $OUTPUT"
+
+  echo "==> Provider route-pack PMTiles (routes layer only)"
+  ROUTES_PACK_TMP="$WORK_DIR/mizutani-henro-routes.pmtiles"
+  ROUTES_PACK_MBTILES="$WORK_DIR/mizutani-henro-routes.mbtiles"
+  ROUTES_PACK_META="$WORK_DIR/mizutani-henro-routes.metadata.json"
+  ROUTES_PACK_OUTPUT="$ROOT/output/mizutani-henro-routes.pmtiles"
+  rm -f "$ROUTES_PACK_TMP" "$ROUTES_PACK_MBTILES"
+  echo "==> tippecanoe (routes layer, z0-14, no simplification)"
+  dockerrun tippecanoe --quiet --force --output "$ROUTES_PACK_MBTILES" \
+    --minimum-zoom 0 --maximum-zoom 14 --no-line-simplification \
+    -L "routes:$ROUTES"
+  echo "==> PMTiles convert"
+  "$PMTILES" convert "$ROUTES_PACK_MBTILES" "$ROUTES_PACK_TMP"
+  "$PMTILES" show --metadata "$ROUTES_PACK_TMP" > "$ROUTES_PACK_META"
+  python3 - "$ROUTES_PACK_META" "$NORMALIZED" <<'PY'
+import json, sys
+metadata_path, normalized_path = sys.argv[1:]
+metadata = json.load(open(metadata_path, encoding="utf-8"))
+source = json.load(open(normalized_path, encoding="utf-8"))["source"]
+metadata.update({
+    "name": "Mizutani Henro Route Pack (routes)",
+    "description": "Offline route geometry for personal use of お遍路のルート",
+    "attribution": "水谷遍路導覽圖 / Original map by 水谷卓也; source: https://min88.jp/photo/558/",
+    "dataset_id": "mizutani-henro-map",
+    "source_map_id": source["map_id"],
+    "source_sha256": source["snapshot_sha256"],
+    "source_url": source["map_url"],
+    "usage": "personal-use",
+})
+json.dump(metadata, open(metadata_path, "w", encoding="utf-8"), ensure_ascii=False)
+PY
+  "$PMTILES" edit --metadata="$ROUTES_PACK_META" "$ROUTES_PACK_TMP"
+  "$PMTILES" verify "$ROUTES_PACK_TMP"
+  python3 - "$("$PMTILES" show --metadata "$ROUTES_PACK_TMP")" <<'PY'
+import json, sys
+metadata = json.loads(sys.argv[1])
+layers = metadata["vector_layers"]
+if isinstance(layers, str):
+    layers = json.loads(layers)
+layer_ids = [layer["id"] for layer in layers]
+if layer_ids != ["routes"]:
+    raise SystemExit("route-pack PMTiles must contain exactly one vector layer 'routes': %r" % layer_ids)
+fields = layers[0].get("fields", {})
+for field in ("route_id", "segment_id"):
+    if field not in fields:
+        raise SystemExit("route-pack routes layer missing required field %r" % field)
+if metadata.get("usage") != "personal-use" or not metadata.get("attribution"):
+    raise SystemExit("required personal-use metadata missing")
+PY
+  mv -f "$ROUTES_PACK_TMP" "$ROUTES_PACK_OUTPUT"
+  echo "==> Done: $ROUTES_PACK_OUTPUT"
 } 2>&1 | tee "$LOG"

@@ -21,12 +21,12 @@ import tempfile
 from urllib.parse import quote, urljoin, urlsplit
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 # Version restricted to ASCII letters/digits/dot/underscore/hyphen.
 VERSION_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
-# The seven unique core roles: (repo-root-relative source, install path, role).
+# The eight unique core roles: (repo-root-relative source, install path, role).
 # The install paths intentionally match the source file names.
 CORE_PACK = [
     ("map-preview/src/style/style.json", "style.json", "style"),
@@ -36,6 +36,7 @@ CORE_PACK = [
     ("output/shikoku-henroyado-lodging.pmtiles", "shikoku-henroyado-lodging.pmtiles", "henroyado"),
     ("output/shikoku-min88-lodging.pmtiles", "shikoku-min88-lodging.pmtiles", "min88"),
     ("output/temples.geojson", "temples.geojson", "temples"),
+    ("output/content.sqlite", "content.sqlite", "content"),
 ]
 
 # Deterministic generated asset spec templates (role -> install subdir, source
@@ -71,12 +72,12 @@ def validate_version(version: str) -> str:
 
 
 def validate_minimum_app_version_code(code: int) -> int:
-    """Return minimum_app_version_code if it is an int >= 2, else raise.
+    """Return minimum_app_version_code if it is an int >= 3, else raise.
 
-    Phase 2b requires Android app versionCode >= 2.
+    Phase 3 requires Android app versionCode >= 3.
     """
-    if isinstance(code, bool) or not isinstance(code, int) or code < 2:
-        raise ValueError("--minimum-app-version-code must be an integer >= 2")
+    if isinstance(code, bool) or not isinstance(code, int) or code < 3:
+        raise ValueError("--minimum-app-version-code must be an integer >= 3")
     return code
 
 
@@ -289,8 +290,8 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--minimum-app-version-code",
         type=int,
-        default=2,
-        help="minimum Android app version code (default: 2)",
+        default=3,
+        help="minimum Android app version code (default: 3)",
     )
     parser.add_argument(
         "--output",

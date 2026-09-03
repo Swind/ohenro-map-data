@@ -1,20 +1,37 @@
-==> Mizutani Henro Guide Map build 2026-08-21T20:35:52Z
+==> Mizutani Henro Guide Map build 2026-09-03T02:57:59Z
 normalize: features=2807 points=2680 lines=127
 export-map: routes=127 pois=2680
 verify: OK (points=2680 lines=127)
 ==> tippecanoe
-/home/swind/Data/Program/ohenro-map-data/output/mizutani-henro-routes.geojson:392: ignoring dimensions beyond two: in JSON object [134.171611,34.224305,0]
-/home/swind/Data/Program/ohenro-map-data/output/mizutani-henro-routes.geojson:392: ignoring dimensions beyond two: in JSON object {"type":"Feature","geometry":{"type":"LineString","coordinates":[[134.171611,34.224305,0],[134.1735634,34.224975,0],[134.17417,34.224804,0],[134.173617,34.224316,0],[134.174121,34.224023,0],[134.174127,34.223806,0],[134.174685,34.223606,0],[134.175183,34.22409,0],[134.175556,34.223954,0],[134.175629,34.223482,0],[134.176331,34.223489,0],[134.178032,34.223841,0],[134.178128,34.223216,0],[134.179432,34.222981,0],[134.180414,34.223345,0],[134.182774,34.22307,0],[134.1842583,34.2217358,0],[134.18...
+/home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/mizutani-henro-routes.geojson:394: ignoring dimensions beyond two: in JSON object [134.171611,34.224305,0]
+/home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/mizutani-henro-routes.geojson:394: ignoring dimensions beyond two: in JSON object {"type":"Feature","geometry":{"type":"LineString","coordinates":[[134.171611,34.224305,0],[134.1735634,34.224975,0],[134.17417,34.224804,0],[134.173617,34.224316,0],[134.174121,34.224023,0],[134.174127,34.223806,0],[134.174685,34.223606,0],[134.175183,34.22409,0],[134.175556,34.223954,0],[134.175629,34.223482,0],[134.176331,34.223489,0],[134.178032,34.223841,0],[134.178128,34.223216,0],[134.179432,34.222981,0],[134.180414,34.223345,0],[134.182774,34.22307,0],[134.1842583,34.2217358,0],[134.18...
 ==> PMTiles convert
-2026/08/22 04:35:54 convert.go:158: Pass 1: Assembling TileID set
-2026/08/22 04:35:54 convert.go:189: Pass 2: writing tiles
-   0% |                                             | (0/1684, 0 it/hr) [0s:0s]                                                                                100% |███████████████████████████████████████| (1684/1684, 74001 it/s)
-2026/08/22 04:35:54 convert.go:243: # of addressed tiles:  1684
-2026/08/22 04:35:54 convert.go:244: # of tile entries (after RLE):  1684
-2026/08/22 04:35:54 convert.go:245: # of tile contents:  1684
-2026/08/22 04:35:54 convert.go:268: Total dir bytes:  3866
-2026/08/22 04:35:54 convert.go:269: Average bytes per addressed tile: 2.30
-2026/08/22 04:35:54 convert.go:238: Finished in  27.454842ms
-writing file   0% |                                     | ( 0 B/1.9 MB) [0s:0s]                                                                               writing file 100% |████████████████████████████| (1.9/1.9 MB, 1.9 GB/s)
-2026/08/22 04:35:54 verify.go:169: Completed verify in 228.457µs.
-==> Done: /home/swind/Data/Program/ohenro-map-data/output/shikoku-mizutani-henro.pmtiles
+2026/09/03 10:58:01 convert.go:158: Pass 1: Assembling TileID set
+2026/09/03 10:58:01 convert.go:189: Pass 2: writing tiles
+   0% |                                             | (0/1684, 0 it/hr) [0s:0s]                                                                                100% |███████████████████████████████████████| (1684/1684, 66260 it/s)
+2026/09/03 10:58:01 convert.go:243: # of addressed tiles:  1684
+2026/09/03 10:58:01 convert.go:244: # of tile entries (after RLE):  1684
+2026/09/03 10:58:01 convert.go:245: # of tile contents:  1684
+2026/09/03 10:58:01 convert.go:268: Total dir bytes:  3871
+2026/09/03 10:58:01 convert.go:269: Average bytes per addressed tile: 2.30
+2026/09/03 10:58:01 convert.go:238: Finished in  31.590877ms
+writing file   0% |                                     | ( 0 B/1.9 MB) [0s:0s]                                                                               writing file 100% |████████████████████████████| (1.9/1.9 MB, 1.7 GB/s)
+2026/09/03 10:58:01 verify.go:169: Completed verify in 242.484µs.
+==> Done: /home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/shikoku-mizutani-henro.pmtiles
+==> Provider route-pack PMTiles (routes layer only)
+==> tippecanoe (routes layer, z0-14, no simplification)
+/home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/mizutani-henro-routes.geojson:394: ignoring dimensions beyond two: in JSON object [134.171611,34.224305,0]
+/home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/mizutani-henro-routes.geojson:394: ignoring dimensions beyond two: in JSON object {"type":"Feature","geometry":{"type":"LineString","coordinates":[[134.171611,34.224305,0],[134.1735634,34.224975,0],[134.17417,34.224804,0],[134.173617,34.224316,0],[134.174121,34.224023,0],[134.174127,34.223806,0],[134.174685,34.223606,0],[134.175183,34.22409,0],[134.175556,34.223954,0],[134.175629,34.223482,0],[134.176331,34.223489,0],[134.178032,34.223841,0],[134.178128,34.223216,0],[134.179432,34.222981,0],[134.180414,34.223345,0],[134.182774,34.22307,0],[134.1842583,34.2217358,0],[134.18...
+==> PMTiles convert
+2026/09/03 10:58:06 convert.go:158: Pass 1: Assembling TileID set
+2026/09/03 10:58:06 convert.go:189: Pass 2: writing tiles
+   0% |                                             | (0/1319, 0 it/hr) [0s:0s]                                                                                100% |███████████████████████████████████████| (1319/1319, 79933 it/s)
+2026/09/03 10:58:06 convert.go:243: # of addressed tiles:  1319
+2026/09/03 10:58:06 convert.go:244: # of tile entries (after RLE):  1319
+2026/09/03 10:58:06 convert.go:245: # of tile contents:  1319
+2026/09/03 10:58:06 convert.go:268: Total dir bytes:  2885
+2026/09/03 10:58:06 convert.go:269: Average bytes per addressed tile: 2.19
+2026/09/03 10:58:06 convert.go:238: Finished in  19.906118ms
+writing file   0% |                                     | ( 0 B/847 kB) [0s:0s]                                                                               writing file 100% |████████████████████████████| (847/847 kB, 1.6 GB/s)
+2026/09/03 10:58:06 verify.go:169: Completed verify in 171.896µs.
+==> Done: /home/swind/Data/Program/ohenro-map/reference/ohenro-map-data/output/mizutani-henro-routes.pmtiles

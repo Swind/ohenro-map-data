@@ -9,10 +9,13 @@ Schema version 2 adds the phase-2b generated assets (sprites, glyphs, licenses)
 as repeated roles alongside the seven unique core roles, and raises the minimum
 Android app version code to 2.
 
+Schema version 3 adds an eighth core role, `content` (`content.sqlite`), and
+raises the minimum Android app version code to 3.
+
 ## Generator
 
 ```bash
-python3 scripts/build-app-map-manifest.py --version dev-20260824-v2
+python3 scripts/build-app-map-manifest.py --version dev-20260824-v3
 ```
 
 Outputs `output/app-map-manifest.json` (default). It is stdlib-only, streams
@@ -27,7 +30,7 @@ range inventory as the asset builder
 | Option | Default | Notes |
 | --- | --- | --- |
 | `--version` | *(required)* | Schema `version`; ASCII letters/digits/dot/underscore/hyphen only. |
-| `--minimum-app-version-code` | `2` | Integer `>= 2` (phase-2b requirement). |
+| `--minimum-app-version-code` | `3` | Integer `>= 3` (phase-3 requirement). |
 | `--output` | `output/app-map-manifest.json` | Manifest path (repo-root relative). |
 | `--base-url` | *(none)* | `http`/`https` URL; turns relative `url`s into absolute ones. |
 
@@ -58,7 +61,7 @@ Pass the URL of the directory where the manifest will be served (i.e. the
 
 ```bash
 python3 scripts/build-app-map-manifest.py \
-  --version dev-20260824-v2 \
+  --version dev-20260824-v3 \
   --base-url https://example.com/mapdata/output/
 ```
 
@@ -70,9 +73,9 @@ Top-level object:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `schema_version` | integer | `2`. |
+| `schema_version` | integer | `3`. |
 | `version` | string | Restricted to ASCII letters/digits/dot/underscore/hyphen. |
-| `minimum_app_version_code` | integer | `>= 2`. |
+| `minimum_app_version_code` | integer | `>= 3`. |
 | `total_size` | integer | Sum of all file `size` values (bytes). |
 | `files` | array | One entry per installable file. |
 
@@ -88,7 +91,7 @@ Each `files[]` item:
 
 ## Roles
 
-### Seven unique core roles
+### Eight unique core roles
 
 | Role | Install path | Source |
 | --- | --- | --- |
@@ -99,6 +102,7 @@ Each `files[]` item:
 | `henroyado` | `shikoku-henroyado-lodging.pmtiles` | `output/shikoku-henroyado-lodging.pmtiles` |
 | `min88` | `shikoku-min88-lodging.pmtiles` | `output/shikoku-min88-lodging.pmtiles` |
 | `temples` | `temples.geojson` | `output/temples.geojson` |
+| `content` | `content.sqlite` | `output/content.sqlite` |
 
 ### Repeated generated roles (phase 2b)
 

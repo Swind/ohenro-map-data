@@ -51,6 +51,11 @@ def verify(data_dir: str = config.DEFAULT_DATA_DIR, *, snapshot: str | None = No
         errors.append("duplicate feature IDs")
     if set(normalized_ids) != set(geojson_ids):
         errors.append("normalized and GeoJSON feature IDs differ")
+    for route in routes:
+        props = route["properties"]
+        if props.get("route_id") != props.get("feature_id") or props.get("segment_id") != props.get("feature_id"):
+            errors.append("route feature %s missing route_id/segment_id equal to feature_id" % props.get("feature_id"))
+            break
     unclassified = sum(feature["category"] == "unclassified" for feature in normalized["features"] if feature["geometry_type"] == "Point")
     if unclassified:
         warnings.append("%d Point features are unclassified" % unclassified)
