@@ -1,23 +1,47 @@
 //! Elevation encoding + compression (plan §20/§22).
 //!
 //! float32 (normalized) -> int16 (1 m, `ELEV_NODATA` = i16::MIN) -> zstd.
+//!
+//! GSI's raw rasters also carry a legacy no-data sentinel of `-9999`
+//! (see `reference/gis-dem-converter.md`; DEM10B uses `その他,-9999.00`).
+//! Real route packs shipped earlier databases that persisted that legacy
+//! value in DEM5 cells, so the shared codec must treat it as no-data on
+//! read and never re-emit it on write.
 
 use crate::gsi::error::{DemError, DemResult};
 use crate::tile::grid::ELEV_NODATA;
 
+/// Legacy GSI no-data sentinel (`-9999`) that leaks into real databases from
+/// source rasters. Treating it as a plausible negative elevation (as opposed
+/// to no-data) silently corrupts fallback chains (a DEM5 cell reporting
+/// `-9999 m` would shadow a valid DEM10 sample). Both directions of the codec
+/// normalize this value to [`ELEV_NODATA`].
+pub const LEGACY_ELEV_NODATA: i16 = -9999;
+
 /// Quantize a float elevation to int16 meters. NaN -> NODATA sentinel.
+///
+/// The exact legacy GSI no-data value (`-9999.0`) is mapped to [`ELEV_NODATA`]
+/// so newly written databases can never persist it. No real elevation on this
+/// dataset is anywhere near `-9999 m`, so the mapping is unambiguous.
 pub fn quantize(e: f32) -> i16 {
     if e.is_nan() {
         ELEV_NODATA
     } else {
         let v = e.round() as i64;
-        v.clamp(i16::MIN as i64 + 1, i16::MAX as i64) as i16
+        if v == LEGACY_ELEV_NODATA as i64 {
+            ELEV_NODATA
+        } else {
+            v.clamp(i16::MIN as i64 + 1, i16::MAX as i64) as i16
+        }
     }
 }
 
 /// Dequantize int16 back to meters (NODATA -> None).
+///
+/// Treats both the canonical sentinel ([`ELEV_NODATA`]) and the legacy GSI
+/// `-9999` as no-data so old databases remain correct on read.
 pub fn dequantize(e: i16) -> Option<f32> {
-    if e == ELEV_NODATA {
+    if e == ELEV_NODATA || e == LEGACY_ELEV_NODATA {
         None
     } else {
         Some(e as f32)
@@ -48,6 +72,26 @@ mod tests {
         assert_eq!(quantize(f32::NAN), ELEV_NODATA);
         assert_eq!(dequantize(quantize(123.4)), Some(123.0));
         assert_eq!(dequantize(ELEV_NODATA), None);
+    }
+
+    #[test]
+    fn dequantize_treats_legacy_9999_as_nodata() {
+        assert_eq!(dequantize(LEGACY_ELEV_NODATA), None);
+        assert_eq!(dequantize(ELEV_NODATA), None);
+        // nearby plausible values still decode.
+        assert_eq!(dequantize(-9998), Some(-9998.0));
+        assert_eq!(dequantize(-10000), Some(-10000.0));
+    }
+
+    #[test]
+    fn quantize_maps_exact_9999_to_nodata() {
+        assert_eq!(quantize(-9999.0), ELEV_NODATA);
+        // values that round to exactly -9999 also collapse to nodata so a
+        // freshly written database can never persist the legacy sentinel.
+        assert_eq!(quantize(-9999.4), ELEV_NODATA);
+        // nearby values are left untouched.
+        assert_eq!(quantize(-9998.4), -9998);
+        assert_eq!(quantize(-10000.0), -10000);
     }
 
     #[test]

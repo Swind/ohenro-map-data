@@ -686,6 +686,67 @@ mod tests {
         assert_eq!(r.layer, Some(10));
     }
 
+    /// Regression: a real route pack persisted the legacy GSI sentinel
+    /// `-9999` in a DEM5 cell. Dequantize now treats it as no-data, so a
+    /// point landing on such a cell must fall through to a valid DEM10 sample
+    /// instead of surfacing an implausible `-9999 m` from DEM5.
+    #[test]
+    fn dem5_legacy_9999_falls_through_to_dem10() {
+        use crate::tile::codec::LEGACY_ELEV_NODATA;
+        let root = temp_dir("legacy9999");
+        let tiles = root.join("tiles");
+        std::fs::create_dir_all(tiles.join("dem5")).unwrap();
+        std::fs::create_dir_all(tiles.join("dem10")).unwrap();
+
+        let origin_lat = 34.508333333;
+        let origin_lon = 134.25;
+        let step = 1.0 / 18000.0;
+        let grid = GridReport {
+            grid_dem5: GridInfo {
+                origin_lat,
+                origin_lon,
+                step_lat: step,
+                step_lon: step,
+                tile_size: TILE_SIZE,
+            },
+            grid_dem10: GridInfo {
+                origin_lat,
+                origin_lon,
+                step_lat: step / 2.0,
+                step_lon: step / 2.0,
+                tile_size: TILE_SIZE,
+            },
+        };
+        let grid_path = root.join("grid.json");
+        std::fs::write(&grid_path, serde_json::to_vec(&grid).unwrap()).unwrap();
+
+        // DEM5 cell (50,50) holds the legacy -9999 sentinel; DEM10 cell
+        // (100,100) — which covers that same point — holds a valid 99 m.
+        write_tile(
+            &tiles.join("dem5"),
+            5,
+            0,
+            0,
+            50 * TILE_SIZE + 50,
+            LEGACY_ELEV_NODATA,
+            4,
+        );
+        write_tile(&tiles.join("dem10"), 10, 0, 0, 100 * TILE_SIZE + 100, 99, 1);
+
+        let db_path = root.join("elev.sqlite");
+        write_db(&tiles, &grid, &db_path).unwrap();
+
+        // Center of DEM10 cell (100,100) = 50.25 DEM5 steps below origin ->
+        // inside DEM5 cell (50,50) which is the legacy -9999 cell.
+        let lat = origin_lat - 50.25 * step;
+        let lon = origin_lon + 50.25 * step;
+        let r = query_db(&db_path, lat, lon).unwrap();
+        // Must be the DEM10 fallback, not the legacy -9999 from DEM5.
+        assert_eq!(r.meters, Some(99.0));
+        assert_eq!(r.layer, Some(10));
+        assert_eq!(r.source_code, Some(1));
+    }
+
     #[test]
     fn elevation_db_reader_grid_and_extent() {
         let root = temp_dir("reader");
