@@ -65,6 +65,13 @@ source/arukihenro-routes/
 # Extracted route GeoJSON (rebuilt by extract_routes.py)
 output/henro-helper-routes/
 
+# OHenro 88 APK reverse-engineering artifacts (rebuilt from the XAPK via
+# reference/ohenro-88/build_reference.py). Keep only the builder tracked.
+/reference/ohenro-88/*
+!/reference/ohenro-88/build_reference.py
+# Extracted route reference (rebuilt by build_reference.py)
+output/ohenro88-routes/
+
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/
 

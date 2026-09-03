@@ -219,6 +219,61 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     toggleLayer(map, [henro.min88LodgingMarker, henro.min88LodgingLabel], v),
   );
 
+  const ohenro88Controls = document.getElementById("ohenro88-controls");
+  if (!henro.ohenro88Available) {
+    for (const input of ohenro88Controls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    ohenro88Controls?.classList.add("disabled");
+  }
+  const ohenro88RouteCheckboxes = new Map<string, HTMLInputElement>();
+  const applyOhenro88Visibility = (): void => {
+    const masterEl = document.getElementById("toggle-ohenro88") as HTMLInputElement | null;
+    const labelsEl = document.getElementById("toggle-ohenro88-labels") as HTMLInputElement | null;
+    const pointsEl = document.getElementById("toggle-ohenro88-points") as HTMLInputElement | null;
+    if (!masterEl || !labelsEl || !pointsEl) return;
+    const master = masterEl.checked;
+    const labels = labelsEl.checked;
+    const showPoints = pointsEl.checked;
+    const visibleRouteIds: string[] = [];
+    for (const [routeId, checkbox] of ohenro88RouteCheckboxes) {
+      if (checkbox.checked) visibleRouteIds.push(routeId);
+    }
+    toggleLayer(map, [henro.ohenro88Casing, henro.ohenro88Line], master);
+    toggleLayer(map, [henro.ohenro88Label], master && labels);
+    toggleLayer(map, [henro.ohenro88Points, henro.ohenro88PointLabels], master && showPoints);
+    const filter: FilterSpecification = ["in", ["get", "route_id"], ["literal", visibleRouteIds]];
+    for (const id of [henro.ohenro88Casing, henro.ohenro88Line, henro.ohenro88Label]) {
+      if (map.getLayer(id)) map.setFilter(id, filter);
+    }
+  };
+  bindToggle("toggle-ohenro88", applyOhenro88Visibility);
+  bindToggle("toggle-ohenro88-labels", applyOhenro88Visibility);
+  bindToggle("toggle-ohenro88-points", applyOhenro88Visibility);
+  void henro.ohenro88Ready.then((groups) => {
+    const container = document.getElementById("ohenro88-routes");
+    if (!container) return;
+    for (const group of groups) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `${group.label} (${group.routes.length})`;
+      details.append(summary);
+      for (const route of group.routes) {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = true;
+        checkbox.addEventListener("change", applyOhenro88Visibility);
+        ohenro88RouteCheckboxes.set(route.routeId, checkbox);
+        label.append(checkbox, ` ${route.name}`);
+        details.append(label);
+      }
+      container.append(details);
+    }
+    applyOhenro88Visibility();
+  });
+
   const henroHelperCheckboxes = new Map<string, HTMLInputElement>();
   const henroHelperDayCheckboxes = new Map<string, Set<HTMLInputElement>>();
   const henroHelperSetMasters = new Map<string, HTMLInputElement>();

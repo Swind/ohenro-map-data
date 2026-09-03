@@ -17,6 +17,12 @@ import {
   type HenroHelperGroup,
   type HenroHelperItinerarySet,
 } from "./henro-helper";
+import {
+  addOhenro88Layers,
+  convertOhenro88,
+  fetchOhenro88,
+  type Ohenro88Group,
+} from "./ohenro88";
 
 export interface HenroLayers {
   labels: string[];
@@ -52,6 +58,14 @@ export interface HenroLayers {
   henroHelperAvailable: boolean;
   henroHelper: HenroHelperData;
   henroHelperReady: Promise<HenroHelperData>;
+  ohenro88Available: boolean;
+  ohenro88Ready: Promise<Ohenro88Group[]>;
+  ohenro88: Ohenro88Group[];
+  ohenro88Casing: string;
+  ohenro88Line: string;
+  ohenro88Label: string;
+  ohenro88Points: string;
+  ohenro88PointLabels: string;
   elevation: ElevationLayers;
 }
 
@@ -367,6 +381,12 @@ export function createMap(container: HTMLElement): {
   let resolveHenroHelper: (data: HenroHelperData) => void = () => undefined;
   const henroHelperReady = new Promise<HenroHelperData>((resolve) => {
     resolveHenroHelper = resolve;
+  });
+
+  const ohenro88Groups: Ohenro88Group[] = [];
+  let resolveOhenro88: (groups: Ohenro88Group[]) => void = () => undefined;
+  const ohenro88Ready = new Promise<Ohenro88Group[]>((resolve) => {
+    resolveOhenro88 = resolve;
   });
 
   const terrainUrl = import.meta.env.VITE_TERRAIN_URL;
@@ -837,6 +857,32 @@ export function createMap(container: HTMLElement): {
     } else {
       resolveArukihenro(arukihenroGroups);
     }
+
+    // OHenro 88 routes: fetch the per-route GeoJSON extracted from the APK
+    // (output/ohenro88-routes/ohenro88-routes.geojson). Adds shared layers
+    // + per-route groups for the selector. Non-blocking.
+    const ohenro88Url = import.meta.env.VITE_OHENRO88_URL;
+    if (ohenro88Url) {
+      void (async () => {
+        try {
+          const data = await fetchOhenro88(ohenro88Url);
+          const { groups } = convertOhenro88(data);
+          const beforeId = findInsertionPoint(
+            map,
+            ["henro-route-casing", "sekaiisan-henro-route-casing", "arukihenro-casing"],
+            LABEL_FALLBACK,
+          );
+          addOhenro88Layers(map, data, beforeId);
+          ohenro88Groups.push(...groups);
+        } catch (error) {
+          console.error("ohenro88 load error:", error);
+        } finally {
+          resolveOhenro88(ohenro88Groups);
+        }
+      })();
+    } else {
+      resolveOhenro88(ohenro88Groups);
+    }
   });
 
   const henro: HenroLayers = {
@@ -873,6 +919,14 @@ export function createMap(container: HTMLElement): {
     henroHelperAvailable: Boolean(import.meta.env.VITE_HENRO_HELPER_URL),
     henroHelper: { groups: henroHelperGroups, itinerarySets: henroHelperSets },
     henroHelperReady,
+    ohenro88Available: Boolean(import.meta.env.VITE_OHENRO88_URL),
+    ohenro88Ready,
+    ohenro88: ohenro88Groups,
+    ohenro88Casing: "ohenro88-casing",
+    ohenro88Line: "ohenro88-line",
+    ohenro88Label: "ohenro88-label",
+    ohenro88Points: "ohenro88-points",
+    ohenro88PointLabels: "ohenro88-point-labels",
     elevation: elevationLayers,
   };
 
