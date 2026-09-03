@@ -12,7 +12,7 @@ import urllib.request
 import xml.etree.ElementTree as ElementTree
 from datetime import UTC, datetime
 
-from sekaiisan_henro import anchors, corridors, graph, normalize, proximity, review, sections, topology
+from sekaiisan_henro import anchors, arukihenro_attribution, corridors, graph, normalize, proximity, review, sections, topology
 
 SOURCE_PAGE_URL = "https://88sekaiisan.org/restroommap/"
 DATA_URL = "https://88sekaiisan.org/map/data/"
@@ -161,6 +161,18 @@ def build_parser() -> argparse.ArgumentParser:
     review_parser.add_argument("--anchored", default="output/sekaiisan-henro-graph-anchors.json")
     review_parser.add_argument("--sections", default="output/sekaiisan-henro-temple-sections.json")
     review_parser.add_argument("--output-dir", default="output/sekaiisan-henro-review")
+    attribution_parser = sub.add_parser(
+        "arukihenro-attribution", help="Phase 4c attribute route edges to temple sections "
+                                       "using the Arukihenro per-section reference maps")
+    attribution_parser.add_argument("--arukihenro", default="output/arukihenro-routes.json")
+    attribution_parser.add_argument("--input", default=None,
+                                    help="graph input; defaults to the graph for the chosen edge layer")
+    attribution_parser.add_argument("--edge-layer", choices=("source", "traversal"), default="source",
+                                    help="attribute source (SHE_) or traversal (STE_) edges")
+    attribution_parser.add_argument("--corridors", default="output/sekaiisan-henro-section-corridors.json")
+    attribution_parser.add_argument("--buffer-m", type=float, default=500.0)
+    attribution_parser.add_argument("--output", default=None,
+                                    help="output path; defaults per edge layer")
     return parser
 
 
@@ -183,6 +195,19 @@ def dispatch(args: argparse.Namespace) -> dict:
     if args.command == "build-review-pack":
         return review.run_review(args.normalized, args.inventory, args.proximity,
                                  args.anchored, args.sections, args.output_dir)
+    if args.command == "arukihenro-attribution":
+        corridors_path = args.corridors if args.corridors else None
+        if args.input is None:
+            args.input = ("output/sekaiisan-henro-graph-anchors.json"
+                          if args.edge_layer == "traversal"
+                          else "output/sekaiisan-henro-graph.json")
+        if args.output is None:
+            args.output = ("output/sekaiisan-henro-arukihenro-attribution-traversal.json"
+                           if args.edge_layer == "traversal"
+                           else "output/sekaiisan-henro-arukihenro-attribution.json")
+        return arukihenro_attribution.run_attribution(
+            args.arukihenro, args.input, corridors_path, args.buffer_m,
+            args.output, args.edge_layer)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -266,6 +291,22 @@ def main(argv: list[str] | None = None) -> int:
                   oc["review_items_total"], pc["P0"], pc["P1"], pc["P2"],
                   unc["review_required_anchors"], unc["disconnected_sections"],
                   unc["ambiguous_sections"], args.output_dir))
+    elif args.command == "arukihenro-attribution":
+        acct = result["accounting"]
+        cc = acct["corridor_crosscheck"]
+        print("arukihenro-attribution: layer=%s refs=%d missing=%d edges=%d "
+              "assigned=%d ambiguous=%d unattributed=%d corridor_compared=%d "
+              "jaccard=%s output=%s" % (
+                  acct["edge_layer"],
+                  acct["reference_sections_with_lines"],
+                  acct["reference_sections_missing"],
+                  acct["edges_total"],
+                  acct["by_status"].get("assigned_unique", 0),
+                  acct["by_status"].get("ambiguous", 0),
+                  acct["by_status"].get("unattributed", 0),
+                  cc["sections_compared"],
+                  ("%.3f" % cc["jaccard"]) if cc["jaccard"] is not None else "n/a",
+                  args.output))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0

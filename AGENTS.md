@@ -139,6 +139,28 @@ anchored node coordinates 推得；offset lines 絕不包含；feature 依 stabl
 `python3 -m sekaiisan_henro build-sections`（Phase 4 加權最短路徑 QA/reference）不受
 影響、維持原狀。
 
+`python3 -m sekaiisan_henro arukihenro-attribution`（Phase 4c）用
+`output/arukihenro-routes.json` 的每區間參考線（86 條；40→41 與 68→69 源站
+無 KML）當**獨立空間先驗**，把 `sekaiisan-henro-graph.json` 的每條 source edge
+（SHE_）貼上最近寺廟區間標籤。Shapely 算 edge→reference 最短距離（共享
+equirectangular 投影）；`--buffer-m` 預設 500m。每 edge：`status`
+`assigned_unique` / `ambiguous`（500m 內 ≥2 個區間，含寺廟端點附近與
+SEC_88_1 閉環穿過德島起點的真實重疊）/ `unattributed`，加
+`nearest_section`/`nearest_distance_m`/`within_buffer_sections`/`distances_m`
+與 provenance。每 reference section 彙總唯一歸屬的 edge_ids/長度。另與
+`build-section-corridors` 的 `source_edge_ids` 交叉比對（per-section jaccard，
+SEC_88_1 不在 corridors 內不比較）。**是軟性先驗，非硬切割**：arukihenro 為
+個人手繪 + Google 導航路線，可能與協議會官方引導線不同。產出
+`output/sekaiisan-henro-arukihenro-attribution.json`（byte-deterministic、無
+timestamp、atomic write）。`--edge-layer traversal` 改用
+`sekaiisan-henro-graph-anchors.json` 的 `traversal_edges`（STE_，寺廟 anchor
+已切好）做同一套比對，corridor cross-check 對 `traversal_edge_ids`，產出
+`...-attribution-traversal.json`。2026-08-29 全量：
+SHE_ 1617 edges / assigned_unique 1029（64%）/ ambiguous 441（27%）/
+unattributed 147（9%）；STE_ 1733 edges / 1056（61%）/ 519（30%）/ 158（9%）；
+median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
+0.468（36→37 最高 0.86、1→2 / 49→50 等 0.00 為審查焦點）。
+
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
 ```bash
