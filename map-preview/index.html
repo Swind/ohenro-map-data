@@ -61,17 +61,30 @@
         <summary>Layers</summary>
         <label><input type="checkbox" id="toggle-labels" checked /> basemap labels</label>
         <label><input type="checkbox" id="toggle-temples" checked /> temples</label>
-        <label><input type="checkbox" id="toggle-temple-labels" checked /> temple labels</label>
-        <label><input type="checkbox" id="toggle-route" checked /> henro route</label>
-        <label><input type="checkbox" id="toggle-trail" checked /> nature trail</label>
-        <label><input type="checkbox" id="toggle-trail-labels" checked /> trail labels</label>
-        <label><input type="checkbox" id="toggle-trail-pois" checked /> trail POIs (z10+)</label>
+        <label><input type="checkbox" id="toggle-temple-labels" /> temple labels</label>
+        <label><input type="checkbox" id="toggle-route" /> henro route</label>
+        <div id="sekaiisan-controls">
+          <label><input type="checkbox" id="toggle-sekaiisan-routes" /> 世界遺産協議会 routes</label>
+        </div>
+        <label><input type="checkbox" id="toggle-trail" /> nature trail</label>
+        <label><input type="checkbox" id="toggle-trail-labels" /> trail labels</label>
+        <label><input type="checkbox" id="toggle-trail-pois" /> trail POIs (z10+)</label>
         <div id="trail-routes"></div>
-        <label><input type="checkbox" id="toggle-henroyado-lodging" checked /> Henroyado lodging</label>
-        <label><input type="checkbox" id="toggle-min88-lodging" checked /> min88 lodging</label>
+        <div id="arukihenro-controls">
+          <label><input type="checkbox" id="toggle-arukihenro" /> 歩き遍路 routes</label>
+          <label><input type="checkbox" id="toggle-arukihenro-labels" /> 歩き遍路 route labels</label>
+          <label><input type="checkbox" id="toggle-arukihenro-pois" /> 歩き遍路 POIs (z10+)</label>
+          <div id="arukihenro-routes"></div>
+        </div>
+        <label><input type="checkbox" id="toggle-henroyado-lodging" /> Henroyado lodging</label>
+        <label><input type="checkbox" id="toggle-min88-lodging" /> min88 lodging</label>
+        <div id="henro-helper-controls">
+          <label><input type="checkbox" id="toggle-henro-helper" checked /> Henro Helper routes</label>
+          <div id="henro-helper-routes"></div>
+        </div>
         <div id="mizutani-controls">
-          <label><input type="checkbox" id="toggle-mizutani-routes" checked /> 水谷遍路 routes</label>
-          <label><input type="checkbox" id="toggle-mizutani-pois" checked /> 水谷遍路 POIs (z10+)</label>
+          <label><input type="checkbox" id="toggle-mizutani-routes" /> 水谷遍路 routes</label>
+          <label><input type="checkbox" id="toggle-mizutani-pois" /> 水谷遍路 POIs (z10+)</label>
           <details>
             <summary>水谷 POI categories</summary>
             <label><input type="checkbox" data-mizutani-category="temple" checked /> temples</label>
@@ -87,7 +100,7 @@
           </details>
         </div>
         <label><input type="checkbox" id="toggle-elevation-color" /> color relief</label>
-        <label><input type="checkbox" id="toggle-hillshade" checked /> hillshade</label>
+        <label><input type="checkbox" id="toggle-hillshade" /> hillshade</label>
         <label><input type="checkbox" id="toggle-contours" /> contours</label>
         <label><input type="checkbox" id="toggle-contour-labels" /> contour labels</label>
         <label><input type="checkbox" id="toggle-terrain" /> 3D terrain</label>

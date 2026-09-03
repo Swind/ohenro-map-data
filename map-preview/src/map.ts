@@ -1,15 +1,22 @@
-import maplibregl, {
-  type Map as MapLibreMap,
-  type StyleSpecification,
-} from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { Protocol } from "pmtiles";
-import basemapStyle from "./style/style.json";
+import { type Map as MapLibreMap } from "maplibre-gl";
+import { createBaseMap } from "./base-map";
 import {
   addTrailRouteLayers,
   loadTrailRoutes,
   type TrailGroup,
 } from "./trail";
+import {
+  addArukihenroLayers,
+  convertArukihenro,
+  fetchArukihenro,
+  type ArukihenroGroup,
+} from "./arukihenro";
+import {
+  addHenroHelperLayers,
+  fetchHenroHelper,
+  type HenroHelperGroup,
+  type HenroHelperItinerarySet,
+} from "./henro-helper";
 
 export interface HenroLayers {
   labels: string[];
@@ -31,7 +38,32 @@ export interface HenroLayers {
   mizutaniRouteCasing: string;
   mizutaniRoute: string;
   mizutaniPoi: string;
+  sekaiisanAvailable: boolean;
+  sekaiisanRouteCasing: string;
+  sekaiisanRoute: string;
+  arukihenroAvailable: boolean;
+  arukihenroReady: Promise<ArukihenroGroup[]>;
+  arukihenro: ArukihenroGroup[];
+  arukihenroLineCasing: string;
+  arukihenroLine: string;
+  arukihenroLabel: string;
+  arukihenroPoints: string;
+  arukihenroPointLabels: string;
+  henroHelperAvailable: boolean;
+  henroHelper: HenroHelperData;
+  henroHelperReady: Promise<HenroHelperData>;
   elevation: ElevationLayers;
+}
+
+export interface HenroHelperLayers {
+  available: boolean;
+  ready: Promise<HenroHelperData>;
+  data: HenroHelperData;
+}
+
+export interface HenroHelperData {
+  groups: HenroHelperGroup[];
+  itinerarySets: HenroHelperItinerarySet[];
 }
 
 export interface ElevationLayers {
@@ -79,6 +111,12 @@ const LABEL_FALLBACK = [
 
 const GSI_ATTRIBUTION =
   '<a href="https://maps.gsi.go.jp">国土地理院</a> (GSI)';
+
+// Official 四国遍路世界遺産登録推進協議会 (88sekaiisan.org) guiding lines,
+// from the KML archives normalized in the sekaiisan_henro pipeline. These are
+// raw source linework (source edges), NOT inferred corridors / navigation.
+const SEKAIISAN_ATTRIBUTION =
+  '<a href="https://88sekaiisan.org/">四国遍路世界遺産登録推進協議会</a>';
 
 function findInsertionPoint(
   map: MapLibreMap,
@@ -165,6 +203,7 @@ function addElevationLayers(
       id: "elevation-hillshade",
       type: "hillshade",
       source: "elevation-dem-style",
+      layout: { visibility: "none" }, // hidden by default (spec §11.3)
       paint: {
         "hillshade-exaggeration": 0.5,
       },
@@ -220,7 +259,7 @@ function addElevationLayers(
         visibility: "none",
         "symbol-placement": "line",
         "text-field": ["to-string", ["get", "elevation_m"]],
-        "text-font": ["Noto Sans Regular"],
+        "text-font": ["Noto Sans CJK JP Regular"],
         "text-size": 10,
         "text-letter-spacing": 0.05,
       },
@@ -279,45 +318,55 @@ function applyHenroSources(map: MapLibreMap): void {
       url: `pmtiles://${mizutaniUrl}`,
     });
   }
+
+  const sekaiisanUrl = import.meta.env.VITE_SEKAIISAN_HENRO_URL;
+  if (sekaiisanUrl) {
+    map.addSource("sekaiisan-henro", {
+      type: "geojson",
+      data: sekaiisanUrl,
+      attribution: SEKAIISAN_ATTRIBUTION,
+    });
+  }
 }
 
 export function createMap(container: HTMLElement): {
   map: MapLibreMap;
   henro: HenroLayers;
 } {
-  const protocol = new Protocol();
-  maplibregl.addProtocol("pmtiles", protocol.tile);
+  const map = createBaseMap(container);
 
-  const basemapUrl =
-    import.meta.env.VITE_BASEMAP_URL ?? "/data/shikoku-basemap.pmtiles";
-
-  const style = basemapStyle as unknown as StyleSpecification;
-  style.sources = {
-    ...style.sources,
-    protomaps: {
-      type: "vector",
-      attribution:
-        '<a href="https://github.com/protomaps/basemaps">Protomaps</a> © <a href="https://osm.org/copyright">OpenStreetMap</a>',
-      url: `pmtiles://${basemapUrl}`,
-    },
-  };
-
+  // Opt-in symbol smoke mode: renders a tiny inline label layer so glyphs and
+  // the townhall icon can be verified against the local assets.
   const params = new URLSearchParams(window.location.search);
-  const lat = Number(params.get("lat"));
-  const lon = Number(params.get("lon"));
-  const zoom = Number(params.get("zoom"));
-
-  const map = new maplibregl.Map({
-    container,
-    center: [lon || 134.206799, lat || 34.191403],
-    zoom: zoom || 11,
-    style,
-  });
+  const symbolSmoke = params.get("symbolSmoke") === "1";
+  if (symbolSmoke) {
+    // Without explicit lat/lon/zoom, frame the two smoke points.
+    const noExplicitPosition =
+      params.get("lat") === null &&
+      params.get("lon") === null &&
+      params.get("zoom") === null;
+    if (noExplicitPosition) {
+      map.jumpTo({ center: [132.765, 33.839], zoom: 13 });
+    }
+  }
 
   const trailGroups: TrailGroup[] = [];
   let resolveTrail: (groups: TrailGroup[]) => void = () => undefined;
   const trailReady = new Promise<TrailGroup[]>((resolve) => {
     resolveTrail = resolve;
+  });
+
+  const arukihenroGroups: ArukihenroGroup[] = [];
+  let resolveArukihenro: (groups: ArukihenroGroup[]) => void = () => undefined;
+  const arukihenroReady = new Promise<ArukihenroGroup[]>((resolve) => {
+    resolveArukihenro = resolve;
+  });
+
+  const henroHelperGroups: HenroHelperGroup[] = [];
+  const henroHelperSets: HenroHelperItinerarySet[] = [];
+  let resolveHenroHelper: (data: HenroHelperData) => void = () => undefined;
+  const henroHelperReady = new Promise<HenroHelperData>((resolve) => {
+    resolveHenroHelper = resolve;
   });
 
   const terrainUrl = import.meta.env.VITE_TERRAIN_URL;
@@ -337,8 +386,6 @@ export function createMap(container: HTMLElement): {
     contourIndex: ["elevation-contour-index"],
     contourLabel: ["elevation-contour-label"],
   };
-
-  map.addControl(new maplibregl.NavigationControl(), "top-left");
 
   // Elevation source/archive failures must not block basemap + Henro layers
   // (spec §11.5): log source id + error; toggles are left to the caller to
@@ -361,6 +408,47 @@ export function createMap(container: HTMLElement): {
   map.on("load", async () => {
     // Sources/layers must be added after the style is loaded (calling
     // map.addSource before load throws "Style is not done loading").
+    if (symbolSmoke) {
+      map.addSource("symbol-smoke", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              geometry: { type: "Point", coordinates: [132.765, 33.839] },
+              properties: { label: "TEST" },
+            },
+            {
+              type: "Feature",
+              geometry: { type: "Point", coordinates: [132.774, 33.839] },
+              properties: { label: "松山市" },
+            },
+          ],
+        },
+      });
+      map.addLayer({
+        id: "symbol-smoke-label",
+        type: "symbol",
+        source: "symbol-smoke",
+        layout: {
+          "text-field": ["get", "label"],
+          "text-font": ["Noto Sans CJK JP Regular"],
+          "text-size": 14,
+          "icon-image": "townhall",
+          "icon-allow-overlap": true,
+          "text-allow-overlap": true,
+          "text-anchor": "top",
+          "text-offset": [0, 1],
+        },
+        paint: {
+          "text-color": "#111111",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.5,
+        },
+      });
+    }
+
     addElevationSources(map, terrainUrl, contoursUrl);
     if (elevation.terrain || elevation.contours) {
       addElevationLayers(map, elevationLayers);
@@ -378,6 +466,7 @@ export function createMap(container: HTMLElement): {
         layout: {
           "line-cap": "round",
           "line-join": "round",
+          visibility: "none",
         },
         paint: {
           "line-color": "#e8e0d0",
@@ -394,6 +483,7 @@ export function createMap(container: HTMLElement): {
         layout: {
           "line-cap": "round",
           "line-join": "round",
+          visibility: "none",
         },
         paint: {
           "line-color": "#8f4b32",
@@ -409,7 +499,7 @@ export function createMap(container: HTMLElement): {
         type: "line",
         source: "mizutani-henro",
         "source-layer": "mizutani_henro_routes",
-        layout: { "line-cap": "round", "line-join": "round" },
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
         paint: {
           "line-color": "#ffffff",
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 3.5, 14, 7],
@@ -421,7 +511,7 @@ export function createMap(container: HTMLElement): {
         type: "line",
         source: "mizutani-henro",
         "source-layer": "mizutani_henro_routes",
-        layout: { "line-cap": "round", "line-join": "round" },
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
         paint: {
           "line-color": ["coalesce", ["get", "color"], "#765b30"],
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 4.5],
@@ -434,6 +524,7 @@ export function createMap(container: HTMLElement): {
         source: "mizutani-henro",
         "source-layer": "mizutani_henro_pois",
         minzoom: 10,
+        layout: { visibility: "none" },
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 14, 6],
           "circle-color": [
@@ -449,6 +540,31 @@ export function createMap(container: HTMLElement): {
       });
     }
 
+    if (map.getSource("sekaiisan-henro")) {
+      map.addLayer({
+        id: "sekaiisan-henro-route-casing",
+        type: "line",
+        source: "sekaiisan-henro",
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+        paint: {
+          "line-color": "#e0eaf8",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 6, 14, 11],
+          "line-opacity": 0.9,
+        },
+      });
+      map.addLayer({
+        id: "sekaiisan-henro-route",
+        type: "line",
+        source: "sekaiisan-henro",
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+        paint: {
+          "line-color": "#1f62c4",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 3.5, 14, 7.5],
+          "line-opacity": 0.9,
+        },
+      });
+    }
+
     if (map.getSource("trail")) {
       map.addLayer({
         id: "trail-pois",
@@ -456,6 +572,7 @@ export function createMap(container: HTMLElement): {
         source: "trail",
         "source-layer": "shikoku_nature_trail_pois",
         minzoom: 10,
+        layout: { visibility: "none" },
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 10, 3, 14, 6],
           "circle-color": ["match", ["get", "kind"], "tourism_spot", "#d9822b", "#4c7f68"],
@@ -471,11 +588,12 @@ export function createMap(container: HTMLElement): {
         minzoom: 10,
         layout: {
           "text-field": ["coalesce", ["get", "name"], ""],
-          "text-font": ["Noto Sans Regular"],
+          "text-font": ["Noto Sans CJK JP Regular"],
           "text-size": 11,
           "text-offset": [0, 0.9],
           "text-anchor": "top",
           "text-max-width": 10,
+          visibility: "none",
         },
         paint: {
           "text-color": "#274c3a",
@@ -499,7 +617,7 @@ export function createMap(container: HTMLElement): {
           type: "line",
           source: "trail",
           "source-layer": "shikoku_nature_trail",
-          layout: { "line-cap": "round", "line-join": "round" },
+          layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
           paint: {
             "line-color": "#2a7d4f",
             "line-width": ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 5],
@@ -514,9 +632,10 @@ export function createMap(container: HTMLElement): {
           layout: {
             "symbol-placement": "line",
             "text-field": ["coalesce", ["get", "name"], ""],
-            "text-font": ["Noto Sans Regular"],
+            "text-font": ["Noto Sans CJK JP Regular"],
             "text-size": 11,
             "symbol-spacing": 400,
+            visibility: "none",
           },
           paint: {
             "text-color": "#1b5e38",
@@ -535,6 +654,7 @@ export function createMap(container: HTMLElement): {
         source: "henroyado-lodging",
         "source-layer": "lodging",
         minzoom: 6,
+        layout: { visibility: "none" },
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 4, 13, 7],
           "circle-color": "#b45309",
@@ -551,11 +671,12 @@ export function createMap(container: HTMLElement): {
         minzoom: 11,
         layout: {
           "text-field": ["coalesce", ["get", "name"], ""],
-          "text-font": ["Noto Sans Regular"],
+          "text-font": ["Noto Sans CJK JP Regular"],
           "text-size": 11,
           "text-offset": [0, 1.1],
           "text-anchor": "top",
           "text-max-width": 8,
+          visibility: "none",
         },
         paint: {
           "text-color": "#6b3410",
@@ -572,6 +693,7 @@ export function createMap(container: HTMLElement): {
         source: "min88-lodging",
         "source-layer": "lodging",
         minzoom: 6,
+        layout: { visibility: "none" },
         paint: {
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 6, 4, 13, 7],
           "circle-color": [
@@ -596,11 +718,12 @@ export function createMap(container: HTMLElement): {
         minzoom: 11,
         layout: {
           "text-field": ["coalesce", ["get", "name"], ""],
-          "text-font": ["Noto Sans Regular"],
+          "text-font": ["Noto Sans CJK JP Regular"],
           "text-size": 11,
           "text-offset": [0, 1.1],
           "text-anchor": "top",
           "text-max-width": 8,
+          visibility: "none",
         },
         paint: {
           "text-color": "#174c55",
@@ -647,11 +770,12 @@ export function createMap(container: HTMLElement): {
             ["get", "name_ja"],
             {},
           ],
-          "text-font": ["Noto Sans Regular"],
+          "text-font": ["Noto Sans CJK JP Regular"],
           "text-size": 13,
           "text-offset": [0, 1.4],
           "text-anchor": "top",
           "text-max-width": 8,
+          visibility: "none",
         },
         paint: {
           "text-color": "#3a2a1e",
@@ -659,6 +783,59 @@ export function createMap(container: HTMLElement): {
           "text-halo-width": 1.5,
         },
       });
+    }
+
+    const henroHelperUrl = import.meta.env.VITE_HENRO_HELPER_URL;
+    if (henroHelperUrl) {
+      void (async () => {
+        try {
+          const data = await fetchHenroHelper(henroHelperUrl);
+          const beforeId = findInsertionPoint(
+            map,
+            [
+              "henro-route-casing",
+              "sekaiisan-henro-route-casing",
+              "mizutani-henro-route-casing",
+            ],
+            LABEL_FALLBACK,
+          );
+          const { groups, itinerarySets } = addHenroHelperLayers(map, data, beforeId);
+          henroHelperGroups.push(...groups);
+          henroHelperSets.push(...itinerarySets);
+        } catch (error) {
+          console.error("henro helper load error:", error);
+        } finally {
+          resolveHenroHelper({ groups: henroHelperGroups, itinerarySets: henroHelperSets });
+        }
+      })();
+    } else {
+      resolveHenroHelper({ groups: henroHelperGroups, itinerarySets: henroHelperSets });
+    }
+
+    // 歩き遍路 routes: fetch ~5MB normalized JSON (ohenro.jp personal hand-drawn
+    // + Google navigation reference lines) as an inline GeoJSON source. Runs
+    // non-blocking so it never delays the static lodging/temple layers above.
+    const arukihenroUrl = import.meta.env.VITE_ARUKIHENRO_URL;
+    if (arukihenroUrl) {
+      void (async () => {
+        try {
+          const data = await fetchArukihenro(arukihenroUrl);
+          const { featureCollection, groups } = convertArukihenro(data);
+          const beforeId = findInsertionPoint(
+            map,
+            ["henro-route-casing", "sekaiisan-henro-route-casing"],
+            LABEL_FALLBACK,
+          );
+          addArukihenroLayers(map, featureCollection, beforeId);
+          arukihenroGroups.push(...groups);
+        } catch (error) {
+          console.error("arukihenro load error:", error);
+        } finally {
+          resolveArukihenro(arukihenroGroups);
+        }
+      })();
+    } else {
+      resolveArukihenro(arukihenroGroups);
     }
   });
 
@@ -682,6 +859,20 @@ export function createMap(container: HTMLElement): {
     mizutaniRouteCasing: "mizutani-henro-route-casing",
     mizutaniRoute: "mizutani-henro-route",
     mizutaniPoi: "mizutani-henro-pois",
+    sekaiisanAvailable: Boolean(import.meta.env.VITE_SEKAIISAN_HENRO_URL),
+    sekaiisanRouteCasing: "sekaiisan-henro-route-casing",
+    sekaiisanRoute: "sekaiisan-henro-route",
+    arukihenroAvailable: Boolean(import.meta.env.VITE_ARUKIHENRO_URL),
+    arukihenroReady,
+    arukihenro: arukihenroGroups,
+    arukihenroLineCasing: "arukihenro-casing",
+    arukihenroLine: "arukihenro-line",
+    arukihenroLabel: "arukihenro-label",
+    arukihenroPoints: "arukihenro-points",
+    arukihenroPointLabels: "arukihenro-point-labels",
+    henroHelperAvailable: Boolean(import.meta.env.VITE_HENRO_HELPER_URL),
+    henroHelper: { groups: henroHelperGroups, itinerarySets: henroHelperSets },
+    henroHelperReady,
     elevation: elevationLayers,
   };
 

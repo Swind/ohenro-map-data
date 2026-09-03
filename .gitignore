@@ -39,6 +39,8 @@ output/mizutani-henro-pois.geojson
 output/mizutani-henro-report.json
 output/mizutani-henro-style-inventory.json
 output/mizutani-henro-update-report.json
+# Generated downloadable route-pack artifacts (first consumer: Mizutani, personal-use)
+output/route-packs/
 # 88sekaiisan Phase 1 normalization + Phase 2A inventory + Phase 2B graph + Phase 2C proximity + Phase 3 anchors + Phase 4 sections + Phase 4b corridors (re-built from archive)
 output/sekaiisan-henro-normalized.json
 output/sekaiisan-henro-topology-inventory.json
@@ -48,11 +50,20 @@ output/sekaiisan-henro-graph-anchors.json
 output/sekaiisan-henro-temple-sections.json
 output/sekaiisan-henro-section-corridors.json
 output/sekaiisan-henro-section-corridor-edges.geojson
+output/sekaiisan-henro-arukihenro-attribution.json
+output/sekaiisan-henro-arukihenro-attribution-traversal.json
 # 88sekaiisan QGIS review-pack / report exporter (rebuilt by build-review-pack)
 output/sekaiisan-henro-review/
 
 # Arukihenro walking-route pages and Google My Maps KML archive
 source/arukihenro-routes/
+
+# Henro Helper APK reverse-engineering artifacts (rebuilt from the XAPK via
+# reference/ohenro-helper/extract_routes.py). Keep only the extractor tracked.
+/reference/ohenro-helper/*
+!/reference/ohenro-helper/extract_routes.py
+# Extracted route GeoJSON (rebuilt by extract_routes.py)
+output/henro-helper-routes/
 
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/

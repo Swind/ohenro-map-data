@@ -1,4 +1,4 @@
-import maplibregl, { type Map as MapLibreMap } from "maplibre-gl";
+import maplibregl, { type FilterSpecification, type Map as MapLibreMap } from "maplibre-gl";
 import { createMap, type HenroLayers } from "./map";
 import { prefLabel, type TrailRoute } from "./trail";
 
@@ -128,11 +128,182 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     }
     applyTrailVisibility();
   });
+
+  const arukihenroRouteCheckboxes = new Map<string, HTMLInputElement>();
+  const arukihenroControls = document.getElementById("arukihenro-controls");
+  const disableArukihenroControls = (): void => {
+    for (const id of [
+      "toggle-arukihenro",
+      "toggle-arukihenro-labels",
+      "toggle-arukihenro-pois",
+    ]) {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      if (el) {
+        el.disabled = true;
+        el.checked = false;
+        el.parentElement?.classList.add("disabled");
+      }
+    }
+    arukihenroControls?.classList.add("disabled");
+  };
+  const applyArukihenroVisibility = (): void => {
+    const masterEl = document.getElementById("toggle-arukihenro") as HTMLInputElement | null;
+    const labelsEl = document.getElementById("toggle-arukihenro-labels") as HTMLInputElement | null;
+    const poisEl = document.getElementById("toggle-arukihenro-pois") as HTMLInputElement | null;
+    if (!masterEl || !labelsEl || !poisEl) return;
+    const master = masterEl.checked;
+    const labels = labelsEl.checked;
+    const showPois = poisEl.checked;
+    const visibleRouteIds: string[] = [];
+    for (const [routeId, checkbox] of arukihenroRouteCheckboxes) {
+      if (checkbox.checked) visibleRouteIds.push(routeId);
+    }
+    toggleLayer(map, [henro.arukihenroLineCasing, henro.arukihenroLine], master);
+    toggleLayer(map, [henro.arukihenroLabel], master && labels);
+    toggleLayer(map, [henro.arukihenroPoints, henro.arukihenroPointLabels], master && showPois);
+    for (const id of [henro.arukihenroLineCasing, henro.arukihenroLine, henro.arukihenroLabel]) {
+      if (map.getLayer(id)) {
+        map.setFilter(id, [
+          "all",
+          ["==", ["get", "kind"], "line"],
+          ["in", ["get", "route_id"], ["literal", visibleRouteIds]],
+        ]);
+      }
+    }
+    for (const id of [henro.arukihenroPoints, henro.arukihenroPointLabels]) {
+      if (map.getLayer(id)) {
+        map.setFilter(id, [
+          "all",
+          ["==", ["get", "kind"], "point"],
+          ["in", ["get", "route_id"], ["literal", visibleRouteIds]],
+        ]);
+      }
+    }
+  };
+  if (!henro.arukihenroAvailable) disableArukihenroControls();
+  bindToggle("toggle-arukihenro", applyArukihenroVisibility);
+  bindToggle("toggle-arukihenro-labels", applyArukihenroVisibility);
+  bindToggle("toggle-arukihenro-pois", applyArukihenroVisibility);
+  void henro.arukihenroReady.then((groups) => {
+    if (groups.length === 0) {
+      disableArukihenroControls();
+      return;
+    }
+    const container = document.getElementById("arukihenro-routes");
+    if (!container) return;
+    for (const group of groups) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `${prefLabel(group.region)} (${group.routes.length})`;
+      details.append(summary);
+      for (const route of group.routes) {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = route.hasGeometry;
+        checkbox.disabled = !route.hasGeometry;
+        checkbox.addEventListener("change", applyArukihenroVisibility);
+        arukihenroRouteCheckboxes.set(route.routeId, checkbox);
+        label.append(checkbox, ` ${route.title ?? route.routeId}${route.hasGeometry ? "" : "（無 KML）"}`);
+        details.append(label);
+      }
+      container.append(details);
+    }
+    applyArukihenroVisibility();
+  });
+
   bindToggle("toggle-henroyado-lodging", (v) =>
     toggleLayer(map, [henro.henroyadoLodgingMarker, henro.henroyadoLodgingLabel], v),
   );
   bindToggle("toggle-min88-lodging", (v) =>
     toggleLayer(map, [henro.min88LodgingMarker, henro.min88LodgingLabel], v),
+  );
+
+  const henroHelperCheckboxes = new Map<string, HTMLInputElement>();
+  const henroHelperDayCheckboxes = new Map<string, Set<HTMLInputElement>>();
+  const henroHelperSetMasters = new Map<string, HTMLInputElement>();
+  const applyHenroHelperVisibility = (): void => {
+    const masterEl = document.getElementById("toggle-henro-helper") as HTMLInputElement | null;
+    if (!masterEl) return;
+    const master = masterEl.checked;
+    for (const group of henro.henroHelper.groups) {
+      const checkbox = henroHelperCheckboxes.get(group.layer);
+      const visible = master && (checkbox?.checked ?? group.checked);
+      toggleLayer(map, [group.casing, group.line], visible);
+    }
+    for (const set of henro.henroHelper.itinerarySets) {
+      const setMaster = henroHelperSetMasters.get(set.layer);
+      const dayBoxes = henroHelperDayCheckboxes.get(set.layer) ?? new Set();
+      const checkedDays = [...dayBoxes]
+        .filter((box) => box.checked)
+        .map((box) => box.value);
+      let visible = false;
+      let filter: FilterSpecification | null = null;
+      if (master && setMaster?.checked) {
+        visible = true; // set master: show all days
+      } else if (master && checkedDays.length > 0) {
+        visible = true;
+        filter = ["in", ["get", "day_label"], ["literal", checkedDays]];
+      }
+      toggleLayer(map, [set.casing, set.line, set.labelLayer], visible);
+      for (const id of [set.casing, set.line, set.labelLayer]) {
+        if (map.getLayer(id)) map.setFilter(id, filter);
+      }
+    }
+  };
+  bindToggle("toggle-henro-helper", applyHenroHelperVisibility);
+  void henro.henroHelperReady.then((data) => {
+    const container = document.getElementById("henro-helper-routes");
+    if (!container) return;
+    for (const group of data.groups) {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = group.checked;
+      checkbox.addEventListener("change", applyHenroHelperVisibility);
+      henroHelperCheckboxes.set(group.layer, checkbox);
+      label.append(checkbox, ` ${group.label}`);
+      container.append(label);
+    }
+    for (const set of data.itinerarySets) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = `${set.label} (${set.days.length})`;
+      details.append(summary);
+      const masterLabel = document.createElement("label");
+      const setMaster = document.createElement("input");
+      setMaster.type = "checkbox";
+      setMaster.addEventListener("change", applyHenroHelperVisibility);
+      henroHelperSetMasters.set(set.layer, setMaster);
+      masterLabel.append(setMaster, " 全部 (all)");
+      details.append(masterLabel);
+      const dayBoxes = new Set<HTMLInputElement>();
+      henroHelperDayCheckboxes.set(set.layer, dayBoxes);
+      for (const day of set.days) {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = day.dayLabel;
+        checkbox.addEventListener("change", applyHenroHelperVisibility);
+        dayBoxes.add(checkbox);
+        label.append(checkbox, ` ${day.dayLabel}`);
+        details.append(label);
+      }
+      container.append(details);
+    }
+    applyHenroHelperVisibility();
+  });
+
+  const sekaiisanControls = document.getElementById("sekaiisan-controls");
+  if (!henro.sekaiisanAvailable) {
+    for (const input of sekaiisanControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    sekaiisanControls?.classList.add("disabled");
+  }
+  bindToggle("toggle-sekaiisan-routes", (v) =>
+    toggleLayer(map, [henro.sekaiisanRouteCasing, henro.sekaiisanRoute], v),
   );
 
   const mizutaniControls = document.getElementById("mizutani-controls");

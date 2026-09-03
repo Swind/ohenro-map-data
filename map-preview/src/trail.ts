@@ -131,7 +131,7 @@ export function addTrailRouteLayers(
           layout: {
             "symbol-placement": "line",
             "text-field": ["coalesce", ["get", "name"], ""],
-            "text-font": ["Noto Sans Regular"],
+            "text-font": ["Noto Sans CJK JP Regular"],
             "text-size": 11,
             "text-letter-spacing": 0.05,
             "text-rotation-alignment": "map",

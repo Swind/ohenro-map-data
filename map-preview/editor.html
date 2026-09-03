@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shikoku Henro Route Editor</title>
+    <link rel="stylesheet" href="/src/editor/editor.css" />
+  </head>
+  <body>
+    <div class="editor-shell">
+      <aside class="editor-sidebar" aria-label="Editor panel">
+        <header class="editor-sidebar-header">
+          <h1>Route Editor</h1>
+        </header>
+
+        <section class="editor-section" aria-labelledby="project-heading">
+          <h2 id="project-heading">Project</h2>
+          <label class="editor-file-label" for="project-file">
+            Open Project JSON (local)
+            <input
+              id="project-file"
+              type="file"
+              accept=".json,application/json"
+              disabled
+            />
+          </label>
+          <div class="editor-output-browser">
+            <label class="editor-field" for="output-project-select">Project from output</label>
+            <input
+              class="editor-output-search"
+              id="output-project-search"
+              type="search"
+              placeholder="Filter project paths…"
+              aria-label="Filter project files by path"
+              disabled
+            />
+            <div class="editor-output-row">
+              <select id="output-project-select" size="6" aria-label="Project files in output" disabled></select>
+              <div class="editor-output-buttons">
+                <button id="output-project-refresh" type="button">Refresh</button>
+                <button id="output-project-open" type="button">Open from Output</button>
+              </div>
+            </div>
+          </div>
+          <div class="editor-actions">
+            <button id="save-project" type="button" class="editor-action">Save Project to Output</button>
+            <button id="export-final-geojson" type="button" class="editor-action">Save Final GeoJSON to Output</button>
+            <button id="export-qa-geojson" type="button" class="editor-action">Save QA GeoJSON to Output</button>
+            <button id="export-final-kml" type="button" class="editor-action">Save Final KML to Output</button>
+            <button id="export-qa-kml" type="button" class="editor-action">Save QA KML to Output</button>
+          </div>
+        </section>
+
+        <section class="editor-section" aria-labelledby="history-heading">
+          <h2 id="history-heading">History</h2>
+          <div class="editor-history">
+            <button id="undo-btn" type="button" disabled>Undo</button>
+            <button id="redo-btn" type="button" disabled>Redo</button>
+          </div>
+        </section>
+
+        <section class="editor-section" aria-labelledby="source-heading">
+          <h2 id="source-heading">Source</h2>
+          <label class="editor-file-label" for="source-file">
+            Load GeoJSON / JSON / KML (local, multi-select)
+            <input
+              id="source-file"
+              type="file"
+              multiple
+              disabled
+              accept=".geojson,.json,.kml,application/geo+json,application/json,application/vnd.google-earth.kml+xml"
+            />
+          </label>
+          <div class="editor-output-browser">
+            <label class="editor-field" for="output-source-select">Sources from output</label>
+            <input
+              class="editor-output-search"
+              id="output-source-search"
+              type="search"
+              placeholder="Filter source paths…"
+              aria-label="Filter source files by path"
+              disabled
+            />
+            <div class="editor-output-row">
+              <select id="output-source-select" size="6" multiple aria-label="Source files in output" disabled></select>
+              <div class="editor-output-buttons">
+                <button id="output-source-refresh" type="button">Refresh</button>
+                <button id="output-source-load" type="button">Load Selected from Output</button>
+              </div>
+            </div>
+          </div>
+          <ul id="source-list" class="editor-source-list" aria-label="Loaded sources"></ul>
+        </section>
+
+        <section class="editor-section" aria-labelledby="sections-heading">
+          <h2 id="sections-heading">Sections</h2>
+          <div class="editor-create-section">
+            <label class="editor-field" for="section-id-input">ID</label>
+            <div class="editor-create-row">
+              <input id="section-id-input" type="text" placeholder="e.g. SEC_1_2" />
+              <button id="section-create-btn" type="button">Create</button>
+            </div>
+          </div>
+          <div id="section-selector" class="editor-section-selector"></div>
+        </section>
+
+        <section class="editor-section" aria-labelledby="active-heading">
+          <h2 id="active-heading">Active Section</h2>
+          <div id="active-section" class="editor-placeholder">No active section.</div>
+        </section>
+      </aside>
+
+      <main class="editor-main">
+        <div id="editor-map" class="editor-map"></div>
+        <div class="editor-toolbar" role="toolbar" aria-label="Route editing tools">
+          <button type="button" data-tool="pan" aria-pressed="true">Pan</button>
+          <button type="button" data-tool="poi">POI</button>
+          <button type="button" data-tool="line-point">Line point</button>
+          <button type="button" data-tool="line-range">Line range</button>
+        </div>
+        <div id="candidate-chooser" class="editor-chooser" role="dialog" aria-label="Candidate selection" hidden></div>
+        <div id="editor-status" class="editor-status" role="status" aria-live="polite">
+          Initializing map…
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/editor/main.ts"></script>
+  </body>
+</html>
