@@ -12,7 +12,7 @@ import urllib.request
 import xml.etree.ElementTree as ElementTree
 from datetime import UTC, datetime
 
-from sekaiisan_henro import anchors, arukihenro_attribution, corridors, graph, normalize, proximity, review, sections, topology
+from sekaiisan_henro import anchors, arukihenro_attribution, corridors, graph, normalize, planner, proximity, review, sections, topology
 
 SOURCE_PAGE_URL = "https://88sekaiisan.org/restroommap/"
 DATA_URL = "https://88sekaiisan.org/map/data/"
@@ -173,6 +173,18 @@ def build_parser() -> argparse.ArgumentParser:
     attribution_parser.add_argument("--buffer-m", type=float, default=500.0)
     attribution_parser.add_argument("--output", default=None,
                                     help="output path; defaults per edge layer")
+    plan_parser = sub.add_parser(
+        "plan", help="point-to-point day planning on the effective graph")
+    plan_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
+    plan_parser.add_argument("--points", nargs="+", required=True,
+                             help="2+ 'lon,lat' pairs: start [waypoints...] end")
+    plan_parser.add_argument("--elevation-db", default="output/shikoku-elevation.sqlite")
+    plan_parser.add_argument("--elevation-bin", default=None,
+                             help="gsi-dem query-db binary (fallback when zstandard missing)")
+    plan_parser.add_argument("--sample-interval-m", type=float, default=200.0)
+    plan_parser.add_argument("--snap-max-m", type=float, default=500.0)
+    plan_parser.add_argument("--output", default="output/sekaiisan-henro-plan.json")
+    plan_parser.add_argument("--geojson", default="output/sekaiisan-henro-plan.geojson")
     return parser
 
 
@@ -208,6 +220,15 @@ def dispatch(args: argparse.Namespace) -> dict:
         return arukihenro_attribution.run_attribution(
             args.arukihenro, args.input, corridors_path, args.buffer_m,
             args.output, args.edge_layer)
+    if args.command == "plan":
+        points = [tuple(float(part) for part in pair.split(","))
+                  for pair in args.points]
+        for pair in points:
+            if len(pair) != 2:
+                raise ValueError("each --points entry must be 'lon,lat': %r" % (pair,))
+        return planner.run_plan(
+            args.input, points, args.elevation_db, args.elevation_bin,
+            args.sample_interval_m, args.snap_max_m, args.output, args.geojson)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -307,6 +328,16 @@ def main(argv: list[str] | None = None) -> int:
                   cc["sections_compared"],
                   ("%.3f" % cc["jaccard"]) if cc["jaccard"] is not None else "n/a",
                   args.output))
+    elif args.command == "plan":
+        path = result["path"]
+        elev = result["elevation"]
+        time_est = result.get("time_estimate") or {}
+        print("plan: status=%s length_km=%s gain_m=%s loss_m=%s "
+              "min_m=%s max_m=%s naismith_h=%s output=%s" % (
+                  path["status"], path.get("length_km"),
+                  elev.get("gain_m"), elev.get("loss_m"),
+                  elev.get("min_m"), elev.get("max_m"),
+                  time_est.get("hours_naismith"), args.output))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0

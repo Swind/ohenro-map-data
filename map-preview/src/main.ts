@@ -3,9 +3,10 @@ import maplibregl, {
   type Map as MapLibreMap,
   type MapGeoJSONFeature,
 } from "maplibre-gl";
-import type { Geometry, Position } from "geojson";
+import type { FeatureCollection, Geometry, Position } from "geojson";
 import { createMap, type HenroLayers } from "./map";
 import { prefLabel, type TrailRoute } from "./trail";
+import { buildElevationProfile } from "./profile";
 
 function toggleLayer(
   map: MapLibreMap,
@@ -433,15 +434,27 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   );
 
   const sekaiisanControls = document.getElementById("sekaiisan-controls");
-  if (!henro.sekaiisanAvailable) {
-    for (const input of sekaiisanControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
-      input.disabled = true;
-      input.checked = false;
+  const disableSekaiisanInput = (id: string): void => {
+    const el = document.getElementById(id) as HTMLInputElement | null;
+    if (el) {
+      el.disabled = true;
+      el.checked = false;
     }
+  };
+  if (!henro.sekaiisanAvailable) disableSekaiisanInput("toggle-sekaiisan-routes");
+  if (!henro.planAvailable) disableSekaiisanInput("toggle-sekaiisan-plan");
+  if (!henro.sekaiisanAvailable && !henro.planAvailable) {
     sekaiisanControls?.classList.add("disabled");
   }
   bindToggle("toggle-sekaiisan-routes", (v) =>
     toggleLayer(map, [henro.sekaiisanRouteCasing, henro.sekaiisanRoute], v),
+  );
+  bindToggle("toggle-sekaiisan-plan", (v) =>
+    toggleLayer(
+      map,
+      [henro.planRouteCasing, henro.planRoute, henro.planWaypoints, henro.planWaypointLabels],
+      v,
+    ),
   );
 
   const mizutaniControls = document.getElementById("mizutani-controls");
@@ -786,11 +799,77 @@ function setupClickPopup(map: MapLibreMap): void {
   });
 }
 
+function renderPlanProfile(
+  container: HTMLElement,
+  fc: FeatureCollection,
+): void {
+  const route = fc.features.find(
+    (f) => f.geometry?.type === "LineString" && f.properties?.kind === "planned_route",
+  );
+  if (!route || route.geometry.type !== "LineString") {
+    container.textContent = "no planned route";
+    return;
+  }
+  const profile = buildElevationProfile(route.geometry.coordinates);
+  if (!profile) {
+    container.textContent = "insufficient elevation data";
+    return;
+  }
+  const props = (route.properties ?? {}) as Record<string, number | undefined>;
+  const span = Math.max(profile.maxM - profile.minM, 1);
+  const W = 260;
+  const H = 90;
+  const PAD = 6;
+  const x = (d: number): number =>
+    PAD + (d / profile.totalM) * (W - 2 * PAD);
+  const y = (e: number): number =>
+    PAD + (1 - (e - profile.minM) / span) * (H - 2 * PAD);
+  const pts = profile.points
+    .map((p) => `${x(p.d).toFixed(1)},${y(p.e).toFixed(1)}`)
+    .join(" ");
+  const base = y(profile.minM);
+  const area = `${x(0).toFixed(1)},${base} ${pts} ${x(profile.totalM).toFixed(1)},${base}`;
+  const lengthKm = (profile.totalM / 1000).toFixed(1);
+  const minM = props.min_m ?? profile.minM;
+  const maxM = props.max_m ?? profile.maxM;
+  const stats = [
+    `${lengthKm} km`,
+    `↑${props.gain_m ?? 0} m`,
+    `↓${props.loss_m ?? 0} m`,
+    `min ${minM.toFixed(0)} m`,
+    `max ${maxM.toFixed(0)} m`,
+  ].join(" · ");
+  container.innerHTML =
+    `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="elevation profile">` +
+    `<polygon points="${area}" fill="#d81b60" opacity="0.18"/>` +
+    `<polyline points="${pts}" fill="none" stroke="#d81b60" stroke-width="1.8" ` +
+    `stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<text x="${PAD}" y="${H - 3}" font-size="9" fill="#777">${minM.toFixed(0)}m</text>` +
+    `<text x="${PAD}" y="${11}" font-size="9" fill="#777">${maxM.toFixed(0)}m</text>` +
+    `</svg>` +
+    `<div class="plan-profile-stats">${stats}</div>`;
+}
+
+function setupPlanProfile(): void {
+  const url = import.meta.env.VITE_PLAN_URL as string | undefined;
+  const container = document.getElementById("plan-profile");
+  if (!url || !container) return;
+  fetch(url)
+    .then((r) =>
+      r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
+    )
+    .then((fc) => renderPlanProfile(container, fc as FeatureCollection))
+    .catch((err) => {
+      container.textContent = `plan profile error: ${String(err)}`;
+    });
+}
+
 const container = document.getElementById("map");
 if (container) {
   setupLayerGroups();
   const { map, henro } = createMap(container);
   setupDebugPanel(map, henro);
   setupClickPopup(map);
+  setupPlanProfile();
   (window as unknown as { __map: MapLibreMap }).__map = map;
 }

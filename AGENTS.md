@@ -161,6 +161,25 @@ unattributed 147（9%）；STE_ 1733 edges / 1056（61%）/ 519（30%）/ 158（
 median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
 0.468（36→37 最高 0.86、1→2 / 49→50 等 0.00 為審查焦點）。
 
+`python3 -m sekaiisan_henro plan --points "lon,lat" "lon,lat" [...]`
+（day-planning）在 effective undirected graph（同樣只含 `traversal_edges` +
+`synthetic_joins`；**不**在 source `edges` 上 routing）上做**點對點候選**：
+輸入 2+ 個 `lon,lat`（起點 [中間點…] 終點）。每點以 shapely `project`/`interpolate`
+投影到最近 `traversal_edge`，把該 edge 依投影點切成分割 virtual sub-edges（多點落
+同一 edge 時依沿線順序直接相連）；Dijkstra 與 `build-sections` 同一套（stdlib heapq、
+確定性 lexicographic tie-break、simple paths）。中間點 = 逐 leg 最短路徑串接，**強制
+經過**。高程沿路徑每 `--sample-interval-m`（預設 200m）取 GSI DEM（
+`--elevation-db`，Python zstd 直接解 int16 tiles，DEM5→DEM10 fallback，與
+`gsi-dem query-db` 同語義；缺 `zstandard` 時退回 `--elevation-bin` 的 query-db），算
+累計爬升/下降、min/max、Naismith 時間（5km/h + 每爬升 600m 加 1hr）。每點 snap
+距離 > `--snap-max-m`（預設 500m）或 leg 不可達（不同 component）時如實回報。產出
+`output/sekaiisan-henro-plan.json`（byte-deterministic、無 timestamp、atomic write）
+與 `output/sekaiisan-henro-plan.geojson`（path LineString 用**完整路徑頂點**
+`dense_path`，每頂點帶高程，非 200m 稀疏樣本 + waypoint Points）。高程統計
+（gain/loss/min/max、Naismith 時間）仍以 `--sample-interval-m` 的稀疏剖面計算。
+**不宣稱 resolved/official/navigable**；這是沿已知路線的 day-planning
+量測，非自由路網導航。
+
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
 ```bash

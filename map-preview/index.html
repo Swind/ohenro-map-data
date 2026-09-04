@@ -80,6 +80,21 @@
       #debug-panel .tree-children.collapsed {
         display: none;
       }
+      #plan-profile {
+        margin: 4px 0;
+        color: #444;
+      }
+      #plan-profile svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      .plan-profile-stats {
+        margin-top: 4px;
+        font-size: 11px;
+        color: #555;
+        white-space: nowrap;
+      }
       .maplibregl-popup-content {
         font: 12px/1.5 system-ui, sans-serif;
       }
@@ -148,6 +163,7 @@
 
         <div id="sekaiisan-controls">
           <label><input type="checkbox" id="toggle-sekaiisan-routes" /> 世界遺産協議会 routes</label>
+          <label><input type="checkbox" id="toggle-sekaiisan-plan" /> Python 規劃結果</label>
         </div>
 
         <div class="layer-group" id="trail-controls">
@@ -255,6 +271,11 @@
             <label><input type="checkbox" id="toggle-terrain" /> 3D terrain</label>
           </div>
         </div>
+      </details>
+
+      <details open>
+        <summary>規劃高度剖面</summary>
+        <div id="plan-profile">（未載入規劃資料）</div>
       </details>
     </div>
     <script type="module" src="/src/main.ts"></script>

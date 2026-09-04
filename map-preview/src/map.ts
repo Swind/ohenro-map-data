@@ -58,6 +58,11 @@ export interface HenroLayers {
   sekaiisanAvailable: boolean;
   sekaiisanRouteCasing: string;
   sekaiisanRoute: string;
+  planAvailable: boolean;
+  planRouteCasing: string;
+  planRoute: string;
+  planWaypoints: string;
+  planWaypointLabels: string;
   arukihenroAvailable: boolean;
   arukihenroReady: Promise<ArukihenroGroup[]>;
   arukihenro: ArukihenroGroup[];
@@ -358,6 +363,14 @@ function applyHenroSources(map: MapLibreMap): void {
       attribution: SEKAIISAN_ATTRIBUTION,
     });
   }
+
+  const planUrl = import.meta.env.VITE_PLAN_URL;
+  if (planUrl) {
+    map.addSource("sekaiisan-plan", {
+      type: "geojson",
+      data: planUrl,
+    });
+  }
 }
 
 export function createMap(container: HTMLElement): {
@@ -625,6 +638,65 @@ export function createMap(container: HTMLElement): {
           "line-color": "#1f62c4",
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 3.5, 14, 7.5],
           "line-opacity": 0.9,
+        },
+      });
+    }
+
+    if (map.getSource("sekaiisan-plan")) {
+      map.addLayer({
+        id: "sekaiisan-plan-route-casing",
+        type: "line",
+        source: "sekaiisan-plan",
+        filter: ["==", ["get", "kind"], "planned_route"],
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 7, 14, 12],
+          "line-opacity": 0.95,
+        },
+      });
+      map.addLayer({
+        id: "sekaiisan-plan-route",
+        type: "line",
+        source: "sekaiisan-plan",
+        filter: ["==", ["get", "kind"], "planned_route"],
+        layout: { "line-cap": "round", "line-join": "round", visibility: "none" },
+        paint: {
+          "line-color": "#d81b60",
+          "line-width": ["interpolate", ["linear"], ["zoom"], 8, 4, 14, 8],
+          "line-opacity": 0.95,
+        },
+      });
+      map.addLayer({
+        id: "sekaiisan-plan-waypoints",
+        type: "circle",
+        source: "sekaiisan-plan",
+        filter: ["==", ["get", "kind"], "waypoint"],
+        layout: { visibility: "none" },
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 8, 6, 14, 9],
+          "circle-color": "#d81b60",
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 2,
+        },
+      });
+      map.addLayer({
+        id: "sekaiisan-plan-waypoint-labels",
+        type: "symbol",
+        source: "sekaiisan-plan",
+        filter: ["==", ["get", "kind"], "waypoint"],
+        layout: {
+          "text-field": ["to-string", ["get", "index"]],
+          "text-font": ["Noto Sans CJK JP Regular"],
+          "text-size": 13,
+          "text-offset": [0, 1.4],
+          "text-anchor": "top",
+          visibility: "none",
+        },
+        paint: {
+          "text-color": "#d81b60",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.6,
         },
       });
     }
@@ -1002,6 +1074,11 @@ export function createMap(container: HTMLElement): {
     sekaiisanAvailable: Boolean(import.meta.env.VITE_SEKAIISAN_HENRO_URL),
     sekaiisanRouteCasing: "sekaiisan-henro-route-casing",
     sekaiisanRoute: "sekaiisan-henro-route",
+    planAvailable: Boolean(import.meta.env.VITE_PLAN_URL),
+    planRouteCasing: "sekaiisan-plan-route-casing",
+    planRoute: "sekaiisan-plan-route",
+    planWaypoints: "sekaiisan-plan-waypoints",
+    planWaypointLabels: "sekaiisan-plan-waypoint-labels",
     arukihenroAvailable: Boolean(import.meta.env.VITE_ARUKIHENRO_URL),
     arukihenroReady,
     arukihenro: arukihenroGroups,
