@@ -18,6 +18,11 @@ import {
   type HenroHelperItinerarySet,
 } from "./henro-helper";
 import {
+  addHenroHelperPoiLayers,
+  fetchHenroHelperPois,
+  type HenroHelperPoiGroup,
+} from "./henro-helper-pois";
+import {
   addOhenro88Layers,
   convertOhenro88,
   fetchOhenro88,
@@ -63,6 +68,9 @@ export interface HenroLayers {
   henroHelperAvailable: boolean;
   henroHelper: HenroHelperData;
   henroHelperReady: Promise<HenroHelperData>;
+  henroHelperPoisAvailable: boolean;
+  henroHelperPois: HenroHelperPoiGroup[];
+  henroHelperPoisReady: Promise<HenroHelperPoiGroup[]>;
   ohenro88Available: boolean;
   ohenro88Ready: Promise<Ohenro88Group[]>;
   ohenro88: Ohenro88Group[];
@@ -389,6 +397,12 @@ export function createMap(container: HTMLElement): {
   let resolveHenroHelper: (data: HenroHelperData) => void = () => undefined;
   const henroHelperReady = new Promise<HenroHelperData>((resolve) => {
     resolveHenroHelper = resolve;
+  });
+
+  const henroHelperPoiGroups: HenroHelperPoiGroup[] = [];
+  let resolveHenroHelperPois: (groups: HenroHelperPoiGroup[]) => void = () => undefined;
+  const henroHelperPoisReady = new Promise<HenroHelperPoiGroup[]>((resolve) => {
+    resolveHenroHelperPois = resolve;
   });
 
   const ohenro88Groups: Ohenro88Group[] = [];
@@ -840,6 +854,34 @@ export function createMap(container: HTMLElement): {
       resolveHenroHelper({ groups: henroHelperGroups, itinerarySets: henroHelperSets });
     }
 
+    // Henro Helper POI markers (temples / toilets / convenience / rest areas /
+    // accommodations / okunoin-bangai ...): same APK, fetched separately from
+    // the route geometry. One circle layer (+ label for named kinds) per kind.
+    const henroHelperPoisUrl = import.meta.env.VITE_HENRO_HELPER_POIS_URL;
+    if (henroHelperPoisUrl) {
+      void (async () => {
+        try {
+          const data = await fetchHenroHelperPois(henroHelperPoisUrl);
+          const beforeId = findInsertionPoint(
+            map,
+            [
+              "henro-route-casing",
+              "sekaiisan-henro-route-casing",
+              "mizutani-henro-route-casing",
+            ],
+            LABEL_FALLBACK,
+          );
+          henroHelperPoiGroups.push(...addHenroHelperPoiLayers(map, data, beforeId));
+        } catch (error) {
+          console.error("henro helper pois load error:", error);
+        } finally {
+          resolveHenroHelperPois(henroHelperPoiGroups);
+        }
+      })();
+    } else {
+      resolveHenroHelperPois(henroHelperPoiGroups);
+    }
+
     // 歩き遍路 routes: fetch ~5MB normalized JSON (ohenro.jp personal hand-drawn
     // + Google navigation reference lines) as an inline GeoJSON source. Runs
     // non-blocking so it never delays the static lodging/temple layers above.
@@ -948,6 +990,9 @@ export function createMap(container: HTMLElement): {
     henroHelperAvailable: Boolean(import.meta.env.VITE_HENRO_HELPER_URL),
     henroHelper: { groups: henroHelperGroups, itinerarySets: henroHelperSets },
     henroHelperReady,
+    henroHelperPoisAvailable: Boolean(import.meta.env.VITE_HENRO_HELPER_POIS_URL),
+    henroHelperPois: henroHelperPoiGroups,
+    henroHelperPoisReady,
     ohenro88Available: Boolean(import.meta.env.VITE_OHENRO88_URL),
     ohenro88Ready,
     ohenro88: ohenro88Groups,

@@ -373,6 +373,48 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     applyHenroHelperVisibility();
   });
 
+  const henroHelperPoiCheckboxes = new Map<string, HTMLInputElement>();
+  const henroHelperPoiControls = document.getElementById("henro-helper-pois-controls");
+  if (!henro.henroHelperPoisAvailable) {
+    for (const input of henroHelperPoiControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    henroHelperPoiControls?.classList.add("disabled");
+  }
+  const applyHenroHelperPoiVisibility = (): void => {
+    const masterEl = document.getElementById("toggle-henro-helper-pois") as HTMLInputElement | null;
+    const labelsEl = document.getElementById("toggle-henro-helper-poi-labels") as HTMLInputElement | null;
+    if (!masterEl || !labelsEl) return;
+    const master = masterEl.checked;
+    const labels = labelsEl.checked;
+    for (const group of henro.henroHelperPois) {
+      const checkbox = henroHelperPoiCheckboxes.get(group.kind);
+      const visible = master && (checkbox?.checked ?? group.checked);
+      toggleLayer(map, [group.circle], visible);
+      if (group.labelLayer) {
+        toggleLayer(map, [group.labelLayer], visible && labels);
+      }
+    }
+  };
+  bindToggle("toggle-henro-helper-pois", applyHenroHelperPoiVisibility);
+  bindToggle("toggle-henro-helper-poi-labels", applyHenroHelperPoiVisibility);
+  void henro.henroHelperPoisReady.then((groups) => {
+    const container = document.getElementById("henro-helper-pois-categories");
+    if (!container) return;
+    for (const group of groups) {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = group.checked;
+      checkbox.addEventListener("change", applyHenroHelperPoiVisibility);
+      henroHelperPoiCheckboxes.set(group.kind, checkbox);
+      label.append(checkbox, ` ${group.label}`);
+      container.append(label);
+    }
+    applyHenroHelperPoiVisibility();
+  });
+
   const ohenroNoAkariControls = document.getElementById("ohenro-no-akari-controls");
   if (!henro.ohenroNoAkariAvailable) {
     for (const input of ohenroNoAkariControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
