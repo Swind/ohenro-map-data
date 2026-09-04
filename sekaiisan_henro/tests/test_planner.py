@@ -155,6 +155,28 @@ class TestDensePath(unittest.TestCase):
         self.assertTrue(all(len(c) == 3 for c in route["geometry"]["coordinates"]))
 
 
+class TestExportPlanGraph(unittest.TestCase):
+    def test_compact_graph_preserves_routing_topology(self):
+        graph = _graph(
+            [_te("e1", "A", "B"), _te("e2", "B", "C")],
+            joins=[{"id": "SHJ_1", "from": "A", "to": "D",
+                    "distance_m": 5.0, "coordinates": [list(COORDS["A"]), list(COORDS["D"])]}],
+        )
+        compact = planner.build_plan_graph(graph)
+        self.assertEqual(compact["kind"], "plan_graph")
+        self.assertEqual([e["id"] for e in compact["traversal_edges"]], ["e1", "e2"])
+        self.assertEqual([e["id"] for e in compact["synthetic_joins"]], ["SHJ_1"])
+        node_ids = {n["id"] for n in compact["nodes"]}
+        self.assertEqual(node_ids, {"A", "B", "C", "D"})
+        for node in compact["nodes"]:
+            self.assertIn("lon", node)
+            self.assertIn("lat", node)
+        for edge in compact["traversal_edges"]:
+            self.assertEqual(len(edge["coordinates"]), 2)
+        for join in compact["synthetic_joins"]:
+            self.assertEqual(len(join["coordinates"]), 2)
+
+
 class TestSnapTooFar(unittest.TestCase):
     def test_point_far_from_route_rejected(self):
         graph = _graph([_te("e1", "A", "B")])

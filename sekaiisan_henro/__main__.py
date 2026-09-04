@@ -185,6 +185,11 @@ def build_parser() -> argparse.ArgumentParser:
     plan_parser.add_argument("--snap-max-m", type=float, default=500.0)
     plan_parser.add_argument("--output", default="output/sekaiisan-henro-plan.json")
     plan_parser.add_argument("--geojson", default="output/sekaiisan-henro-plan.geojson")
+    export_parser = sub.add_parser(
+        "export-plan-graph",
+        help="export the compact browser-routing graph for the map preview")
+    export_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
+    export_parser.add_argument("--output", default="output/sekaiisan-henro-plan-graph.json")
     return parser
 
 
@@ -229,6 +234,8 @@ def dispatch(args: argparse.Namespace) -> dict:
         return planner.run_plan(
             args.input, points, args.elevation_db, args.elevation_bin,
             args.sample_interval_m, args.snap_max_m, args.output, args.geojson)
+    if args.command == "export-plan-graph":
+        return planner.run_export_plan_graph(args.input, args.output)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -338,6 +345,10 @@ def main(argv: list[str] | None = None) -> int:
                   elev.get("gain_m"), elev.get("loss_m"),
                   elev.get("min_m"), elev.get("max_m"),
                   time_est.get("hours_naismith"), args.output))
+    elif args.command == "export-plan-graph":
+        print("export-plan-graph: nodes=%d traversal_edges=%d synthetic_joins=%d "
+              "output=%s" % (len(result["nodes"]), len(result["traversal_edges"]),
+                             len(result["synthetic_joins"]), args.output))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0

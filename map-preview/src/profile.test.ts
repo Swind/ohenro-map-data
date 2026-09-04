@@ -24,6 +24,8 @@ describe("buildElevationProfile", () => {
     expect(profile!.points[1].d).toBeCloseTo(segment, 6);
     expect(profile!.minM).toBe(100);
     expect(profile!.maxM).toBe(150);
+    expect(profile!.gainM).toBeCloseTo(50, 6);
+    expect(profile!.lossM).toBeCloseTo(30, 6);
   });
 
   it("skips vertices without elevation", () => {

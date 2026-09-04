@@ -95,6 +95,16 @@
         color: #555;
         white-space: nowrap;
       }
+      #plan-mode-status {
+        margin: 4px 0;
+        font-size: 11px;
+        color: #555;
+        white-space: pre-wrap;
+      }
+      #plan-clear, #plan-undo {
+        margin-top: 2px;
+        font: 12px/1.5 system-ui, sans-serif;
+      }
       .maplibregl-popup-content {
         font: 12px/1.5 system-ui, sans-serif;
       }
@@ -276,6 +286,14 @@
       <details open>
         <summary>規劃高度剖面</summary>
         <div id="plan-profile">（未載入規劃資料）</div>
+      </details>
+
+      <details open>
+        <summary>互動規劃（地圖點擊 A/B）</summary>
+        <label><input type="checkbox" id="toggle-plan-mode" /> 規劃模式（點擊加點）</label>
+        <div id="plan-mode-status"></div>
+        <button type="button" id="plan-clear">清除</button>
+        <button type="button" id="plan-undo">移除最後一點</button>
       </details>
     </div>
     <script type="module" src="/src/main.ts"></script>

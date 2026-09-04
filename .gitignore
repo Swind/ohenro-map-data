@@ -47,6 +47,9 @@ output/sekaiisan-henro-topology-inventory.json
 output/sekaiisan-henro-graph.json
 output/sekaiisan-henro-graph-proximity.json
 output/sekaiisan-henro-graph-anchors.json
+# Browser routing graph for the map-preview client planner (rebuilt by
+# export-plan-graph from graph-anchors.json)
+output/sekaiisan-henro-plan-graph.json
 output/sekaiisan-henro-temple-sections.json
 output/sekaiisan-henro-section-corridors.json
 output/sekaiisan-henro-section-corridor-edges.geojson

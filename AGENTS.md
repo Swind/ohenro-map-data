@@ -180,6 +180,16 @@ median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
 **不宣稱 resolved/official/navigable**；這是沿已知路線的 day-planning
 量測，非自由路網導航。
 
+`python3 -m sekaiisan_henro export-plan-graph` 把 anchored graph 縮減成
+瀏覽器路由圖 `output/sekaiisan-henro-plan-graph.json`（nodes +
+`traversal_edges` + `synthetic_joins` 的 geometry/weight，source edges 與
+provenance 移除），供 map-preview 的**互動規劃模式**直接抓取在本地跑
+Dijkstra（`map-preview/src/planner.ts`，與 Python 同演算法：equirectangular
+snap、virtual sub-edges、simple-path Dijkstra、逐 leg stitching，實測與
+Python Temple 1→2→5 結果一致 8104m）。瀏覽器高程沿路徑頂點用既有
+`shikoku-terrain.pmtiles` 的 Terrain-RGB（`map-preview/src/terrain.ts`，
+z14 ~12m 解析，DEM10 基底）採樣；「規劃高度剖面」面板即時更新。
+
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
 ```bash

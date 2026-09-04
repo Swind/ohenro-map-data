@@ -6,7 +6,8 @@ import maplibregl, {
 import type { FeatureCollection, Geometry, Position } from "geojson";
 import { createMap, type HenroLayers } from "./map";
 import { prefLabel, type TrailRoute } from "./trail";
-import { buildElevationProfile } from "./profile";
+import { renderElevationProfile } from "./profile";
+import { setupPlanMode } from "./plan-mode";
 
 function toggleLayer(
   map: MapLibreMap,
@@ -709,6 +710,9 @@ interface ClickCandidate {
 
 function setupClickPopup(map: MapLibreMap): void {
   map.on("click", (e) => {
+    // Interactive planning mode owns the click: no feature popup.
+    const planMode = document.getElementById("toggle-plan-mode") as HTMLInputElement | null;
+    if (planMode?.checked) return;
     const x = e.point.x;
     const y = e.point.y;
     const radius = CLICK_TOLERANCE_PX;
@@ -799,57 +803,6 @@ function setupClickPopup(map: MapLibreMap): void {
   });
 }
 
-function renderPlanProfile(
-  container: HTMLElement,
-  fc: FeatureCollection,
-): void {
-  const route = fc.features.find(
-    (f) => f.geometry?.type === "LineString" && f.properties?.kind === "planned_route",
-  );
-  if (!route || route.geometry.type !== "LineString") {
-    container.textContent = "no planned route";
-    return;
-  }
-  const profile = buildElevationProfile(route.geometry.coordinates);
-  if (!profile) {
-    container.textContent = "insufficient elevation data";
-    return;
-  }
-  const props = (route.properties ?? {}) as Record<string, number | undefined>;
-  const span = Math.max(profile.maxM - profile.minM, 1);
-  const W = 260;
-  const H = 90;
-  const PAD = 6;
-  const x = (d: number): number =>
-    PAD + (d / profile.totalM) * (W - 2 * PAD);
-  const y = (e: number): number =>
-    PAD + (1 - (e - profile.minM) / span) * (H - 2 * PAD);
-  const pts = profile.points
-    .map((p) => `${x(p.d).toFixed(1)},${y(p.e).toFixed(1)}`)
-    .join(" ");
-  const base = y(profile.minM);
-  const area = `${x(0).toFixed(1)},${base} ${pts} ${x(profile.totalM).toFixed(1)},${base}`;
-  const lengthKm = (profile.totalM / 1000).toFixed(1);
-  const minM = props.min_m ?? profile.minM;
-  const maxM = props.max_m ?? profile.maxM;
-  const stats = [
-    `${lengthKm} km`,
-    `↑${props.gain_m ?? 0} m`,
-    `↓${props.loss_m ?? 0} m`,
-    `min ${minM.toFixed(0)} m`,
-    `max ${maxM.toFixed(0)} m`,
-  ].join(" · ");
-  container.innerHTML =
-    `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="elevation profile">` +
-    `<polygon points="${area}" fill="#d81b60" opacity="0.18"/>` +
-    `<polyline points="${pts}" fill="none" stroke="#d81b60" stroke-width="1.8" ` +
-    `stroke-linejoin="round" stroke-linecap="round"/>` +
-    `<text x="${PAD}" y="${H - 3}" font-size="9" fill="#777">${minM.toFixed(0)}m</text>` +
-    `<text x="${PAD}" y="${11}" font-size="9" fill="#777">${maxM.toFixed(0)}m</text>` +
-    `</svg>` +
-    `<div class="plan-profile-stats">${stats}</div>`;
-}
-
 function setupPlanProfile(): void {
   const url = import.meta.env.VITE_PLAN_URL as string | undefined;
   const container = document.getElementById("plan-profile");
@@ -858,7 +811,7 @@ function setupPlanProfile(): void {
     .then((r) =>
       r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
     )
-    .then((fc) => renderPlanProfile(container, fc as FeatureCollection))
+    .then((fc) => renderElevationProfile(container, fc as FeatureCollection))
     .catch((err) => {
       container.textContent = `plan profile error: ${String(err)}`;
     });
@@ -871,5 +824,6 @@ if (container) {
   setupDebugPanel(map, henro);
   setupClickPopup(map);
   setupPlanProfile();
+  setupPlanMode(map);
   (window as unknown as { __map: MapLibreMap }).__map = map;
 }
