@@ -4,8 +4,20 @@ import { planRoute, type PlanGraph } from "./planner";
 import { TerrainElevationSampler } from "./terrain";
 import { buildElevationProfile, renderElevationProfile } from "./profile";
 
-const GRAPH_URL = import.meta.env.VITE_PLAN_GRAPH_URL as string | undefined;
+const SEKAIISAN_GRAPH_URL = import.meta.env.VITE_PLAN_GRAPH_URL as string | undefined;
+const OHENRO88_GRAPH_URL = import.meta.env.VITE_OHENRO88_PLAN_GRAPH_URL as string | undefined;
 const TERRAIN_URL = import.meta.env.VITE_TERRAIN_URL as string | undefined;
+
+interface NetworkConfig {
+  id: string;
+  label: string;
+  url?: string;
+}
+
+const NETWORKS: NetworkConfig[] = [
+  { id: "sekaiisan", label: "世界遺産協議会", url: SEKAIISAN_GRAPH_URL },
+  { id: "ohenro88", label: "OHenro 88", url: OHENRO88_GRAPH_URL },
+];
 
 const SOURCE_ID = "plan-live";
 const LIVE_COLOR = "#2e7d32";
@@ -214,22 +226,52 @@ export function setupPlanMode(map: MapLibreMap): void {
 
   toggle.addEventListener("change", () => void refresh());
 
-  if (!GRAPH_URL) {
-    status.textContent = "未設定 VITE_PLAN_GRAPH_URL，互動規劃停用";
+  // Network selector: choose which route network to plan on. Switching loads
+  // that network's routing graph and clears the current points.
+  const networkSelect = document.getElementById("plan-network") as HTMLSelectElement | null;
+  if (networkSelect) {
+    const available = NETWORKS.filter((n) => n.url);
+    for (const n of available) {
+      const option = document.createElement("option");
+      option.value = n.id;
+      option.textContent = n.label;
+      networkSelect.append(option);
+    }
+  }
+  const selectedUrl = (): string | undefined =>
+    NETWORKS.find((n) => n.id === networkSelect?.value)?.url;
+  const currentNetworkLabel = (): string =>
+    NETWORKS.find((n) => n.id === networkSelect?.value)?.label ?? "?";
+
+  const loadGraph = (url: string): void => {
+    graph = null;
+    graphError = null;
+    points.length = 0;
+    void refresh();
+    status.textContent = "載入規劃圖…";
+    fetch(url)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((g) => {
+        graph = g as PlanGraph;
+        status.textContent =
+          `${currentNetworkLabel()} 規劃圖已載入；勾選規劃模式後點擊地圖加入 A`;
+      })
+      .catch((err) => {
+        graphError = `規劃圖載入失敗: ${String(err)}`;
+        status.textContent = graphError;
+      });
+  };
+  networkSelect?.addEventListener("change", () => {
+    const url = selectedUrl();
+    if (url) loadGraph(url);
+  });
+
+  const firstUrl = selectedUrl();
+  if (!firstUrl) {
+    status.textContent = "未設定規劃圖 URL（VITE_PLAN_GRAPH_URL），互動規劃停用";
     return;
   }
-  fetch(GRAPH_URL)
-    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-    .then((g) => {
-      graph = g as PlanGraph;
-      if (ready) {
-        status.textContent = "規劃圖已載入；勾選規劃模式後點擊地圖加入 A";
-      }
-    })
-    .catch((err) => {
-      graphError = `規劃圖載入失敗: ${String(err)}`;
-      status.textContent = graphError;
-    });
+  loadGraph(firstUrl);
 
   if (map.isStyleLoaded()) {
     setupLayers();
