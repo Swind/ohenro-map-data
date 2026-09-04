@@ -181,10 +181,10 @@ labels、henro route、世界遺産協議会、住宿、遍路のあかり）維
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。
   - **hillshade**：同一 source 的 `hillshade` 圖層，預設隱藏，可獨立開關。
   - **等高線**：`shikoku-contours.pmtiles` 的 `contours` layer（`elevation_m`），預設隱藏；z12–z15 可手動開啟，100m 主線較粗，標籤可獨立切換。
-  - **3D terrain**：`elevation-dem-terrain` source 經 `map.setTerrain()` 啟用（exaggeration 1）；啟用後點擊地圖顯示該點高程（`map.queryTerrainElevation`），無資料顯示 `elevation: unavailable`。
+  - **3D terrain**：`elevation-dem-terrain` source 經 `map.setTerrain()` 啟用（exaggeration 1）。
   - 資料 attribution 為國土地理院（GSI），寫在 PMTiles metadata 與 MapLibre source。
   - 未設定 `VITE_CONTOURS_URL` / `VITE_TERRAIN_URL` 時對應 toggle 停用，basemap 與 Henro 圖層照常載入。
-- **點擊檢查**：顯示 feature 的 layer id / id / source / source-layer / 座標 / properties。
+- **點擊檢查**：只對 overlay 資料（非 basemap `protomaps` source）的 feature 回應。popup 以來源標籤 + 主要名稱作標題，`名稱/類別/番號/路線 ID/距離/標高等` 精選欄位以表格顯示，座標與 zoom 標在標題下；其餘未整理屬性收進可展開的「其他屬性」（`field_XX` 多語 raw 欄位與已知雜訊 key 會略過）。點擊 basemap（道路、水系、地名…）不顯示任何資訊。
 - **Debug panel**：zoom、lat/lon、bearing、pitch，以及圖層顯示/隱藏切換。
 - **字形/icon**：預設改為本地 phase-2b assets（`public/data/app-map-assets`，symlink 到 `output/app-map-assets`），`VITE_SPRITE_URL` / `VITE_GLYPHS_URL` 可覆寫；不再依賴 Protomaps 遠端 assets。可用 `?symbolSmoke=1` 驗證字形與 icon。
 

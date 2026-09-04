@@ -1,4 +1,9 @@
-import maplibregl, { type FilterSpecification, type Map as MapLibreMap } from "maplibre-gl";
+import maplibregl, {
+  type FilterSpecification,
+  type Map as MapLibreMap,
+  type MapGeoJSONFeature,
+} from "maplibre-gl";
+import type { Geometry, Position } from "geojson";
 import { createMap, type HenroLayers } from "./map";
 import { prefLabel, type TrailRoute } from "./trail";
 
@@ -500,60 +505,282 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   });
 }
 
-function setupClickPopup(map: MapLibreMap, elevationAvailable: boolean): void {
-  let terrainActive = false;
-  map.on("terrain", () => {
-    terrainActive = map.getTerrain() !== null;
-  });
-  map.on("click", (e) => {
-    // When terrain is active, always show the click elevation (spec §11.4).
-    if (terrainActive && elevationAvailable) {
-      const elevation = map.queryTerrainElevation(e.lngLat);
-      const label =
-        elevation === null || Number.isNaN(elevation)
-          ? "elevation: unavailable"
-          : `elevation: ${elevation.toFixed(1)} m`;
-      new maplibregl.Popup({ closeButton: true })
-        .setLngLat(e.lngLat)
-        .setHTML(`<b>${label}</b>`)
-        .addTo(map);
-      return;
+// Popup: only overlay features (everything except the basemap `protomaps`
+// source) are clickable, and their properties are shown in a curated table
+// instead of a raw dump.
+const OVERLAY_SOURCE_LABELS: Record<string, string> = {
+  "henro-temples": "寺廟",
+  "henro-route": "遍路路線 (OSM)",
+  "sekaiisan-henro": "世界遺産協議会",
+  trail: "四國自然步道",
+  "henroyado-lodging": "Henroyado 住宿",
+  "min88-lodging": "min88 住宿",
+  "mizutani-henro": "水谷遍路",
+  arukihenro: "歩き遍路",
+  "henro-helper": "Henro Helper 路線",
+  "henro-helper-pois": "Henro Helper POI",
+  ohenro88: "OHenro 88",
+  "ohenro-no-akari": "遍路のあかり",
+  "elevation-contours": "等高線",
+  "symbol-smoke": "Symbol smoke",
+};
+
+// Curated display fields, in display order.
+const POPUP_DISPLAY_FIELDS: ReadonlyArray<readonly [string, string]> = [
+  ["name", "名稱"],
+  ["name_ja", "日文名"],
+  ["name_en", "英文名"],
+  ["title", "名稱"],
+  ["temple_number", "札所番號"],
+  ["bekkaku_number", "別格番號"],
+  ["temple_name_ja", "寺名"],
+  ["number", "番號"],
+  ["category", "類別"],
+  ["kind", "種類"],
+  ["route_type", "路線類型"],
+  ["route_kind", "路線類型"],
+  ["day_label", "日"],
+  ["from_temple", "起點"],
+  ["to_temple", "終點"],
+  ["distance", "距離"],
+  ["elevation", "標高"],
+  ["time", "時間"],
+  ["elevation_m", "標高 (m)"],
+  ["address", "地址"],
+  ["url", "網址"],
+  ["description", "說明"],
+  ["route_id", "路線 ID"],
+  ["feature_id", "要素 ID"],
+];
+
+const POPUP_DISPLAY_KEYS = new Set(POPUP_DISPLAY_FIELDS.map(([key]) => key));
+
+// Raw properties hidden from the collapsible "other" list.
+const POPUP_RAW_SKIP = new Set([
+  "source", "source_id", "segment_id", "icon_id", "style_url", "icon",
+  "folder", "color", "width", "_color", "_opacity", "_weight", "layer",
+  "class", "index", "num_points",
+]);
+
+function escapeHtml(value: unknown): string {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function popupValueHtml(key: string, value: unknown): string {
+  if (value === null || value === undefined) return "";
+  const text = String(value);
+  if (key === "url" && /^https?:\/\//.test(text)) {
+    return `<a href="${escapeHtml(text)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`;
+  }
+  return escapeHtml(text);
+}
+
+function popupTitle(source: string, props: Record<string, unknown>): string {
+  const label = OVERLAY_SOURCE_LABELS[source] ?? source;
+  for (const key of [
+    "temple_name_ja",
+    "name_ja",
+    "name_en",
+    "name",
+    "title",
+    "day_label",
+    "route_id",
+    "feature_id",
+  ]) {
+    const v = props[key];
+    if (typeof v === "string" && v.trim() !== "") {
+      return `${label} · ${v}`;
     }
+  }
+  return label;
+}
 
-    const features = map.queryRenderedFeatures(e.point);
-    if (features.length === 0) return;
+function popupCoordinates(geometry: Geometry): string {
+  if (geometry.type === "Point") {
+    return `${geometry.coordinates[1].toFixed(5)}, ${geometry.coordinates[0].toFixed(5)}`;
+  }
+  if (geometry.type === "MultiPoint") {
+    return `${geometry.coordinates.length} points`;
+  }
+  return geometry.type;
+}
 
-    const f = features[0];
-    const g = f.geometry;
-    const coords =
-      g.type === "Point"
-        ? `${g.coordinates[1].toFixed(5)}, ${g.coordinates[0].toFixed(5)}`
-        : g.type;
+// Click tolerance in pixels: a click within this distance of a rendered
+// overlay feature selects that feature instead of requiring an exact hit.
+const CLICK_TOLERANCE_PX = 15;
 
+function pointToSegmentDistance(
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+): number {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const lengthSq = dx * dx + dy * dy;
+  if (lengthSq === 0) return Math.hypot(px - ax, py - ay);
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSq));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+
+function lineDistance(
+  map: MapLibreMap,
+  x: number,
+  y: number,
+  coords: Position[],
+): number {
+  if (coords.length === 0) return Infinity;
+  const project = (coord: Position): { x: number; y: number } =>
+    map.project([coord[0], coord[1]]);
+  if (coords.length === 1) {
+    const p = project(coords[0]);
+    return Math.hypot(x - p.x, y - p.y);
+  }
+  let min = Infinity;
+  let prev = project(coords[0]);
+  for (let i = 1; i < coords.length; i++) {
+    const cur = project(coords[i]);
+    min = Math.min(min, pointToSegmentDistance(x, y, prev.x, prev.y, cur.x, cur.y));
+    prev = cur;
+  }
+  return min;
+}
+
+function screenDistanceToGeometry(
+  map: MapLibreMap,
+  x: number,
+  y: number,
+  geometry: Geometry,
+): number {
+  const project = (coord: Position): { x: number; y: number } =>
+    map.project([coord[0], coord[1]]);
+  switch (geometry.type) {
+    case "Point": {
+      const p = project(geometry.coordinates);
+      return Math.hypot(x - p.x, y - p.y);
+    }
+    case "MultiPoint": {
+      let min = Infinity;
+      for (const coord of geometry.coordinates) {
+        const p = project(coord);
+        min = Math.min(min, Math.hypot(x - p.x, y - p.y));
+      }
+      return min;
+    }
+    case "LineString":
+      return lineDistance(map, x, y, geometry.coordinates);
+    case "MultiLineString": {
+      let min = Infinity;
+      for (const line of geometry.coordinates) {
+        min = Math.min(min, lineDistance(map, x, y, line));
+      }
+      return min;
+    }
+    default:
+      return Infinity;
+  }
+}
+
+interface ClickCandidate {
+  feature: MapGeoJSONFeature;
+  distance: number;
+  isPoint: boolean;
+}
+
+function setupClickPopup(map: MapLibreMap): void {
+  map.on("click", (e) => {
+    const x = e.point.x;
+    const y = e.point.y;
+    const radius = CLICK_TOLERANCE_PX;
+
+    // queryRenderedFeatures only returns rendered (currently shown) features,
+    // so basemap filtering + "shown features only" come for free. Query a
+    // small bounding box around the click for the tolerance.
+    const features = map
+      .queryRenderedFeatures([
+        [x - radius, y - radius],
+        [x + radius, y + radius],
+      ])
+      .filter((f) => f.source !== "protomaps");
+
+    // Deduplicate tile-split copies of the same source feature (keep nearest).
+    const bestByKey = new Map<string, ClickCandidate>();
+    for (const feature of features) {
+      const props = feature.properties ?? {};
+      const key =
+        `${feature.source}:` +
+        (feature.id ??
+          props.feature_id ??
+          props.route_id ??
+          props.name ??
+          feature.sourceLayer ??
+          "");
+      const distance = screenDistanceToGeometry(map, x, y, feature.geometry);
+      if (distance > radius) continue;
+      const isPoint = feature.geometry.type === "Point" || feature.geometry.type === "MultiPoint";
+      const prev = bestByKey.get(key);
+      if (!prev || distance < prev.distance) {
+        bestByKey.set(key, { feature, distance, isPoint });
+      }
+    }
+    const candidates = [...bestByKey.values()];
+    if (candidates.length === 0) return;
+
+    // POI (point geometry) takes priority over routes (line geometry); the
+    // nearest candidate wins within the same kind.
+    const points = candidates.filter((c) => c.isPoint);
+    const pool = points.length > 0 ? points : candidates;
+    const best = pool.reduce((a, b) => (b.distance < a.distance ? b : a));
+
+    const f = best.feature;
     const props = f.properties ?? {};
-    const escapeHtml = (value: unknown): string => String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-    const propLines = Object.entries(props)
-      .map(([k, v]) => `${escapeHtml(k)}: ${escapeHtml(v)}`)
-      .join("<br/>");
+    const rows = POPUP_DISPLAY_FIELDS
+      .filter(([key]) => props[key] !== undefined && props[key] !== null)
+      .map(([key, label]) => {
+        const value = popupValueHtml(key, props[key]);
+        if (value === "") return "";
+        return `<tr><th>${escapeHtml(label)}</th><td>${value}</td></tr>`;
+      })
+      .join("");
 
-    const content = [
-      `<b>${escapeHtml(f.layer.id)}</b>`,
-      `id: ${escapeHtml(f.id ?? props.source_id ?? "(none)")}`,
-      `source: ${escapeHtml(f.source)}`,
-      `source-layer: ${escapeHtml(f.sourceLayer ?? "(geojson)")}`,
-      `coords: ${escapeHtml(coords)}`,
-      props && Object.keys(props).length > 0
-        ? `<hr/>${propLines}`
-        : "",
-    ].join("<br/>");
+    const other = Object.entries(props)
+      .filter(
+        ([key]) =>
+          !POPUP_DISPLAY_KEYS.has(key) &&
+          !POPUP_RAW_SKIP.has(key) &&
+          !key.startsWith("field_"),
+      )
+      .map(([key, value]) => `<span class="raw-line">${escapeHtml(key)}: ${escapeHtml(value)}</span>`)
+      .join("");
+    const otherSection =
+      other.length > 0
+        ? `<details class="henro-popup-raw"><summary>其他屬性</summary><div>${other}</div></details>`
+        : "";
 
-    new maplibregl.Popup({ closeButton: true, maxWidth: "320px" })
-      .setLngLat(e.lngLat)
+    const content =
+      `<div class="henro-popup">` +
+      `<div class="henro-popup-title">${escapeHtml(popupTitle(f.source, props))}</div>` +
+      `<div class="henro-popup-coords">${escapeHtml(popupCoordinates(f.geometry))} · zoom ${map.getZoom().toFixed(1)}</div>` +
+      (rows.length > 0 ? `<table class="henro-popup-table">${rows}</table>` : "") +
+      otherSection +
+      `</div>`;
+
+    // Snap the popup to the feature when it is a point; otherwise anchor at
+    // the click location.
+    const anchor: [number, number] =
+      f.geometry.type === "Point"
+        ? [f.geometry.coordinates[0], f.geometry.coordinates[1]]
+        : [e.lngLat.lng, e.lngLat.lat];
+
+    new maplibregl.Popup({ closeButton: true, maxWidth: "340px" })
+      .setLngLat(anchor)
       .setHTML(content)
       .addTo(map);
   });
@@ -564,6 +791,6 @@ if (container) {
   setupLayerGroups();
   const { map, henro } = createMap(container);
   setupDebugPanel(map, henro);
-  setupClickPopup(map, henro.elevation.available);
+  setupClickPopup(map);
   (window as unknown as { __map: MapLibreMap }).__map = map;
 }
