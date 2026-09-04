@@ -450,12 +450,17 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   const applyMizutaniPois = (): void => {
     const master = (document.getElementById("toggle-mizutani") as HTMLInputElement).checked;
     const pois = (document.getElementById("toggle-mizutani-pois") as HTMLInputElement).checked;
+    const labels = (document.getElementById("toggle-mizutani-poi-labels") as HTMLInputElement).checked;
     const categories = [...document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")]
       .filter((input) => input.checked)
       .map((input) => input.dataset.mizutaniCategory as string);
-    toggleLayer(map, [henro.mizutaniPoi], master && pois && categories.length > 0);
-    if (map.getLayer(henro.mizutaniPoi)) {
-      map.setFilter(henro.mizutaniPoi, ["in", ["get", "category"], ["literal", categories]]);
+    const show = master && pois && categories.length > 0;
+    toggleLayer(map, [henro.mizutaniPoi], show);
+    toggleLayer(map, [henro.mizutaniPoiLabel], show && labels);
+    for (const id of [henro.mizutaniPoi, henro.mizutaniPoiLabel]) {
+      if (map.getLayer(id)) {
+        map.setFilter(id, ["in", ["get", "category"], ["literal", categories]]);
+      }
     }
   };
   const applyMizutaniVisibility = (): void => {
@@ -467,6 +472,7 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   bindToggle("toggle-mizutani", applyMizutaniVisibility);
   bindToggle("toggle-mizutani-routes", applyMizutaniVisibility);
   bindToggle("toggle-mizutani-pois", applyMizutaniPois);
+  bindToggle("toggle-mizutani-poi-labels", applyMizutaniPois);
   for (const input of document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")) {
     input.addEventListener("change", applyMizutaniPois);
   }

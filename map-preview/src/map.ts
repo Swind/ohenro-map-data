@@ -54,6 +54,7 @@ export interface HenroLayers {
   mizutaniRouteCasing: string;
   mizutaniRoute: string;
   mizutaniPoi: string;
+  mizutaniPoiLabel: string;
   sekaiisanAvailable: boolean;
   sekaiisanRouteCasing: string;
   sekaiisanRoute: string;
@@ -580,6 +581,27 @@ export function createMap(container: HTMLElement): {
           "circle-stroke-width": 1.2,
         },
       });
+      map.addLayer({
+        id: "mizutani-henro-pois-labels",
+        type: "symbol",
+        source: "mizutani-henro",
+        "source-layer": "mizutani_henro_pois",
+        minzoom: 10,
+        layout: {
+          "text-field": ["coalesce", ["get", "name"], ""],
+          "text-font": ["Noto Sans CJK JP Regular"],
+          "text-size": 11,
+          "text-offset": [0, 0.9],
+          "text-anchor": "top",
+          "text-max-width": 10,
+          visibility: "none",
+        },
+        paint: {
+          "text-color": "#5d4a2a",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.3,
+        },
+      });
     }
 
     if (map.getSource("sekaiisan-henro")) {
@@ -976,6 +998,7 @@ export function createMap(container: HTMLElement): {
     mizutaniRouteCasing: "mizutani-henro-route-casing",
     mizutaniRoute: "mizutani-henro-route",
     mizutaniPoi: "mizutani-henro-pois",
+    mizutaniPoiLabel: "mizutani-henro-pois-labels",
     sekaiisanAvailable: Boolean(import.meta.env.VITE_SEKAIISAN_HENRO_URL),
     sekaiisanRouteCasing: "sekaiisan-henro-route-casing",
     sekaiisanRoute: "sekaiisan-henro-route",
