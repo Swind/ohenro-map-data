@@ -94,6 +94,8 @@ ln -s ../../../output/shikoku-mizutani-henro.pmtiles map-preview/public/data/shi
 ln -s ../../../output/sekaiisan-henro-review/source-edges.geojson map-preview/public/data/shikoku-sekaiisan-henro.geojson
 ln -s ../../../output/arukihenro-routes.json map-preview/public/data/arukihenro-routes.json
 ln -s ../../../output/henro-helper-routes/henro-helper-routes.geojson map-preview/public/data/henro-helper-routes.geojson
+ln -s ../../../output/ohenro88-routes/ohenro88-routes.geojson map-preview/public/data/ohenro88-routes.geojson
+ln -s ../../../output/ohenro-no-akari-routes/henro-no-akari-route.geojson map-preview/public/data/henro-no-akari-routes.geojson
 ln -s ../../../output/app-map-assets map-preview/public/data/app-map-assets
 cp map-preview/.env.example map-preview/.env.development
 ```
@@ -128,6 +130,8 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_SEKAIISAN_HENRO_URL` | `/data/shikoku-sekaiisan-henro.geojson` | 四国遍路世界遺産登録推進協議会（88sekaiisan.org）引導線 GeoJSON（source edges）；**是原始官方 source linework，不是推論 corridor / 導航保證**；留空停用 |
 | `VITE_ARUKIHENRO_URL` | `/data/arukihenro-routes.json` | 歩き遍路 routes 正規化 JSON（`output/arukihenro-routes.json`，~5MB inline GeoJSON）。**ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**；留空停用 |
 | `VITE_HENRO_HELPER_URL` | `/data/henro-helper-routes.geojson` | Henro Helper（com.henrohelper100.app）路線 GeoJSON（`output/henro-helper-routes/henro-helper-routes.geojson`，自 APK Dart AOT literals 抽出，~11MB）。保留 App 自家分類（road/trail/special/connection/itinerary），11 個 layer 可獨立開關；留空停用 |
+| `VITE_OHENRO88_URL` | `/data/ohenro88-routes.geojson` | OHenro 88（com.sallyzzz.ohenroapp）路線 GeoJSON（`output/ohenro88-routes/ohenro88-routes.geojson`）。依 `route_type` 分組（main/skip/bekkaku/bekkaku_extra/extra）做 per-route selector；留空停用 |
+| `VITE_OHENRO_NO_AKARI_URL` | `/data/henro-no-akari-routes.geojson` | 遍路のあかり+（jp.co.yonden.henronoakari，四国電力）步行路線 GeoJSON（`output/ohenro-no-akari-routes/henro-no-akari-route.geojson`，自 web app bundle 抽出，319 條 road-level LineString，單一連續路線）。**非官方／導航保證**；留空停用 |
 | `VITE_CONTOURS_URL` | `/data/shikoku-contours.pmtiles` | 20m 等高線 PMTiles（`contours` vector layer）；留空停用 |
 | `VITE_TERRAIN_URL` | `/data/shikoku-terrain.pmtiles` | Terrain-RGB 高程 PMTiles（`raster-dem`）；留空停用 |
 | `VITE_SPRITE_URL` | `/data/app-map-assets/sprites/light` | 本地 sprite 基底（覆寫 style.json 的遠端 sprite） |
@@ -154,6 +158,11 @@ http://localhost:5173/?symbolSmoke=1
 世界遺産協議会、自然步道、歩き遍路、住宿、水谷、temple labels、hillshade 等）皆由 Layers
 面板手動開啟。
 
+Layers 面板把同一來源的控制項收進 **tree**：每個來源一行（如「水谷遍路」），左側 ▸/▾
+按鈕展開子項（routes / POIs / categories），行首 checkbox 是 **master**——勾選決定整個
+來源要不要顯示，子項再個別細調；展開/收合與勾選互不干擾。單一 toggle 的來源（basemap
+labels、henro route、世界遺産協議会、住宿、遍路のあかり）維持扁平顯示。
+
 - **basemap**：由 `@protomaps/basemaps` 產生（light flavor、ja lang、71 layers），source 為 `pmtiles://` protocol。
 - **寺廟**：GeoJSON source，紅色圓點 marker；z9+ 顯示 `番号 + 寺名` label。
 - **遍路路線**：`shikoku-henro.pmtiles` 的 `henro_routes` layer（filter `route_kind=henro_candidate`），白色 casing + 赭色（`#8f4b32`）前景，位於 basemap 之上。
@@ -164,6 +173,7 @@ http://localhost:5173/?symbolSmoke=1
 - **世界遺産協議会 routes**：`output/sekaiisan-henro-review/source-edges.geojson`（symlink 至 `public/data/shikoku-sekaiisan-henro.geojson`），即協議會官方四縣 KML 的 source edges（`SHE_` LineString）。藍色 casing + 前景 line layer 疊在 basemap 之上，與 OSM henro、水谷、自然步道明顯區分。這是**原始官方 source linework，不是推論 corridor／合成連線**，也不代表可導航保證；attribution 指向 `https://88sekaiisan.org/`（四国遍路世界遺産登録推進協議会）。未設定 `VITE_SEKAIISAN_HENRO_URL` 時該 toggle 停用。
 - **歩き遍路 routes**：`output/arukihenro-routes.json`（symlink 至 `public/data/arukihenro-routes.json`，~5MB，瀏覽器直接 fetch 成單一 inline GeoJSON source）。90 routes / 91 maps，展平 324 lines + 933 POIs。紫色 line casing + line，route title line-label，POI circles + labels（z10/11+）。每條 route 可獨立開關（lines 與 POIs 一起消失）；master、labels、POIs 各別控制。40→41 與 68→69 來源無 KML，故 checkbox disabled（「無 KML」）。attribution 指向 `https://ohenro.jp/blog/arukihenro/`；**是 ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**。未設定 `VITE_ARUKIHENRO_URL` 時該 toggle 停用。
 - **Henro Helper routes**：`output/henro-helper-routes/henro-helper-routes.geojson`（symlink 至 `public/data/henro-helper-routes.geojson`，~11MB）。自 Henro Helper App（com.henrohelper100.app）APK 的 Dart AOT 座標 literals 抽出，保留 App 自家分類：`black/red/green`（road）、`blue/purple`（trail）、`special`（渡輪/纜車）、`eighty88to1`（88→1 閉環）、`connection`（接點，Point）、`itinerary_56/49/42`（三套每日行程線）。非 itinerary 的 8 個 layer 各自獨立 checkbox（預設只開 black）；itinerary 三套各自 `<details>` 展開，**可逐日勾選**（如 `DAY 1A`、`DAY 27C`）或「全部」，line + label 一起顯示。座標含海拔（`[lon,lat,elevation]`），每條 polyline 有 `elevation_start/end/min/max/mean`；itinerary feature 另帶 `day_label` / `title` / `from_temple` / `to_temple` / `distance` / `elevation` / `time`。未設定 `VITE_HENRO_HELPER_URL` 時該 toggle 停用。
+- **遍路のあかり+ routes**：`output/ohenro-no-akari-routes/henro-no-akari-route.geojson`（symlink 至 `public/data/henro-no-akari-routes.geojson`）。自遍路のあかり+ web app（`app.henro-no-akari.com`，四国電力）的 Leaflet map bundle 抽出（`MapPage.js` 內嵌 GeoJSON）。319 條 road-level LineString 分段、28,405 點、全長約 1,236 km，構成單一連續步行路線（316/319 段端點與鄰段相接）；line color 沿用來源 `_color`（App 渲染為藍色）。原生 APK 本身不含任何路線幾何，此為 web 端資料。**非官方／導航保證**；attribution 指向 `https://app.henro-no-akari.com`。未設定 `VITE_OHENRO_NO_AKARI_URL` 時該 toggle 停用。
 - **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。
   - **hillshade**：同一 source 的 `hillshade` 圖層，預設隱藏，可獨立開關。

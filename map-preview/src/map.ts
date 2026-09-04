@@ -23,6 +23,11 @@ import {
   fetchOhenro88,
   type Ohenro88Group,
 } from "./ohenro88";
+import {
+  addOhenroNoAkariLayers,
+  convertOhenroNoAkari,
+  fetchOhenroNoAkari,
+} from "./ohenro-no-akari";
 
 export interface HenroLayers {
   labels: string[];
@@ -66,6 +71,9 @@ export interface HenroLayers {
   ohenro88Label: string;
   ohenro88Points: string;
   ohenro88PointLabels: string;
+  ohenroNoAkariAvailable: boolean;
+  ohenroNoAkariCasing: string;
+  ohenroNoAkariLine: string;
   elevation: ElevationLayers;
 }
 
@@ -883,6 +891,27 @@ export function createMap(container: HTMLElement): {
     } else {
       resolveOhenro88(ohenro88Groups);
     }
+
+    // 遍路のあかり+ routes: fetch the walking route extracted from the web
+    // app bundle (output/ohenro-no-akari-routes/henro-no-akari-route.geojson).
+    // Adds shared casing + line layers (source color). Non-blocking.
+    const ohenroNoAkariUrl = import.meta.env.VITE_OHENRO_NO_AKARI_URL;
+    if (ohenroNoAkariUrl) {
+      void (async () => {
+        try {
+          const data = await fetchOhenroNoAkari(ohenroNoAkariUrl);
+          convertOhenroNoAkari(data);
+          const beforeId = findInsertionPoint(
+            map,
+            ["henro-route-casing", "sekaiisan-henro-route-casing", "mizutani-henro-route-casing"],
+            LABEL_FALLBACK,
+          );
+          addOhenroNoAkariLayers(map, data, beforeId);
+        } catch (error) {
+          console.error("ohenro-no-akari load error:", error);
+        }
+      })();
+    }
   });
 
   const henro: HenroLayers = {
@@ -927,6 +956,9 @@ export function createMap(container: HTMLElement): {
     ohenro88Label: "ohenro88-label",
     ohenro88Points: "ohenro88-points",
     ohenro88PointLabels: "ohenro88-point-labels",
+    ohenroNoAkariAvailable: Boolean(import.meta.env.VITE_OHENRO_NO_AKARI_URL),
+    ohenroNoAkariCasing: "ohenro-no-akari-casing",
+    ohenroNoAkariLine: "ohenro-no-akari-line",
     elevation: elevationLayers,
   };
 

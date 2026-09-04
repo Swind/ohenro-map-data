@@ -15,6 +15,28 @@ function toggleLayer(
   }
 }
 
+/**
+ * Wire the sidebar source trees: the header's ▸ button toggles the children
+ * (plain div-based collapse, independent from the master checkbox in the same
+ * header row, so checking a source never collapses its sub-toggles).
+ */
+function setupLayerGroups(): void {
+  for (const group of document.querySelectorAll<HTMLElement>(".layer-group")) {
+    const toggle = group.querySelector<HTMLButtonElement>(
+      ":scope > .layer-group-header > .tree-toggle",
+    );
+    const targetId = toggle?.dataset.treeTarget;
+    if (!toggle || !targetId) continue;
+    const children = document.getElementById(targetId);
+    if (!children) continue;
+    toggle.addEventListener("click", () => {
+      const collapsed = children.classList.toggle("collapsed");
+      toggle.textContent = collapsed ? "▸" : "▾";
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+    });
+  }
+}
+
 function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   const info = document.getElementById("debug-info") as HTMLPreElement;
 
@@ -61,12 +83,14 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   }
 
   bindToggle("toggle-labels", (v) => toggleLayer(map, henro.labels, v));
-  bindToggle("toggle-temples", (v) =>
-    toggleLayer(map, [henro.templeMarker], v),
-  );
-  bindToggle("toggle-temple-labels", (v) =>
-    toggleLayer(map, [henro.templeLabel], v),
-  );
+  const applyTemplesVisibility = (): void => {
+    const master = (document.getElementById("toggle-temples") as HTMLInputElement).checked;
+    const labels = (document.getElementById("toggle-temple-labels") as HTMLInputElement).checked;
+    toggleLayer(map, [henro.templeMarker], master);
+    toggleLayer(map, [henro.templeLabel], master && labels);
+  };
+  bindToggle("toggle-temples", applyTemplesVisibility);
+  bindToggle("toggle-temple-labels", applyTemplesVisibility);
   bindToggle("toggle-route", (v) =>
     toggleLayer(map, [henro.routeCasing, henro.routeForeground], v),
   );
@@ -349,6 +373,18 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     applyHenroHelperVisibility();
   });
 
+  const ohenroNoAkariControls = document.getElementById("ohenro-no-akari-controls");
+  if (!henro.ohenroNoAkariAvailable) {
+    for (const input of ohenroNoAkariControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    ohenroNoAkariControls?.classList.add("disabled");
+  }
+  bindToggle("toggle-ohenro-no-akari", (v) =>
+    toggleLayer(map, [henro.ohenroNoAkariCasing, henro.ohenroNoAkariLine], v),
+  );
+
   const sekaiisanControls = document.getElementById("sekaiisan-controls");
   if (!henro.sekaiisanAvailable) {
     for (const input of sekaiisanControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
@@ -370,18 +406,24 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     mizutaniControls?.classList.add("disabled");
   }
   const applyMizutaniPois = (): void => {
-    const master = (document.getElementById("toggle-mizutani-pois") as HTMLInputElement).checked;
+    const master = (document.getElementById("toggle-mizutani") as HTMLInputElement).checked;
+    const pois = (document.getElementById("toggle-mizutani-pois") as HTMLInputElement).checked;
     const categories = [...document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")]
       .filter((input) => input.checked)
       .map((input) => input.dataset.mizutaniCategory as string);
-    toggleLayer(map, [henro.mizutaniPoi], master && categories.length > 0);
+    toggleLayer(map, [henro.mizutaniPoi], master && pois && categories.length > 0);
     if (map.getLayer(henro.mizutaniPoi)) {
       map.setFilter(henro.mizutaniPoi, ["in", ["get", "category"], ["literal", categories]]);
     }
   };
-  bindToggle("toggle-mizutani-routes", (v) =>
-    toggleLayer(map, [henro.mizutaniRouteCasing, henro.mizutaniRoute], v),
-  );
+  const applyMizutaniVisibility = (): void => {
+    const master = (document.getElementById("toggle-mizutani") as HTMLInputElement).checked;
+    const routes = (document.getElementById("toggle-mizutani-routes") as HTMLInputElement).checked;
+    toggleLayer(map, [henro.mizutaniRouteCasing, henro.mizutaniRoute], master && routes);
+    applyMizutaniPois();
+  };
+  bindToggle("toggle-mizutani", applyMizutaniVisibility);
+  bindToggle("toggle-mizutani-routes", applyMizutaniVisibility);
   bindToggle("toggle-mizutani-pois", applyMizutaniPois);
   for (const input of document.querySelectorAll<HTMLInputElement>("input[data-mizutani-category]")) {
     input.addEventListener("change", applyMizutaniPois);
@@ -471,6 +513,7 @@ function setupClickPopup(map: MapLibreMap, elevationAvailable: boolean): void {
 
 const container = document.getElementById("map");
 if (container) {
+  setupLayerGroups();
   const { map, henro } = createMap(container);
   setupDebugPanel(map, henro);
   setupClickPopup(map, henro.elevation.available);

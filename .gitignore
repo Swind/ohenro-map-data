@@ -72,6 +72,14 @@ output/henro-helper-routes/
 # Extracted route reference (rebuilt by build_reference.py)
 output/ohenro88-routes/
 
+# Henro no Akari (Yonden) web route reference artifacts (XAPK + bundle snapshot
+# re-fetchable via reference/ohenro-no-akari/build_web_reference.py).
+# Keep only the builder tracked.
+/reference/ohenro-no-akari/*
+!/reference/ohenro-no-akari/build_web_reference.py
+# Extracted web route reference (rebuilt by build_web_reference.py)
+output/ohenro-no-akari-routes/
+
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/
 

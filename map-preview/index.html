@@ -45,6 +45,41 @@
       #debug-panel label.disabled input {
         opacity: 0.5;
       }
+      #debug-panel .layer-group.disabled {
+        opacity: 0.55;
+      }
+      #debug-panel .layer-group-header {
+        display: flex;
+        align-items: baseline;
+        gap: 2px;
+        margin: 4px 0;
+      }
+      #debug-panel .layer-group-header label.tree-master {
+        margin: 0;
+      }
+      #debug-panel .tree-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0 2px;
+        font-size: 10px;
+        color: #555;
+        line-height: 1.4;
+      }
+      #debug-panel .tree-toggle:focus-visible {
+        outline: 1px dotted #666;
+      }
+      #debug-panel .tree-label {
+        font-weight: 600;
+      }
+      #debug-panel .tree-children {
+        margin: 2px 0 4px 16px;
+        border-left: 1px solid #ddd;
+        padding-left: 6px;
+      }
+      #debug-panel .tree-children.collapsed {
+        display: none;
+      }
       .maplibregl-popup-content {
         font: 12px/1.5 system-ui, sans-serif;
       }
@@ -60,56 +95,113 @@
       <details>
         <summary>Layers</summary>
         <label><input type="checkbox" id="toggle-labels" checked /> basemap labels</label>
-        <label><input type="checkbox" id="toggle-temples" checked /> temples</label>
-        <label><input type="checkbox" id="toggle-temple-labels" /> temple labels</label>
+
+        <div class="layer-group">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="temples-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-temples" checked /> 寺廟</label>
+          </div>
+          <div id="temples-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-temple-labels" /> temple labels</label>
+          </div>
+        </div>
+
         <label><input type="checkbox" id="toggle-route" /> henro route</label>
+
         <div id="sekaiisan-controls">
           <label><input type="checkbox" id="toggle-sekaiisan-routes" /> 世界遺産協議会 routes</label>
         </div>
-        <label><input type="checkbox" id="toggle-trail" /> nature trail</label>
-        <label><input type="checkbox" id="toggle-trail-labels" /> trail labels</label>
-        <label><input type="checkbox" id="toggle-trail-pois" /> trail POIs (z10+)</label>
-        <div id="trail-routes"></div>
-        <div id="arukihenro-controls">
-          <label><input type="checkbox" id="toggle-arukihenro" /> 歩き遍路 routes</label>
-          <label><input type="checkbox" id="toggle-arukihenro-labels" /> 歩き遍路 route labels</label>
-          <label><input type="checkbox" id="toggle-arukihenro-pois" /> 歩き遍路 POIs (z10+)</label>
-          <div id="arukihenro-routes"></div>
+
+        <div class="layer-group" id="trail-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="trail-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-trail" /> 四國自然步道</label>
+          </div>
+          <div id="trail-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-trail-labels" /> labels</label>
+            <label><input type="checkbox" id="toggle-trail-pois" /> POIs (z10+)</label>
+            <div id="trail-routes"></div>
+          </div>
         </div>
+
+        <div class="layer-group" id="arukihenro-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="arukihenro-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-arukihenro" /> 歩き遍路</label>
+          </div>
+          <div id="arukihenro-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-arukihenro-labels" /> route labels</label>
+            <label><input type="checkbox" id="toggle-arukihenro-pois" /> POIs (z10+)</label>
+            <div id="arukihenro-routes"></div>
+          </div>
+        </div>
+
         <label><input type="checkbox" id="toggle-henroyado-lodging" /> Henroyado lodging</label>
         <label><input type="checkbox" id="toggle-min88-lodging" /> min88 lodging</label>
-        <div id="ohenro88-controls">
-          <label><input type="checkbox" id="toggle-ohenro88" /> OHenro 88 routes</label>
-          <label><input type="checkbox" id="toggle-ohenro88-labels" /> OHenro 88 labels</label>
-          <label><input type="checkbox" id="toggle-ohenro88-points" /> OHenro 88 temple points (z8+)</label>
-          <div id="ohenro88-routes"></div>
+
+        <div class="layer-group" id="ohenro88-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="ohenro88-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-ohenro88" /> OHenro 88</label>
+          </div>
+          <div id="ohenro88-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-ohenro88-labels" /> labels</label>
+            <label><input type="checkbox" id="toggle-ohenro88-points" /> temple points (z8+)</label>
+            <div id="ohenro88-routes"></div>
+          </div>
         </div>
-        <div id="henro-helper-controls">
-          <label><input type="checkbox" id="toggle-henro-helper" checked /> Henro Helper routes</label>
-          <div id="henro-helper-routes"></div>
+
+        <div class="layer-group" id="henro-helper-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="henro-helper-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-henro-helper" checked /> Henro Helper</label>
+          </div>
+          <div id="henro-helper-children" class="tree-children collapsed">
+            <div id="henro-helper-routes"></div>
+          </div>
         </div>
-        <div id="mizutani-controls">
-          <label><input type="checkbox" id="toggle-mizutani-routes" /> 水谷遍路 routes</label>
-          <label><input type="checkbox" id="toggle-mizutani-pois" /> 水谷遍路 POIs (z10+)</label>
-          <details>
-            <summary>水谷 POI categories</summary>
-            <label><input type="checkbox" data-mizutani-category="temple" checked /> temples</label>
-            <label><input type="checkbox" data-mizutani-category="lodging" checked /> lodging</label>
-            <label><input type="checkbox" data-mizutani-category="food" checked /> food</label>
-            <label><input type="checkbox" data-mizutani-category="shop_supply" checked /> shops &amp; supplies</label>
-            <label><input type="checkbox" data-mizutani-category="transport" checked /> transport</label>
-            <label><input type="checkbox" data-mizutani-category="wayfinding" checked /> wayfinding</label>
-            <label><input type="checkbox" data-mizutani-category="warning_hazard" checked /> warnings</label>
-            <label><input type="checkbox" data-mizutani-category="water_toilet_rest" checked /> water, toilets &amp; rest</label>
-            <label><input type="checkbox" data-mizutani-category="experience_note" checked /> experience notes</label>
-            <label><input type="checkbox" data-mizutani-category="other" checked /> other</label>
-          </details>
+
+        <div id="ohenro-no-akari-controls">
+          <label><input type="checkbox" id="toggle-ohenro-no-akari" /> 遍路のあかり routes</label>
         </div>
-        <label><input type="checkbox" id="toggle-elevation-color" /> color relief</label>
-        <label><input type="checkbox" id="toggle-hillshade" /> hillshade</label>
-        <label><input type="checkbox" id="toggle-contours" /> contours</label>
-        <label><input type="checkbox" id="toggle-contour-labels" /> contour labels</label>
-        <label><input type="checkbox" id="toggle-terrain" /> 3D terrain</label>
+
+        <div class="layer-group" id="mizutani-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="mizutani-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-mizutani" /> 水谷遍路</label>
+          </div>
+          <div id="mizutani-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-mizutani-routes" /> routes</label>
+            <label><input type="checkbox" id="toggle-mizutani-pois" /> POIs (z10+)</label>
+            <details>
+              <summary>POI categories</summary>
+              <label><input type="checkbox" data-mizutani-category="temple" checked /> temples</label>
+              <label><input type="checkbox" data-mizutani-category="lodging" checked /> lodging</label>
+              <label><input type="checkbox" data-mizutani-category="food" checked /> food</label>
+              <label><input type="checkbox" data-mizutani-category="shop_supply" checked /> shops &amp; supplies</label>
+              <label><input type="checkbox" data-mizutani-category="transport" checked /> transport</label>
+              <label><input type="checkbox" data-mizutani-category="wayfinding" checked /> wayfinding</label>
+              <label><input type="checkbox" data-mizutani-category="warning_hazard" checked /> warnings</label>
+              <label><input type="checkbox" data-mizutani-category="water_toilet_rest" checked /> water, toilets &amp; rest</label>
+              <label><input type="checkbox" data-mizutani-category="experience_note" checked /> experience notes</label>
+              <label><input type="checkbox" data-mizutani-category="other" checked /> other</label>
+            </details>
+          </div>
+        </div>
+
+        <div class="layer-group">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="elevation-children" aria-expanded="false">▸</button>
+            <span class="tree-label">高程視覺化</span>
+          </div>
+          <div id="elevation-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-elevation-color" /> color relief</label>
+            <label><input type="checkbox" id="toggle-hillshade" /> hillshade</label>
+            <label><input type="checkbox" id="toggle-contours" /> contours</label>
+            <label><input type="checkbox" id="toggle-contour-labels" /> contour labels</label>
+            <label><input type="checkbox" id="toggle-terrain" /> 3D terrain</label>
+          </div>
+        </div>
       </details>
     </div>
     <script type="module" src="/src/main.ts"></script>
