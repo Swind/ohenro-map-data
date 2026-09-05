@@ -174,22 +174,10 @@ def build_parser() -> argparse.ArgumentParser:
     attribution_parser.add_argument("--output", default=None,
                                     help="output path; defaults per edge layer")
     plan_parser = sub.add_parser(
-        "plan", help="point-to-point day planning on the effective graph")
-    plan_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
-    plan_parser.add_argument("--points", nargs="+", required=True,
-                             help="2+ 'lon,lat' pairs: start [waypoints...] end")
-    plan_parser.add_argument("--elevation-db", default="output/shikoku-elevation.sqlite")
-    plan_parser.add_argument("--elevation-bin", default=None,
-                             help="gsi-dem query-db binary (fallback when zstandard missing)")
-    plan_parser.add_argument("--sample-interval-m", type=float, default=200.0)
-    plan_parser.add_argument("--snap-max-m", type=float, default=500.0)
-    plan_parser.add_argument("--output", default="output/sekaiisan-henro-plan.json")
-    plan_parser.add_argument("--geojson", default="output/sekaiisan-henro-plan.geojson")
-    export_parser = sub.add_parser(
         "export-plan-graph",
         help="export the compact browser-routing graph for the map preview")
-    export_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
-    export_parser.add_argument("--output", default="output/sekaiisan-henro-plan-graph.json")
+    plan_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
+    plan_parser.add_argument("--output", default="output/sekaiisan-henro-plan-graph.json")
     return parser
 
 
@@ -225,15 +213,6 @@ def dispatch(args: argparse.Namespace) -> dict:
         return arukihenro_attribution.run_attribution(
             args.arukihenro, args.input, corridors_path, args.buffer_m,
             args.output, args.edge_layer)
-    if args.command == "plan":
-        points = [tuple(float(part) for part in pair.split(","))
-                  for pair in args.points]
-        for pair in points:
-            if len(pair) != 2:
-                raise ValueError("each --points entry must be 'lon,lat': %r" % (pair,))
-        return planner.run_plan(
-            args.input, points, args.elevation_db, args.elevation_bin,
-            args.sample_interval_m, args.snap_max_m, args.output, args.geojson)
     if args.command == "export-plan-graph":
         return planner.run_export_plan_graph(args.input, args.output)
     return fetch(args.data_dir, args.timeout)
@@ -336,15 +315,8 @@ def main(argv: list[str] | None = None) -> int:
                   ("%.3f" % cc["jaccard"]) if cc["jaccard"] is not None else "n/a",
                   args.output))
     elif args.command == "plan":
-        path = result["path"]
-        elev = result["elevation"]
-        time_est = result.get("time_estimate") or {}
-        print("plan: status=%s length_km=%s gain_m=%s loss_m=%s "
-              "min_m=%s max_m=%s naismith_h=%s output=%s" % (
-                  path["status"], path.get("length_km"),
-                  elev.get("gain_m"), elev.get("loss_m"),
-                  elev.get("min_m"), elev.get("max_m"),
-                  time_est.get("hours_naismith"), args.output))
+        print("plan: legacy Python day-plan removed; use the interactive "
+              "planner in map-preview (export-plan-graph provides its graph)")
     elif args.command == "export-plan-graph":
         print("export-plan-graph: nodes=%d traversal_edges=%d synthetic_joins=%d "
               "output=%s" % (len(result["nodes"]), len(result["traversal_edges"]),

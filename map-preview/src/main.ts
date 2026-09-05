@@ -3,10 +3,9 @@ import maplibregl, {
   type Map as MapLibreMap,
   type MapGeoJSONFeature,
 } from "maplibre-gl";
-import type { FeatureCollection, Geometry, Position } from "geojson";
+import type { Geometry, Position } from "geojson";
 import { createMap, type HenroLayers } from "./map";
 import { prefLabel, type TrailRoute } from "./trail";
-import { renderElevationProfile } from "./profile";
 import { setupPlanMode } from "./plan-mode";
 
 function toggleLayer(
@@ -435,27 +434,15 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
   );
 
   const sekaiisanControls = document.getElementById("sekaiisan-controls");
-  const disableSekaiisanInput = (id: string): void => {
-    const el = document.getElementById(id) as HTMLInputElement | null;
-    if (el) {
-      el.disabled = true;
-      el.checked = false;
+  if (!henro.sekaiisanAvailable) {
+    for (const input of sekaiisanControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
     }
-  };
-  if (!henro.sekaiisanAvailable) disableSekaiisanInput("toggle-sekaiisan-routes");
-  if (!henro.planAvailable) disableSekaiisanInput("toggle-sekaiisan-plan");
-  if (!henro.sekaiisanAvailable && !henro.planAvailable) {
     sekaiisanControls?.classList.add("disabled");
   }
   bindToggle("toggle-sekaiisan-routes", (v) =>
     toggleLayer(map, [henro.sekaiisanRouteCasing, henro.sekaiisanRoute], v),
-  );
-  bindToggle("toggle-sekaiisan-plan", (v) =>
-    toggleLayer(
-      map,
-      [henro.planRouteCasing, henro.planRoute, henro.planWaypoints, henro.planWaypointLabels],
-      v,
-    ),
   );
 
   const mizutaniControls = document.getElementById("mizutani-controls");
@@ -804,17 +791,9 @@ function setupClickPopup(map: MapLibreMap): void {
 }
 
 function setupPlanProfile(): void {
-  const url = import.meta.env.VITE_PLAN_URL as string | undefined;
   const container = document.getElementById("plan-profile");
-  if (!url || !container) return;
-  fetch(url)
-    .then((r) =>
-      r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
-    )
-    .then((fc) => renderElevationProfile(container, fc as FeatureCollection))
-    .catch((err) => {
-      container.textContent = `plan profile error: ${String(err)}`;
-    });
+  if (!container) return;
+  container.textContent = "（互動規劃時顯示）";
 }
 
 const container = document.getElementById("map");
