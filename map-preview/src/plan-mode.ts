@@ -123,89 +123,99 @@ export function setupPlanMode(map: MapLibreMap): void {
     source.setData(fc);
   };
 
+  const setStatus = (text: string, kind?: "error" | "warn"): void => {
+    status.textContent = text;
+    status.classList.toggle("plan-error", kind === "error");
+    status.classList.toggle("plan-warn", kind === "warn");
+  };
+
   const refresh = async (): Promise<void> => {
-    if (!ready) {
-      status.textContent = "地圖載入中…";
-      return;
-    }
-    if (points.length === 0) {
-      render(emptyCollection());
-      profile.textContent = "（未規劃）";
-      status.textContent = "勾選規劃模式後，點擊地圖加入起點 A";
-      return;
-    }
-    if (points.length === 1) {
-      render(waypointsFc(points));
-      status.textContent = "已加入 A，再點一下加入終點 B（A/B 之間可先點中間點）";
-      return;
-    }
-    if (graphError) {
-      status.textContent = graphError;
-      return;
-    }
-    if (!graph) {
-      status.textContent = "規劃圖尚未載入…";
-      return;
-    }
-    let result;
     try {
-      result = planRoute(graph, points);
-    } catch (err) {
-      status.textContent = String(err);
-      return;
-    }
-    if (result.status === "disconnected") {
-      render(waypointsFc(points));
-      profile.textContent = "disconnected（不同 component，無路徑）";
-      status.textContent = "不同 component：起終點不連通";
-      return;
-    }
+      if (!ready) {
+        setStatus("地圖載入中…");
+        return;
+      }
+      if (points.length === 0) {
+        render(emptyCollection());
+        profile.textContent = "（未規劃）";
+        setStatus("勾選規劃模式後，點擊地圖加入起點 A");
+        return;
+      }
+      if (points.length === 1) {
+        render(waypointsFc(points));
+        setStatus("已加入 A，再點一下加入終點 B（A/B 之間可先點中間點）");
+        return;
+      }
+      if (graphError) {
+        setStatus(graphError, "error");
+        return;
+      }
+      if (!graph) {
+        setStatus("規劃圖尚未載入…", "warn");
+        return;
+      }
+      const result = planRoute(graph, points);
+      if (result.status === "disconnected") {
+        render(waypointsFc(points));
+        profile.textContent = "disconnected（不同 component，無路徑）";
+        setStatus(
+          "不同 component：起終點不在同一連通區塊（官方引導線本身有缺口）。" +
+            "可換點或改用 OHenro 88 網路。",
+          "warn",
+        );
+        return;
+      }
 
-    // Attach per-vertex elevation (Terrain-RGB from the existing PMTiles).
-    const coords3: Array<[number, number] | [number, number, number]> = [];
-    if (sampler) {
-      const elevations = await Promise.all(
-        result.coords.map(([lon, lat]) => sampler.sample(lat, lon)),
+      // Attach per-vertex elevation (Terrain-RGB from the existing PMTiles).
+      const coords3: Array<[number, number] | [number, number, number]> = [];
+      if (sampler) {
+        const elevations = await Promise.all(
+          result.coords.map(([lon, lat]) => sampler.sample(lat, lon)),
+        );
+        result.coords.forEach(([lon, lat], i) => {
+          const elev = elevations[i];
+          coords3.push(elev === null ? [lon, lat] : [lon, lat, elev]);
+        });
+      } else {
+        result.coords.forEach(([lon, lat]) => coords3.push([lon, lat]));
+      }
+
+      const stats = buildElevationProfile(coords3 as Position[]);
+      const routeFeature: Feature = {
+        type: "Feature",
+        properties: {
+          kind: "planned_route",
+          status: result.status,
+          length_m: Math.round((result.lengthM ?? 0) * 1000) / 1000,
+          gain_m: stats ? Math.round(stats.gainM) : undefined,
+          loss_m: stats ? Math.round(stats.lossM) : undefined,
+          min_m: stats?.minM,
+          max_m: stats?.maxM,
+        },
+        geometry: { type: "LineString", coordinates: coords3 },
+      };
+      const fc: FeatureCollection = {
+        type: "FeatureCollection",
+        features: [
+          routeFeature,
+          ...result.points.map((p) => ({
+            type: "Feature" as const,
+            properties: { kind: "waypoint" as const, index: p.index },
+            geometry: { type: "Point" as const, coordinates: [p.lon, p.lat] },
+          })),
+        ],
+      };
+      render(fc);
+      renderElevationProfile(profile, fc);
+      const km = ((result.lengthM ?? 0) / 1000).toFixed(1);
+      setStatus(
+        `${km} km · ↑${stats ? Math.round(stats.gainM) : "?"} ` +
+          `↓${stats ? Math.round(stats.lossM) : "?"} m（再點可加中間點；清除重來）`,
       );
-      result.coords.forEach(([lon, lat], i) => {
-        const elev = elevations[i];
-        coords3.push(elev === null ? [lon, lat] : [lon, lat, elev]);
-      });
-    } else {
-      result.coords.forEach(([lon, lat]) => coords3.push([lon, lat]));
+    } catch (err) {
+      console.error("interactive plan failed:", err);
+      setStatus(`規劃失敗：${String(err)}`, "error");
     }
-
-    const stats = buildElevationProfile(coords3 as Position[]);
-    const routeFeature: Feature = {
-      type: "Feature",
-      properties: {
-        kind: "planned_route",
-        status: result.status,
-        length_m: Math.round((result.lengthM ?? 0) * 1000) / 1000,
-        gain_m: stats ? Math.round(stats.gainM) : undefined,
-        loss_m: stats ? Math.round(stats.lossM) : undefined,
-        min_m: stats?.minM,
-        max_m: stats?.maxM,
-      },
-      geometry: { type: "LineString", coordinates: coords3 },
-    };
-    const fc: FeatureCollection = {
-      type: "FeatureCollection",
-      features: [
-        routeFeature,
-        ...result.points.map((p) => ({
-          type: "Feature" as const,
-          properties: { kind: "waypoint" as const, index: p.index },
-          geometry: { type: "Point" as const, coordinates: [p.lon, p.lat] },
-        })),
-      ],
-    };
-    render(fc);
-    renderElevationProfile(profile, fc);
-    const km = ((result.lengthM ?? 0) / 1000).toFixed(1);
-    status.textContent =
-      `${km} km · ↑${stats ? Math.round(stats.gainM) : "?"} ` +
-      `↓${stats ? Math.round(stats.lossM) : "?"} m（再點可加中間點；清除重來）`;
   };
 
   map.on("click", (e) => {
@@ -248,17 +258,18 @@ export function setupPlanMode(map: MapLibreMap): void {
     graphError = null;
     points.length = 0;
     void refresh();
-    status.textContent = "載入規劃圖…";
+    setStatus("載入規劃圖…", "warn");
     fetch(url)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((g) => {
         graph = g as PlanGraph;
-        status.textContent =
-          `${currentNetworkLabel()} 規劃圖已載入；勾選規劃模式後點擊地圖加入 A`;
+        setStatus(
+          `${currentNetworkLabel()} 規劃圖已載入；勾選規劃模式後點擊地圖加入 A`,
+        );
       })
       .catch((err) => {
         graphError = `規劃圖載入失敗: ${String(err)}`;
-        status.textContent = graphError;
+        setStatus(graphError, "error");
       });
   };
   networkSelect?.addEventListener("change", () => {
@@ -268,7 +279,7 @@ export function setupPlanMode(map: MapLibreMap): void {
 
   const firstUrl = selectedUrl();
   if (!firstUrl) {
-    status.textContent = "未設定規劃圖 URL（VITE_PLAN_GRAPH_URL），互動規劃停用";
+    setStatus("未設定規劃圖 URL（VITE_PLAN_GRAPH_URL），互動規劃停用", "error");
     return;
   }
   loadGraph(firstUrl);
