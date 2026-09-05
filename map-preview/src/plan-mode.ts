@@ -1,8 +1,10 @@
 import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 import type { Feature, FeatureCollection, Position } from "geojson";
-import { planRoute, type PlanGraph } from "./planner";
+import { planRoute, routeEdges, snapPoint, type PlanGraph } from "./planner";
 import { TerrainElevationSampler } from "./terrain";
 import { buildElevationProfile, renderElevationProfile } from "./profile";
+
+const SNAP_MAX_M = 500;
 
 const SEKAIISAN_GRAPH_URL = import.meta.env.VITE_PLAN_GRAPH_URL as string | undefined;
 const OHENRO88_GRAPH_URL = import.meta.env.VITE_OHENRO88_PLAN_GRAPH_URL as string | undefined;
@@ -220,7 +222,27 @@ export function setupPlanMode(map: MapLibreMap): void {
 
   map.on("click", (e) => {
     if (!toggle.checked || !ready) return;
-    points.push({ lon: e.lngLat.lng, lat: e.lngLat.lat });
+    if (!graph) {
+      setStatus("規劃圖尚未載入…", "warn");
+      return;
+    }
+    // Snap the click to the nearest route edge before adding the waypoint, so
+    // the marker lands on the route (and points outside the snap range are
+    // rejected instead of left floating off the route).
+    const snap = snapPoint(routeEdges(graph), e.lngLat.lng, e.lngLat.lat);
+    if (!snap) {
+      setStatus("找不到可吸附的路線", "error");
+      return;
+    }
+    if (snap.distanceM > SNAP_MAX_M) {
+      setStatus(
+        `此點離路線 ${snap.distanceM.toFixed(0)}m（上限 ${SNAP_MAX_M}m），` +
+          `未加入；請點在路線 ${SNAP_MAX_M}m 內`,
+        "warn",
+      );
+      return;
+    }
+    points.push({ lon: snap.projection[0], lat: snap.projection[1] });
     void refresh();
   });
 
