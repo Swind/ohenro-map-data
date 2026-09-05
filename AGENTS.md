@@ -191,16 +191,19 @@ Python Temple 1→2→5 結果一致 8104m）。瀏覽器高程沿路徑頂點�
 z14 ~12m 解析，DEM10 基底）採樣；「規劃高度剖面」面板即時更新。
 
 OHenro 88 互動規劃 graph：`python3 scripts/build-ohenro88-plan-graph.py`
-（`--proximity-m` 預設 15、`--join-m` 預設 90）把
+（`--proximity-m` 預設 3、`--join-m` 預設 90）把
 `output/ohenro88-routes/ohenro88-routes.geojson`（App 抽取的 172 條
 LineString/MultiLineString，`[lon,lat,elev]`，獨立數位化、大量重疊）建成
 `output/ohenro88-routes/ohenro88-plan-graph.json`，schema 與
 `export-plan-graph` 相同（map-preview 的 `planner.ts` 直接可用）：
-頂點 15m proximity-merge（重疊路線合一拓撲）→ 平行邊 dedupe（取最短）→
-degree-2 chain 收縮成單一長邊（保留完整幾何）→ 每個 route 端點以
-`--join-m` 接合到**唯一最近**的邊（落在邊內部就切邊），橋接 App 線路本身
-的缺口（端點中位數隔 360m、內部重疊才相接）。產出 1 component
-（2,393 nodes / 3,300 edges / 723 joins / ~2.5MB）。map-preview「互動規劃」
+頂點 3m proximity-merge（只把真正重疊的頂點合一——**merge 半徑不能大**，
+否則 single-linkage 會沿密集路線鏈式合併成橫跨數公里的巨 cluster，使 edge
+from/to 標籤對不上幾何、畫線離線）→ 平行邊 dedupe（取最短）→ degree-2
+chain 收縮成單一長邊（保留完整幾何）→ 每個 route 端點以 `--join-m` 接合到
+**唯一最近**的邊（落在邊內部就切邊），橋接 App 線路本身的缺口（端點中位數
+隔 360m、內部重疊才相接）。產出 1 component
+（7,534 nodes / 11,579 edges / 765 joins / ~4.5MB；Temple 1→5 實測 ~9.5km，
+依序經過 2/3 寺，0 條 edge from/to 錯位）。map-preview「互動規劃」
 有網路下拉（世界遺産協議会 / OHenro 88），切換即載入對應 graph 並清除點。
 OHenro 88 為 App 自身路線的 routing reference，非官方／導航保證。
 

@@ -84,6 +84,20 @@ class TestBuild(unittest.TestCase):
             self.assertNotEqual(e["from"], e["to"])
             self.assertGreaterEqual(len(e["coordinates"]), 2)
 
+    def test_collapsed_edge_direction_matches_node_ids(self):
+        # A collapsed edge's coordinates must start at `from` and end at `to`
+        # (within the merge radius); a reversed concatenation makes the drawn
+        # path jump off the route.
+        seg = _seg("R1", _line(133.0, 133.01))
+        graph = _build([seg], 0.0, 15.0)
+        node_coords = {n["id"]: (n["lon"], n["lat"]) for n in graph["nodes"]}
+        for e in graph["traversal_edges"]:
+            c0 = e["coordinates"][0]
+            cn = e["coordinates"][-1]
+            for coord, nid in ((c0, e["from"]), (cn, e["to"])):
+                self.assertAlmostEqual(coord[0], node_coords[nid][0], delta=0.0005)
+                self.assertAlmostEqual(coord[1], node_coords[nid][1], delta=0.0005)
+
     def test_deterministic_output(self):
         segs = [
             _seg("A", _line(133.0, 133.005)),

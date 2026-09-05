@@ -212,10 +212,10 @@ def _simplify(edges: list[dict], keep_nodes: set,
             keep_nodes.add(node)  # both edges loop back to the same neighbour
             continue
         coords1 = list(e1["coordinates"])
-        if e1["from"] != node:
+        if e1["from"] == node:
             coords1 = coords1[::-1]  # orient to end at `node` (a -> node)
         coords2 = list(e2["coordinates"])
-        if e2["to"] != node:
+        if e2["to"] == node:
             coords2 = coords2[::-1]  # orient to start at `node` (node -> b)
         path = coords1[:-1] + coords2  # a ... node, node ... b
         cleaned = []
@@ -608,9 +608,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", default="output/ohenro88-routes/ohenro88-routes.geojson")
     parser.add_argument("--output", default="output/ohenro88-routes/ohenro88-plan-graph.json")
-    parser.add_argument("--proximity-m", type=float, default=15.0,
-                        help="vertex-merge radius (metres); overlapping routes "
-                             "closer than this become one routing topology")
+    parser.add_argument("--proximity-m", type=float, default=3.0,
+                        help="vertex-merge radius (metres); only near-identical "
+                             "overlapping vertices merge (a larger radius lets "
+                             "single-linkage clusters chain along dense routes)")
     parser.add_argument("--join-m", type=float, default=90.0,
                         help="route-endpoint proximity join radius (metres); "
                              "bridges real gaps in the app linework")
