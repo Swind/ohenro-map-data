@@ -9,6 +9,8 @@ COORDS = {
     "B": (133.001, 33.0),
     "C": (133.002, 33.0),
     "D": (133.0005, 33.0007),
+    "E": (133.0005, 33.0),
+    "F": (133.0015, 33.0),
 }
 
 
@@ -74,6 +76,67 @@ class TestExportPlanGraph(unittest.TestCase):
             self.assertEqual(len(edge["coordinates"]), 2)
         for join in compact["synthetic_joins"]:
             self.assertEqual(len(join["coordinates"]), 2)
+
+    def test_bridge_connects_overlapping_disconnected_lines(self):
+        # Two disconnected edges whose interiors pass within ~3m of each other
+        # get bridged into one component when bridge_m is large enough.
+        e1 = _te("e1", "A", "C")  # A(133.0,33.0) -> C(133.002,33.0)
+        # e2 runs 3m south of the A-C line, crossing it inside.
+        e2_coords = [
+            [133.0005, 33.0 - 0.00003], [133.0015, 33.0 - 0.00003],
+        ]
+        ax, _ = projection.project_point(e2_coords[0][0], e2_coords[0][1])
+        bx, _ = projection.project_point(e2_coords[1][0], e2_coords[1][1])
+        e2 = {
+            "id": "e2", "from": "E", "to": "F",
+            "length_m": bx - ax,
+            "coordinates": e2_coords,
+            "source_edge_id": "SHE_e2", "provenance": {},
+        }
+        graph = _graph([e1, e2])
+
+        merged = planner.build_plan_graph(graph, bridge_m=5.0)
+        parent = {n["id"]: n["id"] for n in merged["nodes"]}
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        def union(x, y):
+            rx, ry = find(x), find(y)
+            if rx != ry:
+                parent[ry] = rx
+
+        for edge in merged["traversal_edges"]:
+            union(edge["from"], edge["to"])
+        for join in merged["synthetic_joins"]:
+            union(join["from"], join["to"])
+        roots = {find(n["id"]) for n in merged["nodes"]}
+        self.assertEqual(len(roots), 1, "overlapping lines should be bridged")
+
+        # Without bridging they stay disconnected.
+        plain = planner.build_plan_graph(graph, bridge_m=0.0)
+        parent2 = {n["id"]: n["id"] for n in plain["nodes"]}
+
+        def find2(x):
+            while parent2[x] != x:
+                parent2[x] = parent2[parent2[x]]
+                x = parent2[x]
+            return x
+
+        def union2(x, y):
+            rx, ry = find2(x), find2(y)
+            if rx != ry:
+                parent2[ry] = rx
+
+        for edge in plain["traversal_edges"]:
+            union2(edge["from"], edge["to"])
+        for join in plain["synthetic_joins"]:
+            union2(join["from"], join["to"])
+        roots2 = {find2(n["id"]) for n in plain["nodes"]}
+        self.assertEqual(len(roots2), 2, "without bridging they stay separate")
 
 
 if __name__ == "__main__":

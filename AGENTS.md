@@ -165,10 +165,16 @@ median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
 瀏覽器路由圖 `output/sekaiisan-henro-plan-graph.json`（nodes +
 `traversal_edges` + `synthetic_joins` 的 geometry/weight，source edges 與
 provenance 移除），供 map-preview 的**互動規劃模式**直接抓取在本地跑
-Dijkstra（`map-preview/src/planner.ts`，與 Python 同演算法：equirectangular
-snap、virtual sub-edges、simple-path Dijkstra、逐 leg stitching，實測與
-Python Temple 1→2→5 結果一致 8104m）。瀏覽器高程沿路徑頂點用既有
-`shikoku-terrain.pmtiles` 的 Terrain-RGB（`map-preview/src/terrain.ts`，
+Dijkstra。精確管線只連 bit-exact 頂點與零距離 T 接點，跨 KML 但座標不完全
+相同的重疊線會留在不同 component（53 個）；因此 export 內建
+`--bridge-m`（預設 5m）**跨 component 橋接**：幾何相距 ≤5m 的邊對在最近
+接觸點切開、用 synthetic join 接上（只改 plan-graph，**不動** source
+edges / anchored graph，exact 拓撲仍為權威）。實測 53 components → 2
+（largest 2070 nodes），Temple 1→88（原不同 component）現可規劃 ~39km。
+`--bridge-m 0` 可停用。瀏覽器端演算法（`map-preview/src/planner.ts`）與
+Python 相同：equirectangular snap、virtual sub-edges、simple-path Dijkstra、
+逐 leg stitching（實測與 Temple 1→2→5 結果一致 8104m）。高程沿路徑頂點
+用既有 `shikoku-terrain.pmtiles` 的 Terrain-RGB（`map-preview/src/terrain.ts`，
 z14 ~12m 解析，DEM10 基底）採樣；「規劃高度剖面」面板即時更新。
 
 OHenro 88 互動規劃 graph：`python3 scripts/build-ohenro88-plan-graph.py`

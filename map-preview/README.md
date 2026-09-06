@@ -131,7 +131,7 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_MIN88_LODGING_URL` | `/data/shikoku-min88-lodging.pmtiles` | min88 住宿 PMTiles（`lodging` vector layer）；留空停用 |
 | `VITE_MIZUTANI_HENRO_URL` | `/data/shikoku-mizutani-henro.pmtiles` | 水谷遍路導覽圖 PMTiles（routes + POIs layers）；留空停用 |
 | `VITE_SEKAIISAN_HENRO_URL` | `/data/shikoku-sekaiisan-henro.geojson` | 四国遍路世界遺産登録推進協議会（88sekaiisan.org）引導線 GeoJSON（source edges）；**是原始官方 source linework，不是推論 corridor / 導航保證**；留空停用 |
-| `VITE_PLAN_GRAPH_URL` | `/data/sekaiisan-henro-plan-graph.json` | 互動規劃用的 compact routing graph（`output/sekaiisan-henro-plan-graph.json`，由 `python3 -m sekaiisan_henro export-plan-graph` 產生；~3.5MB）。規劃模式在瀏覽器直接抓這份做本地 Dijkstra；留空停用互動規劃 |
+| `VITE_PLAN_GRAPH_URL` | `/data/sekaiisan-henro-plan-graph.json` | 互動規劃用的 compact routing graph（`output/sekaiisan-henro-plan-graph.json`，由 `python3 -m sekaiisan_henro export-plan-graph` 產生；內建 `--bridge-m` 5m 跨 component 橋接重疊線，53 components → 2，~3.5MB）。規劃模式在瀏覽器直接抓這份做本地 Dijkstra；留空停用互動規劃 |
 | `VITE_OHENRO88_PLAN_GRAPH_URL` | `/data/ohenro88-plan-graph.json` | OHenro 88 互動規劃 graph（`output/ohenro88-routes/ohenro88-plan-graph.json`，由 `python3 scripts/build-ohenro88-plan-graph.py` 產生；3m proximity-merge + chain collapse + 端點 join，~4.5MB）。規劃模式可用下拉切換網路；留空停用該網路 |
 | `VITE_ARUKIHENRO_URL` | `/data/arukihenro-routes.json` | 歩き遍路 routes 正規化 JSON（`output/arukihenro-routes.json`，~5MB inline GeoJSON）。**ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**；留空停用 |
 | `VITE_HENRO_HELPER_URL` | `/data/henro-helper-routes.geojson` | Henro Helper（com.henrohelper100.app）路線 GeoJSON（`output/henro-helper-routes/henro-helper-routes.geojson`，自 APK Dart AOT literals 抽出，~11MB）。保留 App 自家分類（road/trail/special/connection/itinerary），11 個 layer 可獨立開關；留空停用 |

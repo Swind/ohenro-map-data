@@ -178,6 +178,9 @@ def build_parser() -> argparse.ArgumentParser:
         help="export the compact browser-routing graph for the map preview")
     plan_parser.add_argument("--input", default="output/sekaiisan-henro-graph-anchors.json")
     plan_parser.add_argument("--output", default="output/sekaiisan-henro-plan-graph.json")
+    plan_parser.add_argument("--bridge-m", type=float, default=5.0,
+                             help="bridge overlapping lines closer than this "
+                                  "(metres) with synthetic joins; 0 disables")
     return parser
 
 
@@ -214,7 +217,7 @@ def dispatch(args: argparse.Namespace) -> dict:
             args.arukihenro, args.input, corridors_path, args.buffer_m,
             args.output, args.edge_layer)
     if args.command == "export-plan-graph":
-        return planner.run_export_plan_graph(args.input, args.output)
+        return planner.run_export_plan_graph(args.input, args.output, args.bridge_m)
     return fetch(args.data_dir, args.timeout)
 
 
@@ -319,8 +322,10 @@ def main(argv: list[str] | None = None) -> int:
               "planner in map-preview (export-plan-graph provides its graph)")
     elif args.command == "export-plan-graph":
         print("export-plan-graph: nodes=%d traversal_edges=%d synthetic_joins=%d "
-              "output=%s" % (len(result["nodes"]), len(result["traversal_edges"]),
-                             len(result["synthetic_joins"]), args.output))
+              "bridged_edges=%d output=%s" % (
+                  len(result["nodes"]), len(result["traversal_edges"]),
+                  len(result["synthetic_joins"]),
+                  result["accounting"]["bridged_edges"], args.output))
     else:
         print("archive: files=%d sha256=%s new_snapshot=%s" % (result["files"], result["sha256"], result["new_snapshot"]))
     return 0
