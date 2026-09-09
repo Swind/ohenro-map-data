@@ -83,6 +83,10 @@ output/ohenro88-routes/
 # Extracted web route reference (rebuilt by build_web_reference.py)
 output/ohenro-no-akari-routes/
 
+# Henro Hub (henro.app) route reference (rebuilt by
+# scripts/build-henrohub-routes.py from the henrohub release planner file)
+output/henrohub-routes/
+
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
 source/GSI/
 

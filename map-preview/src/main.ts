@@ -304,6 +304,90 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     applyOhenro88Visibility();
   });
 
+  const henrohubControls = document.getElementById("henrohub-controls");
+  if (!henro.henrohubAvailable) {
+    for (const input of henrohubControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    henrohubControls?.classList.add("disabled");
+  }
+  const henrohubRouteCheckboxes = new Map<string, HTMLInputElement>();
+  const henrohubGroupBoxes = new Map<string, Set<HTMLInputElement>>();
+  const henrohubGroupMasters = new Map<string, HTMLInputElement>();
+  // henrohub roles visible by default: main + alternative only (connector /
+  // fallback start hidden so the default map is not cluttered by the
+  // network-bridging and fallback segments).
+  const HENROHUB_DEFAULT_ROLES = new Set([
+    "canonical_shikoku88",
+    "unique_alternative",
+  ]);
+  const applyHenrohubVisibility = (): void => {
+    const masterEl = document.getElementById("toggle-henrohub") as HTMLInputElement | null;
+    const labelsEl = document.getElementById("toggle-henrohub-labels") as HTMLInputElement | null;
+    if (!masterEl || !labelsEl) return;
+    const master = masterEl.checked;
+    const labels = labelsEl.checked;
+    const visibleRouteIds: string[] = [];
+    for (const [routeId, checkbox] of henrohubRouteCheckboxes) {
+      if (checkbox.checked) visibleRouteIds.push(routeId);
+    }
+    toggleLayer(map, [henro.henrohubCasing, henro.henrohubLine], master);
+    toggleLayer(map, [henro.henrohubLabel], master && labels);
+    const filter: FilterSpecification = ["in", ["get", "route_id"], ["literal", visibleRouteIds]];
+    for (const id of [henro.henrohubCasing, henro.henrohubLine, henro.henrohubLabel]) {
+      if (map.getLayer(id)) map.setFilter(id, filter);
+    }
+  };
+  const syncHenrohubGroupMaster = (role: string): void => {
+    const master = henrohubGroupMasters.get(role);
+    const boxes = henrohubGroupBoxes.get(role);
+    if (!master || !boxes) return;
+    const all = boxes.size > 0 && [...boxes].every((b) => b.checked);
+    master.checked = all;
+    master.indeterminate = !all && [...boxes].some((b) => b.checked);
+  };
+  bindToggle("toggle-henrohub", applyHenrohubVisibility);
+  bindToggle("toggle-henrohub-labels", applyHenrohubVisibility);
+  void henro.henrohubReady.then((groups) => {
+    const container = document.getElementById("henrohub-routes");
+    if (!container) return;
+    for (const group of groups) {
+      const details = document.createElement("details");
+      const summary = document.createElement("summary");
+      const groupDefault = HENROHUB_DEFAULT_ROLES.has(group.role);
+      const master = document.createElement("input");
+      master.type = "checkbox";
+      master.checked = groupDefault;
+      master.addEventListener("change", () => {
+        const boxes = henrohubGroupBoxes.get(group.role) ?? new Set();
+        for (const box of boxes) box.checked = master.checked;
+        applyHenrohubVisibility();
+      });
+      summary.append(master, ` ${group.label} (${group.routes.length})`);
+      details.append(summary);
+      const boxes = new Set<HTMLInputElement>();
+      henrohubGroupBoxes.set(group.role, boxes);
+      henrohubGroupMasters.set(group.role, master);
+      for (const route of group.routes) {
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = groupDefault;
+        checkbox.addEventListener("change", () => {
+          syncHenrohubGroupMaster(group.role);
+          applyHenrohubVisibility();
+        });
+        henrohubRouteCheckboxes.set(route.routeId, checkbox);
+        boxes.add(checkbox);
+        label.append(checkbox, ` ${route.name}`);
+        details.append(label);
+      }
+      container.append(details);
+    }
+    applyHenrohubVisibility();
+  });
+
   const henroHelperCheckboxes = new Map<string, HTMLInputElement>();
   const henroHelperDayCheckboxes = new Map<string, Set<HTMLInputElement>>();
   const henroHelperSetMasters = new Map<string, HTMLInputElement>();

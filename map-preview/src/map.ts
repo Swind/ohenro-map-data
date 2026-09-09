@@ -33,6 +33,12 @@ import {
   convertOhenroNoAkari,
   fetchOhenroNoAkari,
 } from "./ohenro-no-akari";
+import {
+  addHenrohubLayers,
+  convertHenrohub,
+  fetchHenrohub,
+  type HenrohubGroup,
+} from "./henrohub";
 
 export interface HenroLayers {
   labels: string[];
@@ -83,6 +89,12 @@ export interface HenroLayers {
   ohenroNoAkariAvailable: boolean;
   ohenroNoAkariCasing: string;
   ohenroNoAkariLine: string;
+  henrohubAvailable: boolean;
+  henrohubReady: Promise<HenrohubGroup[]>;
+  henrohub: HenrohubGroup[];
+  henrohubCasing: string;
+  henrohubLine: string;
+  henrohubLabel: string;
   elevation: ElevationLayers;
 }
 
@@ -410,6 +422,12 @@ export function createMap(container: HTMLElement): {
   let resolveOhenro88: (groups: Ohenro88Group[]) => void = () => undefined;
   const ohenro88Ready = new Promise<Ohenro88Group[]>((resolve) => {
     resolveOhenro88 = resolve;
+  });
+
+  const henrohubGroups: HenrohubGroup[] = [];
+  let resolveHenrohub: (groups: HenrohubGroup[]) => void = () => undefined;
+  const henrohubReady = new Promise<HenrohubGroup[]>((resolve) => {
+    resolveHenrohub = resolve;
   });
 
   const terrainUrl = import.meta.env.VITE_TERRAIN_URL;
@@ -976,6 +994,33 @@ export function createMap(container: HTMLElement): {
         }
       })();
     }
+
+    // Henro Hub (henro.app) routes: Henro Hub's own digitised network, grouped
+    // by route_role. Fetched as a single inline GeoJSON source (13.5MB). This
+    // is NOT the repo's Henro Helper extraction and NOT the official guiding
+    // line. Non-blocking.
+    const henrohubUrl = import.meta.env.VITE_HENROHUB_URL;
+    if (henrohubUrl) {
+      void (async () => {
+        try {
+          const data = await fetchHenrohub(henrohubUrl);
+          const { groups } = convertHenrohub(data);
+          const beforeId = findInsertionPoint(
+            map,
+            ["henro-route-casing", "sekaiisan-henro-route-casing", "ohenro88-casing"],
+            LABEL_FALLBACK,
+          );
+          addHenrohubLayers(map, data, beforeId);
+          henrohubGroups.push(...groups);
+        } catch (error) {
+          console.error("henrohub load error:", error);
+        } finally {
+          resolveHenrohub(henrohubGroups);
+        }
+      })();
+    } else {
+      resolveHenrohub(henrohubGroups);
+    }
   });
 
   const henro: HenroLayers = {
@@ -1027,6 +1072,12 @@ export function createMap(container: HTMLElement): {
     ohenroNoAkariAvailable: Boolean(import.meta.env.VITE_OHENRO_NO_AKARI_URL),
     ohenroNoAkariCasing: "ohenro-no-akari-casing",
     ohenroNoAkariLine: "ohenro-no-akari-line",
+    henrohubAvailable: Boolean(import.meta.env.VITE_HENROHUB_URL),
+    henrohubReady,
+    henrohub: henrohubGroups,
+    henrohubCasing: "henrohub-casing",
+    henrohubLine: "henrohub-line",
+    henrohubLabel: "henrohub-label",
     elevation: elevationLayers,
   };
 

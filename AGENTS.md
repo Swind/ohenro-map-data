@@ -162,10 +162,14 @@ median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
 0.468（36→37 最高 0.86、1→2 / 49→50 等 0.00 為審查焦點）。
 
 `python3 -m sekaiisan_henro export-plan-graph` 把 anchored graph 縮減成
-瀏覽器路由圖 `output/sekaiisan-henro-plan-graph.json`（nodes +
-`traversal_edges` + `synthetic_joins` 的 geometry/weight，source edges 與
+瀏覽器路由圖 `output/sekaiisan-henro-plan-graph.json`（schema_version 2，
+**topology/geometry 分離**：`nodes` + `traversal_edges` + `synthetic_joins`
+只含 node/edge 參考與權重、**不含**每邊 vertices，polyline 折點集中在
+`edge_geometry` lookup（`edge_id -> coordinates`），source edges 與
 provenance 移除），供 map-preview 的**互動規劃模式**直接抓取在本地跑
-Dijkstra。精確管線只連 bit-exact 頂點與零距離 T 接點，跨 KML 但座標不完全
+Dijkstra。Dijkstra 層極小（~443KB，2080 nodes / 1744 traversal /
+452 joins），geometry 只在路線選定後被 snapping/繪製時才 materialise。
+精確管線只連 bit-exact 頂點與零距離 T 接點，跨 KML 但座標不完全
 相同的重疊線會留在不同 component（53 個）；因此 export 內建
 `--bridge-m`（預設 5m）**跨 component 橋接**：幾何相距 ≤5m 的邊對在最近
 接觸點切開、用 synthetic join 接上（只改 plan-graph，**不動** source
@@ -173,16 +177,29 @@ edges / anchored graph，exact 拓撲仍為權威）。實測 53 components → 
 （largest 2070 nodes），Temple 1→88（原不同 component）現可規劃 ~39km。
 `--bridge-m 0` 可停用。瀏覽器端演算法（`map-preview/src/planner.ts`）與
 Python 相同：equirectangular snap、virtual sub-edges、simple-path Dijkstra、
-逐 leg stitching（實測與 Temple 1→2→5 結果一致 8104m）。高程沿路徑頂點
+逐 leg stitching（實測與 Temple 1→2→5 結果一致 8104m）。點擊 snapping
+用 `buildSnapIndex`（`planner.ts`）對所有 edge segments 建 ~50m 網格分桶，
+`snapPointIndexed` 只查點擊附近 cell 的 segments，不再逐一掃全圖 edge
+vertices（O(edges×verts) → O(鄰近 segments)）。高程沿路徑頂點
 用既有 `shikoku-terrain.pmtiles` 的 Terrain-RGB（`map-preview/src/terrain.ts`，
 z14 ~12m 解析，DEM10 基底）採樣；「規劃高度剖面」面板即時更新。
+
+互動規劃的 **Export GPX**（`map-preview/src/gpx.ts`）把已規劃路線輸出成
+運動手錶導航用的單一 `<trk>`（只含 track、不含 route、無 `<time>`，避免被
+誤判成已記錄 activity；檔名 `henro-<network>-plan-<km>km.gpx`）。每個
+`trkpt` 帶 `<ele>`：z14 Terrain-RGB 取樣的高程先線性插補缺值（首尾 clamp、
+中間線性），再做 5 點移動平均去假爬升雜訊，最後以保留轉折點的面積抽稀
+依 `maxPoints`（預設 4000）控制點數，避免逼近 Garmin 等 course 點數上限。
+A/B… 中途點（snapped on-route 投影）寫成 `<wpt>`。metadata 註明「規劃結果，
+非官方／導航保證」。
 
 OHenro 88 互動規劃 graph：`python3 scripts/build-ohenro88-plan-graph.py`
 （`--proximity-m` 預設 3、`--join-m` 預設 90）把
 `output/ohenro88-routes/ohenro88-routes.geojson`（App 抽取的 172 條
 LineString/MultiLineString，`[lon,lat,elev]`，獨立數位化、大量重疊）建成
 `output/ohenro88-routes/ohenro88-plan-graph.json`，schema 與
-`export-plan-graph` 相同（map-preview 的 `planner.ts` 直接可用）：
+`export-plan-graph` 相同（schema_version 2，topology/geometry 分離，
+map-preview 的 `planner.ts` 直接可用）：
 頂點 3m proximity-merge（只把真正重疊的頂點合一——**merge 半徑不能大**，
 否則 single-linkage 會沿密集路線鏈式合併成橫跨數公里的巨 cluster，使 edge
 from/to 標籤對不上幾何、畫線離線）→ 平行邊 dedupe（取最短）→ degree-2
@@ -193,6 +210,28 @@ chain 收縮成單一長邊（保留完整幾何）→ 每個 route 端點以 `-
 依序經過 2/3 寺，0 條 edge from/to 錯位）。map-preview「互動規劃」
 有網路下拉（世界遺産協議会 / OHenro 88），切換即載入對應 graph 並清除點。
 OHenro 88 為 App 自身路線的 routing reference，非官方／導航保證。
+
+#### Henro Hub（henro.app）路線網路（靜態比較 + map-preview overlay）
+
+`python3 scripts/build-henrohub-routes.py` 把 Henro Hub（`hub.henro.app`，= `henro.app`）release
+的 planner GeoJSON 轉成 map-preview 可用的 `output/henrohub-routes/henrohub-routes.geojson`
+（1884 條 LineString、~13.5MB、byte-deterministic）。每 feature：`kind=line`、`route_id`
+（`hrn_*`/`shikoku88-*`/`hh26_*`）、`route_role`（`canonical_shikoku88`=main /
+`unique_alternative` / `transition_connector` / `continuity_fallback`）、`route_class`
+（black/red/green/blue/purple/special，著色用）、`route_sets`、可讀 `name`（由 id 解析，
+如 `1 → 2`）、elevation summary。map-preview「Henro Hub」layer 依 `route_role` 分組樹、
+逐條勾選 + master/labels 開關；**預設顯示該 layer，且只顯示 main + alternative**
+（connector/fallback 預設關閉）。**Henro Hub 自家數位化，不是 repo 的 Henro Helper 抽出、
+也非官方引導線**；完整比較見 `reference/henro-hub-comparison.md`。
+
+與 repo 現有資料的重疊：henrohub 網路 ~93.6% 已被 repo 來源覆蓋（henro-helper 86.2% /
+sekaiisan 41.3% / arukihenro 43.2% / ohenro88 33.6% / ohenro-no-akari 42.3%，20m buffer）；
+`hh26_*`（394 條）幾何與 repo henro-helper 幾乎同一份（297/394 <1m）；真正新的只有
+`hrn_*` 自家路線 ~164 km，多為 `unique_alternative`/red-black 繁忙道路替代線（偏 Ehime 西側
+與 bekkaku-20）。其 272 個 sections 覆蓋 85/87 相鄰對（缺 72→73、76→77），且 repo 的 36 對
+`disconnected`/`anchor_review_required` 區間 henrohub 全部有 section（可當 path prior）；
+但小段多為主題式子路線（含繞行/一日遊），非乾淨 temple-to-temple 切割。授權未定
+（商業產品資產，無 ODbL 標示），僅作靜態比較與 QA 參考，**未整合進正式管線**。
 
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
