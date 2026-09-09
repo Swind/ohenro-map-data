@@ -557,8 +557,22 @@ def _build(segs: list[tuple[str, list]], tolerance_m: float,
     for nid in node_coords:
         roots[cfind(nid)] += 1
 
+    # Topology/geometry split (same schema as export-plan-graph): routing
+    # edges carry no per-vertex geometry; polyline vertices live in an
+    # edge_id -> coordinates lookup, materialised only when a chosen route is
+    # drawn or snapped.
+    edge_geometry: dict = {}
+    edge_topo = []
+    for edge in edges:
+        edge_geometry[edge["id"]] = edge["coordinates"]
+        edge_topo.append({k: v for k, v in edge.items() if k != "coordinates"})
+    join_topo = []
+    for join in joins:
+        edge_geometry[join["id"]] = join["coordinates"]
+        join_topo.append({k: v for k, v in join.items() if k != "coordinates"})
+
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "kind": "plan_graph",
         "dataset_id": "ohenro88",
         "projection": {"kind": "equirectangular", "R": R, "lon0": LON0, "lat0": LAT0},
@@ -570,18 +584,22 @@ def _build(segs: list[tuple[str, list]], tolerance_m: float,
                 "parallel edges deduplicated and degree-2 chains collapsed into "
                 "single edges; route endpoints are then joined to their single "
                 "nearest edge within %.0fm (interior joins split the edge) to "
-                "bridge the gaps the linework itself has. Routing reference "
-                "only, not a navigation guarantee." % (proximity_m, tolerance_m),
+                "bridge the gaps the linework itself has. Topology/geometry "
+                "split: edge vertices live in edge_geometry, materialised only "
+                "when a chosen route is drawn. Routing reference only, not a "
+                "navigation guarantee." % (proximity_m, tolerance_m),
         "nodes": [{"id": nid, "lon": node_coords[nid][0],
                    "lat": node_coords[nid][1]}
                   for nid in sorted(node_coords)],
-        "traversal_edges": sorted(edges, key=lambda e: e["id"]),
-        "synthetic_joins": sorted(joins, key=lambda j: j["id"]),
+        "traversal_edges": sorted(edge_topo, key=lambda e: e["id"]),
+        "synthetic_joins": sorted(join_topo, key=lambda j: j["id"]),
+        "edge_geometry": dict(sorted(edge_geometry.items())),
         "accounting": {
             "segments": len(prepared),
             "nodes": len(node_coords),
             "edges": len(edges),
             "synthetic_joins": len(joins),
+            "geometry_points": sum(len(c) for c in edge_geometry.values()),
             "components": len(roots),
             "largest_component_nodes": max(roots.values(), default=0),
         },

@@ -18,16 +18,18 @@ export interface PlanEdge {
   id: string;
   from: string;
   to: string;
-  coordinates: number[][];
   length_m?: number;
   distance_m?: number;
 }
+
+export type EdgeGeometry = Record<string, number[][]>;
 
 export interface PlanGraph {
   kind: "plan_graph";
   nodes: PlanNode[];
   traversal_edges: PlanEdge[];
   synthetic_joins: PlanEdge[];
+  edge_geometry?: EdgeGeometry;
 }
 
 export interface RouteEdge {
@@ -98,23 +100,26 @@ export function lineMeters(coords: number[][]): number {
 
 /** Normalize graph edges to a uniform undirected weighted edge list. */
 export function routeEdges(graph: PlanGraph): RouteEdge[] {
+  const geo = graph.edge_geometry ?? {};
   const edges: RouteEdge[] = [];
   for (const e of graph.traversal_edges) {
+    const coords = geo[e.id] ?? ([[], []] as number[][]);
     edges.push({
       id: e.id,
       from: e.from,
       to: e.to,
       weight: e.length_m ?? 0,
-      coordinates: e.coordinates as [number, number][],
+      coordinates: coords as [number, number][],
     });
   }
   for (const e of graph.synthetic_joins) {
+    const coords = geo[e.id] ?? ([[], []] as number[][]);
     edges.push({
       id: e.id,
       from: e.from,
       to: e.to,
       weight: e.distance_m ?? 0,
-      coordinates: e.coordinates as [number, number][],
+      coordinates: coords as [number, number][],
     });
   }
   return edges;
@@ -176,6 +181,91 @@ export function snapPoint(
         fraction: hit.fraction,
         projection: hit.projection,
       };
+    }
+  }
+  return best;
+}
+
+// --- Spatial index for fast point-to-route snapping -----------------------
+//
+// The routing graph is split into topology + geometry: a chosen route only
+// materialises the polyline vertices it actually draws. Snapping still needs
+// to find the nearest route edge to a click, but scanning every vertex of
+// every edge is O(edges x vertices). Instead we bucket edge segments into a
+// fixed grid (cell ~50m in the shared equirectangular metric), so a click
+// only inspects segments in the small set of overlapping cells.
+
+interface GridSegment {
+  edge: RouteEdge;
+  aIdx: number;
+  a: [number, number];
+  b: [number, number];
+}
+
+export interface SnapIndex {
+  cellSize: number; // metres
+  cells: Map<string, GridSegment[]>;
+  edges: RouteEdge[];
+}
+
+export function buildSnapIndex(edges: RouteEdge[], cellSize = 50): SnapIndex {
+  const cells = new Map<string, GridSegment[]>();
+  for (const edge of edges) {
+    const pts = edge.coordinates;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const a = [pts[i][0], pts[i][1]] as [number, number];
+      const b = [pts[i + 1][0], pts[i + 1][1]] as [number, number];
+      const seg: GridSegment = { edge, aIdx: i, a, b };
+      const [ax, ay] = xy(a[0], a[1]);
+      const [bx, by] = xy(b[0], b[1]);
+      const minX = Math.min(ax, bx);
+      const maxX = Math.max(ax, bx);
+      const minY = Math.min(ay, by);
+      const maxY = Math.max(ay, by);
+      const cx0 = Math.floor(minX / cellSize);
+      const cx1 = Math.floor(maxX / cellSize);
+      const cy0 = Math.floor(minY / cellSize);
+      const cy1 = Math.floor(maxY / cellSize);
+      for (let gx = cx0; gx <= cx1; gx++) {
+        for (let gy = cy0; gy <= cy1; gy++) {
+          const key = `${gx}:${gy}`;
+          if (!cells.has(key)) cells.set(key, []);
+          cells.get(key)!.push(seg);
+        }
+      }
+    }
+  }
+  return { cellSize, cells, edges };
+}
+
+/** Project a WGS84 point onto the nearest segment in a grid snap index. */
+export function snapPointIndexed(
+  index: SnapIndex,
+  lon: number,
+  lat: number,
+): SnapResult | null {
+  const { cellSize, cells } = index;
+  const p = xy(lon, lat);
+  const gx = Math.floor(p[0] / cellSize);
+  const gy = Math.floor(p[1] / cellSize);
+  const radius = 1;
+  let best: SnapResult | null = null;
+  for (let dx = -radius; dx <= radius; dx++) {
+    for (let dy = -radius; dy <= radius; dy++) {
+      const segs = cells.get(`${gx + dx}:${gy + dy}`);
+      if (!segs) continue;
+      for (const seg of segs) {
+        const hit = projectOnEdge(seg.edge, lon, lat);
+        if (!best || hit.distanceM < best.distanceM) {
+          best = {
+            edgeId: seg.edge.id,
+            distanceM: hit.distanceM,
+            measureM: hit.measureM,
+            fraction: hit.fraction,
+            projection: hit.projection,
+          };
+        }
+      }
     }
   }
   return best;

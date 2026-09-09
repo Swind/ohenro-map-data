@@ -73,9 +73,15 @@ class TestExportPlanGraph(unittest.TestCase):
             self.assertIn("lon", node)
             self.assertIn("lat", node)
         for edge in compact["traversal_edges"]:
-            self.assertEqual(len(edge["coordinates"]), 2)
+            self.assertNotIn("coordinates", edge)
+            self.assertEqual(edge["from"] in node_ids, True)
         for join in compact["synthetic_joins"]:
-            self.assertEqual(len(join["coordinates"]), 2)
+            self.assertNotIn("coordinates", join)
+        self.assertEqual(set(compact["edge_geometry"]),
+                         {"e1", "e2", "SHJ_1"})
+        self.assertEqual(len(compact["edge_geometry"]["e1"]), 2)
+        self.assertEqual(len(compact["edge_geometry"]["SHJ_1"]), 2)
+        self.assertEqual(compact["schema_version"], 2)
 
     def test_bridge_connects_overlapping_disconnected_lines(self):
         # Two disconnected edges whose interiors pass within ~3m of each other

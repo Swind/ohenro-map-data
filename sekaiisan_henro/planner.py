@@ -1,10 +1,13 @@
 """Compact browser-routing graph export for the 88sekaiisan effective graph.
 
 Consumes the Phase 3 ``anchored_route_graph`` (``build-anchors`` output) and
-reduces it to exactly what the map-preview client-side planner needs: node
-coordinates plus undirected weighted edges with full geometry. Source ``edges``
-and provenance stay out; routing runs only over ``traversal_edges`` (weight =
-``length_m``) + ``synthetic_joins`` (weight = ``distance_m``).
+reduces it to exactly what the map-preview client-side planner needs. The
+exported plan graph splits **topology from geometry**: routing runs only over
+``traversal_edges`` (weight = ``length_m``) + ``synthetic_joins`` (weight =
+``distance_m``), which carry node references but NO per-vertex coordinates;
+the polyline geometry lives in a separate ``edge_geometry`` lookup
+(``edge_id -> coordinates``) that is consulted only when a chosen route is
+snapped or drawn. Source ``edges`` and provenance stay out.
 
 The exact 88sekaiisan pipeline connects only bit-exact shared vertices and
 zero-distance T-junctions, so independently digitised lines that overlap in
@@ -294,30 +297,50 @@ def build_plan_graph(graph: dict, bridge_m: float = 5.0) -> dict:
         for node in bridge_nodes:
             node_coords[node["id"]] = [node["lon"], node["lat"]]
 
+    # Split topology from geometry: routing edges carry no per-vertex geometry;
+    # the drawing/snapping geometry lives in a separate edge_id -> coordinates
+    # lookup. This keeps the routing graph small (Dijkstra + node snapping
+    # never touch polyline vertices) and defers geometry materialisation until
+    # a chosen route actually needs to be drawn.
+    edge_geometry: dict = {}
+    topo = []
+    for edge in traversal:
+        edge_geometry[edge["id"]] = edge["coordinates"]
+        topo.append({k: v for k, v in edge.items() if k != "coordinates"})
+    join_topo = []
+    for join in joins:
+        edge_geometry[join["id"]] = join["coordinates"]
+        join_topo.append({k: v for k, v in join.items() if k != "coordinates"})
+
     node_ids = sorted({
-        nid for edge in traversal for nid in (edge["from"], edge["to"])
-    } | {nid for join in joins for nid in (join["from"], join["to"])})
+        nid for edge in topo for nid in (edge["from"], edge["to"])
+    } | {nid for join in join_topo for nid in (join["from"], join["to"])})
     nodes = [{"id": nid, "lon": node_coords[nid][0], "lat": node_coords[nid][1]}
              for nid in node_ids]
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "kind": "plan_graph",
         "dataset_id": graph["dataset_id"],
         "snapshot_sha256": graph["snapshot_sha256"],
         "projection": dict(graph["projection"]),
         "limitation": graph["limitation"],
-        "note": "compact browser-routing graph: nodes + traversal_edges + "
-                "synthetic_joins only, for the map-preview client-side planner. "
-                "Overlapping lines within %.0fm are bridged with synthetic "
-                "joins (browser-only; the exact topology stays authoritative)."
-                % bridge_m,
+        "note": "browser-routing graph with topology/geometry split: nodes + "
+                "topology edges (no per-edge vertices) + edge_geometry lookup "
+                "(edge_id -> coordinates, used only for snapping and drawing). "
+                "The Dijkstra layer is tiny; geometry is materialised only when "
+                "a chosen route is drawn. Overlapping lines within %.0fm are "
+                "bridged with synthetic joins (browser-only; the exact topology "
+                "stays authoritative)." % bridge_m,
         "nodes": nodes,
-        "traversal_edges": sorted(traversal, key=lambda e: e["id"]),
-        "synthetic_joins": sorted(joins, key=lambda j: j["id"]),
+        "traversal_edges": sorted(topo, key=lambda e: e["id"]),
+        "synthetic_joins": sorted(join_topo, key=lambda j: j["id"]),
+        "edge_geometry": dict(sorted(edge_geometry.items())),
         "accounting": {
             "bridge_m": bridge_m,
             "bridged_edges": sum(
                 1 for e in traversal if e["id"].startswith("OHE_")),
+            "geometry_points": sum(
+                len(c) for c in edge_geometry.values()),
             "components": 0,
         },
     }

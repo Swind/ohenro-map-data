@@ -1,8 +1,9 @@
 import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 import type { Feature, FeatureCollection, Position } from "geojson";
-import { planRoute, routeEdges, snapPoint, type PlanGraph } from "./planner";
+import { planRoute, routeEdges, buildSnapIndex, snapPointIndexed, type PlanGraph, type SnapIndex } from "./planner";
 import { TerrainElevationSampler } from "./terrain";
 import { buildElevationProfile, renderElevationProfile } from "./profile";
+import { buildGpx } from "./gpx";
 
 const SNAP_MAX_M = 500;
 
@@ -26,6 +27,21 @@ const LIVE_COLOR = "#2e7d32";
 
 function emptyCollection(): FeatureCollection {
   return { type: "FeatureCollection", features: [] };
+}
+
+const WAYPOINT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const NETWORK_ASCII: Record<string, string> = {
+  sekaiisan: "Sekaiisan",
+  ohenro88: "OHenro88",
+};
+
+interface GpxExportState {
+  coords: Array<{ lon: number; lat: number; ele?: number | null }>;
+  waypoints: Array<{ lon: number; lat: number; name: string }>;
+  networkId: string;
+  networkLabel: string;
+  km: number;
 }
 
 function waypointsFc(points: Array<{ lon: number; lat: number }>): FeatureCollection {
@@ -53,10 +69,13 @@ export function setupPlanMode(map: MapLibreMap): void {
   if (!toggle || !status || !profile) return;
 
   let graph: PlanGraph | null = null;
+  let snapIndex: SnapIndex | null = null;
   let graphError: string | null = null;
   const sampler = TERRAIN_URL ? new TerrainElevationSampler(TERRAIN_URL) : null;
   const points: Array<{ lon: number; lat: number }> = [];
   let ready = false;
+  const exportBtn = document.getElementById("plan-export-gpx") as HTMLButtonElement | null;
+  let exportState: GpxExportState | null = null;
 
   // Source/layers can only be added after the style is loaded; registering
   // them too early throws and would abort the whole setup (no click handler).
@@ -214,6 +233,22 @@ export function setupPlanMode(map: MapLibreMap): void {
         `${km} km · ↑${stats ? Math.round(stats.gainM) : "?"} ` +
           `↓${stats ? Math.round(stats.lossM) : "?"} m（再點可加中間點；清除重來）`,
       );
+      exportState = {
+        coords: coords3.map((c) => ({
+          lon: c[0],
+          lat: c[1],
+          ele: c.length >= 3 ? (c[2] as number) : null,
+        })),
+        waypoints: result.points.map((p) => ({
+          lon: p.lon,
+          lat: p.lat,
+          name: WAYPOINT_LETTERS[p.index] ?? String(p.index),
+        })),
+        networkId: networkSelect?.value ?? "plan",
+        networkLabel: currentNetworkLabel(),
+        km: Number(km),
+      };
+      if (exportBtn) exportBtn.disabled = false;
     } catch (err) {
       console.error("interactive plan failed:", err);
       setStatus(`規劃失敗：${String(err)}`, "error");
@@ -228,8 +263,14 @@ export function setupPlanMode(map: MapLibreMap): void {
     }
     // Snap the click to the nearest route edge before adding the waypoint, so
     // the marker lands on the route (and points outside the snap range are
-    // rejected instead of left floating off the route).
-    const snap = snapPoint(routeEdges(graph), e.lngLat.lng, e.lngLat.lat);
+    // rejected instead of left floating off the route). A cached grid index
+    // over edge segments keeps this O(nearby segments) instead of scanning
+    // every edge vertex.
+    if (!snapIndex) {
+      setStatus("規劃圖尚未載入…", "warn");
+      return;
+    }
+    const snap = snapPointIndexed(snapIndex, e.lngLat.lng, e.lngLat.lat);
     if (!snap) {
       setStatus("找不到可吸附的路線", "error");
       return;
@@ -256,6 +297,32 @@ export function setupPlanMode(map: MapLibreMap): void {
     void refresh();
   });
 
+  // Export the last successful planned route as a single-track GPX for watch
+  // navigation. Uses the same on-route snapped waypoints and the per-vertex
+  // elevation that were already attached to the drawn line.
+  exportBtn?.addEventListener("click", () => {
+    if (!exportState || exportState.coords.length < 2) {
+      setStatus("尚無可匯出的規劃路線（先完成 A/B 規劃）", "warn");
+      return;
+    }
+    const netId = NETWORK_ASCII[exportState.networkId] ?? exportState.networkLabel;
+    const name = `Henro ${netId} ${exportState.km}km`;
+    const desc =
+      `互動規劃結果（${exportState.networkLabel}），約 ${exportState.km} km。` +
+      `本 GPX 是規劃軌跡，非官方／導航保證。`;
+    const gpx = buildGpx(exportState.coords, exportState.waypoints, { name, desc });
+    const blob = new Blob([gpx], { type: "application/gpx+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `henro-${exportState.networkId}-plan-${exportState.km}km.gpx`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus(`已匯出 ${name}（${exportState.coords.length} 點）`, "warn");
+  });
+
   toggle.addEventListener("change", () => void refresh());
 
   // Network selector: choose which route network to plan on. Switching loads
@@ -277,6 +344,7 @@ export function setupPlanMode(map: MapLibreMap): void {
 
   const loadGraph = (url: string): void => {
     graph = null;
+    snapIndex = null;
     graphError = null;
     points.length = 0;
     void refresh();
@@ -285,6 +353,7 @@ export function setupPlanMode(map: MapLibreMap): void {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((g) => {
         graph = g as PlanGraph;
+        snapIndex = buildSnapIndex(routeEdges(graph));
         setStatus(
           `${currentNetworkLabel()} 規劃圖已載入；勾選規劃模式後點擊地圖加入 A`,
         );
