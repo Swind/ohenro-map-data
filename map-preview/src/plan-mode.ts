@@ -9,6 +9,7 @@ const SNAP_MAX_M = 500;
 
 const SEKAIISAN_GRAPH_URL = import.meta.env.VITE_PLAN_GRAPH_URL as string | undefined;
 const OHENRO88_GRAPH_URL = import.meta.env.VITE_OHENRO88_PLAN_GRAPH_URL as string | undefined;
+const HENROHUB_GRAPH_URL = import.meta.env.VITE_HENROHUB_PLAN_GRAPH_URL as string | undefined;
 const TERRAIN_URL = import.meta.env.VITE_TERRAIN_URL as string | undefined;
 
 interface NetworkConfig {
@@ -20,6 +21,7 @@ interface NetworkConfig {
 const NETWORKS: NetworkConfig[] = [
   { id: "sekaiisan", label: "世界遺産協議会", url: SEKAIISAN_GRAPH_URL },
   { id: "ohenro88", label: "OHenro 88", url: OHENRO88_GRAPH_URL },
+  { id: "henrohub", label: "Henro Hub", url: HENROHUB_GRAPH_URL },
 ];
 
 const SOURCE_ID = "plan-live";
@@ -34,6 +36,7 @@ const WAYPOINT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const NETWORK_ASCII: Record<string, string> = {
   sekaiisan: "Sekaiisan",
   ohenro88: "OHenro88",
+  henrohub: "HenroHub",
 };
 
 interface GpxExportState {

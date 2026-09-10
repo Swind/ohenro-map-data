@@ -233,6 +233,22 @@ sekaiisan 41.3% / arukihenro 43.2% / ohenro88 33.6% / ohenro-no-akari 42.3%，20
 但小段多為主題式子路線（含繞行/一日遊），非乾淨 temple-to-temple 切割。授權未定
 （商業產品資產，無 ODbL 標示），僅作靜態比較與 QA 參考，**未整合進正式管線**。
 
+Henro Hub 互動規劃 graph：`python3 scripts/build-henrohub-plan-graph.py`
+（`--proximity-m` 預設 3、`--join-m` 預設 30）把
+`output/henrohub-routes/henrohub-routes.geojson` 建成
+`output/henrohub-routes/henrohub-plan-graph.json`，schema 與 `export-plan-graph`
+相同（schema_version 2，topology/geometry 分離，map-preview `planner.ts`
+直接可用）。**只有 `canonical_shikoku88`（main）+ `unique_alternative` 參與
+routing**；`transition_connector`/`continuity_fallback` 是補網接點與 fallback
+段，排除。流程：端點 3m proximity-merge → 平行邊 dedupe → degree-2 chain
+collapse → route 端點以 `--join-m` 30m 接合到唯一最近邊（interior join 切邊）。
+**geometry 保留 3D（含高程）**——規劃出的路徑直接帶高度，不需再對
+Terrain-RGB 採樣。產出 4 components（largest 2303 nodes / 2309，99.7%）；
+剩 3 條 2-node 孤立末端支線（`hh26_black_0333`、`hh26_black_0247`、
+`hrn_662ad434`）端點附近無其他線，保守不臆造連線。實測 Temple 1→2→5
+前端 planRoute 為 candidate。map-preview「互動規劃」網路下拉含 Henro Hub；
+Henro Hub 為自家數位化 routing reference，非官方／導航保證。
+
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
 ```bash
