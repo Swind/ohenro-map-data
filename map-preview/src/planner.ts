@@ -37,7 +37,7 @@ export interface RouteEdge {
   from: string;
   to: string;
   weight: number;
-  coordinates: [number, number][];
+  coordinates: number[][];
 }
 
 export interface SnapResult {
@@ -68,7 +68,7 @@ export interface PlanLeg {
 export interface PlanResult {
   status: "candidate" | "disconnected";
   lengthM: number | null;
-  coords: [number, number][];
+  coords: number[][];
   legs: PlanLeg[];
   points: PlanPoint[];
   waypointNodes: string[];
@@ -96,6 +96,46 @@ export function lineMeters(coords: number[][]): number {
     total += Math.hypot(x2 - x1, y2 - y1);
   }
   return total;
+}
+
+/**
+ * Fill elevation for 2D vertices in a route whose graph is 3D but has a few
+ * 2D points (short synthetic joins are exported without height). Heights are
+ * linearly interpolated between the nearest 3D vertices before/after; when a
+ * whole run is 2D the run keeps the boundary heights. Every point becomes 3D
+ * whenever at least one 3D point exists, so the elevation profile never sees
+ * gaps in the middle of a 3D graph route.
+ */
+export function fillElevationInPath(coords: number[][]): number[][] {
+  const out: number[][] = coords.map((c) => [c[0], c[1], Number.isFinite(c[2]) ? c[2] : NaN]);
+  const known = out.map((c) => c[2]);
+  const left = new Array<number>(known.length);
+  let prev = NaN;
+  for (let i = 0; i < known.length; i++) {
+    if (Number.isFinite(known[i])) prev = known[i];
+    left[i] = prev;
+  }
+  const right = new Array<number>(known.length);
+  let next = NaN;
+  for (let i = known.length - 1; i >= 0; i--) {
+    if (Number.isFinite(known[i])) next = known[i];
+    right[i] = next;
+  }
+  for (let i = 0; i < out.length; i++) {
+    if (Number.isFinite(out[i][2])) continue;
+    const l = left[i];
+    const r = right[i];
+    if (Number.isFinite(l) && Number.isFinite(r)) {
+      out[i][2] = (l + r) / 2;
+    } else if (Number.isFinite(l)) {
+      out[i][2] = l;
+    } else if (Number.isFinite(r)) {
+      out[i][2] = r;
+    } else {
+      out[i][2] = 0;
+    }
+  }
+  return out;
 }
 
 /** Normalize graph edges to a uniform undirected weighted edge list. */
@@ -271,26 +311,35 @@ export function snapPointIndexed(
   return best;
 }
 
-/** Substring of an edge between two measures, mirroring shapely substring(). */
+/** Substring of an edge between two measures, mirroring shapely substring().
+ *  Elevation is carried through: an interpolated point between two 3D
+ *  vertices gets the linearly interpolated height. */
 function substringCoords(
   edge: RouteEdge,
   a: number,
   b: number,
-): [number, number][] {
+): number[][] {
   const pts = edge.coordinates.map((c) => xy(c[0], c[1]));
   const cum = [0];
   for (let i = 1; i < pts.length; i++) {
     cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
   }
-  const interp = (offset: number): [number, number] => {
+  const interp = (offset: number): number[] => {
     let i = 0;
     while (i < cum.length - 1 && cum[i + 1] < offset) i++;
     const t = cum[i + 1] - cum[i] > 0 ? (offset - cum[i]) / (cum[i + 1] - cum[i]) : 0;
-    return unxy(pts[i][0] + t * (pts[i + 1][0] - pts[i][0]), pts[i][1] + t * (pts[i + 1][1] - pts[i][1]));
+    const lon = unxy(pts[i][0] + t * (pts[i + 1][0] - pts[i][0]), pts[i][1] + t * (pts[i + 1][1] - pts[i][1]));
+    const e0 = edge.coordinates[i];
+    const e1 = edge.coordinates[i + 1];
+    const out: number[] = [lon[0], lon[1]];
+    if (e0.length >= 3 && e1.length >= 3) {
+      out.push(e0[2] + t * (e1[2] - e0[2]));
+    }
+    return out;
   };
-  const out: [number, number][] = [interp(a)];
+  const out: number[][] = [interp(a)];
   for (let k = 0; k < cum.length; k++) {
-    if (cum[k] > a && cum[k] < b) out.push([edge.coordinates[k][0], edge.coordinates[k][1]]);
+    if (cum[k] > a && cum[k] < b) out.push([...edge.coordinates[k]]);
   }
   const end = interp(b);
   const last = out[out.length - 1];
@@ -385,18 +434,20 @@ export function shortestPath(
   return { weight: result.w, edgeIds: result.es, nodeIds: result.ns };
 }
 
-/** Stitch edge coordinates along the path into one dense coordinate list. */
+/** Stitch edge coordinates along the path into one dense coordinate list.
+ *  Coordinates keep the source dimension (2D for 2D graphs, 3D when the
+ *  graph's edge_geometry carries elevation). */
 export function stitchCoords(
   edgeIds: string[],
   nodeIds: string[],
   edgesById: Map<string, RouteEdge>,
-): [number, number][] {
-  const coords: [number, number][] = [];
+): number[][] {
+  const coords: number[][] = [];
   for (let i = 0; i < edgeIds.length; i++) {
     const edge = edgesById.get(edgeIds[i]);
     if (!edge) continue;
     const forward = edge.from === nodeIds[i];
-    let seq: [number, number][] = edge.coordinates;
+    let seq: number[][] = edge.coordinates;
     if (!forward) seq = [...edge.coordinates].reverse();
     const last = coords[coords.length - 1];
     if (last && last[0] === seq[0][0] && last[1] === seq[0][1]) seq = seq.slice(1);
@@ -474,7 +525,7 @@ export function planRoute(
 
   // Per-leg Dijkstra.
   const legs: PlanLeg[] = [];
-  const allCoords: [number, number][] = [];
+  const allCoords: number[][] = [];
   let disconnected = false;
   for (let i = 0; i < points.length - 1; i++) {
     const start = waypointNodes[i];

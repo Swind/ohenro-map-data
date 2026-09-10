@@ -1,6 +1,6 @@
 import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
 import type { Feature, FeatureCollection, Position } from "geojson";
-import { planRoute, routeEdges, buildSnapIndex, snapPointIndexed, type PlanGraph, type SnapIndex } from "./planner";
+import { planRoute, routeEdges, buildSnapIndex, snapPointIndexed, fillElevationInPath, type PlanGraph, type SnapIndex } from "./planner";
 import { TerrainElevationSampler } from "./terrain";
 import { buildElevationProfile, renderElevationProfile } from "./profile";
 import { buildGpx } from "./gpx";
@@ -190,9 +190,18 @@ export function setupPlanMode(map: MapLibreMap): void {
         return;
       }
 
-      // Attach per-vertex elevation (Terrain-RGB from the existing PMTiles).
+      // Attach elevation per vertex. Graphs whose edge_geometry is 3D (e.g.
+      // the Henro Hub plan graph) already carry elevation on the route
+      // coordinates; only 2D graphs fall back to sampling the Terrain-RGB
+      // PMTiles per vertex. Sampling a coarse DEM per vertex would otherwise
+      // sum tiny pixel-to-pixel noise into a fake multi-thousand-metre
+      // gain/loss, so never resample when the graph already has heights.
       const coords3: Array<[number, number] | [number, number, number]> = [];
-      if (sampler) {
+      const hasElevation = result.coords[0]?.length === 3;
+      if (hasElevation) {
+        // Some vertices (short synthetic joins) may still be 2D; fill them.
+        coords3.push(...(fillElevationInPath(result.coords) as Array<[number, number, number]>));
+      } else if (sampler) {
         const elevations = await Promise.all(
           result.coords.map(([lon, lat]) => sampler.sample(lat, lon)),
         );

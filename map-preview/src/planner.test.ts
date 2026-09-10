@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildSnapIndex,
+  fillElevationInPath,
   lineMeters,
   planRoute,
   routeEdges,
@@ -152,5 +153,37 @@ describe("snapPointIndexed", () => {
     const g = graph([te("e1", "A", "B")]);
     const result = snapPointIndexed(buildSnapIndex(routeEdges(g)), 133.5, 33.5);
     expect(result).toBeNull();
+  });
+});
+
+describe("fillElevationInPath", () => {
+  it("fills 2D gaps with the boundary heights", () => {
+    const out = fillElevationInPath([
+      [133.0, 33.0, 100],
+      [133.001, 33.0],
+      [133.002, 33.0, 200],
+    ]);
+    expect(out).toHaveLength(3);
+    expect(out.every((c) => c.length === 3)).toBe(true);
+    expect(out[1][2]).toBeCloseTo(150, 6);
+  });
+
+  it("clamps at the leading/trailing boundaries", () => {
+    const out = fillElevationInPath([
+      [133.0, 33.0],
+      [133.001, 33.0, 200],
+      [133.002, 33.0],
+    ]);
+    expect(out[0][2]).toBe(200);
+    expect(out[2][2]).toBe(200);
+  });
+
+  it("keeps fully-3D input unchanged", () => {
+    const out = fillElevationInPath([
+      [133.0, 33.0, 100],
+      [133.001, 33.0, 110],
+    ]);
+    expect(out[0][2]).toBe(100);
+    expect(out[1][2]).toBe(110);
   });
 });
