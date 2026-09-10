@@ -26,6 +26,21 @@ export function decodeTerrainRgb(r: number, g: number, b: number): number {
   return -10000 + ((r * 256 + g) * 256 + b) * 0.1;
 }
 
+/**
+ * Sample elevation at a decoded RGBA pixel. NODATA cells are encoded with
+ * alpha=0 (sea / DEM-missing) per scripts/rgbify_dem.py; the opaque decode
+ * would read as -10000 m, so transparent pixels report null instead.
+ */
+export function elevationFromRgba(
+  r: number,
+  g: number,
+  b: number,
+  a: number,
+): number | null {
+  if (a === 0) return null;
+  return decodeTerrainRgb(r, g, b);
+}
+
 export class TerrainElevationSampler {
   private source: PMTiles;
   private zoom = 14;
@@ -57,7 +72,12 @@ export class TerrainElevationSampler {
       (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2;
     const py = Math.min(n - 1, Math.max(0, Math.floor((fy * nTiles - y) * n)));
     const idx = (py * n + px) * 4;
-    return decodeTerrainRgb(image.data[idx], image.data[idx + 1], image.data[idx + 2]);
+    return elevationFromRgba(
+      image.data[idx],
+      image.data[idx + 1],
+      image.data[idx + 2],
+      image.data[idx + 3],
+    );
   }
 
   private async loadTile(

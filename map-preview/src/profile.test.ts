@@ -49,4 +49,20 @@ describe("buildElevationProfile", () => {
       ] as number[][]),
     ).toBeNull();
   });
+
+  it("ignores out-of-range heights so a no-data spike cannot dominate", () => {
+    const coords = [
+      [133.0, 33.0, 100],
+      [133.001, 33.0, -10000], // Terrain-RGB no-data leak
+      [133.002, 33.0, 200],
+      [133.003, 33.0, 999999], // garbage
+      [133.004, 33.0, 300],
+    ] as number[][];
+    const profile = buildElevationProfile(coords);
+    expect(profile).not.toBeNull();
+    expect(profile!.minM).toBe(100);
+    expect(profile!.maxM).toBe(300);
+    expect(profile!.gainM).toBeCloseTo(200, 6);
+    expect(profile!.lossM).toBe(0);
+  });
 });

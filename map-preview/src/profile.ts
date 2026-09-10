@@ -39,7 +39,16 @@ export function buildElevationProfile(
   let prev: Position | null = null;
   for (const c of coordinates) {
     const elev = c[2];
-    if (typeof elev !== "number" || !Number.isFinite(elev)) continue;
+    // Reject missing/non-finite values and physically impossible heights
+    // (e.g. a Terrain-RGB no-data decode of -10000 leaking into the profile
+    // from a source that did not flag it). A single bad vertex must never
+    // turn the whole gain/loss into a fake cliff.
+    if (
+      typeof elev !== "number" ||
+      !Number.isFinite(elev) ||
+      elev < -1000 ||
+      elev > 5000
+    ) continue;
     if (prev) total += metresBetween(prev, c);
     prev = c;
     points.push({ d: total, e: elev });
