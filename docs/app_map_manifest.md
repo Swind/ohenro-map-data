@@ -12,10 +12,18 @@ Android app version code to 2.
 Schema version 3 adds an eighth core role, `content` (`content.sqlite`), and
 raises the minimum Android app version code to 3.
 
+Schema version 4 replaces the `mizutani` core role with two new
+personal-use/licensing-limited assets — `henrohub`
+(`shikoku-henrohub.pmtiles`) and `info_pois` (`shikoku-info-pois.pmtiles`) —
+and raises the minimum Android app version code to 4. This gives nine unique
+core roles total. The v4 manifest generated here is for personal/dev use only;
+the Henro Hub and info-POI assets are personal-use/licensing-limited and must
+not be publicly redistributed without rights clearance.
+
 ## Generator
 
 ```bash
-python3 scripts/build-app-map-manifest.py --version dev-20260824-v3
+python3 scripts/build-app-map-manifest.py --version dev-20260911-v4
 ```
 
 Outputs `output/app-map-manifest.json` (default). It is stdlib-only, streams
@@ -30,7 +38,7 @@ range inventory as the asset builder
 | Option | Default | Notes |
 | --- | --- | --- |
 | `--version` | *(required)* | Schema `version`; ASCII letters/digits/dot/underscore/hyphen only. |
-| `--minimum-app-version-code` | `3` | Integer `>= 3` (phase-3 requirement). |
+| `--minimum-app-version-code` | `4` | Integer `>= 4` (phase-4 requirement). |
 | `--output` | `output/app-map-manifest.json` | Manifest path (repo-root relative). |
 | `--base-url` | *(none)* | `http`/`https` URL; turns relative `url`s into absolute ones. |
 
@@ -61,7 +69,7 @@ Pass the URL of the directory where the manifest will be served (i.e. the
 
 ```bash
 python3 scripts/build-app-map-manifest.py \
-  --version dev-20260824-v3 \
+  --version dev-20260911-v4 \
   --base-url https://example.com/mapdata/output/
 ```
 
@@ -73,9 +81,9 @@ Top-level object:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `schema_version` | integer | `3`. |
+| `schema_version` | integer | `4`. |
 | `version` | string | Restricted to ASCII letters/digits/dot/underscore/hyphen. |
-| `minimum_app_version_code` | integer | `>= 3`. |
+| `minimum_app_version_code` | integer | `>= 4`. |
 | `total_size` | integer | Sum of all file `size` values (bytes). |
 | `files` | array | One entry per installable file. |
 
@@ -91,18 +99,24 @@ Each `files[]` item:
 
 ## Roles
 
-### Eight unique core roles
+### Nine unique core roles
 
 | Role | Install path | Source |
 | --- | --- | --- |
 | `style` | `style.json` | `map-preview/src/style/style.json` |
 | `basemap` | `shikoku-basemap.pmtiles` | `output/shikoku-basemap.pmtiles` |
-| `mizutani` | `shikoku-mizutani-henro.pmtiles` | `output/shikoku-mizutani-henro.pmtiles` |
+| `henrohub` | `shikoku-henrohub.pmtiles` | `output/shikoku-henrohub.pmtiles` |
+| `info_pois` | `shikoku-info-pois.pmtiles` | `output/shikoku-info-pois.pmtiles` |
 | `nature_trail` | `shikoku-nature-trail.pmtiles` | `output/shikoku-nature-trail.pmtiles` |
 | `henroyado` | `shikoku-henroyado-lodging.pmtiles` | `output/shikoku-henroyado-lodging.pmtiles` |
 | `min88` | `shikoku-min88-lodging.pmtiles` | `output/shikoku-min88-lodging.pmtiles` |
 | `temples` | `temples.geojson` | `output/temples.geojson` |
 | `content` | `content.sqlite` | `output/content.sqlite` |
+
+The `henrohub` and `info_pois` assets are personal-use/licensing-limited
+(Henro Hub is a commercial product asset without ODbL; info-POI data aggregates
+several licensed sources). The v4 manifest is therefore for personal/dev use
+and must not be publicly redistributed without rights clearance.
 
 ### Repeated generated roles (phase 2b)
 

@@ -1,4 +1,4 @@
-"""Focused unit tests for the phase-3 app map pack manifest builder (v3).
+"""Focused unit tests for the app map pack manifest builder (v4).
 
 Uses temporary tiny files (never the real ~117MB PMTiles) and imports the
 builder via importlib since its filename contains a hyphen.
@@ -86,11 +86,11 @@ class ValidateVersionTest(unittest.TestCase):
 
 class ValidateMinVersionCodeTest(unittest.TestCase):
     def test_valid(self):
-        self.assertEqual(builder.validate_minimum_app_version_code(3), 3)
+        self.assertEqual(builder.validate_minimum_app_version_code(4), 4)
         self.assertEqual(builder.validate_minimum_app_version_code(42), 42)
 
-    def test_invalid_below_3(self):
-        for code in (2, 1, 0, -1, 1.5, "1", True, None):
+    def test_invalid_below_4(self):
+        for code in (3, 2, 1, 0, -1, 1.5, "1", True, None):
             with self.assertRaises(ValueError):
                 builder.validate_minimum_app_version_code(code)
 
@@ -208,7 +208,7 @@ class GeneratedAssetSpecsTest(unittest.TestCase):
 
 
 class BuildManifestTest(unittest.TestCase):
-    def test_v3_schema_repeated_roles_and_order(self):
+    def test_v4_schema_repeated_roles_and_order(self):
         repo = TinyRepo()
         try:
             repo.write_inventory()
@@ -218,19 +218,19 @@ class BuildManifestTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=3,
+                minimum_app_version_code=4,
                 base_url=None,
                 manifest_dir="output",
                 repo_root=repo.root,
             )
-            self.assertEqual(manifest["schema_version"], 3)
+            self.assertEqual(manifest["schema_version"], 4)
             self.assertEqual(manifest["version"], "dev-test")
-            self.assertEqual(manifest["minimum_app_version_code"], 3)
-            # Deterministic order: 8 core (content last), 4 sprite, 3 glyph, 2 license.
+            self.assertEqual(manifest["minimum_app_version_code"], 4)
+            # Deterministic order: 9 core (content last), 4 sprite, 3 glyph, 2 license.
             roles = [f["role"] for f in manifest["files"]]
             expected = (
-                ["style", "basemap", "mizutani", "nature_trail",
-                 "henroyado", "min88", "temples", "content"]
+                ["style", "basemap", "henrohub", "info_pois",
+                 "nature_trail", "henroyado", "min88", "temples", "content"]
                 + ["sprite"] * 4 + ["glyph"] * 3 + ["license"] * 2
             )
             self.assertEqual(roles, expected)
@@ -278,7 +278,7 @@ class BuildManifestTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=3,
+                minimum_app_version_code=4,
                 base_url="https://cdn.example.com/output/",
                 manifest_dir="output",
                 repo_root=repo.root,
@@ -312,7 +312,7 @@ class BuildManifestTest(unittest.TestCase):
                 builder.build_manifest(
                     specs,
                     version="dev-test",
-                    minimum_app_version_code=3,
+                    minimum_app_version_code=4,
                     base_url=None,
                     manifest_dir="output",
                     repo_root=repo.root,
@@ -404,7 +404,7 @@ class RelativeUrlEncodingTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=3,
+                minimum_app_version_code=4,
                 base_url=None,
                 manifest_dir="output",
                 repo_root=repo.root,

@@ -15,11 +15,18 @@
       "url": "shikoku-basemap.pmtiles"
     },
     {
-      "path": "shikoku-mizutani-henro.pmtiles",
-      "role": "mizutani",
-      "sha256": "b3051372bbd05d992029a7e70f53330705a0e6f9e7a6b9fe43958bafd660027a",
-      "size": 2036655,
-      "url": "shikoku-mizutani-henro.pmtiles"
+      "path": "shikoku-henrohub.pmtiles",
+      "role": "henrohub",
+      "sha256": "ced30fef0d4104d87b6ef7bf4bf8b432e2e09906c900f1ebbfe1a7e331577c04",
+      "size": 3033035,
+      "url": "shikoku-henrohub.pmtiles"
+    },
+    {
+      "path": "shikoku-info-pois.pmtiles",
+      "role": "info_pois",
+      "sha256": "543421bd05148f7a92606927c3dfbd51266b140f52e053532c886f571f17f383",
+      "size": 2656011,
+      "url": "shikoku-info-pois.pmtiles"
     },
     {
       "path": "shikoku-nature-trail.pmtiles",
@@ -820,8 +827,8 @@
       "url": "app-map-assets/licenses/Tangram-Icons-MIT.txt"
     }
   ],
-  "minimum_app_version_code": 3,
-  "schema_version": 3,
-  "total_size": 141032214,
-  "version": "dev-20260903-v3"
+  "minimum_app_version_code": 4,
+  "schema_version": 4,
+  "total_size": 144684605,
+  "version": "dev-20260911-v4"
 }
