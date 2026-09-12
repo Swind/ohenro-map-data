@@ -1,0 +1,16 @@
+==> info-POI build 2026-09-10T09:33:26Z
+==> tippecanoe
+Warning: Can't represent non-numeric feature ID "MHM_P_001ef1611bae"
+==> PMTiles convert
+2026/09/10 17:33:27 convert.go:158: Pass 1: Assembling TileID set
+2026/09/10 17:33:27 convert.go:189: Pass 2: writing tiles
+   0% |                                             | (0/3538, 0 it/hr) [0s:0s]                                                                                100% |███████████████████████████████████████| (3538/3538, 75129 it/s)
+2026/09/10 17:33:27 convert.go:243: # of addressed tiles:  3538
+2026/09/10 17:33:27 convert.go:244: # of tile entries (after RLE):  3538
+2026/09/10 17:33:27 convert.go:245: # of tile contents:  3538
+2026/09/10 17:33:27 convert.go:268: Total dir bytes:  7012
+2026/09/10 17:33:27 convert.go:269: Average bytes per addressed tile: 1.98
+2026/09/10 17:33:27 convert.go:238: Finished in  56.084797ms
+writing file   0% |                                     | ( 0 B/2.5 MB) [0s:0s]                                                                               writing file 100% |████████████████████████████| (2.5/2.5 MB, 1.9 GB/s)
+2026/09/10 17:33:27 verify.go:169: Completed verify in 412.544µs.
+==> Done: /home/swind/Data/Program/ohenro-map-data/output/shikoku-info-pois.pmtiles

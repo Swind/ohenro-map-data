@@ -1,0 +1,29 @@
+pmtiles spec version: 3
+tile type: mvt
+bounds: (long: 132.466081, lat: 32.723845) (long: 134.605916, lat: 34.364080)
+min zoom: 0
+max zoom: 14
+center: (long: 134.110107, lat: 34.352506)
+center zoom: 14
+addressed tiles count: 1575
+tile entries count: 1575
+tile contents count: 1575
+clustered: true
+internal compression: gzip
+tile compression: gzip
+name Henro Hub Route Network
+source_url https://henro.app
+version 2
+format pbf
+generator tippecanoe v2.82.0
+dataset_id henrohub-routes
+description Offline derivative for personal use of Henro Hub (henro.app) route network
+maxzoom 14
+tilestats <object, use --metadata to view full JSON metadata>
+type overlay
+vector_layers <object, use --metadata to view full JSON metadata>
+antimeridian_adjusted_bounds 132.466081,32.723845,134.605916,34.364080
+usage personal-use
+attribution Henro Hub / https://henro.app
+generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/henrohub-pmtiles/henrohub.mbtiles --minimum-zoom 0 --maximum-zoom 14 --drop-densest-as-needed --no-line-simplification -L henrohub_routes:/home/swind/Data/Program/ohenro-map-data/output/henrohub-routes/henrohub-routes.geojson
+minzoom 0

@@ -1,0 +1,18 @@
+==> Henro Hub route network build 2026-09-10T03:36:31Z
+==> tippecanoe
+Warning: Can't represent non-numeric feature ID "shikoku88-temple-01-to-temple-02__class_002"
+/home/swind/Data/Program/ohenro-map-data/output/henrohub-routes/henrohub-routes.geojson:1: ignoring dimensions beyond two: in JSON object [134.5024492,34.1589562,22]
+/home/swind/Data/Program/ohenro-map-data/output/henrohub-routes/henrohub-routes.geojson:1: ignoring dimensions beyond two: in JSON object {"type":"Feature","id":"shikoku88-temple-01-to-temple-02__class_002","properties":{"kind":"line","route_id":"shikoku88-temple-01-to-temple-02__class_002","route_role":"canonical_shikoku88","route_class":"red","route_sets":["henro-network","shikoku-88"],"name":"1 → 2","elevation_min_m":11,"elevation_max_m":22,"ascent_m":0,"descent_m":9,"length_m":null},"geometry":{"type":"LineString","coordinates":[[134.5024492,34.1589562,22],[134.5023289,34.1589551,21],[134.5023181,34.158936199999988,21],[1...
+==> PMTiles convert
+2026/09/10 11:36:32 convert.go:158: Pass 1: Assembling TileID set
+2026/09/10 11:36:32 convert.go:189: Pass 2: writing tiles
+   0% |                                             | (0/1575, 0 it/hr) [0s:0s]                                                                                100% |███████████████████████████████████████| (1575/1575, 58470 it/s)
+2026/09/10 11:36:32 convert.go:243: # of addressed tiles:  1575
+2026/09/10 11:36:32 convert.go:244: # of tile entries (after RLE):  1575
+2026/09/10 11:36:32 convert.go:245: # of tile contents:  1575
+2026/09/10 11:36:32 convert.go:268: Total dir bytes:  3644
+2026/09/10 11:36:32 convert.go:269: Average bytes per addressed tile: 2.31
+2026/09/10 11:36:32 convert.go:238: Finished in  33.239303ms
+writing file   0% |                                     | ( 0 B/2.9 MB) [0s:0s]                                                                               writing file 100% |████████████████████████████| (2.9/2.9 MB, 1.9 GB/s)
+2026/09/10 11:36:32 verify.go:169: Completed verify in 243.966µs.
+==> Done: /home/swind/Data/Program/ohenro-map-data/output/shikoku-henrohub.pmtiles

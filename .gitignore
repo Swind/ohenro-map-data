@@ -38,6 +38,9 @@ output/mizutani-henro-routes.geojson
 output/mizutani-henro-pois.geojson
 output/mizutani-henro-report.json
 output/mizutani-henro-style-inventory.json
+# Consolidated information POIs (rebuilt by scripts/build-info-pois.py from
+# gitignored sources: mizutani / sekaiisan / basemap)
+output/pois/
 output/mizutani-henro-update-report.json
 # Generated downloadable route-pack artifacts (first consumer: Mizutani, personal-use)
 output/route-packs/
