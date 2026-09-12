@@ -12,8 +12,8 @@
 
 | 資料 | 主要檔案 | 格式 | 數量 | 一句話 |
 |---|---|---|---|---|
-| 統合資訊 POI | `output/pois/pois.geojson` | GeoJSON | 15,159 點 | 全來源 POI 統一分類，app 過濾用 |
-| 統合 POI 離線 | `output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3538 tiles | 單一 `info_pois` layer |
+| 統合資訊 POI | `output/pois/pois.geojson` | GeoJSON | 109,916 點 | 全來源 POI 統一分類，app 過濾用 |
+| 統合 POI 離線 | `output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 5932 tiles | 單一 `info_pois` layer |
 | 88 札所 | `output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
 | 協議會（路線+寺+廁所） | `output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
 | Mizutani POI | `output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
@@ -35,14 +35,14 @@
 ### 1.1 統合資訊 POI — `output/pois/`
 
 ```text
-output/pois/pois.geojson        # FeatureCollection，15,159 點
+output/pois/pois.geojson        # FeatureCollection，109,916 點
 output/pois/pois-report.json    # per-source / per-category accounting
-output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer）
+output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~7.3MB）
 ```
 
-**統一 `category` taxonomy（app 過濾層級，15 類）**：
+**統一 `category` taxonomy（app 過濾層級，18 類）**：
 
-`temple / shrine / toilet / water / rest_area / food / shop / transport / onsen / sightseeing / wayfinding / warning_hazard / experience_note / route_endpoint / other`
+`temple / shrine / toilet / water / rest_area / food / shop / transport / onsen / sightseeing / wayfinding / warning_hazard / health / education / lodging / experience_note / route_endpoint / other`
 
 每筆 feature properties：
 
@@ -50,10 +50,10 @@ output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer）
 |---|---|
 | `poi_id` | 穩定唯一 ID（如 `MHM_P_...` / `SHT_tokushima_1` / `osm-...`） |
 | `source` | `temples` / `sekaiisan` / `mizutani` / `nature_trail` / `arukihenro` / `osm` |
-| `source_category` | **原來源分類**（不丟失，如 mizutani 的 `water_toilet_rest`） |
+| `source_category` | **原來源分類**（不丟失，如 mizutani 的 `water_toilet_rest` 或 OSM 的 `restaurant`） |
 | `category` | 統一分類 |
 | `name` | 顯示名稱 |
-| 其他 | source 特有：廁所有 `address`/`hours`/`toilet_type`/`washlet`/`prefecture`；temple 有 `number`；arukihenro 有 `photos`；mizutani 有 `description`/`url`/`icon`/`color` |
+| 其他 | source 特有：廁所有 `address`/`hours`/`toilet_type`/`washlet`/`prefecture`；temple 有 `number`；arukihenro 有 `photos`；mizutani 有 `description`/`url`/`icon`/`color`；OSM 有 `kind_detail`/`name_ja` |
 
 來源 → 統一 category 對應（詳見 `AGENTS.md`「統合資訊 POI」）：
 - `temples.geojson`（88）→ `temple`
@@ -61,9 +61,9 @@ output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer）
 - `mizutani`（exclude lodging）：`temple→temple`、`transport→transport`、`shop_supply→shop`、`food→food`、`wayfinding→wayfinding`、`warning_hazard→warning_hazard`、`experience_note→experience_note`、`other→other`；`water_toilet_rest` 以 name 啟發式拆 `rest_area`/`onsen`/`water`
 - `nature_trail`：tourism_spot + kml_poi → `sightseeing`
 - `arukihenro`（exclude lodging）：`temple_related→temple`、`shrine→shrine`、`waymarker/route_feature/elevation_mileage→wayfinding`、`food_shop→food`、`onsen→onsen`、`viewpoint/sightseeing→sightseeing`、`rest_area→rest_area`、`route_endpoint→route_endpoint`
-- `osm`（basemap 抽取）：`station/bus_stop→transport`、`toilets→toilet`、`drinking_water→water`、`shelter→rest_area`、`convenience→shop`
+- `osm`（basemap `pois` layer，**104,524 點全抽**，~500 kinds 對應到 18 類，未對應→`other`）：`restaurant/cafe/fast_food/pub→food`、`supermarket/convenience/pharmacy→shop`、`station/bus_stop/tram_stop/ferry/taxi/parking/fuel→transport`、`toilets→toilet`、`drinking_water/water_point/fountain/spring→water`、`shelter/bench/rest_area/picnic_table→rest_area`、`public_bath/hot_spring/sauna→onsen`、`hotel/guest_house/hostel/motel/camp_site→lodging`、`hospital/doctors/clinic→health`、`school/university/library→education`、`place_of_worship/temple→temple`、`wayside_shrine→shrine`、`museum/viewpoint/monument/attraction→sightseeing`、`information/signpost→wayfinding`、`danger/hazard/cliff→warning_hazard`
 
-**lodging 一律不在這裡**（有獨立 henroyado / min88 / OSM 管線）；**跨來源不去重**（同一寺廟可能出現在多個 source，app 端以 source+category 過濾）。
+**lodging 註記**：統合 POI 現含 OSM 的 lodging（hotel/guest_house/hostel/motel/camp_site 等 1,361 點）；Henroyado / min88 兩套專屬住宿管線**仍不在此**（各有獨立 JSONL + PMTiles）。**跨來源不去重**（同一寺廟/餐廳可能出現在多個 source，app 端以 source+category 過濾）。
 
 ### 1.2 88 札所（canonical）
 

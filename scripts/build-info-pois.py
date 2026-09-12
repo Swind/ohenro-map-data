@@ -18,9 +18,8 @@ Sources:
   output/mizutani-henro-pois.geojson   -> all non-lodging categories
   output/shikoku-nature-trail-pois.geojson -> tourism_spot / kml_poi
   output/arukihenro-routes.json        -> all non-lodging point categories
-  output/shikoku-basemap.pmtiles       -> OSM pois (station / bus_stop /
-                                          toilets / drinking_water / shelter /
-                                          convenience)
+  output/shikoku-basemap.pmtiles       -> EVERY OSM pois Point (all kinds, each
+                                          mapped to a unified category)
 
 Outputs output/pois/pois.geojson and output/pois/pois-report.json
 (byte-deterministic, no timestamps, atomic writes).
@@ -45,17 +44,99 @@ DEFAULT_OUT_DIR = os.path.join(ROOT, "output", "pois")
 CATEGORIES = (
     "temple", "shrine", "toilet", "water", "rest_area", "food", "shop",
     "transport", "onsen", "sightseeing", "wayfinding", "warning_hazard",
-    "experience_note", "route_endpoint", "other",
+    "health", "education", "lodging", "experience_note", "route_endpoint",
+    "other",
 )
 
-# OSM basemap pois kinds that participate in the info-POI layer.
-OSM_KINDS = {
-    "station": "transport",
-    "bus_stop": "transport",
-    "toilets": "toilet",
-    "drinking_water": "water",
-    "shelter": "rest_area",
-    "convenience": "shop",
+# OSM basemap `pois` layer: map every kind to a unified category. Kinds not in
+# the table fall through to `other` (source_category preserves the raw kind).
+# Grouped as category -> kinds for maintainability.
+OSM_KIND_CATEGORY: dict[str, set[str]] = {
+    "temple": {
+        "place_of_worship", "temple", "monastery", "church", "chapel", "mosque",
+    },
+    "shrine": {"wayside_shrine", "shrine", "city_gate"},
+    "toilet": {"toilets", "rest_rooms"},
+    "water": {"drinking_water", "water_point", "fountain", "spring", "water",
+              "waterfall"},
+    "rest_area": {"shelter", "bench", "picnic_table", "rest_area", "lean_to",
+                  "alpine_hut", "wilderness_hut", "picnic_site", "pavilion",
+                  "gazebo", "campfire"},
+    "food": {"restaurant", "cafe", "fast_food", "pub", "bar", "ice_cream",
+             "bakery", "food_court", "deli", "seafood", "noodle", "pastry",
+             "coffee", "sake", "tea", "wine", "chocolate", "biergarten",
+             "kiosk", "caterer", "hookah_lounge", "beverages"},
+    "shop": {"supermarket", "convenience", "pharmacy", "clothes", "books",
+             "gift", "electronics", "mobile_phone", "doityourself", "hardware",
+             "stationery", "florist", "butcher", "greengrocer", "shoes",
+             "jewelry", "optician", "cosmetics", "hairdresser", "laundry",
+             "dry_cleaning", "video", "toys", "furniture", "variety_store",
+             "second_hand", "tobacco", "newsagent", "alcohol", "bakery",
+             "confectionery", "marketplace", "department_store", "mall",
+             "shopping_mall", "boutique", "antiques", "craft", "tailor",
+             "sewing", "carpet_layer", "bag", "appliance", "watches",
+             "musical_instrument", "fuel", "car_repair", "car_parts", "car_wash",
+             "tyres", "motorcycle", "bicycle", "bicycle_repair_station",
+             "copyshop", "pawnbroker", "pet", "pet_grooming", "garden_centre",
+             "houseware", "fabric", "pottery", "carpenter", "electrician",
+             "plumber", "electronics_repair", "photo", "photo_studio",
+             "kitchen", "hifi", "frozen_food", "health_food", "grocery",
+             "wine_shop", "dairy", "cheese", "food_market", "general_store"},
+    "transport": {"station", "bus_stop", "tram_stop", "ferry_terminal", "taxi",
+                  "car_rental", "car", "bicycle_rental", "bus_station", "parking",
+                  "charging_station", "motorcycle_parking", "parking_entrance",
+                  "boat_rental", "halt", "train_station_entrance", "marina",
+                  "slipway", "kick-scooter_rental", "car_sharing",
+                  "car_pooling", "boat", "aerodrome", "helipad"},
+    "onsen": {"public_bath", "hot_spring", "sauna", "spa", "spa_resort"},
+    "lodging": {"hotel", "guest_house", "hostel", "motel", "camp_site", "chalet",
+                "love_hotel", "resort", "dormitory", "caravan_site",
+                "wilderness_hut", "alpine_hut", "bed"},
+    "sightseeing": {"museum", "attraction", "viewpoint", "monument", "castle",
+                    "ruins", "archaeological_site", "historic", "artwork",
+                    "gallery", "theatre", "cinema", "theme_park", "zoo",
+                    "aquarium", "beach", "park", "garden", "cave_entrance",
+                    "peak", "cape", "bay", "beach_resort", "water_park",
+                    "amusement_arcade", "tower", "windmill", "lighthouse",
+                    "observatory", "fort", "memorial", "stone", "rock",
+                    "sculpture", "exhibition_centre", "arts_centre",
+                    "events_venue", "stadium", "playground", "recreation_ground",
+                    "golf_course", "sports_centre", "pitch", "swimming_pool",
+                    "swimming_area", "bowling_alley", "miniature_golf",
+                    "surf_school", "dive_centre", "horse_riding", "outdoor",
+                    "picnic_site", "viewpoint", "lookout", "panorama",
+                    "picnic_table", "nature_reserve", "botanical_garden",
+                    "fishing", "marina", "beach"},
+    "wayfinding": {"information", "signpost", "guidepost", "milestone",
+                   "emergency_access_point", "hiking_route", "map_board"},
+    "warning_hazard": {"danger", "hazard", "flood", "landslide", "cliff",
+                       "highwater_mark", "speed_camera", "avalanche", "fire"},
+    "health": {"hospital", "doctors", "dentist", "clinic", "veterinary",
+               "pharmacy", "nursing_home", "midwife", "physiotherapist",
+               "podiatrist", "blood_bank", "health_post", "medical_supply"},
+    "education": {"school", "university", "kindergarten", "college", "library",
+                  "prep_school", "music_school", "driving_school",
+                  "language_school", "dojo", "childcare", "research_institute",
+                  "training"},
+}
+
+# Reverse lookup kind -> category (last match wins via dict build order).
+OSM_KIND_TO_CATEGORY: dict[str, str] = {}
+for _cat, _kinds in OSM_KIND_CATEGORY.items():
+    for _k in _kinds:
+        OSM_KIND_TO_CATEGORY[_k] = _cat
+
+# OSM kinds observed in the basemap that are pure basemap infrastructure /
+# rendering noise and land in `other` (extracted, but filtered out by default
+# in the app). Kept here only for documentation/audit.
+OSM_INFRASTRUCTURE = {
+    "crossing", "tree", "traffic_signals", "level_crossing", "switch",
+    "stop", "tram_crossing", "tram_level_crossing", "buffer_stop",
+    "traffic_mirror", "give_way", "passing_place", "turning_circle",
+    "waste_basket", "street_lamp", "signal", "bench", "windsock",
+    "emergency_bay", "parking_position", "holding_position", "apron",
+    "taxiway", "runway", "platform", "turning_loop", "mini_roundabout",
+    "railway_crossing", "crossing;tram_crossing", "traffic_signals;crossing",
 }
 
 _WTR_REST = ("道の駅", "海の駅", "ヘンロ小屋", "休憩所")
@@ -277,7 +358,11 @@ def _mvt_to_lonlat(z: int, x: int, y: int, px: float, py: float,
 
 
 def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
-    """Extract curated OSM pois from the basemap PMTiles (max-zoom tiles)."""
+    """Extract every Point POI from the basemap `pois` layer (max-zoom tiles).
+
+    All kinds are extracted (nothing dropped); each kind maps to a unified
+    category via OSM_KIND_TO_CATEGORY, falling back to `other` when unmapped.
+    """
     data_bytes = open(basemap_path, "rb").read()
     src = MemorySource(data_bytes)
     reader = Reader(src)
@@ -285,6 +370,7 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
     max_zoom = header["max_zoom"]
     out = []
     counts = {}
+    unmapped = {}
     index = 0
     for (z, x, y), raw in all_tiles(src):
         if z != max_zoom:
@@ -300,9 +386,7 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
             continue
         extent = pois.get("extent") or 4096
         for f in pois["features"]:
-            kind = f["properties"].get("kind")
-            if kind not in OSM_KINDS:
-                continue
+            kind = f["properties"].get("kind") or "other"
             geometry = f.get("geometry")
             if not geometry or geometry.get("type") != "Point":
                 continue
@@ -312,17 +396,22 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
                 "name:ja") or ""
             pid = "osm-%s-%d-%d-%d-%d" % (kind, z, x, y, index)
             index += 1
-            category = OSM_KINDS[kind]
+            category = OSM_KIND_TO_CATEGORY.get(kind, "other")
+            if category == "other" and kind not in OSM_KIND_TO_CATEGORY:
+                unmapped[kind] = unmapped.get(kind, 0) + 1
             counts[category] = counts.get(category, 0) + 1
             extra = {}
             if f["properties"].get("name:ja"):
                 extra["name_ja"] = f["properties"]["name:ja"]
+            if f["properties"].get("kind_detail"):
+                extra["kind_detail"] = f["properties"]["kind_detail"]
             out.append(feature(
                 pid, "osm", kind, category, name,
                 {"type": "Point", "coordinates": [lon, lat]},
                 extra,
             ))
     counts["total"] = len(out)
+    counts["unmapped_kinds"] = unmapped
     return out, counts
 
 
