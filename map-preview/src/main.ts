@@ -505,6 +505,48 @@ function setupDebugPanel(map: MapLibreMap, henro: HenroLayers): void {
     applyHenroHelperPoiVisibility();
   });
 
+  const infoPoiCheckboxes = new Map<string, HTMLInputElement>();
+  const infoPoiControls = document.getElementById("info-pois-controls");
+  if (!henro.infoPoisAvailable) {
+    for (const input of infoPoiControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
+      input.disabled = true;
+      input.checked = false;
+    }
+    infoPoiControls?.classList.add("disabled");
+  }
+  const applyInfoPoiVisibility = (): void => {
+    const masterEl = document.getElementById("toggle-info-pois") as HTMLInputElement | null;
+    const labelsEl = document.getElementById("toggle-info-poi-labels") as HTMLInputElement | null;
+    if (!masterEl || !labelsEl) return;
+    const master = masterEl.checked;
+    const labels = labelsEl.checked;
+    for (const group of henro.infoPois) {
+      const checkbox = infoPoiCheckboxes.get(group.category);
+      const visible = master && (checkbox?.checked ?? group.checked);
+      toggleLayer(map, [group.circle], visible);
+      if (group.labelLayer) {
+        toggleLayer(map, [group.labelLayer], visible && labels);
+      }
+    }
+  };
+  bindToggle("toggle-info-pois", applyInfoPoiVisibility);
+  bindToggle("toggle-info-poi-labels", applyInfoPoiVisibility);
+  void henro.infoPoisReady.then((groups) => {
+    const container = document.getElementById("info-pois-categories");
+    if (!container) return;
+    for (const group of groups) {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = group.checked;
+      checkbox.addEventListener("change", applyInfoPoiVisibility);
+      infoPoiCheckboxes.set(group.category, checkbox);
+      label.append(checkbox, ` ${group.label}`);
+      container.append(label);
+    }
+    applyInfoPoiVisibility();
+  });
+
   const ohenroNoAkariControls = document.getElementById("ohenro-no-akari-controls");
   if (!henro.ohenroNoAkariAvailable) {
     for (const input of ohenroNoAkariControls?.querySelectorAll<HTMLInputElement>("input") ?? []) {
@@ -604,6 +646,7 @@ const OVERLAY_SOURCE_LABELS: Record<string, string> = {
   arukihenro: "歩き遍路",
   "henro-helper": "Henro Helper 路線",
   "henro-helper-pois": "Henro Helper POI",
+  "info-pois": "統合資訊 POI",
   ohenro88: "OHenro 88",
   "ohenro-no-akari": "遍路のあかり",
   "elevation-contours": "等高線",

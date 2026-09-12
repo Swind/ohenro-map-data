@@ -34,6 +34,11 @@ import {
   fetchOhenroNoAkari,
 } from "./ohenro-no-akari";
 import {
+  addInfoPoiLayers,
+  fetchInfoPois,
+  type InfoPoiGroup,
+} from "./info-pois";
+import {
   addHenrohubLayers,
   convertHenrohub,
   fetchHenrohub,
@@ -78,6 +83,9 @@ export interface HenroLayers {
   henroHelperPoisAvailable: boolean;
   henroHelperPois: HenroHelperPoiGroup[];
   henroHelperPoisReady: Promise<HenroHelperPoiGroup[]>;
+  infoPoisAvailable: boolean;
+  infoPois: InfoPoiGroup[];
+  infoPoisReady: Promise<InfoPoiGroup[]>;
   ohenro88Available: boolean;
   ohenro88Ready: Promise<Ohenro88Group[]>;
   ohenro88: Ohenro88Group[];
@@ -416,6 +424,12 @@ export function createMap(container: HTMLElement): {
   let resolveHenroHelperPois: (groups: HenroHelperPoiGroup[]) => void = () => undefined;
   const henroHelperPoisReady = new Promise<HenroHelperPoiGroup[]>((resolve) => {
     resolveHenroHelperPois = resolve;
+  });
+
+  const infoPoiGroups: InfoPoiGroup[] = [];
+  let resolveInfoPois: (groups: InfoPoiGroup[]) => void = () => undefined;
+  const infoPoisReady = new Promise<InfoPoiGroup[]>((resolve) => {
+    resolveInfoPois = resolve;
   });
 
   const ohenro88Groups: Ohenro88Group[] = [];
@@ -922,6 +936,34 @@ export function createMap(container: HTMLElement): {
       resolveHenroHelperPois(henroHelperPoiGroups);
     }
 
+    // Consolidated information POIs (toilets / water / food / shops / transport
+    // / onsen / sights / wayfinding ...): unified `category` taxonomy from
+    // scripts/build-info-pois.py. One circle layer (+ label) per category.
+    const infoPoisUrl = import.meta.env.VITE_INFO_POIS_URL;
+    if (infoPoisUrl) {
+      void (async () => {
+        try {
+          const data = await fetchInfoPois(infoPoisUrl);
+          const beforeId = findInsertionPoint(
+            map,
+            [
+              "henro-route-casing",
+              "sekaiisan-henro-route-casing",
+              "mizutani-henro-route-casing",
+            ],
+            LABEL_FALLBACK,
+          );
+          infoPoiGroups.push(...addInfoPoiLayers(map, data, beforeId));
+        } catch (error) {
+          console.error("info pois load error:", error);
+        } finally {
+          resolveInfoPois(infoPoiGroups);
+        }
+      })();
+    } else {
+      resolveInfoPois(infoPoiGroups);
+    }
+
     // 歩き遍路 routes: fetch ~5MB normalized JSON (ohenro.jp personal hand-drawn
     // + Google navigation reference lines) as an inline GeoJSON source. Runs
     // non-blocking so it never delays the static lodging/temple layers above.
@@ -1061,6 +1103,9 @@ export function createMap(container: HTMLElement): {
     henroHelperPoisAvailable: Boolean(import.meta.env.VITE_HENRO_HELPER_POIS_URL),
     henroHelperPois: henroHelperPoiGroups,
     henroHelperPoisReady,
+    infoPoisAvailable: Boolean(import.meta.env.VITE_INFO_POIS_URL),
+    infoPois: infoPoiGroups,
+    infoPoisReady,
     ohenro88Available: Boolean(import.meta.env.VITE_OHENRO88_URL),
     ohenro88Ready,
     ohenro88: ohenro88Groups,

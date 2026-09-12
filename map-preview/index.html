@@ -256,6 +256,20 @@
           </div>
         </div>
 
+        <div class="layer-group" id="info-pois-controls">
+          <div class="layer-group-header">
+            <button type="button" class="tree-toggle" data-tree-target="info-pois-children" aria-expanded="false">▸</button>
+            <label class="tree-master"><input type="checkbox" id="toggle-info-pois" checked /> 統合資訊 POI</label>
+          </div>
+          <div id="info-pois-children" class="tree-children collapsed">
+            <label><input type="checkbox" id="toggle-info-poi-labels" /> labels (z11+)</label>
+            <details>
+              <summary>categories</summary>
+              <div id="info-pois-categories"></div>
+            </details>
+          </div>
+        </div>
+
         <div id="ohenro-no-akari-controls">
           <label><input type="checkbox" id="toggle-ohenro-no-akari" /> 遍路のあかり routes</label>
         </div>
