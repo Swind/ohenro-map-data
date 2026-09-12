@@ -1,5 +1,8 @@
 # Shikoku Map Data Pipeline
 
+> **資料索引**：要找「哪裡有什麼資料、什麼格式、內容大綱」請先看
+> `docs/data_catalog.md`（data catalog）；本文件是操作手冊。
+
 四國遍路 App 的離線地圖資料管線。從同一份 OSM PBF 產生兩份獨立的 PMTiles：
 
 ```text
@@ -74,8 +77,13 @@ python3 -m arukihenro_routes normalize   # -> output/arukihenro-routes.json
 `source/omotenashi-henro-inspection/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
 四國遍路世界遺產登錄推進協議會 KML archive：`python3 -m sekaiisan_henro`，下載四縣
 引導路線、札所及廁所共 12 份 KML 的完整 immutable snapshot 至
-`source/88sekaiisan-henro/`。`python3 -m sekaiisan_henro normalize` 會嚴格解析四縣路線與
-88 札所至 `output/sekaiisan-henro-normalized.json`；
+`source/88sekaiisan-henro/`。`python3 -m sekaiisan_henro normalize` 會嚴格解析四縣路線、
+88 札所及**四縣廁所**至 `output/sekaiisan-henro-normalized.json`（新增 `toilets` 與
+`toilet_defects`：2026-09-10 全量 599 廁所 + 1 defect —— kochi.kml 一個
+`1330000212,32.7873752` 座標 typo，依保守原則不臆測修正，保留 raw_coordinate 於
+`toilet_defects`，accounting 有 `toilets`/`toilet_defects` 與 per-prefecture 細目；
+廁所 description table 結構化出 facility_name/address/hours/available_days/open/close/
+toilet_type/washlet/notes，HTML 去除、空白收斂）；
 `python3 -m sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
 近距候選及 endpoint-only components）；`python3 -m sekaiisan_henro build-graph` 建立只含
 exact source evidence 的無向 graph（共享頂點及零距離 T 接點，不套用 proximity snapping）；
@@ -248,6 +256,58 @@ Terrain-RGB 採樣。產出 4 components（largest 2303 nodes / 2309，99.7%）�
 `hrn_662ad434`）端點附近無其他線，保守不臆造連線。實測 Temple 1→2→5
 前端 planRoute 為 candidate。map-preview「互動規劃」網路下拉含 Henro Hub；
 Henro Hub 為自家數位化 routing reference，非官方／導航保證。
+
+Henro Hub 離線顯示 PMTiles（個人使用）：`scripts/build-henrohub-pmtiles.sh`
+把 `output/henrohub-routes/henrohub-routes.geojson` 用 docker tippecanoe
+（z0-14、`--no-line-simplification`、單一 `henrohub_routes` layer，1884 條
+LineString）建成 `output/shikoku-henrohub.pmtiles`（~3MB，1575 tiles），
+metadata 標 `usage: personal-use`、attribution 指向 henro.app，驗證 layer/
+fields（route_id/route_role/route_class）/bounds/metadata。**非正式管線**：
+Henro Hub 授權未定（商業產品資產，無 ODbL），此 PMTiles 僅供個人使用、
+未加入 `build-app-map-manifest.py` 的 CORE_PACK。
+
+#### 統合資訊 POI（`build-info-pois`）
+
+```bash
+python3 scripts/build-info-pois.py          # -> output/pois/pois.geojson + pois-report.json
+./scripts/build-info-pois.sh                # -> output/shikoku-info-pois.pmtiles
+```
+
+個人使用、非正式管線。`build-info-pois.py` 把**非住宿類**資訊 POI 統合成單一
+FeatureCollection，套用統一 `category` 分類（app 過濾層級）：`temple / shrine /
+toilet / water / rest_area / food / shop / transport / onsen / sightseeing /
+wayfinding / warning_hazard / experience_note / route_endpoint / other`。每筆
+保留 `source`、`source_category`（原分類不丟）、穩定 `poi_id`、`name`；
+**lodging 一律排除**（有獨立 henroyado/min88/OSM 管線），**跨來源不去重**
+（app 端依 source+category 過濾）。
+
+來源與 mapping：
+- `output/temples.geojson`（88 canonical）→ `temple`。
+- `output/sekaiisan-henro-normalized.json`：88 札所 → `temple`；599 廁所 → `toilet`
+  （carry facility_name/address/hours/toilet_type/washlet 等；kochi 的
+  `toilet_defects` 座標 typo 不輸出）。
+- `output/mizutani-henro-pois.geojson`（2199，exclude lodging）：temple→`temple`、
+  transport→`transport`、shop_supply→`shop`、food→`food`、wayfinding→`wayfinding`、
+  warning_hazard→`warning_hazard`、experience_note→`experience_note`、other→`other`；
+  **`water_toilet_rest`（180）以 name 啟發式拆分**：道の駅/海の駅/休憩所→`rest_area`、
+  溫泉/湯/銭湯/立寄り湯→`onsen`、湧き水/水道→`water`，其餘→`rest_area`
+  （2026-09-10：rest_area 123 / onsen 55 / water 2，見 report）。
+- `output/shikoku-nature-trail-pois.geojson`（1568）→ tourism_spot 與 kml_poi 全數
+  `sightseeing`（kml_poi 來源無分類，source_category 保留 kind）。
+- `output/arukihenro-routes.json`（850，exclude lodging）：temple_related→`temple`、
+  shrine→`shrine`、waymarker/route_feature/elevation_mileage→`wayfinding`、
+  food_shop→`food`、onsen→`onsen`、viewpoint/sightseeing→`sightseeing`、
+  rest_area→`rest_area`、route_endpoint→`route_endpoint`、other→`other`。
+- `output/shikoku-basemap.pmtiles`（OSM，9767）：max-zoom tiles 解碼 `pois` layer，
+  抽取 station/bus_stop→`transport`、toilets→`toilet`、drinking_water→`water`、
+  shelter→`rest_area`、convenience→`shop`（geometry 用 mercantile tile-bounds
+  內插回經緯度；`--skip-osm` 可跳過）。
+
+`build-info-pois.sh`：docker tippecanoe（z0-14、`--drop-densest-as-needed`、單一
+`info_pois` layer，15,159 點）→ pmtiles convert → metadata（`usage: personal-use`、
+attribution 列出所有來源）→ 驗證 layer/fields（poi_id/category/source/
+source_category/name）、feature_count、metadata。產出
+`output/shikoku-info-pois.pmtiles`（~2.5MB，3538 tiles）。
 
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
