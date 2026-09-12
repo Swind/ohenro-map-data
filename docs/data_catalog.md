@@ -12,8 +12,8 @@
 
 | 資料 | 主要檔案 | 格式 | 數量 | 一句話 |
 |---|---|---|---|---|
-| 統合資訊 POI | `output/pois/pois.geojson` | GeoJSON | 109,916 點 | 全來源 POI 統一分類，app 過濾用 |
-| 統合 POI 離線 | `output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 5932 tiles | 單一 `info_pois` layer |
+| 統合資訊 POI | `output/pois/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
+| 統合 POI 離線 | `output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
 | 88 札所 | `output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
 | 協議會（路線+寺+廁所） | `output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
 | Mizutani POI | `output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
@@ -35,14 +35,18 @@
 ### 1.1 統合資訊 POI — `output/pois/`
 
 ```text
-output/pois/pois.geojson        # FeatureCollection，109,916 點
+output/pois/pois.geojson        # FeatureCollection，16,763 點
 output/pois/pois-report.json    # per-source / per-category accounting
-output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~7.3MB）
+output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~2.7MB）
+
+> **設計原則**：統合 POI 只放**精選的特別有用點**（廁所/旅館/水/休息/溫泉/
+> 主要交通/便利商店 + 各來源核心 POI）。其餘 OSM 點（restaurant/shop/學校/
+> 醫院/crossing 等）**留在 basemap 的 `pois` layer 原生顯示**，不重複抽。
 ```
 
-**統一 `category` taxonomy（app 過濾層級，18 類）**：
+**統一 `category` taxonomy（app 過濾層級，16 類）**：
 
-`temple / shrine / toilet / water / rest_area / food / shop / transport / onsen / sightseeing / wayfinding / warning_hazard / health / education / lodging / experience_note / route_endpoint / other`
+`temple / shrine / toilet / water / rest_area / food / shop / transport / onsen / sightseeing / wayfinding / warning_hazard / lodging / experience_note / route_endpoint / other`
 
 每筆 feature properties：
 
@@ -61,9 +65,13 @@ output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~7.3MB�
 - `mizutani`（exclude lodging）：`temple→temple`、`transport→transport`、`shop_supply→shop`、`food→food`、`wayfinding→wayfinding`、`warning_hazard→warning_hazard`、`experience_note→experience_note`、`other→other`；`water_toilet_rest` 以 name 啟發式拆 `rest_area`/`onsen`/`water`
 - `nature_trail`：tourism_spot + kml_poi → `sightseeing`
 - `arukihenro`（exclude lodging）：`temple_related→temple`、`shrine→shrine`、`waymarker/route_feature/elevation_mileage→wayfinding`、`food_shop→food`、`onsen→onsen`、`viewpoint/sightseeing→sightseeing`、`rest_area→rest_area`、`route_endpoint→route_endpoint`
-- `osm`（basemap `pois` layer，**104,524 點全抽**，~500 kinds 對應到 18 類，未對應→`other`）：`restaurant/cafe/fast_food/pub→food`、`supermarket/convenience/pharmacy→shop`、`station/bus_stop/tram_stop/ferry/taxi/parking/fuel→transport`、`toilets→toilet`、`drinking_water/water_point/fountain/spring→water`、`shelter/bench/rest_area/picnic_table→rest_area`、`public_bath/hot_spring/sauna→onsen`、`hotel/guest_house/hostel/motel/camp_site→lodging`、`hospital/doctors/clinic→health`、`school/university/library→education`、`place_of_worship/temple→temple`、`wayside_shrine→shrine`、`museum/viewpoint/monument/attraction→sightseeing`、`information/signpost→wayfinding`、`danger/hazard/cliff→warning_hazard`
+- `osm`（basemap `pois` layer，**精選 kind 抽出，11,371 點**）：`toilets→toilet`、
+  `drinking_water/water_point/fountain→water`、`hotel/guest_house/hostel/motel/camp_site/chalet→lodging`、
+  `shelter/rest_area/picnic_table→rest_area`、`public_bath/hot_spring/sauna→onsen`、
+  `station/bus_stop→transport`、`convenience→shop`；**其餘 ~490 種 kind 留在
+  basemap 原生 `pois` layer，不抽入統合 POI**。geometry 用 mercantile tile-bounds 內插回經緯度；`--skip-osm` 可跳過
 
-**lodging 註記**：統合 POI 現含 OSM 的 lodging（hotel/guest_house/hostel/motel/camp_site 等 1,361 點）；Henroyado / min88 兩套專屬住宿管線**仍不在此**（各有獨立 JSONL + PMTiles）。**跨來源不去重**（同一寺廟/餐廳可能出現在多個 source，app 端以 source+category 過濾）。
+**lodging 註記**：統合 POI 現含 OSM 的 lodging（hotel/guest_house/hostel/motel/camp_site 等 1,276 點）；Henroyado / min88 兩套專屬住宿管線**仍不在此**（各有獨立 JSONL + PMTiles）。**跨來源不去重**（同一寺廟/餐廳可能出現在多個 source，app 端以 source+category 過濾）。
 
 ### 1.2 88 札所（canonical）
 
@@ -97,11 +105,13 @@ output/content.sqlite    # features table ×88，payload_json 同 temples.json�
 | 步行遍路 | `output/arukihenro-routes.json` 的 `routes[].maps[].points[]`（933） | `category`：temple_related/waymarker/food_shop/route_endpoint/lodging/viewpoint/elevation_mileage/onsen/sightseeing/rest_area/shrine/route_feature/other | 385 點帶 `photos` URL |
 | Henro Helper | `output/henro-helper-routes/henro-helper-pois.geojson`（2475） | `kind`：temple/bekkaku/okunoin/bangai/toilet/shower/convenience_store/rest_area/onsen/bus_stop/train_station/campground/accommodation/label/poi/... | 有 `name_ja`/`name_en`/`temple_number` |
 
-### 1.5 住宿（獨立管線，**不在**統合 POI）
+### 1.5 住宿（專屬管線，獨立於統合 POI）
+
+以下住宿**不進**統合 POI（§1.1 的 OSM basemap lodging 除外）；Henroyado / min88 各有獨立 JSONL + PMTiles。
 
 | 來源 | 檔案 | 數量 |
 |---|---|---|
-| OSM | `output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
+| OSM extractor | `output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
 | Henroyado | `output/henroyado/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 702 筆（geocoded 582 有座標） |
 | min88 | `output/min88-lodging/{raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 650 筆（geocoded 640 有座標） |
 
@@ -158,7 +168,8 @@ output/henrohub-routes/henrohub-plan-graph.json   # Henro Hub（2303 nodes；含
 ```text
 output/shikoku-basemap.pmtiles    # Protomaps Basemap；z0-15；10 layers：
                                   #   boundaries/buildings/earth/landcover/landuse/places/pois/roads/water
-                                  #   pois layer kind：station/bus_stop/toilets/drinking_water/shelter/convenience/...
+                                  #   pois layer：~500 kinds（restaurant/hotel/station/toilets/...）
+                                  #   = 所有 OSM 點的「原生」顯示層；§1.1 只精選抽出少數 kind
 output/shikoku-contours.pmtiles   # 20m 等高線 MVT，z12-15
 output/shikoku-terrain.pmtiles    # Terrain-RGB PNG，z6-14（DEM10 基底）
 output/shikoku-elevation.sqlite   # GSI DEM5+DEM10B 合併 SQLite（metadata/elevation_tiles/source_tiles）

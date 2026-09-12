@@ -2,6 +2,10 @@
 
 > **資料索引**：要找「哪裡有什麼資料、什麼格式、內容大綱」請先看
 > `docs/data_catalog.md`（data catalog）；本文件是操作手冊。
+>
+> **維護規則**：新增/變更任何資料集（新來源、新 PMTiles、新分類、schema 或
+> 數量變動）時，**必須同步更新 `docs/data_catalog.md`**（§0 總表、對應
+> schema/數量），讓其他 AI agent 與開發者能依該文件找到資料。
 
 四國遍路 App 的離線地圖資料管線。從同一份 OSM PBF 產生兩份獨立的 PMTiles：
 
@@ -273,15 +277,17 @@ python3 scripts/build-info-pois.py          # -> output/pois/pois.geojson + pois
 ./scripts/build-info-pois.sh                # -> output/shikoku-info-pois.pmtiles
 ```
 
-個人使用、非正式管線。`build-info-pois.py` 把**非住宿類**資訊 POI 統合成單一
+個人使用、非正式管線。`build-info-pois.py` 把**精選資訊 POI** 統合成單一
 FeatureCollection，套用統一 `category` 分類（app 過濾層級）：`temple / shrine /
 toilet / water / rest_area / food / shop / transport / onsen / sightseeing /
-wayfinding / warning_hazard / health / education / lodging / experience_note /
-route_endpoint / other`。每筆
+wayfinding / warning_hazard / lodging / experience_note / route_endpoint /
+other`。每筆
 保留 `source`、`source_category`（原分類不丟）、穩定 `poi_id`、`name`；
-Henroyado / min88 兩套專屬住宿管線**不在這裡**（各有獨立 JSONL + PMTiles），
-但 OSM basemap 的 lodging（hotel/guest_house/hostel/motel/camp_site 等）會進
-統合 POI；**跨來源不去重**（app 端依 source+category 過濾）。
+**設計原則：統合 POI 只放特別有用的點，其餘 OSM 點（restaurant/shop/學校等
+~490 種 kind）留在 basemap 原生 `pois` layer**；Henroyado / min88 兩套專屬
+住宿管線**不在這裡**（各有獨立 JSONL + PMTiles），但 OSM basemap 的 lodging
+（hotel/guest_house/hostel/motel/camp_site 等）會進統合 POI；**跨來源不去重**
+（app 端依 source+category 過濾）。
 
 來源與 mapping：
 - `output/temples.geojson`（88 canonical）→ `temple`。
@@ -300,25 +306,20 @@ Henroyado / min88 兩套專屬住宿管線**不在這裡**（各有獨立 JSONL 
   shrine→`shrine`、waymarker/route_feature/elevation_mileage→`wayfinding`、
   food_shop→`food`、onsen→`onsen`、viewpoint/sightseeing→`sightseeing`、
   rest_area→`rest_area`、route_endpoint→`route_endpoint`、other→`other`。
-- `output/shikoku-basemap.pmtiles`（OSM，104,524）：max-zoom tiles 解碼 `pois` layer，
-  **所有 kinds 全抽**（~500 種，對應表 `OSM_KIND_CATEGORY`），restaurant/cafe/
-  fast_food→`food`、supermarket/convenience/pharmacy→`shop`、station/bus_stop/
-  tram_stop/ferry/taxi/parking/fuel→`transport`、toilets→`toilet`、
-  drinking_water/water_point/fountain→`water`、shelter/bench/rest_area/
-  picnic_table→`rest_area`、public_bath/hot_spring/sauna→`onsen`、
-  hotel/guest_house/hostel/motel/camp_site→`lodging`、hospital/doctors/clinic→
-  `health`、school/university/library→`education`、place_of_worship/temple→
-  `temple`、wayside_shrine→`shrine`、museum/viewpoint/monument/attraction→
-  `sightseeing`、information/signpost→`wayfinding`、danger/hazard/cliff→
-  `warning_hazard`；未對應→`other`（含 crossing/tree/traffic_signals 等
-  基礎設施噪音，source_category 保留 kind）。geometry 用 mercantile tile-bounds
+- `output/shikoku-basemap.pmtiles`（OSM，精選 11,371）：max-zoom tiles 解碼 `pois` layer，
+  **只抽特別有用的 kind**（`OSM_KINDS`）：toilets→`toilet`、drinking_water/
+  water_point/fountain→`water`、hotel/guest_house/hostel/motel/camp_site/chalet→
+  `lodging`、shelter/rest_area/picnic_table→`rest_area`、public_bath/hot_spring/
+  sauna→`onsen`、station/bus_stop→`transport`、convenience→`shop`；**其餘
+  ~490 種 kind（restaurant/shop/school/醫院/crossing 等）留在 basemap 原生
+  `pois` layer，不抽入統合 POI**。geometry 用 mercantile tile-bounds
   內插回經緯度；`--skip-osm` 可跳過。
 
 `build-info-pois.sh`：docker tippecanoe（z0-14、`--drop-densest-as-needed`、單一
-`info_pois` layer，109,916 點）→ pmtiles convert → metadata（`usage: personal-use`、
+`info_pois` layer，16,763 點）→ pmtiles convert → metadata（`usage: personal-use`、
 attribution 列出所有來源）→ 驗證 layer/fields（poi_id/category/source/
 source_category/name）、feature_count、metadata。產出
-`output/shikoku-info-pois.pmtiles`（~7.3MB，5932 tiles）。
+`output/shikoku-info-pois.pmtiles`（~2.7MB，3769 tiles）。
 
 #### QGIS review-pack / report exporter（`build-review-pack`）
 

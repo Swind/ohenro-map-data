@@ -1,30 +1,30 @@
 pmtiles spec version: 3
 tile type: mvt
-bounds: (long: 131.810529, lat: 32.580260) (long: 135.616480, lat: 34.598368)
+bounds: (long: 132.018263, lat: 32.704585) (long: 135.616480, lat: 34.569745)
 min zoom: 0
 max zoom: 14
-center: (long: 134.044189, lat: 34.352506)
+center: (long: 132.769775, lat: 33.843045)
 center zoom: 14
-addressed tiles count: 5932
-tile entries count: 5932
-tile contents count: 5932
+addressed tiles count: 3769
+tile entries count: 3769
+tile contents count: 3769
 clustered: true
 internal compression: gzip
 tile compression: gzip
 minzoom 0
-name Information POIs
-tilestats <object, use --metadata to view full JSON metadata>
-antimeridian_adjusted_bounds 131.810529,32.580260,135.616480,34.598368
-format pbf
-generator tippecanoe v2.82.0
-generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/info-pois/info-pois.mbtiles --minimum-zoom 0 --maximum-zoom 14 --drop-densest-as-needed -L info_pois:/home/swind/Data/Program/ohenro-map-data/output/pois/pois.geojson
-strategies [{"dropped_by_rate":109915},{"dropped_by_rate":109915},{"dropped_by_rate":109914},{"dropped_by_rate":130943},{"dropped_by_rate":114068},{"dropped_by_rate":109913},{"dropped_by_rate":109842},{"dropped_by_rate":137663},{"dropped_by_rate":123004},{"dropped_by_rate":117209},{"dropped_by_rate":113378},{"dropped_by_rate":109476},{"dropped_by_rate":99279},{"dropped_by_rate":71499},{}]
-maxzoom 14
+strategies [{"dropped_by_rate":16762},{"dropped_by_rate":16762},{"dropped_by_rate":16762},{"dropped_by_rate":20082},{"dropped_by_rate":17333},{"dropped_by_rate":16763},{"dropped_by_rate":16751},{"dropped_by_rate":18803},{"dropped_by_rate":18084},{"dropped_by_rate":17702},{"dropped_by_rate":17316},{"dropped_by_rate":16645},{"dropped_by_rate":14945},{"dropped_by_rate":10422},{}]
 type overlay
 usage personal-use
-vector_layers <object, use --metadata to view full JSON metadata>
-version 2
 description Consolidated information POIs (temples/toilets/food/shops/transport/onsen/sights/wayfinding) with a unified category field
-attribution Multiple sources: Mizutani Henro Guide Map, 四国自然歩道, 88sekaiisan, arukihenro, OpenStreetMap (ODbL)
-dataset_id info-pois
 feature_count <object, use --metadata to view full JSON metadata>
+generator tippecanoe v2.82.0
+dataset_id info-pois
+maxzoom 14
+name Information POIs
+version 2
+antimeridian_adjusted_bounds 132.018263,32.704585,135.616480,34.569745
+attribution Multiple sources: Mizutani Henro Guide Map, 四国自然歩道, 88sekaiisan, arukihenro, OpenStreetMap (ODbL)
+format pbf
+tilestats <object, use --metadata to view full JSON metadata>
+vector_layers <object, use --metadata to view full JSON metadata>
+generator_options tippecanoe --quiet --force --output /home/swind/Data/Program/ohenro-map-data/work/info-pois/info-pois.mbtiles --minimum-zoom 0 --maximum-zoom 14 --drop-densest-as-needed -L info_pois:/home/swind/Data/Program/ohenro-map-data/output/pois/pois.geojson
