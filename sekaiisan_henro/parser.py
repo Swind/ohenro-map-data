@@ -8,6 +8,7 @@ here; this module extracts raw, validated geometry plus conservative identity
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import math
 import re
@@ -16,6 +17,24 @@ import xml.etree.ElementTree as ElementTree
 
 _FID_RE = re.compile(r"<td>FID</td>\s*<td>\s*([^<]+?)\s*</td>", re.DOTALL)
 _TEMPLE_NUMBER_RE = re.compile(r"第\s*(\d+)\s*番")
+# One description-table row: <tr><td ...>label</td><td ...>value</td></tr>.
+_TOILET_ROW_RE = re.compile(
+    r"<tr>\s*<td[^>]*>(.*?)</td>\s*<td[^>]*>(.*?)</td>\s*</tr>", re.DOTALL
+)
+# Label prefix -> structured field. Order matters (longer prefixes first).
+_TOILET_FIELDS = (
+    ("施設名", "facility_name"),
+    ("住所", "address"),
+    ("利用可能日", "available_days"),
+    ("利用時間", "hours"),
+    ("Open", "open"),
+    ("Close", "close"),
+    ("ｳｫｼｭﾚｯﾄ", "washlet"),
+    ("ウォシュレット", "washlet"),
+    ("種類", "toilet_type"),
+    ("備考", "notes"),
+)
+_TAG_RE = re.compile(r"<[^>]+>")
 
 # KML geometry element names (namespace-stripped) that must be explicitly
 # accounted for. Anything in this set that is not supported by a given
@@ -253,3 +272,89 @@ def parse_temple_file(data: bytes | str, source_file: str) -> list[dict]:
             "source_file": source_file,
         })
     return temples
+
+
+# Toilet parsing ---------------------------------------------------------------
+
+
+def _clean_html(value: str) -> str:
+    """Strip HTML tags, unescape entities, collapse whitespace runs."""
+    value = _TAG_RE.sub("", value or "")
+    value = html.unescape(value)
+    value = re.sub(r"[\s\u3000]+", " ", value)
+    return value.strip()
+
+
+def _parse_toilet_description(raw_description: str) -> dict:
+    """Extract the structured description-table fields from a toilet KML.
+
+    Rows whose label does not match a known field are ignored (conservative);
+    the facility name is the primary display name and may be absent.
+    """
+    fields: dict[str, str] = {}
+    for label_raw, value_raw in _TOILET_ROW_RE.findall(raw_description or ""):
+        label = _clean_html(label_raw)
+        if not label:
+            continue
+        for prefix, field in _TOILET_FIELDS:
+            if label.startswith(prefix):
+                value = _clean_html(value_raw)
+                if value:
+                    fields[field] = value
+                break
+    return fields
+
+
+def parse_toilet_file(data: bytes | str, prefecture: str) -> dict:
+    """Parse one toilets/<prefecture>.kml into stable toilet records.
+
+    Returns {"placemark_count": int, "toilets": [toilet, ...], "defects":
+    [defect, ...]}. Each toilet Placemark must contain exactly one direct Point
+    and no other geometry; the raw name is preserved as ``raw_type`` and the
+    description table is parsed conservatively (unknown rows are dropped).
+
+    A Placemark whose Point coordinate cannot be validated (out of bounds /
+    non-numeric) is not silently dropped: it is returned as a ``defect`` with
+    its raw coordinate and reason, so the caller can account for it explicitly.
+    Raises ValueError for missing/multiple Points or unsupported geometry.
+    """
+    root = _parse_kml_root(data)
+    toilets: list[dict] = []
+    defects: list[dict] = []
+    placemark_count = 0
+    for index, placemark in enumerate(_iter_placemarks(root), start=1):
+        placemark_count += 1
+        raw_type = _text(placemark, "name") or ""
+        raw_description = _text(placemark, "description") or ""
+        points = []
+        for child in placemark:
+            kind = _name(child)
+            if kind == "Point":
+                points.append(child)
+            elif kind in _GEOMETRY_TAGS:
+                raise ValueError("unsupported geometry in toilet placemark: %s" % kind)
+        if len(points) != 1:
+            raise ValueError(
+                "toilet placemark must contain exactly one Point: %r" % raw_type
+            )
+        raw_coordinate = _text(points[0], "coordinates") or ""
+        try:
+            coordinate = _coordinates(raw_coordinate, "Point")[0]
+        except ValueError as error:
+            defects.append({
+                "id": "SHT_%s_%d" % (prefecture, index),
+                "prefecture": prefecture,
+                "source_order": index - 1,
+                "raw_type": raw_type,
+                "raw_coordinate": raw_coordinate.strip(),
+                "reason": str(error),
+            })
+            continue
+        fields = _parse_toilet_description(raw_description)
+        fields["raw_type"] = raw_type
+        fields["prefecture"] = prefecture
+        fields["source_order"] = index - 1
+        fields["id"] = "SHT_%s_%d" % (prefecture, index)
+        fields["geometry"] = {"type": "Point", "coordinates": coordinate}
+        toilets.append(fields)
+    return {"placemark_count": placemark_count, "toilets": toilets, "defects": defects}

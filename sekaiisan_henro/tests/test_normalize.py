@@ -36,11 +36,28 @@ class TestNormalize(unittest.TestCase):
         self.assertEqual(acct["linestrings"], 8)
         self.assertEqual(acct["points"], 16)
         self.assertEqual(acct["temples"], 88)
+        self.assertEqual(acct["toilets"], 4)
         self.assertEqual(acct["missing_source_fid"], 0)
         self.assertEqual(acct["by_prefecture"]["tokushima"], {"routes": 2, "linestrings": 3, "points": 6, "missing_source_fid": 0})
         self.assertEqual(acct["by_prefecture"]["kochi"], {"routes": 1, "linestrings": 3, "points": 6, "missing_source_fid": 0})
         self.assertEqual(acct["by_prefecture"]["ehime"], {"routes": 1, "linestrings": 1, "points": 2, "missing_source_fid": 0})
         self.assertEqual(acct["by_prefecture"]["kagawa"], {"routes": 1, "linestrings": 1, "points": 2, "missing_source_fid": 0})
+        self.assertEqual(acct["by_prefecture"]["toilets"],
+                         {"tokushima": 2, "kochi": 1, "ehime": 0, "kagawa": 1})
+        # toilets keep per-file source order and stable ids
+        toilets = first["toilets"]
+        self.assertEqual([t["id"] for t in toilets],
+                         ["SHT_tokushima_1", "SHT_tokushima_2",
+                          "SHT_kochi_1", "SHT_kagawa_1"])
+        # structured description-table fields survive parsing
+        self.assertEqual(toilets[0]["facility_name"], "県庁舎")
+        self.assertEqual(toilets[0]["toilet_type"], "和・洋式両方、多目的トイレ")
+        self.assertEqual(toilets[0]["washlet"], "有り")
+        # HTML inside a value is stripped
+        self.assertEqual(toilets[1]["notes"], "夜間は閉鎖")
+        # toilet without a description keeps raw_type only
+        self.assertEqual(toilets[2]["raw_type"], "屋外トイレ(Toilet)")
+        self.assertNotIn("facility_name", toilets[2])
         # MultiGeometry parts share source_order and get distinct part/IDs
         tokushima = [r for r in first["routes"] if r["prefecture"] == "tokushima"]
         self.assertEqual([r["id"] for r in tokushima], ["SHR_tokushima_1_1", "SHR_tokushima_2_1", "SHR_tokushima_2_2"])
@@ -85,6 +102,41 @@ class TestNormalize(unittest.TestCase):
         data_dir = _make_data_dir(temple_numbers=list(range(1, 89)) + [1])
         with self.assertRaisesRegex(ValueError, "duplicate temple number"):
             normalize.build_normalized(data_dir, "current")
+
+    def test_malformed_toilet_coordinate_accounted_as_defect(self):
+        # Build the standard fixture, then replace the kochi toilet file body
+        # with one malformed coordinate (a source-data typo, never "fixed").
+        data_dir = _make_data_dir()
+        snapshot_dir = os.path.join(data_dir, "snapshots", SNAPSHOT_SHA)
+        body = helpers.toilet_kml([
+            "<Placemark><name>公衆トイレ(Toilet)</name>"
+            "<Point><coordinates>1330000212,32.7873752</coordinates></Point></Placemark>"
+        ])
+        path = os.path.join(snapshot_dir, "toilets/kochi.kml")
+        with open(path, "wb") as stream:
+            stream.write(body)
+        import hashlib
+        metadata_path = os.path.join(snapshot_dir, "metadata.json")
+        with open(metadata_path, encoding="utf-8") as stream:
+            metadata = json.load(stream)
+        for entry in metadata["files"]:
+            if entry["local_path"] == "toilets/kochi.kml":
+                entry["sha256"] = hashlib.sha256(body).hexdigest()
+                entry["size"] = len(body)
+                break
+        with open(metadata_path, "w", encoding="utf-8") as stream:
+            json.dump(metadata, stream, ensure_ascii=False, sort_keys=True)
+
+        result = normalize.build_normalized(data_dir, "current")
+        acct = result["accounting"]
+        self.assertEqual(acct["toilets"], 3)
+        self.assertEqual(acct["toilet_defects"], 1)
+        self.assertEqual(acct["by_prefecture"]["toilets"]["kochi"], 0)
+        self.assertEqual(acct["by_prefecture"]["toilet_defects"]["kochi"], 1)
+        defect = result["toilet_defects"][0]
+        self.assertEqual(defect["raw_type"], "公衆トイレ(Toilet)")
+        self.assertEqual(defect["raw_coordinate"], "1330000212,32.7873752")
+        self.assertIn("longitude", defect["reason"])
 
     def test_failed_normalization_preserves_existing_output(self):
         data_dir = _make_data_dir(temple_numbers=list(range(1, 88)))  # missing 88

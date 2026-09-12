@@ -22,6 +22,12 @@ ROUTE_FILES = (
     ("routes/kagawa.kml", "kagawa"),
 )
 TEMPLE_FILES = ("temples/1-23.kml", "temples/24-39.kml", "temples/40-65.kml", "temples/66-88.kml")
+TOILET_FILES = (
+    ("toilets/tokushima.kml", "tokushima"),
+    ("toilets/kochi.kml", "kochi"),
+    ("toilets/ehime.kml", "ehime"),
+    ("toilets/kagawa.kml", "kagawa"),
+)
 SNAPSHOT_HASH_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
@@ -83,7 +89,7 @@ def build_normalized(data_dir: str, snapshot: str) -> dict:
     file_map = _file_map(metadata)
 
     routes: list[dict] = []
-    accounting = {"routes": 0, "linestrings": 0, "points": 0, "temples": 0, "missing_source_fid": 0, "by_prefecture": {}}
+    accounting = {"routes": 0, "linestrings": 0, "points": 0, "temples": 0, "toilets": 0, "missing_source_fid": 0, "by_prefecture": {}}
     for local_path, prefecture in ROUTE_FILES:
         info = file_map.get(local_path)
         if info is None:
@@ -122,15 +128,44 @@ def build_normalized(data_dir: str, snapshot: str) -> dict:
         raise ValueError("temple numbers missing: %s" % ", ".join(map(str, missing)))
     accounting["temples"] = len(temples)
 
+    toilets: list[dict] = []
+    toilet_defects: list[dict] = []
+    for local_path, prefecture in TOILET_FILES:
+        info = file_map.get(local_path)
+        if info is None:
+            raise ValueError("toilet file not in snapshot metadata: %s" % local_path)
+        body = _read_kml(snapshot_dir, local_path, info["sha256"])
+        parsed = parser.parse_toilet_file(body, prefecture)
+        for toilet in parsed["toilets"]:
+            toilet["source_file"] = info["source_file"]
+            toilets.append(toilet)
+        for defect in parsed["defects"]:
+            defect["source_file"] = info["source_file"]
+            toilet_defects.append(defect)
+    accounting["toilets"] = len(toilets)
+    accounting["toilet_defects"] = len(toilet_defects)
+    accounting["by_prefecture"].setdefault("toilets", {})
+    accounting["by_prefecture"].setdefault("toilet_defects", {})
+    for prefecture in ("tokushima", "kochi", "ehime", "kagawa"):
+        accounting["by_prefecture"]["toilets"][prefecture] = sum(
+            1 for t in toilets if t["prefecture"] == prefecture
+        )
+        accounting["by_prefecture"]["toilet_defects"][prefecture] = sum(
+            1 for d in toilet_defects if d["prefecture"] == prefecture
+        )
+
     # Deterministic ordering: routes keep the declared ROUTE_FILES order
     # (tokushima, kochi, ehime, kagawa), then source order, then part; temples
-    # sorted by number. No prefecture re-sort is applied.
+    # sorted by number; toilets keep per-file source order. No prefecture
+    # re-sort is applied.
     temples = sorted(temples, key=lambda t: t["number"])
 
     source_files = {}
     for local_path, _ in ROUTE_FILES:
         source_files[local_path] = file_map[local_path]
     for local_path in TEMPLE_FILES:
+        source_files[local_path] = file_map[local_path]
+    for local_path, _ in TOILET_FILES:
         source_files[local_path] = file_map[local_path]
 
     return {
@@ -139,6 +174,8 @@ def build_normalized(data_dir: str, snapshot: str) -> dict:
         "snapshot_sha256": sha,
         "routes": routes,
         "temples": temples,
+        "toilets": toilets,
+        "toilet_defects": toilet_defects,
         "source_files": source_files,
         "accounting": accounting,
     }
