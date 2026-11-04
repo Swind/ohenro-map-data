@@ -371,6 +371,15 @@ GSI DEM 轉換詳見 `datasets/gsi/gsi-dem/README.md`（規劃：`datasets/gsi/d
 
 ## GSI DEM（Phase 1-6：Inspector + Raster correctness + DEM5 merge + DEM10B fallback + Final tiling + SQLite）
 
+一鍵入口：`python3 -m datasets.gsi`，先比對官方四國 DEM 最新檔名清單，缺檔或
+版本差異會停止並列出手動下載需求（官方 ZIP 需登入）。ZIP 放在
+`datasets/gsi/raw/DEM5/{5A,5B,5C}/` 與 `DEM10B/`；舊版移到 raw 以外。
+輸入齊全後 CRC/hash → merge → tile → 兩份 SQLite → 兩份 PMTiles →
+整組驗證後逐檔發布。`check`／`build`／`validate` 可拆開，`--local` 略過更新檢查。
+依賴、參數與報告見 `datasets/gsi/README.md`；資料不提交 Git。
+輸入 SHA-256、建置設定／程式碼與四份產出 hash 都未變時跳過重建；`--force`
+可強制重建（仍做官方更新檢查，除非搭配 `--local` 或使用 `build`）。
+
 ```bash
 cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- inspect datasets/gsi/raw/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
 cargo test --manifest-path datasets/gsi/gsi-dem/Cargo.toml
@@ -417,7 +426,7 @@ docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
 # -> datasets/gsi/output/shikoku-contours.pmtiles（20m 等高線, MVT, z12-15）
 # -> datasets/gsi/output/shikoku-terrain.pmtiles（Terrain-RGB, PNG, z6-14）
 # 完整流程：export-vrt -> gdal_translate COG -> gdalinfo 驗證 -> gdal_contour ->
-#   tippecanoe -> gdalwarp 3857 -> rgbify_dem -> pmtiles convert -> 嚴格驗證 -> npm build
+#   tippecanoe -> gdalwarp 3857 -> rgbify_dem -> pmtiles convert -> 嚴格驗證
 # 全部 stdout/stderr 寫入 datasets/gsi/reports/elevation-visuals-build.log；
 # metadata 寫入 reports/{contours,terrain}-metadata.txt；GSI attribution 寫入 PMTiles。
 

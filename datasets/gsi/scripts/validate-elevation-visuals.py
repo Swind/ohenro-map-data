@@ -73,16 +73,15 @@ def validate_contours(path):
     check("contours has elevation_m field", "elevation_m" in fields, str(fields.get("elevation_m")))
 
     # bounds overlap Shikoku
-    b = h.get("bounds")
-    if b:
-        lon_min, lat_min, lon_max, lat_max = b
-        check(
-            "contours bounds overlap Shikoku",
-            lon_min < 135.5 and lon_max > 131.0 and lat_min < 34.5 and lat_max > 32.0,
-            f"[{lon_min},{lat_min}]-[{lon_max},{lat_max}]",
-        )
-    else:
-        print("  WARN: no bounds in header")
+    lon_min, lat_min, lon_max, lat_max = (
+        h[key] / 1e7 for key in ("min_lon_e7", "min_lat_e7", "max_lon_e7", "max_lat_e7")
+    )
+    check(
+        "contours bounds overlap Shikoku",
+        lon_min < lon_max and lat_min < lat_max
+        and lon_min < 135.5 and lon_max > 131.0 and lat_min < 34.5 and lat_max > 32.0,
+        f"[{lon_min},{lat_min}]-[{lon_max},{lat_max}]",
+    )
 
     # zoom coverage z12-15
     for z in range(12, 16):

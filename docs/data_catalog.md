@@ -30,6 +30,7 @@ assets／manifest、route packs 與人工編輯成果。
 | min88 住宿 | `datasets/min88_lodging/output/*.jsonl` | JSONL | 650 | min88.jp |
 | 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
 | 高程 | `datasets/gsi/output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
+| 高程原始資料／建置索引 | `datasets/gsi/raw/`、`datasets/gsi/reports/{updates,pipeline}.json` | ZIP / JSON | 692 ZIP（2026-11-04 清單） | 官方四國版本清單、本機 SHA-256 與產出 hash |
 | 互動規劃 graph | `output/*-plan-graph.json` ×3 | JSON | — | map-preview 規劃用 |
 | App 離線包 manifest | `output/app-map-manifest.json` | JSON | — | Android 安裝清單 |
 
@@ -169,6 +170,16 @@ datasets/henrohub/output/henrohub-plan-graph.json   # Henro Hub（2303 nodes；�
 ---
 
 ## 4. 底圖與高程
+
+GSI 一鍵管線：`python3 -m datasets.gsi`（官方四國版本清單 → 本機 ZIP 驗證 →
+merge → tile → 完整及 DEM10-only SQLite → contours/Terrain-RGB → 驗證後發布）。
+下載需登入官方網站後手動放入 `datasets/gsi/raw/DEM5/{5A,5B,5C}/` 與 `DEM10B/`；
+`check` 只查更新，`--local` 跳過線上清單。`reports/updates.json` 保存官方 records、
+missing_or_updated、obsolete_or_extra；`reports/pipeline.json` 保存 input_sha256 與
+outputs 的 size/sha256 與 `build_config`（環境設定、管線程式碼 hash）；輸入、設定、
+產出 hash 皆未變時跳過重建，`--force` 強制重建。`merge.json`、`tile.json`、
+`validation.json` 為建置 accounting。
+操作見 [`datasets/gsi/README.md`](../datasets/gsi/README.md)。
 
 OSM 一鍵管線：`python3 -m datasets.osm`（Geofabrik checksum 更新檢查 → PBF
 下載 → 編譯 profiles → 底圖／hiking PMTiles＋住宿抽取 → 驗證後發布）。

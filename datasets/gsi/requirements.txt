@@ -1,0 +1,5 @@
+mercantile
+numpy
+Pillow
+pmtiles
+mapbox-vector-tile

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build elevation visualization artifacts (contours + terrain RGB) from the
-# DEM10-only SQLite database, following docs/elevation_visualization_pipeline.md.
+# DEM10-only SQLite database, following datasets/gsi/docs/elevation_visualization_pipeline.md.
 #
 # All GDAL / tippecanoe / rio-rgbify steps run inside the Docker image
 # ohenro-elevation-visuals (see docker/Dockerfile.elevation) so nothing is
@@ -19,8 +19,8 @@ TERRAIN_MIN_ZOOM="${TERRAIN_MIN_ZOOM:-6}"
 TERRAIN_MAX_ZOOM="${TERRAIN_MAX_ZOOM:-14}"
 RGBIFY_WORKERS="${RGBIFY_WORKERS:-4}"
 IMAGE="${ELEVATION_IMAGE:-ohenro-elevation-visuals}"
-OUTPUT="$ROOT/datasets/gsi/output"
-REPORTS="$ROOT/datasets/gsi/reports"
+OUTPUT="${GSI_OUTPUT_DIR:-$ROOT/datasets/gsi/output}"
+REPORTS="${GSI_REPORTS_DIR:-$ROOT/datasets/gsi/reports}"
 LOG="$REPORTS/elevation-visuals-build.log"
 
 # SRS for the exported geographic raster (JGD2024 geographic 2D = EPSG:6668).
@@ -32,7 +32,8 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 # absolute path (so paths inside the container match the host) and writing as
 # the invoking user (no root-owned artifacts).
 dockerrun() {
-  docker run --rm --user "$(id -u):$(id -g)" -v "$ROOT:$ROOT" "$IMAGE" "$@"
+  docker run --rm --user "$(id -u):$(id -g)" -v "$ROOT:$ROOT" \
+    -v "$WORK_DIR:$WORK_DIR" -v "$(dirname "$ELEVATION_DB"):$(dirname "$ELEVATION_DB")" "$IMAGE" "$@"
 }
 
 # ---- Preflight ----
@@ -176,14 +177,6 @@ echo "==> validating elevation visualization artifacts"
 "$ROOT/datasets/gsi/scripts/validate-elevation-visuals.sh" \
   "$OUTPUT/shikoku-contours.pmtiles" \
   "$OUTPUT/shikoku-terrain.pmtiles"
-
-# ---- 11. Web preview build ----
-if [ -f "$ROOT/map-preview/package.json" ]; then
-  echo "==> npm build (map-preview)"
-  npm --prefix "$ROOT/map-preview" run build
-else
-  echo "WARN: map-preview not present, skipping web build"
-fi
 
 echo "==> Done"
 echo "  $OUTPUT/shikoku-contours.pmtiles"

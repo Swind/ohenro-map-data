@@ -21,6 +21,8 @@ target/
 *.pmtiles
 *.osm.pbf
 datasets/osm/.pipeline.lock
+datasets/gsi/.pipeline.lock
+datasets/gsi/.gsi-build-*/
 
 # GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/

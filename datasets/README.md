@@ -6,7 +6,7 @@
 | 資料夾 | 來源／用途 | 程式入口 |
 |---|---|---|
 | [osm](osm/README.md) | OpenStreetMap 底圖、hiking relations、住宿 | **已一鍵化**：`python3 -m datasets.osm`（自動下載／更新→建置→驗證）；手動檔用 `--local` |
-| [gsi](gsi/) | 國土地理院 DEM、高程、等高線、Terrain-RGB | `gsi-dem/`、`scripts/` |
+| [gsi](gsi/README.md) | 國土地理院 DEM、高程、等高線、Terrain-RGB | **已一鍵化**：`python3 -m datasets.gsi`（四國更新檢查→手動 ZIP→建置→驗證）；本機檔用 `--local` |
 | [seichijunrei](seichijunrei/) | 聖地巡礼網站的 canonical 88 札所與詳細內容 | `scripts/` |
 | [sekaiisan_henro](sekaiisan_henro/) | 世界遺產協議會路線、札所、廁所、路由 graph | `python3 -m datasets.sekaiisan_henro` |
 | [arukihenro_routes](arukihenro_routes/) | ohenro.jp 步行遍路路線與 POI | `python3 -m datasets.arukihenro_routes` |
