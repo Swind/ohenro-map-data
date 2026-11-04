@@ -46,6 +46,8 @@ def resolve_snapshot(data_dir: str, snapshot: str) -> tuple[str, str]:
         sha = snapshot.lower()
         if not SNAPSHOT_HASH_RE.fullmatch(sha):
             raise ValueError("snapshot must be 'current' or a 64-hex sha256")
+    if not isinstance(sha, str) or not SNAPSHOT_HASH_RE.fullmatch(sha):
+        raise ValueError("snapshot sha256 must be 64 lowercase hex characters")
     snapshot_dir = os.path.join(data_dir, "snapshots", sha)
     if not os.path.isdir(snapshot_dir):
         raise ValueError("snapshot directory not found: %s" % snapshot_dir)

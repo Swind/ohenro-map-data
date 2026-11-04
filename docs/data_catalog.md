@@ -22,6 +22,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 88 札所 | `datasets/seichijunrei/output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
 | 88 札所離線 tiles | `datasets/seichijunrei/output/shikoku-temples.pmtiles` | PMTiles (MVT) | 88 unique IDs | `temples` layer，z0–14，未加入共用 App manifest |
 | 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
+| 協議會一鍵建置報告 | `datasets/sekaiisan_henro/reports/pipeline.json` | JSON | 核心 15 檔／可選 17 檔 | snapshot、設定、驗證摘要、產出 hash；最新隔離實跑 594 廁所，見 §1.3 |
 | Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
 | 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
@@ -98,6 +99,23 @@ canonical ID 使用 `properties.id`，不依賴 MVT 的 numeric feature ID。
 PMTiles 位於 `/tmp/opencode/temples-check/output/`，正式 output 需執行入口產生。
 
 ### 1.3 協議會（世界遺産登錄推進協議會）— `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`
+
+一鍵入口 `python3 -m datasets.sekaiisan_henro run`：更新 12 KML 後建置 normalized、
+topology inventory、exact/proximity/anchors graph、87 sections/corridors、corridor GeoJSON、
+plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層 attribution。
+`reports/pipeline.json` schema：`inputs`（snapshot_sha256/metadata_sha256）、
+`build_config`（bridge_m/arukihenro_sha256/shapely_version/source_sha256）、
+`validation`（來源 accounting、區間／corridor status、plan nodes/edges）、
+`outputs`（相對 output 路徑 → size/sha256）。全部未變時跳過重建。
+操作與 archive 位置見 [`datasets/sekaiisan_henro/README.md`](../datasets/sekaiisan_henro/README.md)。
+
+2026-11-05 全量隔離實跑（`/tmp/opencode/sekaiisan-check/`）：snapshot `dc5c5a86…`，
+1494 route Placemarks / 1506 lines / 36,350 vertices / 88 temples / **594 toilets + 1 defect**。
+正式 output 尚未替換（上方 599 為既有正式資料）。plan graph 為 2080 nodes /
+1744 traversal edges / **443 joins**；新 exporter 去除同一 bridge ID 的重複候選
+（舊版 452 joins 中有 9 筆重複），source/exact graph 不受影響。
+87 sections：candidate 34 / ambiguous 17 / disconnected 23 / anchor_review_required 13；
+87 corridors：corridor 28 / branched_corridor 23 / disconnected 23 / anchor_review_required 13。
 
 ```jsonc
 {

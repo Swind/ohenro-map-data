@@ -57,6 +57,18 @@ def _graph(edges, joins=()):
 
 
 class TestExportPlanGraph(unittest.TestCase):
+    def test_shared_endpoint_contacts_emit_one_bridge(self):
+        # Two edges in one component both touch an endpoint of another.
+        edges = [
+            {"id": "a", "from": "A", "to": "B", "coordinates": [[133, 33], [133.001, 33]]},
+            {"id": "b", "from": "A", "to": "C", "coordinates": [[133, 33], [133, 33.001]]},
+            {"id": "c", "from": "D", "to": "E", "coordinates": [[133, 33], [132.999, 32.999]]},
+        ]
+        _, joins, _ = planner._bridge_overlaps(edges, 5, lambda i, j: i < 2 and j < 2)
+        self.assertEqual(len(joins), 1)
+        self.assertEqual({joins[0]["from"], joins[0]["to"]}, {"A", "D"})
+        self.assertEqual(joins[0]["distance_m"], 0)
+
     def test_compact_graph_preserves_routing_topology(self):
         graph = _graph(
             [_te("e1", "A", "B"), _te("e2", "B", "C")],

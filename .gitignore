@@ -25,6 +25,8 @@ datasets/gsi/.pipeline.lock
 datasets/gsi/.gsi-build-*/
 datasets/seichijunrei/.pipeline.lock
 datasets/seichijunrei/.temples-build-*/
+datasets/sekaiisan_henro/.pipeline.lock
+datasets/sekaiisan_henro/.sekaiisan-build-*/
 
 # GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/

@@ -69,7 +69,7 @@ def _download(url: str, timeout: int) -> tuple[str, bytes]:
     raise AssertionError("unreachable")
 
 
-def fetch(data_dir: str, timeout: int) -> dict:
+def fetch(data_dir: str, timeout: int, validate_snapshot: bool = False) -> dict:
     """Fetch every source first, so a failed group never changes current.json."""
     downloaded = []
     digest = hashlib.sha256()
@@ -106,6 +106,8 @@ def fetch(data_dir: str, timeout: int) -> dict:
             "files": downloaded,
         }
         _write(os.path.join(snapshot_dir, "metadata.json"), json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True).encode() + b"\n")
+    if validate_snapshot:
+        normalize.build_normalized(data_dir, snapshot_hash)
     _write(os.path.join(data_dir, "current.json"), json.dumps({
         "schema_version": 1,
         "sha256": snapshot_hash,
@@ -120,6 +122,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--timeout", type=int, default=30)
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("fetch", help="download an immutable snapshot (same as no command)")
+    for command in ("run", "build", "validate"):
+        full = sub.add_parser(command, help="full pipeline: " + command)
+        full.add_argument("--data-dir", default=argparse.SUPPRESS)
+        full.add_argument("--timeout", type=int, default=argparse.SUPPRESS)
+        full.add_argument("--output-dir", default="datasets/sekaiisan_henro/output")
+        full.add_argument("--reports-dir", default="datasets/sekaiisan_henro/reports")
+        if command != "validate":
+            full.add_argument("--force", action="store_true", help="rebuild unchanged inputs")
+            full.add_argument("--bridge-m", type=float, default=5.0)
+            full.add_argument("--arukihenro", help="optional normalized Arukihenro JSON for both attribution layers")
+        if command == "run":
+            full.add_argument("--local", action="store_true", help="use current local snapshot without downloading")
     normalize_parser = sub.add_parser("normalize", help="Phase 1 normalization to normalized.json")
     normalize_parser.add_argument("--snapshot", default="current")
     normalize_parser.add_argument("--data-dir", default="datasets/sekaiisan_henro/raw")
@@ -186,6 +200,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 def dispatch(args: argparse.Namespace) -> dict:
     """Route a parsed command to its implementation (fetch by default)."""
+    if args.command in ("run", "build", "validate"):
+        from datasets.sekaiisan_henro.pipeline import execute
+        return execute(args, fetch)
     if args.command == "normalize":
         return normalize.run_normalize(args.data_dir, args.snapshot, args.output)
     if args.command == "topology-inventory":
@@ -228,7 +245,9 @@ def main(argv: list[str] | None = None) -> int:
         result = dispatch(args)
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    if args.command == "normalize":
+    if args.command in ("run", "build", "validate"):
+        print("pipeline: %s" % json.dumps(result, ensure_ascii=False))
+    elif args.command == "normalize":
         print("normalized: snapshot=%s temples=%d output=%s" % (
             result["snapshot_sha256"], result["accounting"]["temples"], args.output))
     elif args.command == "topology-inventory":

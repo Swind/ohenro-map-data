@@ -80,7 +80,12 @@ python3 -m datasets.arukihenro_routes normalize   # -> datasets/arukihenro_route
 `datasets/omotenashi_henro_inspection/raw/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
 四國遍路世界遺產登錄推進協議會 KML archive：`python3 -m datasets.sekaiisan_henro`，下載四縣
 引導路線、札所及廁所共 12 份 KML 的完整 immutable snapshot 至
-`datasets/sekaiisan_henro/raw/`。`python3 -m datasets.sekaiisan_henro normalize` 會嚴格解析四縣路線、
+`datasets/sekaiisan_henro/raw/`。一鍵完整流程用 `python3 -m datasets.sekaiisan_henro run`：
+下載並驗證 12 KML → normalize → topology → exact/proximity/anchors graph →
+sections/corridors → plan graph → review pack → 整組驗證後發布；來源／設定／產出 hash
+未變則跳過。`run --local`、`build`、`validate`、`--force` 及可選
+`--arukihenro PATH` 見 `datasets/sekaiisan_henro/README.md`；無子命令仍只 fetch。
+`python3 -m datasets.sekaiisan_henro normalize` 會嚴格解析四縣路線、
 88 札所及**四縣廁所**至 `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`（新增 `toilets` 與
 `toilet_defects`：2026-09-10 全量 599 廁所 + 1 defect —— kochi.kml 一個
 `1330000212,32.7873752` 座標 typo，依保守原則不臆測修正，保留 raw_coordinate 於

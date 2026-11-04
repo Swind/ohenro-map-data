@@ -214,7 +214,12 @@ def _bridge_overlaps(edges: list[dict], bridge_m: float,
             })
     new_nodes_list = [{"id": nid, "lon": coords[0], "lat": coords[1]}
                       for nid, coords in sorted(new_nodes.items())]
-    return final, joins, new_nodes_list
+    # Several edge pairs can meet at the same two nodes. Keep one bridge per
+    # ID, choosing the shortest contact with a deterministic geometry tie-break.
+    unique_joins = {}
+    for join in sorted(joins, key=lambda j: (j["distance_m"], _canon(j))):
+        unique_joins.setdefault(join["id"], join)
+    return final, [unique_joins[key] for key in sorted(unique_joins)], new_nodes_list
 
 
 def _split_node(edge: dict, line: dict, measure: float, wgs84: list,
