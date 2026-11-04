@@ -38,6 +38,11 @@ ohenro-map-data/
 來源資料及程式均為實體搬遷；`map-preview/public/data/` 的連結只維持 Web URL。
 
 遍路寺廟資料管線詳見 `datasets/seichijunrei/docs/henro_data_pipeline.md`（更新資料時依該文件執行）。
+一鍵入口 `python3 -m datasets.seichijunrei`：取得網站 map/all 的 88 寺與詳細內容，
+先驗證後更新 raw/spots.json（保留舊 snapshot），建置 JSON／GeoJSON／content.sqlite／
+shikoku-temples.pmtiles，整組驗證後逐檔發布；輸入／設定／產出未變則跳過。
+`fetch`／`build`／`validate` 可拆開，`--local` 使用手動 spots.json，`--force` 強制建置。
+說明見 `datasets/seichijunrei/README.md`。PMTiles 尚未加入共用 App manifest。
 住宿資料管線詳見 `datasets/osm/docs/lodging_data_pipeline.md`（OSM lodging extractor，
 `python3 datasets/osm/henro/scripts/extract_lodging.py` → `datasets/osm/output/lodging.geojson` + `lodging-report.json`）。
 Henroyado 住宿爬蟲（Phase 1）詳見 `datasets/henroyado/docs/henroyado-parser-standardization-plan.md`。

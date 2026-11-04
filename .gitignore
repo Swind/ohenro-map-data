@@ -23,6 +23,8 @@ target/
 datasets/osm/.pipeline.lock
 datasets/gsi/.pipeline.lock
 datasets/gsi/.gsi-build-*/
+datasets/seichijunrei/.pipeline.lock
+datasets/seichijunrei/.temples-build-*/
 
 # GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/

@@ -5,6 +5,11 @@
 
 架構設計依 `datasets/seichijunrei/docs/henro_data_plan.md`。請先讀過該文件再操作。
 
+**完整自動流程**：`python3 -m datasets.seichijunrei`（抓取／更新 → 以下轉換 →
+SQLite／PMTiles → 驗證後發布；未變則跳過）。`--local` 使用本機 spots.json，
+`--force` 強制重建。依賴、快照、更新判斷與分步命令見
+[`../README.md`](../README.md)。以下保留個別轉換腳本與 schema 說明。
+
 ---
 
 ## 1. 概覽
@@ -22,34 +27,34 @@ seichijunrei-shikokuhenro.jp HTML
 [3] Generate  generate_geojson.py   → datasets/seichijunrei/output/temples.geojson
         │
         ▼
-[4] (未來) Planetiler → output/*.pmtiles
+[4] build-content-sqlite.py → datasets/seichijunrei/output/content.sqlite
+        │
+        ▼
+[5] 一鍵入口的 tippecanoe → datasets/seichijunrei/output/shikoku-temples.pmtiles
 ```
 
 原則：
 
-- **`source/` 放原始資料**：所有從外部下載／抓取的資料都放這裡（OSM PBF、seichijunrei
-  spots.json），視為 immutable，不可手動修改。
-- **`output/` 放所有產出**：normalized 中間檔、geojson、pmtiles 全部輸出到這裡。
+- **`datasets/seichijunrei/raw/` 放原始資料**：spots.json 由管線更新，舊版保留在 snapshots/。
+- **`datasets/seichijunrei/output/` 放所有產出**：JSON、GeoJSON、SQLite、PMTiles。
 - **Pipeline 必須 deterministic**：同樣的 source 輸入，必須產生完全相同的 output。
 - 不要直接使用來源網站 schema（`Spot` / `SpotContent`）作為應用程式領域模型。
 
 ## 2. 檔案位置
 
-Scripts 位於 `datasets/osm/henro/scripts/`，內部用自身位置解析 repo 根目錄，所以**從任何工作目錄
+Scripts 位於 `datasets/seichijunrei/scripts/`，前三個腳本內部用自身位置解析 repo 根目錄，所以**從任何工作目錄
 執行都可以**，不需先 `cd`：
 
 ```text
-ohenro-map-data/
-├── source/
-│   ├── shikoku-latest.osm.pbf        # OSM 來源（immutable）
-│   └── seichijunrei/spots.json       # 寺廟原始資料（immutable）
+datasets/seichijunrei/
+├── raw/
+│   └── spots.json                    # 寺廟來源（舊版本存 snapshots/）
 ├── output/
 │   ├── temples.json                  # normalized 中間產出
 │   ├── temples.geojson               # 地圖用 GeoJSON
-│   ├── shikoku-basemap.pmtiles       # basemap
-│   └── shikoku-henro.pmtiles         # henro overlay
-└── datasets/osm/henro/
-    └── scripts/
+│   ├── content.sqlite               # 88 寺完整詳細內容
+│   └── shikoku-temples.pmtiles       # temples layer
+└── scripts/
         ├── extract_henro.py          # Step 1
         ├── normalize_henro.py        # Step 2
         └── generate_geojson.py       # Step 3
@@ -58,6 +63,8 @@ ohenro-map-data/
 ## 3. 操作方式（更新流程）
 
 要更新資料時，依序執行：
+
+以下僅為前三步；完整建置與驗證後發布請使用一鍵入口。
 
 ```bash
 # Step 1: 從網站抓取原始資料

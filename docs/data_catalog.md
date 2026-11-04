@@ -20,6 +20,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 統合資訊 POI | `datasets/info_pois/output/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
 | 統合 POI 離線 | `datasets/info_pois/output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
 | 88 札所 | `datasets/seichijunrei/output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
+| 88 札所離線 tiles | `datasets/seichijunrei/output/shikoku-temples.pmtiles` | PMTiles (MVT) | 88 unique IDs | `temples` layer，z0–14，未加入共用 App manifest |
 | 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
 | Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
@@ -85,7 +86,16 @@ datasets/info_pois/output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_p
 datasets/seichijunrei/output/temples.geojson   # Point ×88，properties: id/type/number/name_ja/name_en/name_kana
 datasets/seichijunrei/output/temples.json      # list ×88，詳盡：full_name{ja,en}、address、history、image、phone、temple{founded,founder,principal_deity,sect}
 datasets/seichijunrei/output/content.sqlite    # features table ×88，payload_json 同 temples.json（provider=seichijunrei）
+datasets/seichijunrei/output/shikoku-temples.pmtiles # temples layer，z0–14，88 unique canonical IDs，309 tiles（2026-11-04 實跑）
 ```
+
+入口 `python3 -m datasets.seichijunrei`，自動抓 map/all、驗證來源、保留舊 snapshot，
+建置以上四檔並驗證。PMTiles properties 同 GeoJSON（nullable 字串可能省略）；
+canonical ID 使用 `properties.id`，不依賴 MVT 的 numeric feature ID。
+`reports/pipeline.json` 記錄 source_url/input_sha256/build_config/temple_count/outputs
+（size、sha256）；未變則跳過，`--force` 強制重建。操作見
+[`datasets/seichijunrei/README.md`](../datasets/seichijunrei/README.md)。首次隔離實跑的
+PMTiles 位於 `/tmp/opencode/temples-check/output/`，正式 output 需執行入口產生。
 
 ### 1.3 協議會（世界遺産登錄推進協議會）— `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`
 
