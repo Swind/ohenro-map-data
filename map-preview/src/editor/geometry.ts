@@ -2,7 +2,7 @@
  * Local equirectangular metric geometry for the route editor core.
  *
  * Constants and math are replicated exactly from the Python pipeline
- * (`sekaiisan_henro/projection.py`): a fixed, deterministic local metric
+ * (`datasets/sekaiisan_henro/projection.py`): a fixed, deterministic local metric
  * projection centred near Shikoku used only for relative distances and
  * topology. WGS84 lon/lat remains authoritative; every function accepts and
  * returns WGS84 coordinates, and nothing here is navigation-grade.

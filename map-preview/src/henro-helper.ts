@@ -1,7 +1,7 @@
 import type { FilterSpecification, Map as MapLibreMap } from "maplibre-gl";
 
 // Henro Helper (com.henrohelper100.app) route layers, extracted from the
-// APK's Dart AOT literals into a single GeoJSON (output/henro-helper-routes/).
+// APK's Dart AOT literals into a single GeoJSON (datasets/henro_helper/output/).
 // Each feature carries `layer` (black/red/green/blue/purple/special/
 // eighty88to1/connection/itinerary_*) and `route_type` (road/trail/special/
 // connection/itinerary) properties that preserve the app's own classification.

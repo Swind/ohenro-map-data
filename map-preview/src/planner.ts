@@ -1,7 +1,7 @@
 /**
  * Client-side day planner over the 88sekaiisan effective route graph.
  *
- * Mirrors sekaiisan_henro/planner.py in the browser: snap user points onto the
+ * Mirrors datasets/sekaiisan_henro/planner.py in the browser: snap user points onto the
  * nearest traversal edge (equirectangular metric projection), split the
  * snapped edges into virtual sub-edges, and run the same weighted Dijkstra
  * (simple paths, deterministic tie-break) over traversal_edges +

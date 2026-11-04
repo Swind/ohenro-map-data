@@ -11,8 +11,8 @@ bash scripts/build-lodging-pmtiles.sh min88
 
 Outputs:
 
-- `output/shikoku-henroyado-lodging.pmtiles`
-- `output/shikoku-min88-lodging.pmtiles`
+- `datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles`
+- `datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles`
 
 Both archives contain one `lodging` point layer at zooms 6-14 with the same compact map contract:
 `provider`, `source_id`, `name`, `business_status`, `address`, `phone`, `website`, `room_count`,

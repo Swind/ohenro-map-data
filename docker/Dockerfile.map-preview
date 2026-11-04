@@ -1,0 +1,29 @@
+# Multi-stage build for the Ohenro map-preview web app.
+#
+# Stage 1 builds the Vite production bundle with the local /data/* asset URLs
+# baked in (from .env.example -> .env). No map data is copied into the image:
+# the PMTiles/GeoJSON are served at runtime from the host `datasets/` and `output/` volumes via
+# the entrypoint's data symlinks (see map-preview-entrypoint.sh).
+#
+# Build (repo-root context):
+#   docker build -t ohenro-map-preview -f docker/Dockerfile.map-preview .
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY map-preview/package.json map-preview/package-lock.json ./
+RUN npm ci
+COPY map-preview/tsconfig.json map-preview/vite.config.ts \
+     map-preview/output-api-plugin.ts map-preview/index.html \
+     map-preview/editor.html ./
+COPY map-preview/scripts ./scripts
+COPY map-preview/src ./src
+COPY map-preview/.env.example ./.env
+RUN npm run style:generate && npm run build
+
+FROM nginx:1.27-alpine
+COPY docker/nginx.map-preview.conf /etc/nginx/nginx.conf
+COPY docker/map-preview-entrypoint.sh /usr/local/bin/map-preview-entrypoint.sh
+RUN chmod +x /usr/local/bin/map-preview-entrypoint.sh \
+    && rm -f /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 5173
+ENTRYPOINT ["/usr/local/bin/map-preview-entrypoint.sh"]

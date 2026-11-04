@@ -1,7 +1,7 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 
 // Henro Hub (henro.app) route network, digitised independently by Henro Hub
-// (see reference/henro-hub-comparison.md). Each line feature carries a stable
+// (see datasets/henrohub/docs/henro-hub-comparison.md). Each line feature carries a stable
 // `route_id` (hrn_/shikoku88-/hh26_*), `route_role`
 // (canonical_shikoku88 / unique_alternative / transition_connector /
 // continuity_fallback), `route_class` (colour) and `route_sets`. Groups are

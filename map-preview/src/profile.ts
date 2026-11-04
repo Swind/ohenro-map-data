@@ -3,7 +3,7 @@ import type { FeatureCollection, Position } from "geojson";
 /**
  * Elevation profile built from a GeoJSON LineString whose coordinates carry
  * an elevation as the third element ([lon, lat, elev]). Cumulative distance
- * uses the same fixed equirectangular projection as sekaiisan_henro/planner.py
+ * uses the same fixed equirectangular projection as datasets/sekaiisan_henro/planner.py
  * (R = 6371008.8, lat0 = 33.65), so distances match the Python report.
  */
 export interface ElevationPoint {

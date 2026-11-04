@@ -55,7 +55,7 @@ Required: `--pack-id`, `--version`, `--name`, `--provider`, `--attribution`,
 Optional: `--base-url` (http(s) root for absolute file URLs; otherwise relative
 `routes.pmtiles` / `content.sqlite`); `--minimum-app-version-code` (default `4`,
 rejects `<4`); `--interval-m` (default `20`, positive finite);
-`--gsi-dem-bin` (default `gsi-dem/target/release/gsi-dem`).
+`--gsi-dem-bin` (default `datasets/gsi/gsi-dem/target/release/gsi-dem`).
 
 The builder invokes the existing GSI-DEM profile tool directly as
 `<bin> profile <elevation-db> --input <input> --output <tmp> --interval-m <m>`
@@ -104,8 +104,8 @@ the `routes` layer (no POI/other layers), is built `z0-14` with no line
 simplification, and carries explicit `personal-use` metadata/attribution.
 
 For Mizutani the provider builds this artifact at
-`output/mizutani-henro-routes.pmtiles` from
-`output/mizutani-henro-routes.geojson`.
+`datasets/mizutani_henro_map/output/mizutani-henro-routes.pmtiles` from
+`datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson`.
 
 ## ID tuple namespace
 

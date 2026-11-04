@@ -1,7 +1,7 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 
 // OHenro 88 (com.sallyzzz.ohenroapp) route layers, extracted from the APK's
-// bundled GeoJSON into output/ohenro88-routes/ohenro88-routes.geojson.
+// bundled GeoJSON into datasets/ohenro88/output/ohenro88-routes.geojson.
 // Each line feature carries a stable `route_id` (e.g. OH88_1_2), the app's
 // original `name` (e.g. "Walking (1-2)") and a `route_type`
 // (main/skip/bekkaku/bekkaku_extra/extra). Temple points carry `temple_number`

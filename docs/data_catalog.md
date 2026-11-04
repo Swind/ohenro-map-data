@@ -6,25 +6,30 @@
 
 一律假設以下路徑相對 repo 根目錄（`ohenro-map-data/`）。
 
+**來源目錄**：所有來源已完整搬遷至 `datasets/<來源>/`，原始資料在 `raw/`、
+產出在 `output/`，來源專屬程式與文件也在同一目錄。來源總覽與操作入口見
+[`datasets/README.md`](../datasets/README.md)。根目錄 `output/` 僅放共用 App
+assets／manifest、route packs 與人工編輯成果。
+
 ---
 
 ## 0. 快速導覽
 
 | 資料 | 主要檔案 | 格式 | 數量 | 一句話 |
 |---|---|---|---|---|
-| 統合資訊 POI | `output/pois/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
-| 統合 POI 離線 | `output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
-| 88 札所 | `output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
-| 協議會（路線+寺+廁所） | `output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
-| Mizutani POI | `output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
-| 自然步道 POI | `output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
-| 步行遍路點 | `output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
-| Henro Helper POI | `output/henro-helper-routes/henro-helper-pois.geojson` | GeoJSON | 2,475 | Henro Helper app |
-| OSM 住宿 | `output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
-| Henroyado 住宿 | `output/henroyado/*.jsonl` | JSONL | 702 | henroyado.com |
-| min88 住宿 | `output/min88-lodging/*.jsonl` | JSONL | 650 | min88.jp |
-| 底圖 | `output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
-| 高程 | `output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
+| 統合資訊 POI | `datasets/info_pois/output/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
+| 統合 POI 離線 | `datasets/info_pois/output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
+| 88 札所 | `datasets/seichijunrei/output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
+| 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
+| Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
+| 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
+| 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
+| Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,475 | Henro Helper app |
+| OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
+| Henroyado 住宿 | `datasets/henroyado/output/*.jsonl` | JSONL | 702 | henroyado.com |
+| min88 住宿 | `datasets/min88_lodging/output/*.jsonl` | JSONL | 650 | min88.jp |
+| 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
+| 高程 | `datasets/gsi/output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
 | 互動規劃 graph | `output/*-plan-graph.json` ×3 | JSON | — | map-preview 規劃用 |
 | App 離線包 manifest | `output/app-map-manifest.json` | JSON | — | Android 安裝清單 |
 
@@ -32,12 +37,12 @@
 
 ## 1. POI 資料（重點）
 
-### 1.1 統合資訊 POI — `output/pois/`
+### 1.1 統合資訊 POI — `datasets/info_pois/output/`
 
 ```text
-output/pois/pois.geojson        # FeatureCollection，16,763 點
-output/pois/pois-report.json    # per-source / per-category accounting
-output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~2.7MB）
+datasets/info_pois/output/pois.geojson        # FeatureCollection，16,763 點
+datasets/info_pois/output/pois-report.json    # per-source / per-category accounting
+datasets/info_pois/output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~2.7MB）
 
 > **設計原則**：統合 POI 只放**精選的特別有用點**（廁所/旅館/水/休息/溫泉/
 > 主要交通/便利商店 + 各來源核心 POI）。其餘 OSM 點（restaurant/shop/學校/
@@ -76,12 +81,12 @@ output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~2.7MB�
 ### 1.2 88 札所（canonical）
 
 ```text
-output/temples.geojson   # Point ×88，properties: id/type/number/name_ja/name_en/name_kana
-output/temples.json      # list ×88，詳盡：full_name{ja,en}、address、history、image、phone、temple{founded,founder,principal_deity,sect}
-output/content.sqlite    # features table ×88，payload_json 同 temples.json（provider=seichijunrei）
+datasets/seichijunrei/output/temples.geojson   # Point ×88，properties: id/type/number/name_ja/name_en/name_kana
+datasets/seichijunrei/output/temples.json      # list ×88，詳盡：full_name{ja,en}、address、history、image、phone、temple{founded,founder,principal_deity,sect}
+datasets/seichijunrei/output/content.sqlite    # features table ×88，payload_json 同 temples.json（provider=seichijunrei）
 ```
 
-### 1.3 協議會（世界遺産登錄推進協議會）— `output/sekaiisan-henro-normalized.json`
+### 1.3 協議會（世界遺産登錄推進協議會）— `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`
 
 ```jsonc
 {
@@ -100,10 +105,10 @@ output/content.sqlite    # features table ×88，payload_json 同 temples.json�
 
 | 來源 | 檔案 | category 欄位 | 備註 |
 |---|---|---|---|
-| Mizutani | `output/mizutani-henro-pois.geojson`（2680） | `category`：temple/transport/shop_supply/food/water_toilet_rest/other/experience_note/wayfinding/warning_hazard/lodging | 另有 `icon`/`color`/`url`/`description`；geometry 是 `[lon,lat]` |
-| 自然步道 | `output/shikoku-nature-trail-pois.geojson`（1568） | `kind`：`tourism_spot`(394) / `kml_poi`(1174) | `poi_id`(`SNT_...`)、`route_id`、`content_id` |
-| 步行遍路 | `output/arukihenro-routes.json` 的 `routes[].maps[].points[]`（933） | `category`：temple_related/waymarker/food_shop/route_endpoint/lodging/viewpoint/elevation_mileage/onsen/sightseeing/rest_area/shrine/route_feature/other | 385 點帶 `photos` URL |
-| Henro Helper | `output/henro-helper-routes/henro-helper-pois.geojson`（2475） | `kind`：temple/bekkaku/okunoin/bangai/toilet/shower/convenience_store/rest_area/onsen/bus_stop/train_station/campground/accommodation/label/poi/... | 有 `name_ja`/`name_en`/`temple_number` |
+| Mizutani | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson`（2680） | `category`：temple/transport/shop_supply/food/water_toilet_rest/other/experience_note/wayfinding/warning_hazard/lodging | 另有 `icon`/`color`/`url`/`description`；geometry 是 `[lon,lat]` |
+| 自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson`（1568） | `kind`：`tourism_spot`(394) / `kml_poi`(1174) | `poi_id`(`SNT_...`)、`route_id`、`content_id` |
+| 步行遍路 | `datasets/arukihenro_routes/output/arukihenro-routes.json` 的 `routes[].maps[].points[]`（933） | `category`：temple_related/waymarker/food_shop/route_endpoint/lodging/viewpoint/elevation_mileage/onsen/sightseeing/rest_area/shrine/route_feature/other | 385 點帶 `photos` URL |
+| Henro Helper | `datasets/henro_helper/output/henro-helper-pois.geojson`（2475） | `kind`：temple/bekkaku/okunoin/bangai/toilet/shower/convenience_store/rest_area/onsen/bus_stop/train_station/campground/accommodation/label/poi/... | 有 `name_ja`/`name_en`/`temple_number` |
 
 ### 1.5 住宿（專屬管線，獨立於統合 POI）
 
@@ -111,11 +116,11 @@ output/content.sqlite    # features table ×88，payload_json 同 temples.json�
 
 | 來源 | 檔案 | 數量 |
 |---|---|---|
-| OSM extractor | `output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
-| Henroyado | `output/henroyado/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 702 筆（geocoded 582 有座標） |
-| min88 | `output/min88-lodging/{raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 650 筆（geocoded 640 有座標） |
+| OSM extractor | `datasets/osm/output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
+| Henroyado | `datasets/henroyado/output/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 702 筆（geocoded 582 有座標） |
+| min88 | `datasets/min88_lodging/output/{raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 650 筆（geocoded 640 有座標） |
 
-離線 tiles：`output/shikoku-henroyado-lodging.pmtiles`、`output/shikoku-min88-lodging.pmtiles`。
+離線 tiles：`datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles`、`datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles`。
 
 ---
 
@@ -123,28 +128,28 @@ output/content.sqlite    # features table ×88，payload_json 同 temples.json�
 
 | 資料集 | 檔案 | 格式/數量 | 說明 |
 |---|---|---|---|
-| 步行遍路 | `output/arukihenro-routes.json` | JSON，90 routes / 91 maps / 324 lines / 933 points | schema v1：每 route 有 region/title/from/to_temple/temple_range；每 map 有 `lines` + `points` |
-| OHenro 88 | `output/ohenro88-routes/ohenro88-routes.geojson` | GeoJSON，280 LineString | App 抽取，`[lon,lat,elev]` |
-| Henro Hub | `output/henrohub-routes/henrohub-routes.geojson` | GeoJSON，1884 LineString | properties: `route_id`/`route_role`(canonical_shikoku88/unique_alternative/transition_connector/continuity_fallback)/`route_class`(black/red/green/blue/purple/special)/`route_sets`/`name`。**授權未定，非正式管線** |
-| Henro Helper | `output/henro-helper-routes/`（`henro-helper-routes.geojson` 11MB + 各 `*.geojson`） | GeoJSON | 依 category 拆分（black/red/...、itinerary_*、accommodations_* 等）；含該目錄的 `README.md` |
-| 遍路のあかり | `output/ohenro-no-akari-routes/henro-no-akari-route.geojson` | GeoJSON，319 | + `manifest.json` |
-| 四國自然步道 | `output/shikoku-nature-trail.geojson` / `shikoku-nature-trail.json` | GeoJSON / JSON，123 courses / 145 segments | json 含 tourism_spots + KML Placemarks |
-| Mizutani 路線 | `output/mizutani-henro-routes.geojson` | GeoJSON | 水谷遍路導覽圖路線 |
-| 協議會路線 | `output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
+| 步行遍路 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON，90 routes / 91 maps / 324 lines / 933 points | schema v1：每 route 有 region/title/from/to_temple/temple_range；每 map 有 `lines` + `points` |
+| OHenro 88 | `datasets/ohenro88/output/ohenro88-routes.geojson` | GeoJSON，172 線幾何（67 LineString + 105 MultiLineString）＋108 Point | App 抽取，路線含 `[lon,lat,elev]` |
+| Henro Hub | `datasets/henrohub/output/henrohub-routes.geojson` | GeoJSON，1884 LineString | properties: `route_id`/`route_role`(canonical_shikoku88/unique_alternative/transition_connector/continuity_fallback)/`route_class`(black/red/green/blue/purple/special)/`route_sets`/`name`。**授權未定，非正式管線** |
+| Henro Helper | `datasets/henro_helper/output/`（`henro-helper-routes.geojson` 11MB + 各 `*.geojson`） | GeoJSON | 依 category 拆分（black/red/...、itinerary_*、accommodations_* 等）；含該目錄的 `README.md` |
+| 遍路のあかり | `datasets/ohenro_no_akari/output/henro-no-akari-route.geojson` | GeoJSON，319 | + `manifest.json` |
+| 四國自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail.geojson` / `shikoku-nature-trail.json` | GeoJSON / JSON，123 courses / 145 segments | json 含 tourism_spots + KML Placemarks |
+| Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON | 水谷遍路導覽圖路線 |
+| 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
 
 ### 協議會 graph / topology（QA 專用，非顯示資料）
 
 ```text
-output/sekaiisan-henro-normalized.json             # normalize（上）
-output/sekaiisan-henro-topology-inventory.json     # 拓撲診斷
-output/sekaiisan-henro-graph.json                  # exact graph（source edges）
-output/sekaiisan-henro-graph-proximity.json        # + proximity joins
-output/sekaiisan-henro-graph-anchors.json          # + temple anchors（traversal_edges）
-output/sekaiisan-henro-temple-sections.json        # 87 區間候選（candidate/ambiguous/disconnected）
-output/sekaiisan-henro-section-corridors.json      # 區間 corridor（edge union）
-output/sekaiisan-henro-section-corridor-edges.geojson
-output/sekaiisan-henro-arukihenro-attribution.json # edge→區間空間歸屬
-output/sekaiisan-henro-review/                     # QGIS 審閱 pack（source-edges/topology/anchors/sections/review-items/report）
+datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json             # normalize（上）
+datasets/sekaiisan_henro/output/sekaiisan-henro-topology-inventory.json     # 拓撲診斷
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph.json                  # exact graph（source edges）
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph-proximity.json        # + proximity joins
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph-anchors.json          # + temple anchors（traversal_edges）
+datasets/sekaiisan_henro/output/sekaiisan-henro-temple-sections.json        # 87 區間候選（candidate/ambiguous/disconnected）
+datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridors.json      # 區間 corridor（edge union）
+datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridor-edges.geojson
+datasets/sekaiisan_henro/output/sekaiisan-henro-arukihenro-attribution.json # edge→區間空間歸屬
+datasets/sekaiisan_henro/output/sekaiisan-henro-review/                     # QGIS 審閱 pack（source-edges/topology/anchors/sections/review-items/report）
 ```
 
 ---
@@ -154,9 +159,9 @@ output/sekaiisan-henro-review/                     # QGIS 審閱 pack（source-e
 schema_version 2，**topology/geometry 分離**：`nodes` + `traversal_edges` + `synthetic_joins` 只含參考與權重，折點集中在 `edge_geometry`。
 
 ```text
-output/sekaiisan-henro-plan-graph.json    # 協議會（2080 nodes / 1744 traversal / 452 joins）
-output/ohenro88-routes/ohenro88-plan-graph.json   # OHenro 88（7534 nodes / 11579 edges / 765 joins）
-output/henrohub-routes/henrohub-plan-graph.json   # Henro Hub（2303 nodes；含 3D 高程）
+datasets/sekaiisan_henro/output/sekaiisan-henro-plan-graph.json    # 協議會（2080 nodes / 1744 traversal / 452 joins）
+datasets/ohenro88/output/ohenro88-plan-graph.json   # OHenro 88（7534 nodes / 11579 edges / 765 joins）
+datasets/henrohub/output/henrohub-plan-graph.json   # Henro Hub（2303 nodes；含 3D 高程）
 ```
 
 前端消費：`map-preview/src/planner.ts`（Dijkstra + snap）。
@@ -165,42 +170,55 @@ output/henrohub-routes/henrohub-plan-graph.json   # Henro Hub（2303 nodes；含
 
 ## 4. 底圖與高程
 
+OSM 一鍵管線：`python3 -m datasets.osm`（Geofabrik checksum 更新檢查 → PBF
+下載 → 編譯 profiles → 底圖／hiking PMTiles＋住宿抽取 → 驗證後發布）。
+手動放檔到 `datasets/osm/raw/shikoku-latest.osm.pbf` 後用 `--local`；舊 PBF
+保存在 `datasets/osm/raw/snapshots/<sha256>.osm.pbf`。建置來源與產出 hash 記在
+`datasets/osm/reports/pipeline.json`。詳細操作見
+[`datasets/osm/README.md`](../datasets/osm/README.md)。
+
 ```text
-output/shikoku-basemap.pmtiles    # Protomaps Basemap；z0-15；10 layers：
+datasets/osm/output/shikoku-basemap.pmtiles    # Protomaps Basemap；z0-15；10 layers：
                                   #   boundaries/buildings/earth/landcover/landuse/places/pois/roads/water
                                   #   pois layer：~500 kinds（restaurant/hotel/station/toilets/...）
                                   #   = 所有 OSM 點的「原生」顯示層；§1.1 只精選抽出少數 kind
-output/shikoku-contours.pmtiles   # 20m 等高線 MVT，z12-15
-output/shikoku-terrain.pmtiles    # Terrain-RGB PNG，z6-14（DEM10 基底）
-output/shikoku-elevation.sqlite   # GSI DEM5+DEM10B 合併 SQLite（metadata/elevation_tiles/source_tiles）
-output/shikoku-elevation-dem10.sqlite  # DEM10-only（視覺化基底）
+datasets/gsi/output/shikoku-contours.pmtiles   # 20m 等高線 MVT，z12-15
+datasets/gsi/output/shikoku-terrain.pmtiles    # Terrain-RGB PNG，z6-14（DEM10 基底）
+datasets/gsi/output/shikoku-elevation.sqlite   # GSI DEM5+DEM10B 合併 SQLite（metadata/elevation_tiles/source_tiles）
+datasets/gsi/output/shikoku-elevation-dem10.sqlite  # DEM10-only（視覺化基底）
 ```
 
-查詢：`cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db output/shikoku-elevation.sqlite --lat .. --lon ..`。
+查詢：`cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- query-db datasets/gsi/output/shikoku-elevation.sqlite --lat .. --lon ..`。
 
 ---
 
 ## 5. Android App 離線包
 
 ```text
-output/app-map-manifest.json   # schema_version 3；files[] 含 role/path/url/size/sha256
+output/app-map-manifest.json   # schema_version 5；files[] 含 role/path/url/size/sha256
 output/app-map-assets/         # sprites/ + fonts/ + licenses/（glyph 範圍見 scripts/app-map-assets/noto-...-ranges.txt）
-output/content.sqlite          # 88 寺廟詳細內容（features table）
+datasets/seichijunrei/output/content.sqlite          # 88 寺廟詳細內容（features table）
 ```
 
-CORE_PACK roles：`style` / `basemap` / `mizutani` / `nature_trail` / `henroyado` / `min88` / `temples` / `content`。規格見 `docs/app_map_manifest.md`。
+CORE_PACK roles（8 個唯一核心 role）：`style` / `basemap` / `henrohub` / `info_pois` / `nature_trail` / `henroyado` / `temples` / `content`。規格見 `docs/app_map_manifest.md`。
+
+- 依產品政策，核心 App 地圖包只保留 **Henroyado** 住宿；**min88 不在** core pack（min88 資料仍以個人使用 dataset 留在 repo，見 §1.5 / `datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles`）。
+- `henrohub` 與 `info_pois` **已納入** core pack，但屬**個人使用／授權受限** asset（Henro Hub 授權未定、info-POI 彙整多個授權來源）；不得未經權利釐清公開轉發。
+- 本目錄只是**資料索引**，不是自動化的 app 選料規則；App 實際打包內容以 `scripts/build-app-map-manifest.py` 的 CORE_PACK 與 `docs/app_map_manifest.md` 為準。
 
 ---
 
 ## 6. 個人使用 overlay（非正式管線）
 
 ```text
-output/shikoku-henrohub.pmtiles     # Henro Hub 路線（z0-14，henrohub_routes layer，1884 條）
-output/shikoku-info-pois.pmtiles    # 統合資訊 POI（見 §1.1）
-output/shikoku-mizutani-henro.pmtiles  # Mizutani 全圖（routes + pois）
+datasets/henrohub/output/shikoku-henrohub.pmtiles     # Henro Hub 路線（z0-14，henrohub_routes layer，1884 條）
+datasets/info_pois/output/shikoku-info-pois.pmtiles    # 統合資訊 POI（見 §1.1）
+datasets/mizutani_henro_map/output/shikoku-mizutani-henro.pmtiles  # Mizutani 全圖（routes + pois）
 ```
 
-這些 metadata 標 `usage: personal-use`，**未加入** app-manifest CORE_PACK；Henro Hub 授權未定。
+- `henrohub` 與 `info_pois`：schema v5 起**已納入** app-manifest CORE_PACK（見 §5），但仍標 `usage: personal-use`、授權受限，不可未經權利釐清公開轉發。
+- `shikoku-mizutani-henro.pmtiles`：仍**未加入** app-manifest CORE_PACK，屬非正式個人使用 overlay。
+- 本目錄只是**資料索引**，不是自動化的 app 選料規則；是否進 app pack 由 manifest generator 的 CORE_PACK 決定。
 
 ---
 
@@ -210,7 +228,7 @@ output/shikoku-mizutani-henro.pmtiles  # Mizutani 全圖（routes + pois）
 |---|---|---|
 | **GeoJSON** | 標準 FeatureCollection；properties 欄位因來源不同 | 各 `scripts/build-*.py` |
 | **JSON** | 結構化資料集（routes/points/graph/manifest） | normalize / export |
-| **JSONL** | 一筆一列（henroyado / min88 Raw→V1） | `python3 -m henroyado|min88_lodging` |
+| **JSONL** | 一筆一列（henroyado / min88 Raw→V1） | `python3 -m datasets.henroyado|min88_lodging` |
 | **PMTiles** | 離線地圖 tiles（MVT/PNG）；`pmtiles show --metadata` 看內容 | tippecanoe + `pmtiles convert` |
 | **SQLite** | 高程（elevation_tiles）或內容（features table） | `gsi-dem build` / `build-content-sqlite.py` |
 

@@ -1,28 +1,45 @@
 # Build artifacts
 target/
 
-# Large generated binaries (small JSON outputs under output/ can be tracked)
+# Docker compose secrets (CLOUDFLARED_TOKEN, see docker-compose.yml)
+.env
+
+# Map data and generated artifacts stay local; commit code/docs/test fixtures only.
+/datasets/*/raw/
+/datasets/*/output/
+/datasets/*/reports/
+/source/
+/output/
+/reports/
+/reference/*.geojson
+/reference/*.osm
+/reference/*.kml
+/reference/*.csv
+/reference/*.zip
+
+# Large generated binaries
 *.pmtiles
 *.osm.pbf
+datasets/osm/.pipeline.lock
 
-# GSI DEM pipeline intermediate + output (re-buildable, see gsi-dem/README.md)
+# GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/
 *.sqlite
 *.tile
 *.bin
 
-# Henroyado raw HTML snapshot (re-fetchable via `python3 -m henroyado fetch`)
-source/henroyado.html
-source/henroyado-google-maps/
+# Henroyado raw HTML snapshot (re-fetchable via `python3 -m datasets.henroyado fetch`)
+datasets/henroyado/raw/henroyado.html
+datasets/henroyado/raw/google-maps/
 
 # min88 lodging raw HTML archive and Google Maps response cache
-source/min88-lodging/
+datasets/min88_lodging/raw/
 
 # Shikoku Nature Trail raw archive (re-fetchable via
-# `python3 -m shikoku_nature_trail crawl-all`); keep the crawler code tracked
-source/shikoku-nature-trail/
+# `python3 -m datasets.shikoku_nature_trail crawl-all`); keep the crawler code tracked
+datasets/shikoku_nature_trail/raw/
 # Deterministic Phase 2 dataset (~9.6MB, rebuilt from the raw archive)
-output/shikoku-nature-trail.json
+datasets/shikoku_nature_trail/output/shikoku-nature-trail.json
 # Route profile samples are large but can be rebuilt from the GeoJSON + DEM SQLite.
 output/shikoku-nature-trail-elevation.json
 
@@ -30,68 +47,69 @@ output/shikoku-nature-trail-elevation.json
 output/app-map-assets/
 
 # Mizutani Henro Guide Map raw KML snapshots and derived personal-use data
-source/mizutani-henro-map/
-source/omotenashi-henro-inspection/
-source/88sekaiisan-henro/
-output/mizutani-henro-map.json
-output/mizutani-henro-routes.geojson
-output/mizutani-henro-pois.geojson
-output/mizutani-henro-report.json
-output/mizutani-henro-style-inventory.json
-# Consolidated information POIs (rebuilt by scripts/build-info-pois.py from
+datasets/mizutani_henro_map/raw/
+datasets/omotenashi_henro_inspection/raw/
+datasets/sekaiisan_henro/raw/
+datasets/mizutani_henro_map/output/mizutani-henro-map.json
+datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson
+datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson
+datasets/mizutani_henro_map/output/mizutani-henro-report.json
+datasets/mizutani_henro_map/output/mizutani-henro-style-inventory.json
+# Consolidated information POIs (rebuilt by datasets/info_pois/scripts/build-info-pois.py from
 # gitignored sources: mizutani / sekaiisan / basemap)
-output/pois/
-output/mizutani-henro-update-report.json
+datasets/info_pois/output/
+datasets/mizutani_henro_map/output/mizutani-henro-update-report.json
 # Generated downloadable route-pack artifacts (first consumer: Mizutani, personal-use)
 output/route-packs/
 # 88sekaiisan Phase 1 normalization + Phase 2A inventory + Phase 2B graph + Phase 2C proximity + Phase 3 anchors + Phase 4 sections + Phase 4b corridors (re-built from archive)
-output/sekaiisan-henro-normalized.json
-output/sekaiisan-henro-topology-inventory.json
-output/sekaiisan-henro-graph.json
-output/sekaiisan-henro-graph-proximity.json
-output/sekaiisan-henro-graph-anchors.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-topology-inventory.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph-proximity.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-graph-anchors.json
 # Browser routing graph for the map-preview client planner (rebuilt by
 # export-plan-graph from graph-anchors.json)
-output/sekaiisan-henro-plan-graph.json
-output/sekaiisan-henro-temple-sections.json
-output/sekaiisan-henro-section-corridors.json
-output/sekaiisan-henro-section-corridor-edges.geojson
-output/sekaiisan-henro-arukihenro-attribution.json
-output/sekaiisan-henro-arukihenro-attribution-traversal.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-plan-graph.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-temple-sections.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridors.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridor-edges.geojson
+datasets/sekaiisan_henro/output/sekaiisan-henro-arukihenro-attribution.json
+datasets/sekaiisan_henro/output/sekaiisan-henro-arukihenro-attribution-traversal.json
 # 88sekaiisan QGIS review-pack / report exporter (rebuilt by build-review-pack)
-output/sekaiisan-henro-review/
+datasets/sekaiisan_henro/output/sekaiisan-henro-review/
 
 # Arukihenro walking-route pages and Google My Maps KML archive
-source/arukihenro-routes/
+datasets/arukihenro_routes/raw/
 
 # Henro Helper APK reverse-engineering artifacts (rebuilt from the XAPK via
-# reference/ohenro-helper/extract_routes.py). Keep only the extractor tracked.
-/reference/ohenro-helper/*
-!/reference/ohenro-helper/extract_routes.py
+# datasets/henro_helper/reference/extract_routes.py). Keep only the extractor tracked.
+/datasets/henro_helper/reference/*
+!/datasets/henro_helper/reference/extract_routes.py
 # Extracted route GeoJSON (rebuilt by extract_routes.py)
-output/henro-helper-routes/
+datasets/henro_helper/output/
 
 # OHenro 88 APK reverse-engineering artifacts (rebuilt from the XAPK via
-# reference/ohenro-88/build_reference.py). Keep only the builder tracked.
-/reference/ohenro-88/*
-!/reference/ohenro-88/build_reference.py
+# datasets/ohenro88/reference/build_reference.py). Keep only the builder tracked.
+/datasets/ohenro88/reference/*
+!/datasets/ohenro88/reference/build_reference.py
 # Extracted route reference (rebuilt by build_reference.py)
-output/ohenro88-routes/
+datasets/ohenro88/output/
 
 # Henro no Akari (Yonden) web route reference artifacts (XAPK + bundle snapshot
-# re-fetchable via reference/ohenro-no-akari/build_web_reference.py).
+# re-fetchable via datasets/ohenro_no_akari/reference/build_web_reference.py).
 # Keep only the builder tracked.
-/reference/ohenro-no-akari/*
-!/reference/ohenro-no-akari/build_web_reference.py
+/datasets/ohenro_no_akari/reference/*
+!/datasets/ohenro_no_akari/reference/build_web_reference.py
 # Extracted web route reference (rebuilt by build_web_reference.py)
-output/ohenro-no-akari-routes/
+datasets/ohenro_no_akari/output/
 
 # Henro Hub (henro.app) route reference (rebuilt by
-# scripts/build-henrohub-routes.py from the henrohub release planner file)
-output/henrohub-routes/
+# datasets/henrohub/scripts/build-henrohub-routes.py from the henrohub release planner file)
+datasets/henrohub/output/
+datasets/henrohub/raw/
 
 # GSI DEM source ZIPs (20k+ meshes, 1.8GB, re-downloadable from GSI)
-source/GSI/
+datasets/gsi/raw/
 
 # Python
 __pycache__/

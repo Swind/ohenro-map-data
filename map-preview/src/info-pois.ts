@@ -3,7 +3,7 @@ import type {
   Map as MapLibreMap,
 } from "maplibre-gl";
 
-// Consolidated information POIs (scripts/build-info-pois.py), one unified
+// Consolidated information POIs (datasets/info_pois/scripts/build-info-pois.py), one unified
 // `category` taxonomy the app filters by. Each Point feature carries
 // `category` / `source` / `source_category` / `name` / `poi_id`. No cross-source
 // dedup; the selector groups by category with per-category circle layers.

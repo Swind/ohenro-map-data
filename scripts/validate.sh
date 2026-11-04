@@ -5,8 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(dirname "$SCRIPT_DIR")"
 
-BASEMAP="$ROOT/output/shikoku-basemap.pmtiles"
-HENRO="$ROOT/output/shikoku-henro.pmtiles"
+BASEMAP="$ROOT/datasets/osm/output/shikoku-basemap.pmtiles"
+HENRO="$ROOT/datasets/osm/output/shikoku-henro.pmtiles"
 
 FAIL=0
 fail() { echo "FAIL: $*" >&2; FAIL=1; }
@@ -62,13 +62,13 @@ sys.exit(0 if 'henro_routes' in ids else 1)
 " || fail "henro_routes layer missing"
 
   # TEMPORARY smoke-test rule: relation 13653654 must appear with metadata
-  python3 "$SCRIPT_DIR/smoke-test-henro.py" "$HENRO" >/dev/null || fail "henro smoke test failed (relation 13653654)"
+  python3 "$ROOT/datasets/osm/scripts/smoke-test-henro.py" "$HENRO" >/dev/null || fail "henro smoke test failed (relation 13653654)"
 else
   echo "WARN: henro pmtiles not built yet, skipping henro checks"
 fi
 
 # ---- Shikoku Nature Trail ----
-TRAIL="$ROOT/output/shikoku-nature-trail.pmtiles"
+TRAIL="$ROOT/datasets/shikoku_nature_trail/output/shikoku-nature-trail.pmtiles"
 echo "==> Trail: $TRAIL"
 if [ -f "$TRAIL" ]; then
   [ -s "$TRAIL" ] || fail "trail pmtiles is empty"
@@ -99,7 +99,7 @@ else
 fi
 
 # ---- Mizutani Henro Guide Map ----
-MIZUTANI="$ROOT/output/shikoku-mizutani-henro.pmtiles"
+MIZUTANI="$ROOT/datasets/mizutani_henro_map/output/shikoku-mizutani-henro.pmtiles"
 echo "==> Mizutani Henro Guide Map: $MIZUTANI"
 if [ -f "$MIZUTANI" ]; then
   [ -s "$MIZUTANI" ] || fail "Mizutani PMTiles is empty"
@@ -125,11 +125,11 @@ else
 fi
 
 # ---- Elevation visualization ----
-CONTOURS="$ROOT/output/shikoku-contours.pmtiles"
-TERRAIN="$ROOT/output/shikoku-terrain.pmtiles"
+CONTOURS="$ROOT/datasets/gsi/output/shikoku-contours.pmtiles"
+TERRAIN="$ROOT/datasets/gsi/output/shikoku-terrain.pmtiles"
 echo "==> Elevation visualization"
 if [ -f "$CONTOURS" ] && [ -f "$TERRAIN" ]; then
-  if "$SCRIPT_DIR/validate-elevation-visuals.sh" "$CONTOURS" "$TERRAIN"; then
+  if "$ROOT/datasets/gsi/scripts/validate-elevation-visuals.sh" "$CONTOURS" "$TERRAIN"; then
     : # passed
   else
     FAIL=1
@@ -139,7 +139,7 @@ else
 fi
 
 # ---- Provider-specific lodging overlays ----
-for LODGING in "$ROOT/output/shikoku-henroyado-lodging.pmtiles" "$ROOT/output/shikoku-min88-lodging.pmtiles"; do
+for LODGING in "$ROOT/datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles" "$ROOT/datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles"; do
   echo "==> Lodging: $LODGING"
   if [ -f "$LODGING" ]; then
     [ -s "$LODGING" ] || fail "lodging PMTiles is empty: $LODGING"

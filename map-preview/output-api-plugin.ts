@@ -124,12 +124,29 @@ async function ensureDirectory(parent: string, name: string, root: string): Prom
   return canonical;
 }
 
-export function outputApiPlugin(outputDirectory: string): Plugin {
+export function outputApiPlugin(outputDirectory: string, datasetDirectory?: string): Plugin {
   const outputRoot = resolve(outputDirectory);
   return {
     name: "ohenro-output-api",
     async configureServer(server) {
       const root = await realpath(outputRoot);
+      const datasetOutputs = new Map<string, string>();
+      if (datasetDirectory) {
+        const datasetRoot = await realpath(datasetDirectory);
+        for (const entry of await readdir(datasetRoot, { withFileTypes: true })) {
+          if (!entry.isDirectory()) continue;
+          const directory = join(datasetRoot, entry.name, "output");
+          try {
+            const info = await lstat(directory);
+            const canonical = await realpath(directory);
+            if (info.isDirectory() && !info.isSymbolicLink() && inside(datasetRoot, canonical)) {
+              datasetOutputs.set(`datasets/${entry.name}/output/`, canonical);
+            }
+          } catch (cause) {
+            if ((cause as NodeJS.ErrnoException).code !== "ENOENT") throw cause;
+          }
+        }
+      }
       const routeEditor = await ensureDirectory(root, "route-editor", root);
       await Promise.all([
         ensureDirectory(routeEditor, "projects", root),
@@ -141,6 +158,9 @@ export function outputApiPlugin(outputDirectory: string): Plugin {
         if (requestUrl.pathname === "/api/output/files" && req.method === "GET") {
           try {
             const files = await listFiles(outputRoot);
+            for (const [prefix, directory] of datasetOutputs) {
+              files.push(...await listFiles(directory, prefix.slice(0, -1)));
+            }
             files.sort((a, b) => a.path.localeCompare(b.path));
             json(res, 200, { files });
           } catch (cause) {
@@ -162,8 +182,11 @@ export function outputApiPlugin(outputDirectory: string): Plugin {
 
         if (req.method === "GET") {
           try {
-            const root = await realpath(outputRoot);
-            const target = resolve(outputRoot, path);
+            const source = [...datasetOutputs].find(([prefix]) => path.startsWith(prefix));
+            const readRoot = source?.[1] ?? outputRoot;
+            const readPath = source ? path.slice(source[0].length) : path;
+            const root = await realpath(readRoot);
+            const target = resolve(readRoot, readPath);
             const targetInfo = await lstat(target);
             const canonicalTarget = await realpath(target);
             if (!targetInfo.isFile() || targetInfo.isSymbolicLink() || !inside(root, canonicalTarget)) {

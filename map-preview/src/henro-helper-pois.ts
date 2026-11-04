@@ -6,7 +6,7 @@ import type {
 
 // Henro Helper (com.henrohelper100.app) POI markers, extracted from the APK's
 // Dart AOT object-pool literals into a single GeoJSON
-// (output/henro-helper-routes/henro-helper-pois.geojson). Each Point feature
+// (datasets/henro_helper/output/henro-helper-pois.geojson). Each Point feature
 // carries `kind` (temple/toilet/convenience_store/...), multilingual fields
 // (name_ja / name_en + raw field_XX), and structured extras (temple_number /
 // temple_name_ja for the 88 temples, bekkaku_number, okunoin temple_number...).

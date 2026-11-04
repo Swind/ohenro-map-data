@@ -21,23 +21,24 @@ import tempfile
 from urllib.parse import quote, urljoin, urlsplit
 
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 # Version restricted to ASCII letters/digits/dot/underscore/hyphen.
 VERSION_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
-# The nine unique core roles: (repo-root-relative source, install path, role).
+# The eight unique core roles: (repo-root-relative source, install path, role).
 # The install paths intentionally match the source file names.
+# Product policy: the core app map pack keeps Henroyado lodging only; min88 is
+# not part of the core pack (kept as a separate personal-use dataset).
 CORE_PACK = [
     ("map-preview/src/style/style.json", "style.json", "style"),
-    ("output/shikoku-basemap.pmtiles", "shikoku-basemap.pmtiles", "basemap"),
-    ("output/shikoku-henrohub.pmtiles", "shikoku-henrohub.pmtiles", "henrohub"),
-    ("output/shikoku-info-pois.pmtiles", "shikoku-info-pois.pmtiles", "info_pois"),
-    ("output/shikoku-nature-trail.pmtiles", "shikoku-nature-trail.pmtiles", "nature_trail"),
-    ("output/shikoku-henroyado-lodging.pmtiles", "shikoku-henroyado-lodging.pmtiles", "henroyado"),
-    ("output/shikoku-min88-lodging.pmtiles", "shikoku-min88-lodging.pmtiles", "min88"),
-    ("output/temples.geojson", "temples.geojson", "temples"),
-    ("output/content.sqlite", "content.sqlite", "content"),
+    ("datasets/osm/output/shikoku-basemap.pmtiles", "shikoku-basemap.pmtiles", "basemap"),
+    ("datasets/henrohub/output/shikoku-henrohub.pmtiles", "shikoku-henrohub.pmtiles", "henrohub"),
+    ("datasets/info_pois/output/shikoku-info-pois.pmtiles", "shikoku-info-pois.pmtiles", "info_pois"),
+    ("datasets/shikoku_nature_trail/output/shikoku-nature-trail.pmtiles", "shikoku-nature-trail.pmtiles", "nature_trail"),
+    ("datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles", "shikoku-henroyado-lodging.pmtiles", "henroyado"),
+    ("datasets/seichijunrei/output/temples.geojson", "temples.geojson", "temples"),
+    ("datasets/seichijunrei/output/content.sqlite", "content.sqlite", "content"),
 ]
 
 # Deterministic generated asset spec templates (role -> install subdir, source
@@ -73,12 +74,12 @@ def validate_version(version: str) -> str:
 
 
 def validate_minimum_app_version_code(code: int) -> int:
-    """Return minimum_app_version_code if it is an int >= 4, else raise.
+    """Return minimum_app_version_code if it is an int >= 5, else raise.
 
-    Schema v4 requires Android app versionCode >= 4.
+    Schema v5 requires Android app versionCode >= 5.
     """
-    if isinstance(code, bool) or not isinstance(code, int) or code < 4:
-        raise ValueError("--minimum-app-version-code must be an integer >= 4")
+    if isinstance(code, bool) or not isinstance(code, int) or code < 5:
+        raise ValueError("--minimum-app-version-code must be an integer >= 5")
     return code
 
 
@@ -291,8 +292,8 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--minimum-app-version-code",
         type=int,
-        default=4,
-        help="minimum Android app version code (default: 4)",
+        default=5,
+        help="minimum Android app version code (default: 5)",
     )
     parser.add_argument(
         "--output",

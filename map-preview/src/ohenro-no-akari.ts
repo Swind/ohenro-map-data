@@ -2,7 +2,7 @@ import type { Map as MapLibreMap } from "maplibre-gl";
 
 // 遍路のあかり+ (jp.co.yonden.henronoakari, 四国電力) walking-route overlay,
 // extracted from the web app bundle into
-// output/ohenro-no-akari-routes/henro-no-akari-route.geojson. The native app
+// datasets/ohenro_no_akari/output/henro-no-akari-route.geojson. The native app
 // embeds no route geometry; the web app's Leaflet map bundle (MapPage.js)
 // carries the full walking route as inline GeoJSON. Features are 319
 // road-level LineString segments (single route, no per-route names); Leaflet

@@ -4,7 +4,7 @@ import {
   type HenroHelperPoiFeatureCollection,
 } from "./henro-helper-pois";
 
-// `kind` values present in output/henro-helper-routes/henro-helper-pois.geojson
+// `kind` values present in datasets/henro_helper/output/henro-helper-pois.geojson
 // (extracted from the Henro Helper APK object-pool POI records). Kept in sync
 // with extract_routes.py POI_CLASSES.
 const EXTRACTED_KINDS = [

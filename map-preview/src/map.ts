@@ -991,7 +991,7 @@ export function createMap(container: HTMLElement): {
     }
 
     // OHenro 88 routes: fetch the per-route GeoJSON extracted from the APK
-    // (output/ohenro88-routes/ohenro88-routes.geojson). Adds shared layers
+    // (datasets/ohenro88/output/ohenro88-routes.geojson). Adds shared layers
     // + per-route groups for the selector. Non-blocking.
     const ohenro88Url = import.meta.env.VITE_OHENRO88_URL;
     if (ohenro88Url) {
@@ -1017,7 +1017,7 @@ export function createMap(container: HTMLElement): {
     }
 
     // 遍路のあかり+ routes: fetch the walking route extracted from the web
-    // app bundle (output/ohenro-no-akari-routes/henro-no-akari-route.geojson).
+    // app bundle (datasets/ohenro_no_akari/output/henro-no-akari-route.geojson).
     // Adds shared casing + line layers (source color). Non-blocking.
     const ohenroNoAkariUrl = import.meta.env.VITE_OHENRO_NO_AKARI_URL;
     if (ohenroNoAkariUrl) {

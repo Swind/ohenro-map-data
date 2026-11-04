@@ -6,7 +6,7 @@ import {
   type HenroHelperFeatureCollection,
 } from "./henro-helper";
 
-// Layers present in output/henro-helper-routes/henro-helper-routes.geojson
+// Layers present in datasets/henro_helper/output/henro-helper-routes.geojson
 // (extracted from the Henro Helper APK). Kept in sync with extract_routes.py.
 const EXTRACTED_LAYERS = [
   "black",

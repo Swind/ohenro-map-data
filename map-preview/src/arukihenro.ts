@@ -1,6 +1,6 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 
-// Schema v1 input interfaces (output/arukihenro-routes.json).
+// Schema v1 input interfaces (datasets/arukihenro_routes/output/arukihenro-routes.json).
 export interface ArukihenroLine {
   name: string | null;
   folder: string | null;

@@ -61,7 +61,7 @@ def repo_root_from_script() -> str:
 
 
 DEFAULT_GSI_DEM_BIN = os.path.join(
-    repo_root_from_script(), "gsi-dem", "target", "release", "gsi-dem"
+    repo_root_from_script(), "datasets", "gsi", "gsi-dem", "target", "release", "gsi-dem"
 )
 
 

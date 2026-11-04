@@ -50,22 +50,25 @@ west, south, east, north = header["bounds"]
 if not (131 < west < east < 136 and 31.5 < south < north < 35.5):
     raise SystemExit("PMTiles bounds outside Shikoku: %r" % header["bounds"])
 PY
-  pmtiles show "$output" > "$REPORTS/$provider-lodging-metadata.txt"
+  local source_dir
+  if [ "$provider" = henroyado ]; then source_dir=henroyado; else source_dir=min88_lodging; fi
+  mkdir -p "$ROOT/datasets/$source_dir/reports"
+  pmtiles show "$output" > "$ROOT/datasets/$source_dir/reports/$provider-lodging-metadata.txt"
   echo "==> Done: $output"
 }
 
 {
   echo "==> lodging PMTiles build $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   if [ "$TARGET" = all ] || [ "$TARGET" = henroyado ]; then
-    HENROYADO_GEOJSON="$ROOT/output/henroyado/map.geojson"
-    python3 -m henroyado export-map "$ROOT/output/henroyado/v1-geocoded.jsonl" --output "$HENROYADO_GEOJSON"
-    build henroyado "$HENROYADO_GEOJSON" "$ROOT/output/shikoku-henroyado-lodging.pmtiles" \
+    HENROYADO_GEOJSON="$ROOT/datasets/henroyado/output/map.geojson"
+    python3 -m datasets.henroyado export-map "$ROOT/datasets/henroyado/output/v1-geocoded.jsonl" --output "$HENROYADO_GEOJSON"
+    build henroyado "$HENROYADO_GEOJSON" "$ROOT/datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles" \
       "Henroyado lodging data © henroyado.com"
   fi
   if [ "$TARGET" = all ] || [ "$TARGET" = min88 ]; then
-    MIN88_GEOJSON="$ROOT/output/min88-lodging/map.geojson"
-    python3 -m min88_lodging export-map "$ROOT/output/min88-lodging/v1-geocoded.jsonl" --output "$MIN88_GEOJSON"
-    build min88 "$MIN88_GEOJSON" "$ROOT/output/shikoku-min88-lodging.pmtiles" \
+    MIN88_GEOJSON="$ROOT/datasets/min88_lodging/output/map.geojson"
+    python3 -m datasets.min88_lodging export-map "$ROOT/datasets/min88_lodging/output/v1-geocoded.jsonl" --output "$MIN88_GEOJSON"
+    build min88 "$MIN88_GEOJSON" "$ROOT/datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles" \
       "min88 lodging data © min88.jp"
   fi
 } 2>&1 | tr '\r' '\n' | sed 's/[[:space:]]*$//' | tee "$REPORTS/lodging-pmtiles-build.log"

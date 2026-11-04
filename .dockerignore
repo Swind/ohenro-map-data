@@ -1,0 +1,40 @@
+# Keep Docker build contexts small. The map-preview Dockerfile only COPYs
+# map-preview/ and docker/; everything else is excluded from the context.
+
+# VCS
+.git
+.gitmodules
+.gitignore
+
+# Large data / generated artifacts (mounted at runtime, not baked into images)
+output/
+source/
+work/
+basemaps/
+*.pmtiles
+*.osm.pbf
+*.sqlite
+*.tile
+*.bin
+
+# Node / build artifacts
+**/node_modules
+map-preview/dist/
+map-preview/public/data/
+
+# Language build artifacts
+**/target/
+**/__pycache__/
+**/*.pyc
+
+# Docs / reports (not needed at build time)
+docs/
+reference/
+reports/
+
+# Per-source data and archives are runtime volumes; only the elevation helper
+# is needed by Dockerfile.elevation.
+datasets/**/raw/
+datasets/**/output/
+datasets/**/reference/
+datasets/**/reports/

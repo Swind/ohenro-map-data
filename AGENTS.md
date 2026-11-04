@@ -23,51 +23,45 @@ shikoku-latest.osm.pbf
 
 ```text
 ohenro-map-data/
-├── source/                    原始資料（immutable）：OSM PBF、網站快照、GSI DEM ZIPs、shikoku-nature-trail/ 官方 archive
+├── datasets/                  每個來源獨立管理（總覽：datasets/README.md）
+│   └── <source>/              raw/、output/、reports/、docs/、來源專屬程式與 tests/
 ├── basemaps/                  Protomaps Basemaps repo（外部 git clone，勿放入自訂檔案）
-├── henro/                     自訂 Henro Planetiler 專案（schema 見 henro/schema.md）
-│   └── scripts/               遍路寺廟資料管線（extract / normalize / generate）
-├── henroyado/                 Henroyado 住宿爬蟲（Python package，Phase 1：fetcher→parse→normalize）
-│   └── tests/                 regression fixtures + 單元測試
-├── min88_lodging/             min88 住宿 archive / parser / normalizer / optional geocoder
-│   └── tests/                 parser、normalizer、crawler I/O 與 pipeline regression tests
-├── shikoku_nature_trail/      四國自然步道網站爬蟲（Python，Phase 1 raw archive；見 reference/shikoku-nature-trail-crawler-plan.md）
-│   ├── crawler/               index / detail / assets / kml / manifest 子命令
-│   ├── parser/                course_list + course_detail HTML parser
-│   └── tests/                 fixtures + parser 單元測試
-├── gsi-dem/                   GSI DEM 轉換工具（Rust，Phase 1 Inspector 完成）
-├── output/                    所有產出：henroyado/{detect,raw,v1}.jsonl、temples.*、lodging.*、shikoku-nature-trail.*、五份 PMTiles（basemap/henro/contours/terrain/nature-trail）
-├── scripts/                   build / validate 腳本
-├── docs/                      操作文件（lodging_data_pipeline.md 等）
-├── reference/                 計畫與操作文件
-└── reports/                   build log 與 metadata 報告
+├── output/                    跨來源 App manifest/assets、route packs、route-editor
+├── scripts/                   共用 build / validate 腳本
+├── docs/                      資料索引與共用規格
+├── reference/                 共用計畫與未確認來源的歷史樣本
+├── work/                      可重建的暫存工作區
+└── reports/                   跨來源 build log
 ```
 
-遍路寺廟資料管線詳見 `reference/henro_data_pipeline.md`（更新資料時依該文件執行）。
-住宿資料管線詳見 `docs/lodging_data_pipeline.md`（OSM lodging extractor，
-`python3 henro/scripts/extract_lodging.py` → `output/lodging.geojson` + `lodging-report.json`）。
-Henroyado 住宿爬蟲（Phase 1）詳見 `reference/henroyado-parser-standardization-plan.md`。
-步行遍路路線 archive：`python3 -m arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
-路線 HTML 與內嵌 Google My Maps KML 到 `source/arukihenro-routes/`；可用 `--force` 重抓。
+所有命令由 repo 根目錄執行。Python 來源 CLI 使用 `python3 -m datasets.<來源>`。
+來源資料及程式均為實體搬遷；`map-preview/public/data/` 的連結只維持 Web URL。
+
+遍路寺廟資料管線詳見 `datasets/seichijunrei/docs/henro_data_pipeline.md`（更新資料時依該文件執行）。
+住宿資料管線詳見 `datasets/osm/docs/lodging_data_pipeline.md`（OSM lodging extractor，
+`python3 datasets/osm/henro/scripts/extract_lodging.py` → `datasets/osm/output/lodging.geojson` + `lodging-report.json`）。
+Henroyado 住宿爬蟲（Phase 1）詳見 `datasets/henroyado/docs/henroyado-parser-standardization-plan.md`。
+步行遍路路線 archive：`python3 -m datasets.arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
+路線 HTML 與內嵌 Google My Maps KML 到 `datasets/arukihenro_routes/raw/`；可用 `--force` 重抓。
 
 步行遍路路線 normalize（Phase 2）：
 
 ```bash
-python3 -m arukihenro_routes normalize   # -> output/arukihenro-routes.json
+python3 -m datasets.arukihenro_routes normalize   # -> datasets/arukihenro_routes/output/arukihenro-routes.json
 ```
 
-- `python3 -m arukihenro_routes` 預設走 fetch；`normalize` 子命令把 archive 的
+- `python3 -m datasets.arukihenro_routes` 預設走 fetch；`normalize` 子命令把 archive 的
   manifest + 各 map KML 正規化為 schema v1（deterministic、無 timestamp、
   atomic write）。每 route 保留 region/title/url 與札所範圍
   `from_temple`/`to_temple`/`temple_range`（88 條正規 + 1 條別格為空；
   `88→01` 閉環為 `[88, 1]`、`79→81` 非連續、`68・69` 合併為
-  `[67, 68, 69]` 等，見 `arukihenro_routes/temple_range.py`）。每 map 保留
+  `[67, 68, 69]` 等，見 `datasets/arukihenro_routes/temple_range.py`）。每 map 保留
   `map_name`/`map_description`（Document name 常含長度如 `【A:1.4㎞　B:1.6km】`）、
   各自的 `from_temple`/`to_temple`/`temple_range`、`lines` 與 `points`
   （均保留來源 Folder 名稱、依文件順序）。
 - `lines`：LineString geometry `[lon, lat]`，`source` 依 Placemark name 判定
   `google_directions`（`日本,…`/`Unnamed Road,…`，My Maps 導航自動產生）或 `manual`。
-- `points`：統一分類 `category`（見 `arukihenro_routes/classify.py`，12 類：
+- `points`：統一分類 `category`（見 `datasets/arukihenro_routes/classify.py`，12 類：
   route_endpoint / waymarker / lodging / onsen / food_shop / rest_area / shrine /
   viewpoint / temple_related / elevation_mileage / route_feature / sightseeing，
   另有 `other`/`no_name`）。`route_endpoint` = Google 自動起終點（392 個），
@@ -77,26 +71,26 @@ python3 -m arukihenro_routes normalize   # -> output/arukihenro-routes.json
   `/blog/arukihenro/junnro/michi…` 與罕見的裸 `/blog/arukihenro/michi…`
   （如 `michi45to46/`）；88 個相鄰札所區間全數覆蓋（40→41 源站無 KML）。
 一日一斉おもてなし遍路道ウォーク點檢路線 archive：
-`python3 -m omotenashi_henro_inspection`，下載 KML immutable snapshot 至
-`source/omotenashi-henro-inspection/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
-四國遍路世界遺產登錄推進協議會 KML archive：`python3 -m sekaiisan_henro`，下載四縣
+`python3 -m datasets.omotenashi_henro_inspection`，下載 KML immutable snapshot 至
+`datasets/omotenashi_henro_inspection/raw/`；它僅代表點檢活動覆蓋，非道路維護或導航保證。
+四國遍路世界遺產登錄推進協議會 KML archive：`python3 -m datasets.sekaiisan_henro`，下載四縣
 引導路線、札所及廁所共 12 份 KML 的完整 immutable snapshot 至
-`source/88sekaiisan-henro/`。`python3 -m sekaiisan_henro normalize` 會嚴格解析四縣路線、
-88 札所及**四縣廁所**至 `output/sekaiisan-henro-normalized.json`（新增 `toilets` 與
+`datasets/sekaiisan_henro/raw/`。`python3 -m datasets.sekaiisan_henro normalize` 會嚴格解析四縣路線、
+88 札所及**四縣廁所**至 `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`（新增 `toilets` 與
 `toilet_defects`：2026-09-10 全量 599 廁所 + 1 defect —— kochi.kml 一個
 `1330000212,32.7873752` 座標 typo，依保守原則不臆測修正，保留 raw_coordinate 於
 `toilet_defects`，accounting 有 `toilets`/`toilet_defects` 與 per-prefecture 細目；
 廁所 description table 結構化出 facility_name/address/hours/available_days/open/close/
 toilet_type/washlet/notes，HTML 去除、空白收斂）；
-`python3 -m sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
-近距候選及 endpoint-only components）；`python3 -m sekaiisan_henro build-graph` 建立只含
+`python3 -m datasets.sekaiisan_henro topology-inventory` 會產生唯讀拓撲診斷（端點、T 接點、交叉、
+近距候選及 endpoint-only components）；`python3 -m datasets.sekaiisan_henro build-graph` 建立只含
 exact source evidence 的無向 graph（共享頂點及零距離 T 接點，不套用 proximity snapping）；
-`python3 -m sekaiisan_henro apply-proximity` 在 exact graph 之上只加入保守、無歧義的
+`python3 -m datasets.sekaiisan_henro apply-proximity` 在 exact graph 之上只加入保守、無歧義的
 proximity joins（<=5m 端點 cluster 僅在 unambiguous 時連接；<=5m 端點到線內部 T 僅在
 唯一且無競爭候選時連接），全部以顯式 `synthetic_joins` + `synthetic_nodes` 呈現，source
 edges/nodes 與 source length accounting 保持 byte/value 不變；5–20m 缺口、competing、
 ambiguous cluster 與 ambiguous crossings 一律只報告不連接。
-`python3 -m sekaiisan_henro build-anchors` 把 88 個札所投影到最近 source edge 並切分
+`python3 -m datasets.sekaiisan_henro build-anchors` 把 88 個札所投影到最近 source edge 並切分
 derived traversal edges：confidence 分 `near`(<=50m) / `offset`(>50–150m) /
 `review_required`(>150m 或最近邊真正 tied)；多 edge tied 只有在所有最近投影落到同一個
 existing exact graph node 時才以 `shared_node_tie` 安全解析。只把 usable (near/offset) anchors 與 attached
@@ -104,8 +98,8 @@ synthetic T nodes 插入 traversal topology，review-required 一律排除（uni
 投影與 anchor node 供審，但標 unusable）。source nodes/edges/synthetic joins/route_sources/
 source length accounting 保持 byte/value 不變；temple 點原樣保留、temple→邊的偏移線絕不成
 edge；component 數維持與 Phase 2C 相同（僅 subdivide）。產出
-`output/sekaiisan-henro-graph-anchors.json`。
-`python3 -m sekaiisan_henro build-sections` 在 effective undirected graph
+`datasets/sekaiisan_henro/output/sekaiisan-henro-graph-anchors.json`。
+`python3 -m datasets.sekaiisan_henro build-sections` 在 effective undirected graph
 （只有 `traversal_edges` + `synthetic_joins`，weight = `length_m`/`distance_m`；
 **不**在原始 source `edges` 上 routing、**不**用 temple 偏移距離當成本）上對 88 個
 札所兩兩相鄰（1→2 至 87→88）做加權最短路徑（stdlib heapq Dijkstra + 確定性
@@ -114,10 +108,10 @@ status 為 `candidate` / `ambiguous`（有 <=1.15x 替代路徑，保留 primary
 `disconnected`（不同 component，不臆造連線）/ `anchor_review_required`（任一側 anchor
 不可用）；替代路徑 = 逐一排除 primary 每條邊重跑。永不宣稱 resolved/official/navigable；
 `closure_88_1` = `{"status":"not_requested"}`。產出
-`output/sekaiisan-henro-temple-sections.json`（byte-deterministic，無 timestamp）。
+`datasets/sekaiisan_henro/output/sekaiisan-henro-temple-sections.json`（byte-deterministic，無 timestamp）。
 目前尚未建立區間路徑的 PMTiles。
 
-`python3 -m sekaiisan_henro build-section-corridors`（Phase 4b parallel section
+`python3 -m datasets.sekaiisan_henro build-section-corridors`（Phase 4b parallel section
 corridor classifier）在 effective undirected graph（同樣只有 `traversal_edges` +
 `synthetic_joins`；**不**在 source `edges` 上 routing、**不**用 temple 偏移當
 edge/cost）上，對 88 個札所兩兩相鄰（1→2 至 87→88）計算 **section corridor**：
@@ -141,18 +135,18 @@ effective-edge classification：每條 effective edge 一筆（kind traversal/sy
 sorted section_ids、assignment_count、`assigned_once`/`assigned_multiple`/
 `unassigned`、`source_edge_id`），並有 by-status 與 by-classification accounting
 （不宣稱 assignment 是 exclusive）。產出
-`output/sekaiisan-henro-section-corridors.json` 與
-`output/sekaiisan-henro-section-corridor-edges.geojson`（byte-deterministic、無
+`datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridors.json` 與
+`datasets/sekaiisan_henro/output/sekaiisan-henro-section-corridor-edges.geojson`（byte-deterministic、無
 timestamp、atomic write）。GeoJSON：每 `(section_id, effective_edge_id)` assignment
 一個 LineString feature（props：section_id/status/edge_id/edge_kind/source_edge_id/
 synthetic/applied/assignment_count），外加每條 unassigned edge 一個 feature
 （`section_id=null`、`classification=unassigned`）；synthetic join geometry 由
 anchored node coordinates 推得；offset lines 絕不包含；feature 依 stable id 排序。
-`python3 -m sekaiisan_henro build-sections`（Phase 4 加權最短路徑 QA/reference）不受
+`python3 -m datasets.sekaiisan_henro build-sections`（Phase 4 加權最短路徑 QA/reference）不受
 影響、維持原狀。
 
-`python3 -m sekaiisan_henro arukihenro-attribution`（Phase 4c）用
-`output/arukihenro-routes.json` 的每區間參考線（86 條；40→41 與 68→69 源站
+`python3 -m datasets.sekaiisan_henro arukihenro-attribution`（Phase 4c）用
+`datasets/arukihenro_routes/output/arukihenro-routes.json` 的每區間參考線（86 條；40→41 與 68→69 源站
 無 KML）當**獨立空間先驗**，把 `sekaiisan-henro-graph.json` 的每條 source edge
 （SHE_）貼上最近寺廟區間標籤。Shapely 算 edge→reference 最短距離（共享
 equirectangular 投影）；`--buffer-m` 預設 500m。每 edge：`status`
@@ -163,7 +157,7 @@ SEC_88_1 閉環穿過德島起點的真實重疊）/ `unattributed`，加
 `build-section-corridors` 的 `source_edge_ids` 交叉比對（per-section jaccard，
 SEC_88_1 不在 corridors 內不比較）。**是軟性先驗，非硬切割**：arukihenro 為
 個人手繪 + Google 導航路線，可能與協議會官方引導線不同。產出
-`output/sekaiisan-henro-arukihenro-attribution.json`（byte-deterministic、無
+`datasets/sekaiisan_henro/output/sekaiisan-henro-arukihenro-attribution.json`（byte-deterministic、無
 timestamp、atomic write）。`--edge-layer traversal` 改用
 `sekaiisan-henro-graph-anchors.json` 的 `traversal_edges`（STE_，寺廟 anchor
 已切好）做同一套比對，corridor cross-check 對 `traversal_edge_ids`，產出
@@ -173,8 +167,8 @@ unattributed 147（9%）；STE_ 1733 edges / 1056（61%）/ 519（30%）/ 158（
 median distance 0m、p90 390m；corridor cross-check 51 區間 jaccard 0.474 /
 0.468（36→37 最高 0.86、1→2 / 49→50 等 0.00 為審查焦點）。
 
-`python3 -m sekaiisan_henro export-plan-graph` 把 anchored graph 縮減成
-瀏覽器路由圖 `output/sekaiisan-henro-plan-graph.json`（schema_version 2，
+`python3 -m datasets.sekaiisan_henro export-plan-graph` 把 anchored graph 縮減成
+瀏覽器路由圖 `datasets/sekaiisan_henro/output/sekaiisan-henro-plan-graph.json`（schema_version 2，
 **topology/geometry 分離**：`nodes` + `traversal_edges` + `synthetic_joins`
 只含 node/edge 參考與權重、**不含**每邊 vertices，polyline 折點集中在
 `edge_geometry` lookup（`edge_id -> coordinates`），source edges 與
@@ -205,11 +199,11 @@ z14 ~12m 解析，DEM10 基底）採樣；「規劃高度剖面」面板即時�
 A/B… 中途點（snapped on-route 投影）寫成 `<wpt>`。metadata 註明「規劃結果，
 非官方／導航保證」。
 
-OHenro 88 互動規劃 graph：`python3 scripts/build-ohenro88-plan-graph.py`
+OHenro 88 互動規劃 graph：`python3 datasets/ohenro88/scripts/build-ohenro88-plan-graph.py`
 （`--proximity-m` 預設 3、`--join-m` 預設 90）把
-`output/ohenro88-routes/ohenro88-routes.geojson`（App 抽取的 172 條
+`datasets/ohenro88/output/ohenro88-routes.geojson`（App 抽取的 172 條
 LineString/MultiLineString，`[lon,lat,elev]`，獨立數位化、大量重疊）建成
-`output/ohenro88-routes/ohenro88-plan-graph.json`，schema 與
+`datasets/ohenro88/output/ohenro88-plan-graph.json`，schema 與
 `export-plan-graph` 相同（schema_version 2，topology/geometry 分離，
 map-preview 的 `planner.ts` 直接可用）：
 頂點 3m proximity-merge（只把真正重疊的頂點合一——**merge 半徑不能大**，
@@ -225,8 +219,8 @@ OHenro 88 為 App 自身路線的 routing reference，非官方／導航保證�
 
 #### Henro Hub（henro.app）路線網路（靜態比較 + map-preview overlay）
 
-`python3 scripts/build-henrohub-routes.py` 把 Henro Hub（`hub.henro.app`，= `henro.app`）release
-的 planner GeoJSON 轉成 map-preview 可用的 `output/henrohub-routes/henrohub-routes.geojson`
+`python3 datasets/henrohub/scripts/build-henrohub-routes.py` 把 Henro Hub（`hub.henro.app`，= `henro.app`）release
+的 planner GeoJSON 轉成 map-preview 可用的 `datasets/henrohub/output/henrohub-routes.geojson`
 （1884 條 LineString、~13.5MB、byte-deterministic）。每 feature：`kind=line`、`route_id`
 （`hrn_*`/`shikoku88-*`/`hh26_*`）、`route_role`（`canonical_shikoku88`=main /
 `unique_alternative` / `transition_connector` / `continuity_fallback`）、`route_class`
@@ -234,7 +228,7 @@ OHenro 88 為 App 自身路線的 routing reference，非官方／導航保證�
 如 `1 → 2`）、elevation summary。map-preview「Henro Hub」layer 依 `route_role` 分組樹、
 逐條勾選 + master/labels 開關；**預設顯示該 layer，且只顯示 main + alternative**
 （connector/fallback 預設關閉）。**Henro Hub 自家數位化，不是 repo 的 Henro Helper 抽出、
-也非官方引導線**；完整比較見 `reference/henro-hub-comparison.md`。
+也非官方引導線**；完整比較見 `datasets/henrohub/docs/henro-hub-comparison.md`。
 
 與 repo 現有資料的重疊：henrohub 網路 ~93.6% 已被 repo 來源覆蓋（henro-helper 86.2% /
 sekaiisan 41.3% / arukihenro 43.2% / ohenro88 33.6% / ohenro-no-akari 42.3%，20m buffer）；
@@ -245,10 +239,10 @@ sekaiisan 41.3% / arukihenro 43.2% / ohenro88 33.6% / ohenro-no-akari 42.3%，20
 但小段多為主題式子路線（含繞行/一日遊），非乾淨 temple-to-temple 切割。授權未定
 （商業產品資產，無 ODbL 標示），僅作靜態比較與 QA 參考，**未整合進正式管線**。
 
-Henro Hub 互動規劃 graph：`python3 scripts/build-henrohub-plan-graph.py`
+Henro Hub 互動規劃 graph：`python3 datasets/henrohub/scripts/build-henrohub-plan-graph.py`
 （`--proximity-m` 預設 3、`--join-m` 預設 30）把
-`output/henrohub-routes/henrohub-routes.geojson` 建成
-`output/henrohub-routes/henrohub-plan-graph.json`，schema 與 `export-plan-graph`
+`datasets/henrohub/output/henrohub-routes.geojson` 建成
+`datasets/henrohub/output/henrohub-plan-graph.json`，schema 與 `export-plan-graph`
 相同（schema_version 2，topology/geometry 分離，map-preview `planner.ts`
 直接可用）。**只有 `canonical_shikoku88`（main）+ `unique_alternative` 參與
 routing**；`transition_connector`/`continuity_fallback` 是補網接點與 fallback
@@ -261,10 +255,10 @@ Terrain-RGB 採樣。產出 4 components（largest 2303 nodes / 2309，99.7%）�
 前端 planRoute 為 candidate。map-preview「互動規劃」網路下拉含 Henro Hub；
 Henro Hub 為自家數位化 routing reference，非官方／導航保證。
 
-Henro Hub 離線顯示 PMTiles（個人使用）：`scripts/build-henrohub-pmtiles.sh`
-把 `output/henrohub-routes/henrohub-routes.geojson` 用 docker tippecanoe
+Henro Hub 離線顯示 PMTiles（個人使用）：`datasets/henrohub/scripts/build-henrohub-pmtiles.sh`
+把 `datasets/henrohub/output/henrohub-routes.geojson` 用 docker tippecanoe
 （z0-14、`--no-line-simplification`、單一 `henrohub_routes` layer，1884 條
-LineString）建成 `output/shikoku-henrohub.pmtiles`（~3MB，1575 tiles），
+LineString）建成 `datasets/henrohub/output/shikoku-henrohub.pmtiles`（~3MB，1575 tiles），
 metadata 標 `usage: personal-use`、attribution 指向 henro.app，驗證 layer/
 fields（route_id/route_role/route_class）/bounds/metadata。**非正式管線**：
 Henro Hub 授權未定（商業產品資產，無 ODbL），此 PMTiles 僅供個人使用、
@@ -273,8 +267,8 @@ Henro Hub 授權未定（商業產品資產，無 ODbL），此 PMTiles 僅供�
 #### 統合資訊 POI（`build-info-pois`）
 
 ```bash
-python3 scripts/build-info-pois.py          # -> output/pois/pois.geojson + pois-report.json
-./scripts/build-info-pois.sh                # -> output/shikoku-info-pois.pmtiles
+python3 datasets/info_pois/scripts/build-info-pois.py          # -> datasets/info_pois/output/pois.geojson + pois-report.json
+./datasets/info_pois/scripts/build-info-pois.sh                # -> datasets/info_pois/output/shikoku-info-pois.pmtiles
 ```
 
 個人使用、非正式管線。`build-info-pois.py` 把**精選資訊 POI** 統合成單一
@@ -290,23 +284,23 @@ other`。每筆
 （app 端依 source+category 過濾）。
 
 來源與 mapping：
-- `output/temples.geojson`（88 canonical）→ `temple`。
-- `output/sekaiisan-henro-normalized.json`：88 札所 → `temple`；599 廁所 → `toilet`
+- `datasets/seichijunrei/output/temples.geojson`（88 canonical）→ `temple`。
+- `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`：88 札所 → `temple`；599 廁所 → `toilet`
   （carry facility_name/address/hours/toilet_type/washlet 等；kochi 的
   `toilet_defects` 座標 typo 不輸出）。
-- `output/mizutani-henro-pois.geojson`（2199，exclude lodging）：temple→`temple`、
+- `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson`（2199，exclude lodging）：temple→`temple`、
   transport→`transport`、shop_supply→`shop`、food→`food`、wayfinding→`wayfinding`、
   warning_hazard→`warning_hazard`、experience_note→`experience_note`、other→`other`；
   **`water_toilet_rest`（180）以 name 啟發式拆分**：道の駅/海の駅/休憩所→`rest_area`、
   溫泉/湯/銭湯/立寄り湯→`onsen`、湧き水/水道→`water`，其餘→`rest_area`
   （2026-09-10：rest_area 123 / onsen 55 / water 2，見 report）。
-- `output/shikoku-nature-trail-pois.geojson`（1568）→ tourism_spot 與 kml_poi 全數
+- `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson`（1568）→ tourism_spot 與 kml_poi 全數
   `sightseeing`（kml_poi 來源無分類，source_category 保留 kind）。
-- `output/arukihenro-routes.json`（850，exclude lodging）：temple_related→`temple`、
+- `datasets/arukihenro_routes/output/arukihenro-routes.json`（850，exclude lodging）：temple_related→`temple`、
   shrine→`shrine`、waymarker/route_feature/elevation_mileage→`wayfinding`、
   food_shop→`food`、onsen→`onsen`、viewpoint/sightseeing→`sightseeing`、
   rest_area→`rest_area`、route_endpoint→`route_endpoint`、other→`other`。
-- `output/shikoku-basemap.pmtiles`（OSM，精選 11,371）：max-zoom tiles 解碼 `pois` layer，
+- `datasets/osm/output/shikoku-basemap.pmtiles`（OSM，精選 11,371）：max-zoom tiles 解碼 `pois` layer，
   **只抽特別有用的 kind**（`OSM_KINDS`）：toilets→`toilet`、drinking_water/
   water_point/fountain→`water`、hotel/guest_house/hostel/motel/camp_site/chalet→
   `lodging`、shelter/rest_area/picnic_table→`rest_area`、public_bath/hot_spring/
@@ -319,19 +313,19 @@ other`。每筆
 `info_pois` layer，16,763 點）→ pmtiles convert → metadata（`usage: personal-use`、
 attribution 列出所有來源）→ 驗證 layer/fields（poi_id/category/source/
 source_category/name）、feature_count、metadata。產出
-`output/shikoku-info-pois.pmtiles`（~2.7MB，3769 tiles）。
+`datasets/info_pois/output/shikoku-info-pois.pmtiles`（~2.7MB，3769 tiles）。
 
 #### QGIS review-pack / report exporter（`build-review-pack`）
 
 ```bash
-python3 -m sekaiisan_henro build-review-pack
-# -> output/sekaiisan-henro-review/
+python3 -m datasets.sekaiisan_henro build-review-pack
+# -> datasets/sekaiisan_henro/output/sekaiisan-henro-review/
 ```
 
-`python3 -m sekaiisan_henro build-review-pack` 產生給 QGIS 人工審閱用的唯讀、確定性
+`python3 -m datasets.sekaiisan_henro build-review-pack` 產生給 QGIS 人工審閱用的唯讀、確定性
 review pack，輸入為同一 snapshot 的五份文件（預設即 pipeline 產出，可用
 `--normalized` / `--inventory` / `--proximity` / `--anchored` / `--sections`
-覆寫，`--output-dir` 預設 `output/sekaiisan-henro-review`）。先驗證所有 kind /
+覆寫，`--output-dir` 預設 `datasets/sekaiisan_henro/output/sekaiisan-henro-review`）。先驗證所有 kind /
 dataset / snapshot 一致與跨輸入 accounting 基本 identity，全部 payload 在記憶體建好後
 用既有 atomic writer 逐檔寫出（byte-deterministic、無 timestamp）：
 
@@ -371,64 +365,64 @@ synthetic joins 的 section crossref（sorted section IDs，primary 與 alternat
 `sections.geojson`（看候選/替代路徑），`review-items.json` 與 `report.json` 作為審閱清單
 與摘要；人工決定記到未來 `graph_overrides`/`review-decisions`，本 exporter 不寫 decisions。
 
-min88 住宿管線操作詳見 `docs/min88_lodging_pipeline.md`（規劃：
-`reference/min88-lodging-parser-standardization-plan.md`）。
-GSI DEM 轉換詳見 `gsi-dem/README.md`（規劃：`reference/gis-dem-converter.md`）。
+min88 住宿管線操作詳見 `datasets/min88_lodging/docs/min88_lodging_pipeline.md`（規劃：
+`datasets/min88_lodging/docs/min88-lodging-parser-standardization-plan.md`）。
+GSI DEM 轉換詳見 `datasets/gsi/gsi-dem/README.md`（規劃：`datasets/gsi/docs/gis-dem-converter.md`）。
 
 ## GSI DEM（Phase 1-6：Inspector + Raster correctness + DEM5 merge + DEM10B fallback + Final tiling + SQLite）
 
 ```bash
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- inspect source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
-cargo test --manifest-path gsi-dem/Cargo.toml
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate \
-  source/GSI/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip \
-  source/GSI/DEM10B/FG-GML-513462-DEM10B-20161001.zip
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- inspect datasets/gsi/raw/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip
+cargo test --manifest-path datasets/gsi/gsi-dem/Cargo.toml
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- validate \
+  datasets/gsi/raw/DEM5/5A/FG-GML-513462-DEM5A-20251208.zip \
+  datasets/gsi/raw/DEM10B/FG-GML-513462-DEM10B-20161001.zip
 # Phase 3+4：per-mesh merge + DEM10B fallback（20,362 meshes 全量約 57 秒）
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
-  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B --report /tmp/merge-report.json
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- merge \
+  --input datasets/gsi/raw/DEM5 --dem10b-input datasets/gsi/raw/DEM10B --report /tmp/merge-report.json
 # 示範 fallback 查詢路徑（DEM5 無資料 → DEM10B）
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
-  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B \
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- merge \
+  --input datasets/gsi/raw/DEM5 --dem10b-input datasets/gsi/raw/DEM10B \
   --region 503354 --query-lat 33.754 --query-lon 133.544
 # Phase 5：先 merge 落盤（~3.8GB），再切成 256x256 zstd tile（~1.4GB）
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- merge \
-  --input source/GSI/DEM5 --dem10b-input source/GSI/DEM10B --out-dir work/merged
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- tile \
-  --merged work/merged --dem10b source/GSI/DEM10B --out work/tiles \
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- merge \
+  --input datasets/gsi/raw/DEM5 --dem10b-input datasets/gsi/raw/DEM10B --out-dir work/merged
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- tile \
+  --merged work/merged --dem10b datasets/gsi/raw/DEM10B --out work/tiles \
   --check-lat 33.754 --check-lon 133.544
 # Phase 6：tiles -> SQLite（540MB），並用 runtime query 查詢
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- build \
-  --tiles work/tiles --grid /tmp/tile-report.json --output output/shikoku-elevation.sqlite
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- query-db \
-  output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- build \
+  --tiles work/tiles --grid /tmp/tile-report.json --output datasets/gsi/output/shikoku-elevation.sqlite
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- query-db \
+  datasets/gsi/output/shikoku-elevation.sqlite --lat 33.754 --lon 133.544
 # Phase 7：golden coordinates regression + coverage/source report
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- validate-db \
-  output/shikoku-elevation.sqlite --golden gsi-dem/tests/golden/elevation.json
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- validate-db \
+  datasets/gsi/output/shikoku-elevation.sqlite --golden datasets/gsi/gsi-dem/tests/golden/elevation.json
 # 高程視覺化：export-vrt（raw Int16 + VRT）→ build-elevation-visuals.sh（Docker: GDAL/tippecanoe/rgbify）
-cargo run --manifest-path gsi-dem/Cargo.toml --release -- export-vrt \
-  output/shikoku-elevation-dem10.sqlite --layer 10 --output work/elevation/dem10.vrt
-./scripts/build-elevation-visuals.sh   # -> output/shikoku-contours.pmtiles + output/shikoku-terrain.pmtiles
+cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- export-vrt \
+  datasets/gsi/output/shikoku-elevation-dem10.sqlite --layer 10 --output work/elevation/dem10.vrt
+./datasets/gsi/scripts/build-elevation-visuals.sh   # -> datasets/gsi/output/shikoku-contours.pmtiles + datasets/gsi/output/shikoku-terrain.pmtiles
 ```
 
 #### 高程視覺化 build（build-elevation-visuals.sh）
 
 ```bash
-# 前置需求：cargo、pmtiles CLI、docker；DEM10-only SQLite（預設 output/shikoku-elevation-dem10.sqlite）
+# 前置需求：cargo、pmtiles CLI、docker；DEM10-only SQLite（預設 datasets/gsi/output/shikoku-elevation-dem10.sqlite）
 
 # 第一次使用：build 工具 Docker 映像（host 不需安裝 GDAL/tippecanoe/rgbify）
 docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
 
 # 之後每次：從 DEM10 SQLite 一次重建兩份 PMTiles
-./scripts/build-elevation-visuals.sh
-# -> output/shikoku-contours.pmtiles（20m 等高線, MVT, z12-15）
-# -> output/shikoku-terrain.pmtiles（Terrain-RGB, PNG, z6-14）
+./datasets/gsi/scripts/build-elevation-visuals.sh
+# -> datasets/gsi/output/shikoku-contours.pmtiles（20m 等高線, MVT, z12-15）
+# -> datasets/gsi/output/shikoku-terrain.pmtiles（Terrain-RGB, PNG, z6-14）
 # 完整流程：export-vrt -> gdal_translate COG -> gdalinfo 驗證 -> gdal_contour ->
 #   tippecanoe -> gdalwarp 3857 -> rgbify_dem -> pmtiles convert -> 嚴格驗證 -> npm build
-# 全部 stdout/stderr 寫入 reports/elevation-visuals-build.log；
+# 全部 stdout/stderr 寫入 datasets/gsi/reports/elevation-visuals-build.log；
 # metadata 寫入 reports/{contours,terrain}-metadata.txt；GSI attribution 寫入 PMTiles。
 
 # 可調環境變數（只有需要時才設）
-#   ELEVATION_DB=...          DEM10 SQLite 路徑（預設 output/shikoku-elevation-dem10.sqlite）
+#   ELEVATION_DB=...          DEM10 SQLite 路徑（預設 datasets/gsi/output/shikoku-elevation-dem10.sqlite）
 #   WORK_DIR=...              中間檔目錄（預設 work/elevation）
 #   CONTOUR_INTERVAL=20       等高線間隔
 #   TERRAIN_MIN_ZOOM=6 / TERRAIN_MAX_ZOOM=14
@@ -437,7 +431,7 @@ docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
 
 - 直接從 ZIP 讀 XML entry，不將 XML 解壓到磁碟；支援 nested ZIP。
 - streaming XML parser（quick-xml），tupleList → SoA（elevation f32 + mask u8）。
-- 關鍵資料結構發現（詳見 `gsi-dem/README.md`）：
+- 關鍵資料結構發現（詳見 `datasets/gsi/gsi-dem/README.md`）：
   - DEM5 沿海 mesh 的 sample count **不固定**（partial coverage，非損壞），
     且最後一列也可能 partial（merge 需 bounds-check）。
   - Grid row 0 = 北（north-up），與 envelope lowerCorner（SW）不同。
@@ -453,7 +447,7 @@ docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
 - Phase 3 完成：`merge` 依 primary region 群組、per-mesh A>B>C pixel-level merge，
   per-pixel 保留 source code（§16：0=NODATA, 2=DEM5C, 3=DEM5B, 4=DEM5A）。
   2026-08-17 全量結果：A=626.7M / B=6.4M / C=17.5k / nodata=54.1M pixels。
-- Phase 4 完成：`merge --dem10b-input source/GSI/DEM10B` 載入獨立 10m layer，
+- Phase 4 完成：`merge --dem10b-input datasets/gsi/raw/DEM10B` 載入獨立 10m layer，
   計算 DEM10B 對 DEM5 nodata 的填補（全量 999,851 格、佔 nodata 1.8%；
   其餘為公海，DEM10B 亦無資料）。`--query-lat/--query-lon` 示範 fallback 查詢
   （DEM5 無值 → DEM10B，如 503354 區域 335.00m）。runtime 語義：
@@ -474,19 +468,19 @@ docker build -t ohenro-elevation-visuals -f docker/Dockerfile.elevation .
 ## Henroyado Crawler（Phase 1：fetcher）
 
 ```bash
-python3 -m henroyado fetch    # 下載全四國住宿清單，存為 source/henroyado.html
+python3 -m datasets.henroyado fetch    # 下載全四國住宿清單，存為 datasets/henroyado/raw/henroyado.html
 ```
 
-- 下載 `https://henroyado.com/inns` 並存為 `source/henroyado.html`。
+- 下載 `https://henroyado.com/inns` 並存為 `datasets/henroyado/raw/henroyado.html`。
 - 只做 URL → HTML 快照（plan Step 1），不解析。
 - 只存一份：base 與四個 `?pref=` URL 的 HTTP body 都包含完整四縣資料；
   `pref` 只由 `inn.js` 在瀏覽器端切換 `div.js_prefGroup` 的顯示，不會另抓資料。
-- `source/henroyado.html` 已 gitignore（可重新抓取）。
+- `datasets/henroyado/raw/henroyado.html` 已 gitignore（可重新抓取）。
 
 ### Detect（plan Step 2：記錄偵測）
 
 ```bash
-python3 -m henroyado detect   # → output/henroyado/detect.jsonl
+python3 -m datasets.henroyado detect   # → datasets/henroyado/output/detect.jsonl
 ```
 
 - 每筆住宿 = `tr.bl_table_row_frontInfo`（+ 緊接的 `tr.bl_table_row_detail`）。
@@ -500,7 +494,7 @@ python3 -m henroyado detect   # → output/henroyado/detect.jsonl
 ### Parse（plan Step 3：RawInn 抽取）
 
 ```bash
-python3 -m henroyado parse   # → output/henroyado/raw.jsonl（702 筆）
+python3 -m datasets.henroyado parse   # → datasets/henroyado/output/raw.jsonl（702 筆）
 ```
 
 - 每筆 = `tr.bl_table_row_frontInfo`（summary row）+ `tr.bl_table_row_detail`
@@ -520,10 +514,10 @@ python3 -m henroyado parse   # → output/henroyado/raw.jsonl（702 筆）
 ### Normalize（plan Step 4/5：RawInn → HenroyadoInnV1）
 
 ```bash
-python3 -m henroyado normalize   # → output/henroyado/v1.jsonl（702 筆）
+python3 -m datasets.henroyado normalize   # → datasets/henroyado/output/v1.jsonl（702 筆）
 ```
 
-- 純函式 normalizer（`henroyado/normalize/`）：text/time/room/meal/route/
+- 純函式 normalizer（`datasets/henroyado/normalize/`）：text/time/room/meal/route/
   facility/payment/map/image，各自獨立、失敗只記 warning 不丟 record。
 - 結果符合 plan §5 schema：`henro.from/to_temple`（1番霊山寺→2番極楽寺）、
   `rooms.room_count`（`(\d+)部屋`，全形數字/冒號先正規化）、`meals`、
@@ -546,12 +540,12 @@ python3 -m henroyado normalize   # → output/henroyado/v1.jsonl（702 筆）
 ### Geocode（Google Maps embed place 補座標）
 
 ```bash
-python3 -m henroyado geocode
-# output/henroyado/v1.jsonl -> output/henroyado/v1-geocoded.jsonl
+python3 -m datasets.henroyado geocode
+# datasets/henroyado/output/v1.jsonl -> datasets/henroyado/output/v1-geocoded.jsonl
 ```
 
 - 以每筆 `google_maps_search_url` 請求 `output=embed&hl=ja`，回應快取在
-  `source/henroyado-google-maps/`；既有 cache 預設不重抓，`--force` 才更新。
+  `datasets/henroyado/raw/google-maps/`；既有 cache 預設不重抓，`--force` 才更新。
 - 只接受 Google place record 或 resolved URL 的
   `!8m2!3d<latitude>!4d<longitude>` marker；不使用原始 iframe 前段的
   `!2d...!3d...` viewport center。
@@ -568,7 +562,7 @@ python3 -m henroyado geocode
 ### Tests（plan Step 8：regression fixtures）
 
 ```bash
-python3 -m unittest discover henroyado/tests
+python3 -m unittest discover datasets/henroyado/tests
 ```
 
 - `tests/test_normalizers.py`：normalizer 純函式單元測試（time/room/meal/route/
@@ -576,30 +570,30 @@ python3 -m unittest discover henroyado/tests
 - `tests/test_pipeline.py`：HTML fixture → RawInn → V1 == 凍結的 expected JSON
   （6 個代表性 record：ootoriien / no_meal / no_detail / multi_room /
   fullwidth_times / price）。
-- fixtures 從 `source/henroyado.html` 抽真實片段：改版後跑
-  `henroyado/tests/extract_fixtures.py` + `generate_expected.py` 重新凍結。
+- fixtures 從 `datasets/henroyado/raw/henroyado.html` 抽真實片段：改版後跑
+  `datasets/henroyado/tests/extract_fixtures.py` + `generate_expected.py` 重新凍結。
 
 **Phase 1 狀態**：Step 1–8 全完成（fetch / detect / parse / normalize /
 warnings / writers / fixtures+tests），另有 Google embed geocode enrichment；產出
-`source/henroyado.html`、`output/henroyado/{detect,raw,v1,v1-geocoded}.jsonl`。
+`datasets/henroyado/raw/henroyado.html`、`datasets/henroyado/output/{detect,raw,v1,v1-geocoded}.jsonl`。
 
 ## min88 Lodging（archive + offline normalization）
 
 ```bash
-python3 -m min88_lodging crawl-all
-python3 -m min88_lodging parse
-python3 -m min88_lodging normalize
-python3 -m min88_lodging verify
-python3 -m min88_lodging report
-python3 -m min88_lodging geocode       # optional Google place enrichment
-python3 -m min88_lodging export-map    # -> map.geojson（WebUI）
+python3 -m datasets.min88_lodging crawl-all
+python3 -m datasets.min88_lodging parse
+python3 -m datasets.min88_lodging normalize
+python3 -m datasets.min88_lodging verify
+python3 -m datasets.min88_lodging report
+python3 -m datasets.min88_lodging geocode       # optional Google place enrichment
+python3 -m datasets.min88_lodging export-map    # -> map.geojson（WebUI）
 ```
 
 - 架構：日文列表 → `index.json` → 逐 post ID 的 immutable detail HTML archive →
   offline Raw JSONL → conservative `Min88LodgingV1`；Google Maps geocode 是獨立可選 enrichment。
-- 預設 archive：`source/min88-lodging/`（`index/page.html`、`records/<id>/page.html`、
+- 預設 archive：`datasets/min88_lodging/raw/`（`index/page.html`、`records/<id>/page.html`、
   `index.json`、`manifest.json`）；產出：
-  `output/min88-lodging/{raw,v1,v1-geocoded}.jsonl` 與 `report.json`。
+  `datasets/min88_lodging/output/{raw,v1,v1-geocoded}.jsonl` 與 `report.json`。
 - crawler 預設 timeout 30 秒、單 worker、request delay 0.3 秒；有效 archive 會 resume 跳過，
   `--force` 才重抓。manifest 保存 URL/local path/status、retrieval/HTTP metadata、SHA-256、
   parser version 與完整 detail accounting；失敗不覆蓋既有有效頁。
@@ -613,22 +607,22 @@ python3 -m min88_lodging export-map    # -> map.geojson（WebUI）
   4 malformed route distance、1 partial Wi-Fi state）；原值均保留，未強行推斷。
 - 2026-08-19 optional geocode 結果：640 `resolved`、7 `place_not_found`、3
   `source_data_incomplete`、0 fetch errors；`export-map` 產生 640 點
-  `output/min88-lodging/map.geojson`，供 WebUI 的獨立 min88 lodging layer 使用。
+  `datasets/min88_lodging/output/map.geojson`，供 WebUI 的獨立 min88 lodging layer 使用。
 
 ## Shikoku Nature Trail（Phase 1 raw archive + Phase 2 normalization）
 
 ```bash
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-index   # 四縣列表 + course-index.json
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-details # 每 course 的 page.html + metadata/assets.json
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-assets # 內容圖片
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail download-kml   # Google My Maps KML
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail crawl-all      # index→details→assets→kml→report
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail verify
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail report
-python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize --output output/shikoku-nature-trail.json
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw crawl-index   # 四縣列表 + course-index.json
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw crawl-details # 每 course 的 page.html + metadata/assets.json
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw download-assets # 內容圖片
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw download-kml   # Google My Maps KML
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw crawl-all      # index→details→assets→kml→report
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw verify
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw report
+python3 -m datasets.shikoku_nature_trail --data-dir datasets/shikoku_nature_trail/raw normalize --output datasets/shikoku_nature_trail/output/shikoku-nature-trail.json
 ```
 
-- 計畫：`reference/shikoku-nature-trail-crawler-plan.md`；詳見 `shikoku_nature_trail/README.md`。
+- 計畫：`datasets/shikoku_nature_trail/docs/shikoku-nature-trail-crawler-plan.md`；詳見 `datasets/shikoku_nature_trail/README.md`。
 - 網站結構實測：列表頁是 **div-based table**（`.courselist` + `a.row_line` + `.cel`），
   非 `<table>`；詳細頁 `iframe[src*="google.com/maps/d/"]` 的 `mid` query → KML。
 - 列表欄位由 header row 建立 class→field mapping（`cel1`..`cel7`），不依賴位置。
@@ -638,8 +632,8 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize
 - KML 驗證：HTTP 200 + 非空 + 內容含 `<kml>`（不信 Content-Type）；無效 body 存 `map.kml.failed`。
 - resume：已存在檔案跳過，`--force` 才重抓；`crawl-state.json` 非唯一真相。
 - 限速：預設 3 並發 + 0.3s delay；retry 429/5xx/timeout（exponential backoff）。
-- `source/shikoku-nature-trail/` 已 gitignore（可重抓），僅爬蟲程式碼進 repo。
-- Tests：`python3 -m unittest discover shikoku_nature_trail/tests`（parser fixtures）。
+- `datasets/shikoku_nature_trail/raw/` 已 gitignore（可重抓），僅爬蟲程式碼進 repo。
+- Tests：`python3 -m unittest discover datasets/shikoku_nature_trail/tests`（parser fixtures）。
 
 **Phase 1 狀態（2026-08-19）**：完整 archive 完成 —— 123 courses
 （tokushima 24 / kagawa 28 / ehime 33 / kochi 38），123 張 detail HTML、
@@ -647,7 +641,7 @@ python3 -m shikoku_nature_trail --data-dir source/shikoku-nature-trail normalize
 Crawl report：`reports/shikoku-nature-trail-crawl-report.{json,md}`。
 
 **Phase 2 狀態（2026-08-19）**：offline normalization 完成。輸出 schema v1
-`output/shikoku-nature-trail.json`（deterministic、無 timestamp、atomic write，約 9.6MB，
+`datasets/shikoku_nature_trail/output/shikoku-nature-trail.json`（deterministic、無 timestamp、atomic write，約 9.6MB，
 已 gitignore）。每 course 合併 index 欄位、HTML introduction、`photo_point`、依來源順序的
 `tourism_spots`（source URL + `assets.json` local path）、Google Maps metadata 與 KML。
 KML 保留 Placemark name/description，以及 GeoJSON-compatible Point / LineString /
@@ -685,12 +679,12 @@ GeometryCollection；單 course malformed HTML/assets/KML 記 warning 後繼續�
 ## Build Shikoku Nature Trail（四國自然步道 Phase 3）
 
 ```bash
-./scripts/build-shikoku-nature-trail.sh
-# -> output/shikoku-nature-trail.pmtiles + shikoku-nature-trail.geojson
+./datasets/shikoku_nature_trail/scripts/build-shikoku-nature-trail.sh
+# -> datasets/shikoku_nature_trail/output/shikoku-nature-trail.pmtiles + shikoku-nature-trail.geojson
 #    + shikoku-nature-trail-pois.geojson + shikoku-nature-trail-report.json
 ```
 
-- 唯一來源：`source/shikoku-nature-trail/` 的 `shikoku-nature-trail.com` 官方 archive。
+- 唯一來源：`datasets/shikoku_nature_trail/raw/` 的 `shikoku-nature-trail.com` 官方 archive。
 - 流程：offline normalize → `export-map` → tippecanoe（`--no-line-simplification`）→ PMTiles。
 - Layers：`shikoku_nature_trail`（route LineString）與 `shikoku_nature_trail_pois`（Point，z10+）。
 - Route ID：`SNT_<source_post_id>`；POI ID：`SNT_<source_post_id>_P####`。
@@ -702,19 +696,25 @@ GeometryCollection；單 course malformed HTML/assets/KML 記 warning 後繼續�
 
 ## Build Basemap
 
+OSM 完整流程現在使用 `python3 -m datasets.osm`：自動以 Geofabrik `.md5` 檢查
+更新、下載並驗證 PBF、保存舊 snapshot、編譯兩個 profiles、產出 basemap／henro
+PMTiles 與 lodging GeoJSON／report，整組驗證後逐檔發布。`--local` 使用手動
+提供的 `datasets/osm/raw/shikoku-latest.osm.pbf`；也可分開 `fetch`／`build`／
+`validate`。操作與依賴見 `datasets/osm/README.md`。
+
 ```bash
-./scripts/build-basemap.sh
+./datasets/osm/scripts/build-basemap.sh
 ```
 
 步驟：
 
 1. 檢查 Java / pmtiles / 來源 PBF。
-2. 將本機 `source/shikoku-latest.osm.pbf` 複製到
+2. 將本機 `datasets/osm/raw/shikoku-latest.osm.pbf` 複製到
    `basemaps/tiles/data/sources/shikoku.osm.pbf`
    （用複製而非 symlink，避免 Planetiler 視為檔案不存在而重新下載）。
 3. 執行 Planetiler：`java -Xmx8g -jar ... --area=shikoku --download --force`。
-4. 產出移到 `output/shikoku-basemap.pmtiles`。
-5. 保存 metadata 到 `reports/basemap-metadata.txt`。
+4. 產出移到 `datasets/osm/output/shikoku-basemap.pmtiles`。
+5. 保存 metadata 到 `datasets/osm/reports/basemap-metadata.txt`。
 
 `--download` 只會下載缺失的 supporting datasets（Natural Earth、water/land
 polygons、landcover、qrank、pgf-encoding），不會重新下載 OSM。
@@ -737,19 +737,19 @@ polygons、landcover、qrank、pgf-encoding），不會重新下載 OSM。
 
 ## Henro（完成 v1）
 
-自訂 Henro Planetiler profile（`henro/`，獨立 Maven 專案，不修改 Protomaps Basemap）。
+自訂 Henro Planetiler profile（`datasets/osm/henro/`，獨立 Maven 專案，不修改 Protomaps Basemap）。
 
 ```bash
-./scripts/build-henro.sh
+./datasets/osm/scripts/build-henro.sh
 ```
 
-- 輸入：`source/shikoku-latest.osm.pbf`（`--osm-path` 指定本機 immutable PBF）
-- 輸出：`output/shikoku-henro.pmtiles`
+- 輸入：`datasets/osm/raw/shikoku-latest.osm.pbf`（`--osm-path` 指定本機 immutable PBF）
+- 輸出：`datasets/osm/output/shikoku-henro.pmtiles`
 - 產出 `henro_routes` layer（LineString，overlay，zoom 0–14）
 - 抽取所有 `type=route` + `route=hiking` relations，`route_kind=henro_candidate`
   （Extraction 與 classification 分開，正式分類屬 v1.3）
 - Smoke test（temporary rule）：relation `13653654` 必須出現且帶
-  `name` / `network` / `route` metadata — `python3 scripts/smoke-test-henro.py`
+  `name` / `network` / `route` metadata — `python3 datasets/osm/scripts/smoke-test-henro.py`
 
 ### 驗證結果（2026-08-15）
 
@@ -758,4 +758,4 @@ polygons、landcover、qrank、pgf-encoding），不會重新下載 OSM。
 - Relation `13653654`（四国遍路 1番札所霊山寺~2番札所極楽寺）在 44 個 features 中出現，
   `network=nwn`、`route=hiking`、`route_kind=henro_candidate`
 
-Schema 詳見 `henro/schema.md`。
+Schema 詳見 `datasets/osm/henro/schema.md`。

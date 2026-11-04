@@ -83,7 +83,7 @@ shikoku-map-data/
 │   ├── shikoku-henro.pmtiles
 │   └── temples.geojson
 │
-├── henro/
+├── datasets/osm/henro/
 │   ├── pom.xml
 │   ├── src/
 │   │   └── main/
@@ -111,7 +111,7 @@ shikoku-map-data/
 不要修改：
 
 ```text
-source/shikoku-latest.osm.pbf
+datasets/osm/raw/shikoku-latest.osm.pbf
 ```
 
 它應視為 immutable input。
@@ -324,7 +324,7 @@ shikoku.pmtiles
 將它整理到：
 
 ```text
-output/shikoku-basemap.pmtiles
+datasets/osm/output/shikoku-basemap.pmtiles
 ```
 
 例如：
@@ -333,7 +333,7 @@ output/shikoku-basemap.pmtiles
 mkdir -p output
 
 mv shikoku.pmtiles \
-  output/shikoku-basemap.pmtiles
+  datasets/osm/output/shikoku-basemap.pmtiles
 ```
 
 實際路徑可以依 repository 結構調整。
@@ -346,7 +346,7 @@ mv shikoku.pmtiles \
 
 ```bash
 pmtiles show \
-  output/shikoku-basemap.pmtiles
+  datasets/osm/output/shikoku-basemap.pmtiles
 ```
 
 驗證：
@@ -1045,7 +1045,7 @@ henro_pois
 建立：
 
 ```text
-scripts/build-basemap.sh
+datasets/osm/scripts/build-basemap.sh
 ```
 
 建議職責：
@@ -1074,7 +1074,7 @@ set -euo pipefail
 建立：
 
 ```text
-scripts/build-henro.sh
+datasets/osm/scripts/build-henro.sh
 ```
 
 職責：
@@ -1085,8 +1085,8 @@ set -euo pipefail
 
 # Check Java / Maven
 Build custom Henro profile
-# Read source/shikoku-latest.osm.pbf
-# Generate output/shikoku-henro.pmtiles
+# Read datasets/osm/raw/shikoku-latest.osm.pbf
+# Generate datasets/osm/output/shikoku-henro.pmtiles
 # Inspect PMTiles metadata
 # Run relation 13653654 smoke test
 ```
@@ -1104,8 +1104,8 @@ scripts/validate.sh
 至少驗證：
 
 ```text
-output/shikoku-basemap.pmtiles
-output/shikoku-henro.pmtiles
+datasets/osm/output/shikoku-basemap.pmtiles
+datasets/osm/output/shikoku-henro.pmtiles
 ```
 
 存在且非空。
@@ -1135,29 +1135,29 @@ exit 1
 
 ```bash
 pmtiles show \
-  output/shikoku-basemap.pmtiles
+  datasets/osm/output/shikoku-basemap.pmtiles
 ```
 
 以及：
 
 ```bash
 pmtiles show \
-  output/shikoku-henro.pmtiles
+  datasets/osm/output/shikoku-henro.pmtiles
 ```
 
 保存：
 
 ```text
-reports/basemap-metadata.txt
-reports/henro-metadata.txt
+datasets/osm/reports/basemap-metadata.txt
+datasets/osm/reports/henro-metadata.txt
 ```
 
 例如：
 
 ```bash
 pmtiles show \
-  output/shikoku-basemap.pmtiles \
-  > reports/basemap-metadata.txt
+  datasets/osm/output/shikoku-basemap.pmtiles \
+  > datasets/osm/reports/basemap-metadata.txt
 ```
 
 ---
@@ -1203,7 +1203,7 @@ pmtiles show \
 ```text
 source/
 basemap/
-henro/
+datasets/osm/henro/
 scripts/
 reports/
 ```
@@ -1288,7 +1288,7 @@ relation_id=13653654
 產生：
 
 ```text
-output/shikoku-henro.pmtiles
+datasets/osm/output/shikoku-henro.pmtiles
 ```
 
 ---
@@ -1298,7 +1298,7 @@ output/shikoku-henro.pmtiles
 建立：
 
 ```text
-henro/schema.md
+datasets/osm/henro/schema.md
 ```
 
 記錄：
@@ -1328,7 +1328,7 @@ min/max zoom
 
 # 32. Definition of Done
 
-* [ ] `source/shikoku-latest.osm.pbf` 保持原始狀態。
+* [ ] `datasets/osm/raw/shikoku-latest.osm.pbf` 保持原始狀態。
 * [ ] `shikoku-basemap.pmtiles` 可以從 script 重建。
 * [ ] Basemap PMTiles 可正常顯示四國。
 * [ ] `roads` 有徒步 path 類型。
@@ -1341,7 +1341,7 @@ min/max zoom
 * [ ] relation name / network / route metadata 有被保留。
 * [ ] Henro build 不修改 Protomaps Basemap profile。
 * [ ] Basemap 與 Henro PMTiles 可以獨立更新。
-* [ ] `henro/schema.md` 完成。
+* [ ] `datasets/osm/henro/schema.md` 完成。
 * [ ] `README.md` 記錄完整 build 方法。
 * [ ] `scripts/validate.sh` 全部通過。
 
@@ -1428,7 +1428,7 @@ route type inference
 至少：
 
 ```bash
-./scripts/build-henro.sh
+./datasets/osm/scripts/build-henro.sh
 ./scripts/validate.sh
 ```
 

@@ -4,7 +4,10 @@ import { outputApiPlugin } from "./output-api-plugin";
 
 export default defineConfig({
   plugins: [
-    outputApiPlugin(fileURLToPath(new URL("../output", import.meta.url))),
+    outputApiPlugin(
+      fileURLToPath(new URL("../output", import.meta.url)),
+      fileURLToPath(new URL("../datasets", import.meta.url)),
+    ),
   ],
   server: {
     port: 5173,

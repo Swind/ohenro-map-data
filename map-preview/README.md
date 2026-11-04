@@ -72,7 +72,7 @@ map-preview/
 ## 前置需求
 
 - Node.js 20+
-- `output/` 下有 `shikoku-basemap.pmtiles` 與 `temples.geojson`（由根目錄 build 管線產生）
+- `datasets/osm/output/` 有 `shikoku-basemap.pmtiles`，`datasets/seichijunrei/output/` 有 `temples.geojson`
 
 ## 安裝與執行
 
@@ -86,26 +86,26 @@ npm run dev
 
 ```bash
 mkdir -p map-preview/public/data
-ln -s ../../../output/shikoku-basemap.pmtiles map-preview/public/data/shikoku-basemap.pmtiles
-ln -s ../../../output/shikoku-henro.pmtiles map-preview/public/data/shikoku-henro.pmtiles
-ln -s ../../../output/shikoku-contours.pmtiles map-preview/public/data/shikoku-contours.pmtiles
-ln -s ../../../output/shikoku-terrain.pmtiles map-preview/public/data/shikoku-terrain.pmtiles
-ln -s ../../../output/shikoku-nature-trail.pmtiles map-preview/public/data/shikoku-nature-trail.pmtiles
-ln -s ../../../output/shikoku-nature-trail.geojson map-preview/public/data/shikoku-nature-trail.geojson
-ln -s ../../../output/temples.geojson map-preview/public/data/temples.geojson
-ln -s ../../../output/shikoku-henroyado-lodging.pmtiles map-preview/public/data/shikoku-henroyado-lodging.pmtiles
-ln -s ../../../output/shikoku-min88-lodging.pmtiles map-preview/public/data/shikoku-min88-lodging.pmtiles
-ln -s ../../../output/shikoku-mizutani-henro.pmtiles map-preview/public/data/shikoku-mizutani-henro.pmtiles
-ln -s ../../../output/sekaiisan-henro-review/source-edges.geojson map-preview/public/data/shikoku-sekaiisan-henro.geojson
-ln -s ../../../output/sekaiisan-henro-plan-graph.json map-preview/public/data/sekaiisan-henro-plan-graph.json
-ln -s ../../../output/ohenro88-routes/ohenro88-plan-graph.json map-preview/public/data/ohenro88-plan-graph.json
-ln -s ../../../output/arukihenro-routes.json map-preview/public/data/arukihenro-routes.json
-ln -s ../../../output/henro-helper-routes/henro-helper-routes.geojson map-preview/public/data/henro-helper-routes.geojson
-ln -s ../../../output/henro-helper-routes/henro-helper-pois.geojson map-preview/public/data/henro-helper-pois.geojson
-ln -s ../../../output/ohenro88-routes/ohenro88-routes.geojson map-preview/public/data/ohenro88-routes.geojson
-ln -s ../../../output/ohenro-no-akari-routes/henro-no-akari-route.geojson map-preview/public/data/henro-no-akari-routes.geojson
-ln -s ../../../output/henrohub-routes/henrohub-routes.geojson map-preview/public/data/henrohub-routes.geojson
-ln -s ../../../output/henrohub-routes/henrohub-plan-graph.json map-preview/public/data/henrohub-plan-graph.json
+ln -s ../../../datasets/osm/output/shikoku-basemap.pmtiles map-preview/public/data/shikoku-basemap.pmtiles
+ln -s ../../../datasets/osm/output/shikoku-henro.pmtiles map-preview/public/data/shikoku-henro.pmtiles
+ln -s ../../../datasets/gsi/output/shikoku-contours.pmtiles map-preview/public/data/shikoku-contours.pmtiles
+ln -s ../../../datasets/gsi/output/shikoku-terrain.pmtiles map-preview/public/data/shikoku-terrain.pmtiles
+ln -s ../../../datasets/shikoku_nature_trail/output/shikoku-nature-trail.pmtiles map-preview/public/data/shikoku-nature-trail.pmtiles
+ln -s ../../../datasets/shikoku_nature_trail/output/shikoku-nature-trail.geojson map-preview/public/data/shikoku-nature-trail.geojson
+ln -s ../../../datasets/seichijunrei/output/temples.geojson map-preview/public/data/temples.geojson
+ln -s ../../../datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles map-preview/public/data/shikoku-henroyado-lodging.pmtiles
+ln -s ../../../datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles map-preview/public/data/shikoku-min88-lodging.pmtiles
+ln -s ../../../datasets/mizutani_henro_map/output/shikoku-mizutani-henro.pmtiles map-preview/public/data/shikoku-mizutani-henro.pmtiles
+ln -s ../../../datasets/sekaiisan_henro/output/sekaiisan-henro-review/source-edges.geojson map-preview/public/data/shikoku-sekaiisan-henro.geojson
+ln -s ../../../datasets/sekaiisan_henro/output/sekaiisan-henro-plan-graph.json map-preview/public/data/sekaiisan-henro-plan-graph.json
+ln -s ../../../datasets/ohenro88/output/ohenro88-plan-graph.json map-preview/public/data/ohenro88-plan-graph.json
+ln -s ../../../datasets/arukihenro_routes/output/arukihenro-routes.json map-preview/public/data/arukihenro-routes.json
+ln -s ../../../datasets/henro_helper/output/henro-helper-routes.geojson map-preview/public/data/henro-helper-routes.geojson
+ln -s ../../../datasets/henro_helper/output/henro-helper-pois.geojson map-preview/public/data/henro-helper-pois.geojson
+ln -s ../../../datasets/ohenro88/output/ohenro88-routes.geojson map-preview/public/data/ohenro88-routes.geojson
+ln -s ../../../datasets/ohenro_no_akari/output/henro-no-akari-route.geojson map-preview/public/data/henro-no-akari-routes.geojson
+ln -s ../../../datasets/henrohub/output/henrohub-routes.geojson map-preview/public/data/henrohub-routes.geojson
+ln -s ../../../datasets/henrohub/output/henrohub-plan-graph.json map-preview/public/data/henrohub-plan-graph.json
 ln -s ../../../output/app-map-assets map-preview/public/data/app-map-assets
 cp map-preview/.env.example map-preview/.env.development
 ```
@@ -138,15 +138,15 @@ ssh -L 5173:localhost:5173 -L 8080:localhost:8080 user@server
 | `VITE_MIN88_LODGING_URL` | `/data/shikoku-min88-lodging.pmtiles` | min88 住宿 PMTiles（`lodging` vector layer）；留空停用 |
 | `VITE_MIZUTANI_HENRO_URL` | `/data/shikoku-mizutani-henro.pmtiles` | 水谷遍路導覽圖 PMTiles（routes + POIs layers）；留空停用 |
 | `VITE_SEKAIISAN_HENRO_URL` | `/data/shikoku-sekaiisan-henro.geojson` | 四国遍路世界遺産登録推進協議会（88sekaiisan.org）引導線 GeoJSON（source edges）；**是原始官方 source linework，不是推論 corridor / 導航保證**；留空停用 |
-| `VITE_PLAN_GRAPH_URL` | `/data/sekaiisan-henro-plan-graph.json` | 互動規劃用的 compact routing graph（`output/sekaiisan-henro-plan-graph.json`，由 `python3 -m sekaiisan_henro export-plan-graph` 產生；**topology/geometry 分離**——`nodes`/`traversal_edges`/`synthetic_joins` 只含 node/edge 參考與權重，polyline 折點集中在 `edge_geometry` lookup；內建 `--bridge-m` 5m 跨 component 橋接重疊線，53 components → 2，~3.3MB）。規劃模式在瀏覽器直接抓這份做本地 Dijkstra；留空停用互動規劃 |
-| `VITE_OHENRO88_PLAN_GRAPH_URL` | `/data/ohenro88-plan-graph.json` | OHenro 88 互動規劃 graph（`output/ohenro88-routes/ohenro88-plan-graph.json`，由 `python3 scripts/build-ohenro88-plan-graph.py` 產生；3m proximity-merge + chain collapse + 端點 join，同 schema v2 topology/geometry 分離，~4.5MB）。規劃模式可用下拉切換網路；留空停用該網路 |
-| `VITE_HENROHUB_PLAN_GRAPH_URL` | `/data/henrohub-plan-graph.json` | Henro Hub 互動規劃 graph（`output/henrohub-routes/henrohub-plan-graph.json`，由 `python3 scripts/build-henrohub-plan-graph.py` 產生；**main+alternative 才參與 routing**，connector/fallback 排除；3m proximity-merge + chain collapse + 端點 join（30m）；geometry 保留 3D 高程；同 schema v2 topology/geometry 分離）。規劃模式可用下拉切換網路；留空停用該網路 |
-| `VITE_ARUKIHENRO_URL` | `/data/arukihenro-routes.json` | 歩き遍路 routes 正規化 JSON（`output/arukihenro-routes.json`，~5MB inline GeoJSON）。**ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**；留空停用 |
-| `VITE_HENRO_HELPER_URL` | `/data/henro-helper-routes.geojson` | Henro Helper（com.henrohelper100.app）路線 GeoJSON（`output/henro-helper-routes/henro-helper-routes.geojson`，自 APK Dart AOT literals 抽出，~11MB）。保留 App 自家分類（road/trail/special/connection/itinerary），11 個 layer 可獨立開關；留空停用 |
-| `VITE_HENRO_HELPER_POIS_URL` | `/data/henro-helper-pois.geojson` | Henro Helper POI 點位 GeoJSON（`output/henro-helper-routes/henro-helper-pois.geojson`，同 APK 的 POI object-pool records，~2MB）。依 `kind` 分類（temples/bekkaku/okunoin/bangai/toilets/convenience/rest areas/tsuyado/onsen/bus/train/campground/accommodations/labels/POIs/important notes/roadside/Ishizuchi），每類圓點（z8+）+ 具名類別 label（z11+）；留空停用 |
-| `VITE_OHENRO88_URL` | `/data/ohenro88-routes.geojson` | OHenro 88（com.sallyzzz.ohenroapp）路線 GeoJSON（`output/ohenro88-routes/ohenro88-routes.geojson`）。依 `route_type` 分組（main/skip/bekkaku/bekkaku_extra/extra）做 per-route selector；留空停用 |
-| `VITE_OHENRO_NO_AKARI_URL` | `/data/henro-no-akari-routes.geojson` | 遍路のあかり+（jp.co.yonden.henronoakari，四国電力）步行路線 GeoJSON（`output/ohenro-no-akari-routes/henro-no-akari-route.geojson`，自 web app bundle 抽出，319 條 road-level LineString，單一連續路線）。**非官方／導航保證**；留空停用 |
-| `VITE_HENROHUB_URL` | `/data/henrohub-routes.geojson` | Henro Hub（henro.app）路線網路 GeoJSON（`output/henrohub-routes/henrohub-routes.geojson`，由 `python3 scripts/build-henrohub-routes.py` 轉換自 henrohub release planner 檔）。**Henro Hub 自家數位化網路**（依 `route_role` 分 main / alternative / connector / fallback，`route_class` 著色），**不是** repo 的 Henro Helper 抽出、也**非官方引導線**；留空停用 |
+| `VITE_PLAN_GRAPH_URL` | `/data/sekaiisan-henro-plan-graph.json` | 互動規劃用的 compact routing graph（`datasets/sekaiisan_henro/output/sekaiisan-henro-plan-graph.json`，由 `python3 -m datasets.sekaiisan_henro export-plan-graph` 產生；**topology/geometry 分離**——`nodes`/`traversal_edges`/`synthetic_joins` 只含 node/edge 參考與權重，polyline 折點集中在 `edge_geometry` lookup；內建 `--bridge-m` 5m 跨 component 橋接重疊線，53 components → 2，~3.3MB）。規劃模式在瀏覽器直接抓這份做本地 Dijkstra；留空停用互動規劃 |
+| `VITE_OHENRO88_PLAN_GRAPH_URL` | `/data/ohenro88-plan-graph.json` | OHenro 88 互動規劃 graph（`datasets/ohenro88/output/ohenro88-plan-graph.json`，由 `python3 datasets/ohenro88/scripts/build-ohenro88-plan-graph.py` 產生；3m proximity-merge + chain collapse + 端點 join，同 schema v2 topology/geometry 分離，~4.5MB）。規劃模式可用下拉切換網路；留空停用該網路 |
+| `VITE_HENROHUB_PLAN_GRAPH_URL` | `/data/henrohub-plan-graph.json` | Henro Hub 互動規劃 graph（`datasets/henrohub/output/henrohub-plan-graph.json`，由 `python3 datasets/henrohub/scripts/build-henrohub-plan-graph.py` 產生；**main+alternative 才參與 routing**，connector/fallback 排除；3m proximity-merge + chain collapse + 端點 join（30m）；geometry 保留 3D 高程；同 schema v2 topology/geometry 分離）。規劃模式可用下拉切換網路；留空停用該網路 |
+| `VITE_ARUKIHENRO_URL` | `/data/arukihenro-routes.json` | 歩き遍路 routes 正規化 JSON（`datasets/arukihenro_routes/output/arukihenro-routes.json`，~5MB inline GeoJSON）。**ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**；留空停用 |
+| `VITE_HENRO_HELPER_URL` | `/data/henro-helper-routes.geojson` | Henro Helper（com.henrohelper100.app）路線 GeoJSON（`datasets/henro_helper/output/henro-helper-routes.geojson`，自 APK Dart AOT literals 抽出，~11MB）。保留 App 自家分類（road/trail/special/connection/itinerary），11 個 layer 可獨立開關；留空停用 |
+| `VITE_HENRO_HELPER_POIS_URL` | `/data/henro-helper-pois.geojson` | Henro Helper POI 點位 GeoJSON（`datasets/henro_helper/output/henro-helper-pois.geojson`，同 APK 的 POI object-pool records，~2MB）。依 `kind` 分類（temples/bekkaku/okunoin/bangai/toilets/convenience/rest areas/tsuyado/onsen/bus/train/campground/accommodations/labels/POIs/important notes/roadside/Ishizuchi），每類圓點（z8+）+ 具名類別 label（z11+）；留空停用 |
+| `VITE_OHENRO88_URL` | `/data/ohenro88-routes.geojson` | OHenro 88（com.sallyzzz.ohenroapp）路線 GeoJSON（`datasets/ohenro88/output/ohenro88-routes.geojson`）。依 `route_type` 分組（main/skip/bekkaku/bekkaku_extra/extra）做 per-route selector；留空停用 |
+| `VITE_OHENRO_NO_AKARI_URL` | `/data/henro-no-akari-routes.geojson` | 遍路のあかり+（jp.co.yonden.henronoakari，四国電力）步行路線 GeoJSON（`datasets/ohenro_no_akari/output/henro-no-akari-route.geojson`，自 web app bundle 抽出，319 條 road-level LineString，單一連續路線）。**非官方／導航保證**；留空停用 |
+| `VITE_HENROHUB_URL` | `/data/henrohub-routes.geojson` | Henro Hub（henro.app）路線網路 GeoJSON（`datasets/henrohub/output/henrohub-routes.geojson`，由 `python3 datasets/henrohub/scripts/build-henrohub-routes.py` 轉換自 henrohub release planner 檔）。**Henro Hub 自家數位化網路**（依 `route_role` 分 main / alternative / connector / fallback，`route_class` 著色），**不是** repo 的 Henro Helper 抽出、也**非官方引導線**；留空停用 |
 | `VITE_CONTOURS_URL` | `/data/shikoku-contours.pmtiles` | 20m 等高線 PMTiles（`contours` vector layer）；留空停用 |
 | `VITE_TERRAIN_URL` | `/data/shikoku-terrain.pmtiles` | Terrain-RGB 高程 PMTiles（`raster-dem`）；留空停用 |
 | `VITE_SPRITE_URL` | `/data/app-map-assets/sprites/light` | 本地 sprite 基底（覆寫 style.json 的遠端 sprite） |
@@ -184,15 +184,15 @@ labels、henro route、世界遺産協議会、住宿、遍路のあかり）維
 - **四國自然步道**：官方 `shikoku-nature-trail.com` archive 產生的 `shikoku_nature_trail` 路線與 `shikoku_nature_trail_pois` POI（圓點與名稱標籤皆為 z10+）。路線可依縣與課程選擇；每條路線與所屬 POI 一起顯示或隱藏，路線標籤及全體 POI 仍可獨立關閉。
 - **Henroyado 住宿**：`shikoku-henroyado-lodging.pmtiles` 的 `lodging` layer。只含 resolved Google Place 座標；同一 Place 的重複 listing 只在地圖層收斂。使用琥珀色 marker，z11+ 顯示名稱。
 - **min88 住宿**：`shikoku-min88-lodging.pmtiles` 的 `lodging` layer。只含 resolved Google Place 座標，依住宿類型著色，z11+ 顯示名稱。兩來源各有獨立圖層開關，不做跨來源合併。
-- **水谷遍路導覽圖**：`shikoku-mizutani-henro.pmtiles` 的 `mizutani_henro_routes` 與 `mizutani_henro_pois` layers。路線與 POI 可分別開關；POI 從 z10 顯示圓點，名稱 label（`name`）可獨立開關，並可依 10 個 `category` 值個別篩選（label 與圓點一起依 category 篩選）。此資料僅供個人使用，詳見 `docs/mizutani_henro_map_pipeline.md`。
-- **世界遺産協議会 routes**：`output/sekaiisan-henro-review/source-edges.geojson`（symlink 至 `public/data/shikoku-sekaiisan-henro.geojson`），即協議會官方四縣 KML 的 source edges（`SHE_` LineString）。藍色 casing + 前景 line layer 疊在 basemap 之上，與 OSM henro、水谷、自然步道明顯區分。這是**原始官方 source linework，不是推論 corridor／合成連線**，也不代表可導航保證；attribution 指向 `https://88sekaiisan.org/`（四国遍路世界遺産登録推進協議会）。未設定 `VITE_SEKAIISAN_HENRO_URL` 時該 toggle 停用。
-- **互動規劃（瀏覽器端 planner）**：勾選「規劃模式」後在地圖上點擊加入 A / B（可再加中間點）。側欄「互動規劃」有**網路下拉**（世界遺産協議会 / OHenro 88 / Henro Hub），選擇後抓取對應的 compact routing graph（`VITE_PLAN_GRAPH_URL` / `VITE_OHENRO88_PLAN_GRAPH_URL` / `VITE_HENROHUB_PLAN_GRAPH_URL`），前端用與 `sekaiisan_henro/planner.py` 相同的演算法（equirectangular snap、virtual sub-edge、weighted Dijkstra、simple paths）在瀏覽器計算最短路徑。graph 為 **topology/geometry 分離**（schema v2）：Dijkstra 與點擊 snapping 只碰 `nodes`/`traversal_edges`/`synthetic_joins` 的 node/edge 參考與權重（極小），polyline 折點集中在 `edge_geometry` lookup，只有選定路線要繪製/採樣高程時才 materialise。點擊 snapping 用 `buildSnapIndex`（`planner.ts`）對所有 edge segments 建 ~50m 網格分桶，`snapPointIndexed` 只查點擊附近 cell 的 segments（O(edges×verts) → O(鄰近 segments)）。高程沿路徑頂點用既有 `shikoku-terrain.pmtiles` 的 Terrain-RGB（`VITE_TERRAIN_URL`，z14）採樣。綠色路徑 + waypoint 圓點畫在地圖，側欄「規劃高度剖面」即時更新（距離 / 爬升 / 下降 / min / max）。**不是導航保證**；規劃模式開啟時 feature click popup 暫停。未設定 `VITE_PLAN_GRAPH_URL` 時停用。成功規劃後可點 **Export GPX**（`src/gpx.ts`）下載給運動手錶導航用的單一 `<trk>` GPX：只含 track 不含 route、無 `<time>`（當 course 用）、每個 `trkpt` 帶 `<ele>`（高程缺值線性插補 + 5 點移動平均去雜訊，z14 取樣易有假爬升）、依 `maxPoints`（預設 4000）用保留轉折點的面積抽稀控制點數（避免逼近 Garmin 等 course 點數上限）；A/B… 中途點寫成 `<wpt>`。檔案名稱含網路與里程（`henro-<network>-plan-<km>km.gpx`）。
-- **歩き遍路 routes**：`output/arukihenro-routes.json`（symlink 至 `public/data/arukihenro-routes.json`，~5MB，瀏覽器直接 fetch 成單一 inline GeoJSON source）。90 routes / 91 maps，展平 324 lines + 933 POIs。紫色 line casing + line，route title line-label，POI circles + labels（z10/11+）。每條 route 可獨立開關（lines 與 POIs 一起消失）；master、labels、POIs 各別控制。40→41 與 68→69 來源無 KML，故 checkbox disabled（「無 KML」）。attribution 指向 `https://ohenro.jp/blog/arukihenro/`；**是 ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**。未設定 `VITE_ARUKIHENRO_URL` 時該 toggle 停用。
-- **Henro Helper routes**：`output/henro-helper-routes/henro-helper-routes.geojson`（symlink 至 `public/data/henro-helper-routes.geojson`，~11MB）。自 Henro Helper App（com.henrohelper100.app）APK 的 Dart AOT 座標 literals 抽出，保留 App 自家分類：`black/red/green`（road）、`blue/purple`（trail）、`special`（渡輪/纜車）、`eighty88to1`（88→1 閉環）、`connection`（接點，Point）、`itinerary_56/49/42`（三套每日行程線）。非 itinerary 的 8 個 layer 各自獨立 checkbox（預設只開 black）；itinerary 三套各自 `<details>` 展開，**可逐日勾選**（如 `DAY 1A`、`DAY 27C`）或「全部」，line + label 一起顯示。座標含海拔（`[lon,lat,elevation]`），每條 polyline 有 `elevation_start/end/min/max/mean`；itinerary feature 另帶 `day_label` / `title` / `from_temple` / `to_temple` / `distance` / `elevation` / `time`。未設定 `VITE_HENRO_HELPER_URL` 時該 toggle 停用。
-- **Henro Helper POIs**：`output/henro-helper-routes/henro-helper-pois.geojson`（symlink 至 `public/data/henro-helper-pois.geojson`，~2MB）。同一個 APK 的 POI 點位（2,475 Point），座標來自 App PP pool 的 `Obj!LatLng` 預建物件（`off_8`=lat / `off_10`=lon），多語欄位保留於 `field_XX`。依 `kind` 分 20 類獨立開關（master + labels + 每類 checkbox）：temples（88，圓點 + 「番号 寺名」label）、bekkaku/okunoin/bangai、toilets/shower、convenience stores（含座位）、rest areas / rest toilets / tsuyado、onsens、bus / train stations、campgrounds（正式+非正式）、accommodations（宿坊/民宿/旅館…）、place labels、points of interest、important notes（路線封閉等提示）、roadside stations、Ishizuchi 行程。具名類別 z11+ 顯示 label（`name_ja`/`name_en`）。未設定 `VITE_HENRO_HELPER_POIS_URL` 時該 toggle 停用。
-- **遍路のあかり+ routes**：`output/ohenro-no-akari-routes/henro-no-akari-route.geojson`（symlink 至 `public/data/henro-no-akari-routes.geojson`）。自遍路のあかり+ web app（`app.henro-no-akari.com`，四国電力）的 Leaflet map bundle 抽出（`MapPage.js` 內嵌 GeoJSON）。319 條 road-level LineString 分段、28,405 點、全長約 1,236 km，構成單一連續步行路線（316/319 段端點與鄰段相接）；line color 沿用來源 `_color`（App 渲染為藍色）。原生 APK 本身不含任何路線幾何，此為 web 端資料。**非官方／導航保證**；attribution 指向 `https://app.henro-no-akari.com`。未設定 `VITE_OHENRO_NO_AKARI_URL` 時該 toggle 停用。
-- **Henro Hub routes**：`output/henrohub-routes/henrohub-routes.geojson`（symlink 至 `public/data/henrohub-routes.geojson`，~13.5MB，`python3 scripts/build-henrohub-routes.py` 從 henrohub release 的 planner GeoJSON 轉換）。**Henro Hub（henro.app）自家數位化的完整路線網路**，1884 條 LineString。依 `route_role` 分四組樹（main(canonical 88) / alternative / connector / fallback），每組 `<summary>` 內有**「全部」master checkbox**（勾選/取消即一次切換該組所有路線），組內仍可逐條勾選，master 會反映三態（全選/部分/全不選）；依 `route_class`（black/red/green/blue/purple/special）著色，master + labels 獨立開關。**預設顯示此 layer，且只顯示 main + alternative**（connector / fallback 預設關閉，避免預設畫面被補網接點與 fallback 段塞滿）；可手動開啟。**此資料是 Henro Hub 自家數位化，不是 repo 的 Henro Helper 抽出、也非官方引導線**（比較見 `reference/henro-hub-comparison.md`）；attribution 指向 `https://henro.app`。未設定 `VITE_HENROHUB_URL` 時該 toggle 停用。
-- **高程視覺化**（`scripts/build-elevation-visuals.sh` 產出，資料來源 `output/shikoku-elevation-dem10.sqlite`）：
+- **水谷遍路導覽圖**：`shikoku-mizutani-henro.pmtiles` 的 `mizutani_henro_routes` 與 `mizutani_henro_pois` layers。路線與 POI 可分別開關；POI 從 z10 顯示圓點，名稱 label（`name`）可獨立開關，並可依 10 個 `category` 值個別篩選（label 與圓點一起依 category 篩選）。此資料僅供個人使用，詳見 `datasets/mizutani_henro_map/docs/mizutani_henro_map_pipeline.md`。
+- **世界遺産協議会 routes**：`datasets/sekaiisan_henro/output/sekaiisan-henro-review/source-edges.geojson`（symlink 至 `public/data/shikoku-sekaiisan-henro.geojson`），即協議會官方四縣 KML 的 source edges（`SHE_` LineString）。藍色 casing + 前景 line layer 疊在 basemap 之上，與 OSM henro、水谷、自然步道明顯區分。這是**原始官方 source linework，不是推論 corridor／合成連線**，也不代表可導航保證；attribution 指向 `https://88sekaiisan.org/`（四国遍路世界遺産登録推進協議会）。未設定 `VITE_SEKAIISAN_HENRO_URL` 時該 toggle 停用。
+- **互動規劃（瀏覽器端 planner）**：勾選「規劃模式」後在地圖上點擊加入 A / B（可再加中間點）。側欄「互動規劃」有**網路下拉**（世界遺産協議会 / OHenro 88 / Henro Hub），選擇後抓取對應的 compact routing graph（`VITE_PLAN_GRAPH_URL` / `VITE_OHENRO88_PLAN_GRAPH_URL` / `VITE_HENROHUB_PLAN_GRAPH_URL`），前端用與 `datasets/sekaiisan_henro/planner.py` 相同的演算法（equirectangular snap、virtual sub-edge、weighted Dijkstra、simple paths）在瀏覽器計算最短路徑。graph 為 **topology/geometry 分離**（schema v2）：Dijkstra 與點擊 snapping 只碰 `nodes`/`traversal_edges`/`synthetic_joins` 的 node/edge 參考與權重（極小），polyline 折點集中在 `edge_geometry` lookup，只有選定路線要繪製/採樣高程時才 materialise。點擊 snapping 用 `buildSnapIndex`（`planner.ts`）對所有 edge segments 建 ~50m 網格分桶，`snapPointIndexed` 只查點擊附近 cell 的 segments（O(edges×verts) → O(鄰近 segments)）。高程沿路徑頂點用既有 `shikoku-terrain.pmtiles` 的 Terrain-RGB（`VITE_TERRAIN_URL`，z14）採樣。綠色路徑 + waypoint 圓點畫在地圖，側欄「規劃高度剖面」即時更新（距離 / 爬升 / 下降 / min / max）。**不是導航保證**；規劃模式開啟時 feature click popup 暫停。未設定 `VITE_PLAN_GRAPH_URL` 時停用。成功規劃後可點 **Export GPX**（`src/gpx.ts`）下載給運動手錶導航用的單一 `<trk>` GPX：只含 track 不含 route、無 `<time>`（當 course 用）、每個 `trkpt` 帶 `<ele>`（高程缺值線性插補 + 5 點移動平均去雜訊，z14 取樣易有假爬升）、依 `maxPoints`（預設 4000）用保留轉折點的面積抽稀控制點數（避免逼近 Garmin 等 course 點數上限）；A/B… 中途點寫成 `<wpt>`。檔案名稱含網路與里程（`henro-<network>-plan-<km>km.gpx`）。
+- **歩き遍路 routes**：`datasets/arukihenro_routes/output/arukihenro-routes.json`（symlink 至 `public/data/arukihenro-routes.json`，~5MB，瀏覽器直接 fetch 成單一 inline GeoJSON source）。90 routes / 91 maps，展平 324 lines + 933 POIs。紫色 line casing + line，route title line-label，POI circles + labels（z10/11+）。每條 route 可獨立開關（lines 與 POIs 一起消失）；master、labels、POIs 各別控制。40→41 與 68→69 來源無 KML，故 checkbox disabled（「無 KML」）。attribution 指向 `https://ohenro.jp/blog/arukihenro/`；**是 ohenro.jp 個人手繪 + Google navigation 空間參考，不是官方／導航保證**。未設定 `VITE_ARUKIHENRO_URL` 時該 toggle 停用。
+- **Henro Helper routes**：`datasets/henro_helper/output/henro-helper-routes.geojson`（symlink 至 `public/data/henro-helper-routes.geojson`，~11MB）。自 Henro Helper App（com.henrohelper100.app）APK 的 Dart AOT 座標 literals 抽出，保留 App 自家分類：`black/red/green`（road）、`blue/purple`（trail）、`special`（渡輪/纜車）、`eighty88to1`（88→1 閉環）、`connection`（接點，Point）、`itinerary_56/49/42`（三套每日行程線）。非 itinerary 的 8 個 layer 各自獨立 checkbox（預設只開 black）；itinerary 三套各自 `<details>` 展開，**可逐日勾選**（如 `DAY 1A`、`DAY 27C`）或「全部」，line + label 一起顯示。座標含海拔（`[lon,lat,elevation]`），每條 polyline 有 `elevation_start/end/min/max/mean`；itinerary feature 另帶 `day_label` / `title` / `from_temple` / `to_temple` / `distance` / `elevation` / `time`。未設定 `VITE_HENRO_HELPER_URL` 時該 toggle 停用。
+- **Henro Helper POIs**：`datasets/henro_helper/output/henro-helper-pois.geojson`（symlink 至 `public/data/henro-helper-pois.geojson`，~2MB）。同一個 APK 的 POI 點位（2,475 Point），座標來自 App PP pool 的 `Obj!LatLng` 預建物件（`off_8`=lat / `off_10`=lon），多語欄位保留於 `field_XX`。依 `kind` 分 20 類獨立開關（master + labels + 每類 checkbox）：temples（88，圓點 + 「番号 寺名」label）、bekkaku/okunoin/bangai、toilets/shower、convenience stores（含座位）、rest areas / rest toilets / tsuyado、onsens、bus / train stations、campgrounds（正式+非正式）、accommodations（宿坊/民宿/旅館…）、place labels、points of interest、important notes（路線封閉等提示）、roadside stations、Ishizuchi 行程。具名類別 z11+ 顯示 label（`name_ja`/`name_en`）。未設定 `VITE_HENRO_HELPER_POIS_URL` 時該 toggle 停用。
+- **遍路のあかり+ routes**：`datasets/ohenro_no_akari/output/henro-no-akari-route.geojson`（symlink 至 `public/data/henro-no-akari-routes.geojson`）。自遍路のあかり+ web app（`app.henro-no-akari.com`，四国電力）的 Leaflet map bundle 抽出（`MapPage.js` 內嵌 GeoJSON）。319 條 road-level LineString 分段、28,405 點、全長約 1,236 km，構成單一連續步行路線（316/319 段端點與鄰段相接）；line color 沿用來源 `_color`（App 渲染為藍色）。原生 APK 本身不含任何路線幾何，此為 web 端資料。**非官方／導航保證**；attribution 指向 `https://app.henro-no-akari.com`。未設定 `VITE_OHENRO_NO_AKARI_URL` 時該 toggle 停用。
+- **Henro Hub routes**：`datasets/henrohub/output/henrohub-routes.geojson`（symlink 至 `public/data/henrohub-routes.geojson`，~13.5MB，`python3 datasets/henrohub/scripts/build-henrohub-routes.py` 從 henrohub release 的 planner GeoJSON 轉換）。**Henro Hub（henro.app）自家數位化的完整路線網路**，1884 條 LineString。依 `route_role` 分四組樹（main(canonical 88) / alternative / connector / fallback），每組 `<summary>` 內有**「全部」master checkbox**（勾選/取消即一次切換該組所有路線），組內仍可逐條勾選，master 會反映三態（全選/部分/全不選）；依 `route_class`（black/red/green/blue/purple/special）著色，master + labels 獨立開關。**預設顯示此 layer，且只顯示 main + alternative**（connector / fallback 預設關閉，避免預設畫面被補網接點與 fallback 段塞滿）；可手動開啟。**此資料是 Henro Hub 自家數位化，不是 repo 的 Henro Helper 抽出、也非官方引導線**（比較見 `datasets/henrohub/docs/henro-hub-comparison.md`）；attribution 指向 `https://henro.app`。未設定 `VITE_HENROHUB_URL` 時該 toggle 停用。
+- **高程視覺化**（`datasets/gsi/scripts/build-elevation-visuals.sh` 產出，資料來源 `datasets/gsi/output/shikoku-elevation-dem10.sqlite`）：
   - **color relief**：`elevation-dem-style` source 的 `color-relief` 圖層，預設隱藏，可獨立開關。
   - **hillshade**：同一 source 的 `hillshade` 圖層，預設隱藏，可獨立開關。
   - **等高線**：`shikoku-contours.pmtiles` 的 `contours` layer（`elevation_m`），預設隱藏；z12–z15 可手動開啟，100m 主線較粗，標籤可獨立切換。
@@ -224,11 +224,12 @@ npm run style:generate dark en  # 其他 flavor / 語言
 ### 輸出 API（dev server 專用）
 
 Vite dev server 透過 `configureServer` 中間件（`output-api-plugin.ts`）在本機暴露一個受限的
-output 檔案 API，讓編輯器直接讀寫根目錄的 `output/`，不再需要手動下載/上傳檔案：
+output 檔案 API，讓編輯器讀取各來源 `datasets/<source>/output/` 與共用 `output/`，
+人工編輯寫入共用 `output/route-editor/`：
 
 - dev server 預設只綁定 `127.0.0.1`；遠端使用請走 SSH port forwarding，不把寫入 API
   直接暴露到區網。PUT 另要求同源 client header，避免其他網站對 localhost 發動跨站寫入。
-- **List / Read**：`GET /api/output/files` 列出 `output/` 下所有 `.json` / `.geojson` /
+- **List / Read**：`GET /api/output/files` 列出 `output/` 與各來源 `output/` 下所有 `.json` / `.geojson` /
   `.kml` 檔案（path + size）；`GET /api/output/file?path=...` 讀取單一檔。讀取**拒絕
   symlink 與 path traversal**（`..`/絕對路徑/反斜線），且檔案大小上限 **64 MiB**。
 - **Write（受限）**：`PUT /api/output/file?path=...` 只允許寫到
@@ -376,7 +377,7 @@ npm test        # vitest run（editor 核心單元測試）
 
 5. Henroyado 與 min88 住宿各自顯示，並可分別開關；點擊 marker popup 顯示 provider、stable `source_id`、聯絡方式與價格等 PMTiles properties。
 
-6. 高程視覺化（需 `output/shikoku-contours.pmtiles` 與 `output/shikoku-terrain.pmtiles`）：
+6. 高程視覺化（需 `datasets/gsi/output/shikoku-contours.pmtiles` 與 `datasets/gsi/output/shikoku-terrain.pmtiles`）：
    - 無 elevation URL 時既有 preview 正常載入。
    - hillshade 預設隱藏；開啟後不蓋掉道路、地名與遍路路線。
    - color relief 可獨立開關。
@@ -386,7 +387,7 @@ npm test        # vitest run（editor 核心單元測試）
    - terrain 啟用後點擊可取得合理高程。
     - 海面沒有低高程彩色方塊或尖峰。
 
-7. 水谷遍路導覽圖（需 `output/shikoku-mizutani-henro.pmtiles`）：
+7. 水谷遍路導覽圖（需 `datasets/mizutani_henro_map/output/shikoku-mizutani-henro.pmtiles`）：
    - routes 與 POIs 可分別開關。
    - 關閉任一 POI category 後，該類別 marker 消失，其餘類別保持顯示。
    - 點擊 marker popup 顯示 `category`、`icon_id`、來源 style 與純文字 description。

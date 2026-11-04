@@ -28,7 +28,7 @@ export function decodeTerrainRgb(r: number, g: number, b: number): number {
 
 /**
  * Sample elevation at a decoded RGBA pixel. NODATA cells are encoded with
- * alpha=0 (sea / DEM-missing) per scripts/rgbify_dem.py; the opaque decode
+ * alpha=0 (sea / DEM-missing) per datasets/gsi/scripts/rgbify_dem.py; the opaque decode
  * would read as -10000 m, so transparent pixels report null instead.
  */
 export function elevationFromRgba(

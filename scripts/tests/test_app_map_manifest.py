@@ -1,4 +1,4 @@
-"""Focused unit tests for the app map pack manifest builder (v4).
+"""Focused unit tests for the app map pack manifest builder (v5).
 
 Uses temporary tiny files (never the real ~117MB PMTiles) and imports the
 builder via importlib since its filename contains a hyphen.
@@ -86,11 +86,11 @@ class ValidateVersionTest(unittest.TestCase):
 
 class ValidateMinVersionCodeTest(unittest.TestCase):
     def test_valid(self):
-        self.assertEqual(builder.validate_minimum_app_version_code(4), 4)
+        self.assertEqual(builder.validate_minimum_app_version_code(5), 5)
         self.assertEqual(builder.validate_minimum_app_version_code(42), 42)
 
-    def test_invalid_below_4(self):
-        for code in (3, 2, 1, 0, -1, 1.5, "1", True, None):
+    def test_invalid_below_5(self):
+        for code in (4, 3, 2, 1, 0, -1, 1.5, "1", True, None):
             with self.assertRaises(ValueError):
                 builder.validate_minimum_app_version_code(code)
 
@@ -208,7 +208,7 @@ class GeneratedAssetSpecsTest(unittest.TestCase):
 
 
 class BuildManifestTest(unittest.TestCase):
-    def test_v4_schema_repeated_roles_and_order(self):
+    def test_v5_schema_repeated_roles_and_order(self):
         repo = TinyRepo()
         try:
             repo.write_inventory()
@@ -218,22 +218,25 @@ class BuildManifestTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=4,
+                minimum_app_version_code=5,
                 base_url=None,
                 manifest_dir="output",
                 repo_root=repo.root,
             )
-            self.assertEqual(manifest["schema_version"], 4)
+            self.assertEqual(manifest["schema_version"], 5)
             self.assertEqual(manifest["version"], "dev-test")
-            self.assertEqual(manifest["minimum_app_version_code"], 4)
-            # Deterministic order: 9 core (content last), 4 sprite, 3 glyph, 2 license.
+            self.assertEqual(manifest["minimum_app_version_code"], 5)
+            # Deterministic order: 8 core (content last, min88 excluded),
+            # 4 sprite, 3 glyph, 2 license.
             roles = [f["role"] for f in manifest["files"]]
             expected = (
                 ["style", "basemap", "henrohub", "info_pois",
-                 "nature_trail", "henroyado", "min88", "temples", "content"]
+                 "nature_trail", "henroyado", "temples", "content"]
                 + ["sprite"] * 4 + ["glyph"] * 3 + ["license"] * 2
             )
             self.assertEqual(roles, expected)
+            # min88 must never appear in the core pack.
+            self.assertNotIn("min88", roles)
             # total_size equals sum of file sizes.
             expected_total = sum(
                 os.path.getsize(os.path.join(repo.root, s))
@@ -278,7 +281,7 @@ class BuildManifestTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=4,
+                minimum_app_version_code=5,
                 base_url="https://cdn.example.com/output/",
                 manifest_dir="output",
                 repo_root=repo.root,
@@ -290,7 +293,7 @@ class BuildManifestTest(unittest.TestCase):
             )
             self.assertEqual(
                 by_path["temples.geojson"]["url"],
-                "https://cdn.example.com/output/temples.geojson",
+                "https://cdn.example.com/datasets/seichijunrei/output/temples.geojson",
             )
             # Encodings retained through --base-url resolution.
             self.assertEqual(
@@ -312,7 +315,7 @@ class BuildManifestTest(unittest.TestCase):
                 builder.build_manifest(
                     specs,
                     version="dev-test",
-                    minimum_app_version_code=4,
+                    minimum_app_version_code=5,
                     base_url=None,
                     manifest_dir="output",
                     repo_root=repo.root,
@@ -404,7 +407,7 @@ class RelativeUrlEncodingTest(unittest.TestCase):
             manifest = builder.build_manifest(
                 specs,
                 version="dev-test",
-                minimum_app_version_code=4,
+                minimum_app_version_code=5,
                 base_url=None,
                 manifest_dir="output",
                 repo_root=repo.root,

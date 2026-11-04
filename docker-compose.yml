@@ -1,0 +1,29 @@
+services:
+  ohenro-map-preview:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.map-preview
+    image: ohenro-map-preview:latest
+    container_name: ohenro-map-preview
+    restart: unless-stopped
+    volumes:
+      - ./output:/srv/output:ro
+      - ./datasets:/srv/datasets:ro
+      - ./map-preview/public/data:/data-ref:ro
+    networks:
+      - ohenro-map
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: ohenro-map-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TOKEN:?set CLOUDFLARED_TOKEN in .env}
+    depends_on:
+      - ohenro-map-preview
+    networks:
+      - ohenro-map
+
+networks:
+  ohenro-map:
+    name: ohenro-map
+    external: true
