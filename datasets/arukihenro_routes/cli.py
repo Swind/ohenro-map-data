@@ -7,7 +7,7 @@ import sys
 from datasets.arukihenro_routes.fetch import main as fetch_main
 from datasets.arukihenro_routes.normalize import normalize_archive
 
-_SUBCOMMANDS = ("fetch", "normalize")
+_SUBCOMMANDS = ("fetch", "normalize", "run", "build", "validate")
 
 
 def _normalize_main(argv) -> int:
@@ -40,4 +40,7 @@ def main(argv=None) -> int:
         subcommand = "fetch"
     if subcommand == "normalize":
         return _normalize_main(args)
+    if subcommand in ("run", "build", "validate"):
+        from datasets.arukihenro_routes.pipeline import main as pipeline_main
+        return pipeline_main([subcommand, *args])
     return fetch_main(args)

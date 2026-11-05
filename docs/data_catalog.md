@@ -17,6 +17,7 @@ assets／manifest、route packs 與人工編輯成果。
 
 | 資料 | 主要檔案 | 格式 | 數量 | 一句話 |
 |---|---|---|---|---|
+| 步行遍路建置報告 | `datasets/arukihenro_routes/reports/pipeline.json` | JSON | 單一 normalized JSON | 來源快照／程式碼／產出 hash、summary；操作見 §2 |
 | 統合資訊 POI | `datasets/info_pois/output/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
 | 統合 POI 離線 | `datasets/info_pois/output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
 | 88 札所 | `datasets/seichijunrei/output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
@@ -154,6 +155,17 @@ plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層
 ---
 
 ## 2. 路線資料
+
+步行遍路一鍵入口 `python3 -m datasets.arukihenro_routes run`：重新下載四縣列表、
+路線 HTML、My Maps KML，驗證後切換 `raw/current.json` 指向的 immutable
+`raw/snapshots/<sha256>/`，再發布既有 schema v1。legacy 平面 archive 仍可離線建置。
+`reports/pipeline.json`：archive_sha256/source_sha256/output/output_sha256/size/summary；
+summary 沿用 normalized 各數量，再加 degenerate_line_count（單頂點來源線）。
+2026-11-05 隔離線上實跑 snapshot `141a6a2d…`：90 routes / 91 maps /
+324 lines / 933 points / 385 photo points，0 warnings、degenerate_line_count=1；
+獨立驗證與重建未變跳過皆通過。
+JSON／程式碼／產出 hash 皆未變則不重發。操作見
+[`datasets/arukihenro_routes/README.md`](../datasets/arukihenro_routes/README.md)。
 
 | 資料集 | 檔案 | 格式/數量 | 說明 |
 |---|---|---|---|

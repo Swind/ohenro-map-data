@@ -49,6 +49,13 @@ Henroyado 住宿爬蟲（Phase 1）詳見 `datasets/henroyado/docs/henroyado-par
 步行遍路路線 archive：`python3 -m datasets.arukihenro_routes`，下載四縣列表頁、各 `junnro/michi*`
 路線 HTML 與內嵌 Google My Maps KML 到 `datasets/arukihenro_routes/raw/`；可用 `--force` 重抓。
 
+完整更新用 `python3 -m datasets.arukihenro_routes run`：每次取得 HTML／KML，
+暫存區驗證後保存 `raw/snapshots/<sha256>/` 並更新 `raw/current.json`，再正規化、
+驗證發布。來源缺檔／下載失敗／warnings 不替換有效來源；JSON、程式碼與產出 hash
+未變不重發（仍重算輕量 normalization）。`run --local`／`build` 支援 legacy 平面
+archive 及 current snapshot；`validate`／`--force` 見 `datasets/arukihenro_routes/README.md`。
+40→41、68→69 無 KML 為已知缺口；單頂點 line 保留並報告 degenerate_line_count。
+
 步行遍路路線 normalize（Phase 2）：
 
 ```bash

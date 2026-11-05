@@ -6,7 +6,7 @@ import os
 from collections import Counter
 
 from datasets.arukihenro_routes.kml import parse_kml
-from datasets.arukihenro_routes.storage import atomic_write_json, read_json
+from datasets.arukihenro_routes.storage import atomic_write_json, read_json, resolve_archive
 from datasets.arukihenro_routes.temple_range import parse_temple_range
 
 SOURCE = "https://ohenro.jp/blog/arukihenro/"
@@ -26,6 +26,7 @@ def _load_kml(data_dir: str, local_path: str, warnings: list[str], route_id: str
 
 def normalize_archive(data_dir: str, output: str) -> dict:
     """Normalize the archive into schema version 1 and atomically write it."""
+    data_dir = str(resolve_archive(data_dir))
     manifest_path = os.path.join(data_dir, "manifest.json")
     if not os.path.isfile(manifest_path):
         raise FileNotFoundError("required archive manifest not found: %s" % manifest_path)

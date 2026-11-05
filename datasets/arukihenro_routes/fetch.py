@@ -8,6 +8,8 @@ import json
 import os
 import time
 import urllib.request
+import urllib.error
+import xml.etree.ElementTree as ET
 
 from datasets.arukihenro_routes.parser import parse_index, parse_route
 
@@ -32,15 +34,25 @@ def _write(path: str, data: bytes) -> None:
 
 
 def _get(url: str, timeout: int) -> bytes:
-    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        if response.status != 200:
-            raise ValueError("GET %s returned HTTP %s" % (url, response.status))
-        return response.read()
+    for attempt in range(3):
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                if response.status != 200:
+                    raise ValueError("GET %s returned HTTP %s" % (url, response.status))
+                return response.read()
+        except (urllib.error.URLError, TimeoutError):
+            if attempt == 2:
+                raise
+            time.sleep(2 ** attempt)
 
 
 def _validate_kml(body: bytes) -> None:
-    if b"<kml" not in body.lower():
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError as error:
+        raise ValueError("response is not valid KML XML") from error
+    if root.tag.rsplit("}", 1)[-1] != "kml":
         raise ValueError("response is not KML")
 
 

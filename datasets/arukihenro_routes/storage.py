@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import os
 import tempfile
+from pathlib import Path
+import re
 
 
 def atomic_write_bytes(path: str, data: bytes) -> None:
@@ -32,3 +34,17 @@ def atomic_write_json(path: str, obj) -> None:
 def read_json(path: str):
     with open(path, encoding="utf-8") as stream:
         return json.load(stream)
+
+
+def resolve_archive(data_dir):
+    """Accept both legacy flat archives and the full pipeline's current snapshot."""
+    root = Path(data_dir)
+    if not (root / "current.json").exists():
+        return root
+    sha = read_json(root / "current.json").get("sha256")
+    if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{64}", sha):
+        raise ValueError("Invalid archive snapshot hash")
+    archive = root / "snapshots" / sha
+    if not archive.is_dir():
+        raise ValueError(f"Snapshot missing: {archive}")
+    return archive
