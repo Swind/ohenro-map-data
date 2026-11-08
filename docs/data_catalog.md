@@ -27,6 +27,7 @@ assets／manifest、route packs 與人工編輯成果。
 | Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
 | 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
+| 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON | 319 LineString / 28,405 座標 | 一日一斉おもてなし遍路道ウォーク覆蓋；不是通行／維護保證 |
 | Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,471（2.26.111） | Henro Helper app，88 札所；另有 5 筆非空間原始記錄 |
 | Henro Helper 原始快照／建置報告 | `datasets/henro_helper/raw/{current.json,snapshots/}`、`datasets/henro_helper/reports/pipeline.json` | XAPK/APK / JSON | 最新 ARM64 archive 240,093,231 bytes | API 版本／SHA1、本機 SHA256、native libs、產出 hash 與完整 accounting |
 | OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
@@ -178,6 +179,17 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 | 四國自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail.geojson` / `shikoku-nature-trail.json` | GeoJSON / JSON，123 courses / 145 segments | json 含 tourism_spots + KML Placemarks |
 | Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON | 水谷遍路導覽圖路線 |
 | 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
+| 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON，319 LineString / 28,405 座標 | 原 Placemark、名稱、folders、description、style、原次序與高度原樣保留；不拼接或簡化 |
+
+點檢活動一鍵入口 `python3 -m datasets.omotenashi_henro_inspection`：重新從官方頁
+及其地圖程式發現當前 KML，完整解析驗證後更新 immutable snapshot/current，
+發布 routes GeoJSON 與 `output/source-metadata.json`；`reports/pipeline.json`
+記錄來源／程式與全部產出 hash、feature/line/coordinate counts/bounds。
+無參數即 run，另有 fetch/build/validate、run --local、run/build --force。
+2026-11-09 snapshot `655ee2eb…` 全量建置與獨立驗證通過；再次線上更新確認
+hash/mtime 不變，6 項來源測試及 4 項共用發布邊界測試通過。
+權利保留、只代表點檢活動覆蓋；操作見
+[`來源說明`](../datasets/omotenashi_henro_inspection/docs/omotenashi_henro_inspection_source.md)。
 
 ### Henro Helper 自動更新與產出契約
 

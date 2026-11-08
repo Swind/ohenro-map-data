@@ -20,16 +20,8 @@ target/
 # Large generated binaries
 *.pmtiles
 *.osm.pbf
-datasets/osm/.pipeline.lock
-datasets/gsi/.pipeline.lock
-datasets/gsi/.gsi-build-*/
-datasets/seichijunrei/.pipeline.lock
-datasets/seichijunrei/.temples-build-*/
-datasets/sekaiisan_henro/.pipeline.lock
-datasets/sekaiisan_henro/.sekaiisan-build-*/
-datasets/arukihenro_routes/.pipeline.lock
-datasets/henro_helper/.pipeline.lock
-datasets/henro_helper/.henro-helper-build-*/
+/datasets/*/.pipeline.lock
+/datasets/*/.*-build-*/
 
 # GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/
