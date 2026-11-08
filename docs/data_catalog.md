@@ -35,7 +35,8 @@ assets／manifest、route packs 與人工編輯成果。
 | Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,471（2.26.111） | Henro Helper app，88 札所；另有 5 筆非空間原始記錄 |
 | Henro Helper 原始快照／建置報告 | `datasets/henro_helper/raw/{current.json,snapshots/}`、`datasets/henro_helper/reports/pipeline.json` | XAPK/APK / JSON | 最新 ARM64 archive 240,093,231 bytes | API 版本／SHA1、本機 SHA256、native libs、產出 hash 與完整 accounting |
 | OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
-| Henroyado 住宿 | `datasets/henroyado/output/*.jsonl` | JSONL | 702 | henroyado.com |
+| Henroyado 住宿 | `datasets/henroyado/output/*.jsonl` | JSONL | 658 筆；561 resolved / 555 distinct map places（2026-11-09） | henroyado.com；所有未定位狀態保留 |
+| Henroyado 更新來源／報告 | `datasets/henroyado/raw/{current.json,snapshots/,google-maps/}`、`datasets/henroyado/reports/pipeline.json` | HTML / JSON / JSONL | 6 份正式產出（含 lodging PMTiles） | source/cache/code/output hashes、listing/geocode/map accounting |
 | min88 住宿 | `datasets/min88_lodging/output/*.jsonl` | JSONL | 650 | min88.jp |
 | 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
 | 高程 | `datasets/gsi/output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
@@ -153,10 +154,22 @@ plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層
 | 來源 | 檔案 | 數量 |
 |---|---|---|
 | OSM extractor | `datasets/osm/output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
-| Henroyado | `datasets/henroyado/output/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 702 筆（geocoded 582 有座標） |
+| Henroyado | `datasets/henroyado/output/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 658 筆；561 有 place 座標，地圖依 place ID 合併 6 筆重複為 555 features |
 | min88 | `datasets/min88_lodging/output/{raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 650 筆（geocoded 640 有座標） |
 
 離線 tiles：`datasets/henroyado/output/shikoku-henroyado-lodging.pmtiles`、`datasets/min88_lodging/output/shikoku-min88-lodging.pmtiles`。
+
+Henroyado 一鍵入口 `python3 -m datasets.henroyado`：驗證完整四縣 HTML 後保存
+immutable snapshot/current，detect→parse→normalize→Google-place enrichment→
+map export→lodging PMTiles（z6–14）。只有單一 place marker 可作為座標，不能用
+iframe viewport；名稱／Maps URL 變更會使對應 geocode cache 失效。
+原始 JSONL 全保留，只有地圖按 Google Place ID 合併來源重複。
+支援 fetch/build/validate、run --local、run/build --force 與路徑／限速覆寫；
+detect/parse 未指定 HTML 時讀取 current snapshot。來源缺漏或 geocode fetch
+失敗不發布；找不到 place／來源無 Maps URL 等已知不確定性保留狀態，不冒充定位成功。
+2026-11-09 全量 658 筆：561 resolved、83 place_not_found、
+13 source_data_incomplete、1 place_outside_shikoku；0 normalization warnings。
+六份產出、獨立 validate、53 項測試及選定快照未變更 skip/hash/mtime 檢查通過。
 
 ---
 

@@ -1,5 +1,57 @@
 Henroyado Accommodation Data Extraction & Standardization Plan
 
+Current source-local update workflow
+
+```sh
+python3 -m datasets.henroyado                 # refresh HTML, then publish all outputs
+python3 -m datasets.henroyado fetch           # fetch/validate/select immutable HTML only
+python3 -m datasets.henroyado run --local     # reuse selected HTML; fetch missing Google responses
+python3 -m datasets.henroyado build --force   # rebuild all outputs, retaining Google request cache
+python3 -m datasets.henroyado validate        # published hashes, listing accounting, map and PMTiles
+```
+
+`run`, `fetch`, `build`, and `validate` accept `--raw-dir`, `--output-dir`,
+and `--reports-dir`. The default command is `run`; `--local` belongs to `run`,
+and `--force` belongs to `run`/`build`. These commands use a nonblocking
+source-local `.pipeline.lock`. Existing detect/parse/normalize/geocode/export-map
+commands remain available for individual stages.
+
+Raw HTML is validated as a complete four-prefecture, temples 1–88 document,
+including listing/detail row accounting, before selecting
+`raw/snapshots/<sha256>/henroyado.html` through `raw/current.json`.
+The older `raw/henroyado.html` input is supported when no selector exists.
+`raw/geocode-inputs.json` records the actual source names and Maps search URLs.
+Fetch metadata preserves retrieval provenance; normalized `source.retrieved_at`
+is null so repeating normalization does not introduce retrieval-time churn.
+
+The complete pipeline stages `detect.jsonl`, `raw.jsonl`, `v1.jsonl`,
+`v1-geocoded.jsonl`, `map.geojson`, and `shikoku-henroyado-lodging.pmtiles`
+before publishing. PMTiles contains the `lodging` layer at zooms 6–14,
+attributed to `Henroyado lodging data © henroyado.com`.
+The report is written last to `reports/pipeline.json`; unchanged input,
+code/settings, and output hashes skip regeneration.
+
+Google embed responses are cached under `raw/google-maps`, keyed by both the
+source name and Maps request URL. Existing URL-only cache entries are migrated
+with a name binding; a changed name or URL cannot silently reuse an old place.
+Only explicit Google place records supply exported coordinates, never viewport
+centres. Normalizer warnings remain attached to records. Missing URLs,
+not-found places, and outside-Shikoku results remain explicit unresolved statuses,
+and the report distinguishes unmapped listings and duplicate places from map
+features; a map is not a claim that every listing was resolved.
+
+Any Google request error prevents pipeline publication and preserves existing
+outputs; `reports/geocode-failure.json` records the failed attempt's accounting.
+The individual geocode command also retains an existing destination on request
+errors. Consent/error pages are not accepted as cached map responses.
+
+Regression command (not part of fetch):
+`python3 -m unittest discover datasets/henroyado/tests`.
+
+The remainder of this document records the original parser design; its Phase 1
+exclusions are historical, not limitations of the complete update command above.
+
+
 1. Goal
 
 The first phase of this project is to extract accommodation data from Henroyado and preserve it as a standardized, re-processable JSON dataset.

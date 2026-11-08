@@ -4,10 +4,13 @@ import hashlib
 import json
 import os
 import re
+from pathlib import Path
+import shutil
 import time
 import urllib.parse
 import urllib.request
 
+from datasets._pipeline import atomic_json, read_json
 from datasets.henroyado.fetcher.fetcher import USER_AGENT
 from datasets.henroyado.normalize.map import parse_coordinates
 
@@ -62,25 +65,46 @@ def parse_place(content, final_url=None):
     return None
 
 
-def fetch_place(search_url, cache_dir, timeout=30, force=False):
-    """Fetch/cache an embed response and return its parsed place record."""
+def fetch_place(search_url, cache_dir, timeout=30, force=False, name=None):
+    """Cache by source name and request URL; changed listings are fetched anew."""
     url = embed_url(search_url)
-    key = hashlib.sha256(url.encode("utf-8")).hexdigest()
-    path = os.path.join(cache_dir, key + ".html")
-    if os.path.exists(path) and not force:
-        with open(path, encoding="utf-8") as f:
-            return parse_place(f.read()), url, True
+    cache = Path(cache_dir)
+    legacy = cache / (hashlib.sha256(url.encode("utf-8")).hexdigest() + ".html")
+    identity = url if name is None else json.dumps([url, name], ensure_ascii=False)
+    path = cache / (hashlib.sha256(identity.encode("utf-8")).hexdigest() + ".html")
+    binding = legacy.with_suffix(".identity.json")
+    if name is not None and not path.exists() and legacy.exists() and not force:
+        if not binding.exists() or read_json(binding) == {"name": name, "url": url}:
+            atomic_json(binding, {"name": name, "url": url})
+            shutil.copyfile(legacy, path)
+    if path.exists() and not force:
+        try:
+            content = path.read_text(encoding="utf-8")
+            validate_response(content)
+            return parse_place(content), url, True
+        except (ValueError, UnicodeError):
+            pass
 
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=timeout) as response:
         content = response.read().decode("utf-8", errors="replace")
         final_url = response.geturl()
-    os.makedirs(cache_dir, exist_ok=True)
-    temporary = path + ".tmp"
-    with open(temporary, "w", encoding="utf-8") as f:
-        f.write(content)
+    validate_response(content, final_url)
+    place = parse_place(content, final_url)
+    cache.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(content, encoding="utf-8")
     os.replace(temporary, path)
-    return parse_place(content, final_url), url, False
+    return place, url, False
+
+
+def validate_response(content, final_url=None):
+    """Do not persist consent, throttling, or other non-map responses."""
+    host = urllib.parse.urlsplit(final_url or "").hostname or ""
+    if (host.startswith(("consent.", "sorry.")) or
+            not re.search(r"</html\s*>", content, re.IGNORECASE) or
+            not any(marker in content for marker in ("_pageData", "APP_INITIALIZATION_STATE", "initEmbed"))):
+        raise ValueError("Google returned an incomplete or non-map response")
 
 
 def enrich_file(input_path, output_path, cache_dir, timeout=30, delay=0.3,
@@ -102,7 +126,8 @@ def enrich_file(input_path, output_path, cache_dir, timeout=30, delay=0.3,
             continue
         try:
             place, request_url, cached = fetch_place(
-                search_url, cache_dir, timeout=timeout, force=force
+                search_url, cache_dir, timeout=timeout, force=force,
+                name=record["identity"]["name"],
             )
             if not cached and delay:
                 time.sleep(delay)
@@ -116,7 +141,7 @@ def enrich_file(input_path, output_path, cache_dir, timeout=30, delay=0.3,
                 "raw_value": search_url,
             })
             continue
-        if place is None:
+        if place is None or not place.get("place_id"):
             stats["not_found"] += 1
             location["map_data_status"] = "place_not_found"
             record["_warnings"].append({
@@ -152,8 +177,11 @@ def enrich_file(input_path, output_path, cache_dir, timeout=30, delay=0.3,
         })
         stats["geocoded"] += 1
 
+    if stats["errors"] and os.path.exists(output_path):
+        return stats
+
     os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
-    temporary = output_path + ".tmp"
+    temporary = os.fspath(output_path) + ".tmp"
     with open(temporary, "w", encoding="utf-8") as f:
         for record in records:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")

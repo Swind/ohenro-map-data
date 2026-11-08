@@ -2,13 +2,15 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from pathlib import Path
+import subprocess
 
 from datasets.henroyado.fetcher import DEFAULT_RAW_FILENAME, fetch
 from datasets.henroyado.export_map import export_map
 from datasets.henroyado.geocode import enrich_file
 from datasets.henroyado.html_parser import detect_records, extract_all
 from datasets.henroyado.normalize import normalize_inn
+from datasets.henroyado import pipeline
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 SOURCE_DIR = os.path.join(ROOT, "datasets/henroyado/raw")
@@ -19,22 +21,38 @@ DEFAULT_RAW_HTML = os.path.join(SOURCE_DIR, DEFAULT_RAW_FILENAME)
 def build_parser():
     p = argparse.ArgumentParser(
         prog="python3 -m datasets.henroyado",
-        description="Henroyado crawler (Phase 1)",
+        description="Fetch, normalize, geocode and publish the complete Henroyado lodging dataset",
     )
     sub = p.add_subparsers(dest="command")
+    p.set_defaults(local=False, force=False, timeout=60, delay=0.3)
+
+    def directories(command):
+        command.add_argument("--raw-dir", type=Path, default=Path(SOURCE_DIR))
+        command.add_argument("--output-dir", type=Path, default=Path(OUTPUT_DIR))
+        command.add_argument("--reports-dir", type=Path, default=Path(SOURCE_DIR).parent / "reports")
+
+    for name in ("run", "build", "validate"):
+        command = sub.add_parser(name, help=f"{name} the complete source pipeline")
+        directories(command)
+        if name == "run":
+            command.add_argument("--local", action="store_true", help="use the validated local HTML snapshot")
+        if name in ("run", "build"):
+            command.add_argument("--force", action="store_true", help="rebuild unchanged outputs; retain geocode cache")
+            command.add_argument("--timeout", type=int, default=60)
+            command.add_argument("--delay", type=float, default=0.3, help="delay after uncached Google requests")
 
     f = sub.add_parser("fetch", help="download the full Shikoku inn list and save a raw HTML snapshot")
-    f.add_argument("--output", default=DEFAULT_RAW_HTML,
-                   help="output HTML path (default: %(default)s)")
+    directories(f)
+    f.add_argument("--output", help="legacy: save a validated HTML file instead of selecting an immutable snapshot")
     f.add_argument("--timeout", type=int, default=60, help="HTTP timeout seconds (default: %(default)s)")
 
     d = sub.add_parser("detect", help="detect every accommodation record in a raw HTML snapshot (plan Step 2)")
-    d.add_argument("input", nargs="?", default=DEFAULT_RAW_HTML, help="raw HTML file (default: %(default)s)")
+    d.add_argument("input", nargs="?", help="raw HTML file (default: selected source snapshot)")
     d.add_argument("--output", default=os.path.join(OUTPUT_DIR, "detect.jsonl"),
                    help="detected records JSONL (default: %(default)s)")
 
     pr = sub.add_parser("parse", help="extract RawInn for every accommodation (plan Step 3)")
-    pr.add_argument("input", nargs="?", default=DEFAULT_RAW_HTML, help="raw HTML file (default: %(default)s)")
+    pr.add_argument("input", nargs="?", help="raw HTML file (default: selected source snapshot)")
     pr.add_argument("--output", default=os.path.join(OUTPUT_DIR, "raw.jsonl"),
                     help="RawInn JSONL output (default: %(default)s)")
 
@@ -44,7 +62,7 @@ def build_parser():
     n.add_argument("--output", default=os.path.join(OUTPUT_DIR, "v1.jsonl"),
                    help="V1 JSONL output (default: %(default)s)")
     n.add_argument("--raw-html", default=DEFAULT_RAW_HTML,
-                   help="raw HTML snapshot whose mtime becomes source.retrieved_at (default: %(default)s)")
+                   help="legacy compatibility; retrieval time is not embedded in deterministic normalized data")
 
     g = sub.add_parser("geocode", help="enrich V1 records from Google Maps embed place results")
     g.add_argument("input", nargs="?", default=os.path.join(OUTPUT_DIR, "v1.jsonl"),
@@ -66,15 +84,24 @@ def build_parser():
 
 
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if not argv or argv[0].startswith("--"):
+        argv.insert(0, "run")
     args = build_parser().parse_args(argv)
-    if args.command is None:
-        build_parser().print_help()
-        return 1
+    if args.command in ("run", "build", "validate") or (args.command == "fetch" and not args.output):
+        try:
+            return pipeline.execute(args)
+        except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.CalledProcessError) as error:
+            print(f"ERROR: {error}", file=sys.stderr)
+            return 1
 
     if args.command == "fetch":
         path = fetch(args.output, timeout=args.timeout)
         print("fetched -> %s" % path)
         return 0
+
+    if args.command in ("detect", "parse") and args.input is None:
+        args.input = str(pipeline.resolve(Path(SOURCE_DIR)) / DEFAULT_RAW_FILENAME)
 
     if args.command == "detect":
         with open(args.input, "r", encoding="utf-8") as f:
@@ -116,9 +143,6 @@ def main(argv=None):
 
     if args.command == "normalize":
         retrieved_at = None
-        if os.path.exists(args.raw_html):
-            mtime = datetime.fromtimestamp(os.path.getmtime(args.raw_html), tz=timezone.utc)
-            retrieved_at = mtime.isoformat(timespec="seconds")
         v1s = []
         with open(args.input, "r", encoding="utf-8") as f:
             for line in f:
