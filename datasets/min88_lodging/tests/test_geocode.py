@@ -115,7 +115,7 @@ class TestGeocode(unittest.TestCase):
         response = Mock()
         response.__enter__ = Mock(return_value=response)
         response.__exit__ = Mock(return_value=False)
-        response.read.return_value = b"no viewport or place record"
+        response.read.return_value = b"<html><script>var _pageData = [];</script></html>"
         response.geturl.return_value = "https://www.google.com/maps/!8m2!3d34.1!4d134.2"
         opener = Mock(return_value=response)
         with tempfile.TemporaryDirectory() as directory:
@@ -125,6 +125,22 @@ class TestGeocode(unittest.TestCase):
         self.assertEqual(second[0]["latitude"], 34.1)
         self.assertTrue(second[3])
         opener.assert_called_once()
+
+    def test_incomplete_response_does_not_replace_valid_cached_place(self):
+        response = Mock()
+        response.__enter__ = Mock(return_value=response)
+        response.__exit__ = Mock(return_value=False)
+        response.geturl.return_value = "https://www.google.com/maps?q=x"
+        response.read.return_value = ("<html><script>var _pageData = " + CONTENT + ";</script></html>").encode()
+        opener = Mock(return_value=response)
+        with tempfile.TemporaryDirectory() as directory:
+            first = fetch_place("https://www.google.com/maps?q=x", directory, opener=opener)
+            response.read.return_value = b"<html>temporarily unavailable"
+            with self.assertRaisesRegex(ValueError, "incomplete or non-map"):
+                fetch_place("https://www.google.com/maps?q=x", directory, opener=opener, force=True)
+            retained = fetch_place("https://www.google.com/maps?q=x", directory, opener=opener)
+            self.assertEqual(retained[0], first[0])
+            self.assertTrue(retained[3])
 
     def test_rejects_non_google_initial_host_without_fetching(self):
         opener = Mock()

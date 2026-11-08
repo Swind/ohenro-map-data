@@ -8,31 +8,48 @@ provider-specific Raw 與 `Min88LodgingV1` JSONL。詳細 schema 與保守解析
 
 - Python 3.10+
 - BeautifulSoup（現有專案 dependency）
-- 網路只用於 crawl 與可選的 Google Maps enrichment
+- 網路用於列表/詳細頁 refresh 與 Google Maps enrichment；`run --local` 完全離線
+- `tippecanoe`（或 Docker image `ohenro-elevation-visuals:latest`）與 `pmtiles` / `go-pmtiles`
 
 ## Full Run
 
 ```bash
-python3 -m datasets.min88_lodging crawl-all
-python3 -m datasets.min88_lodging parse
-python3 -m datasets.min88_lodging normalize
-python3 -m datasets.min88_lodging geocode       # optional, uses network/cache
-python3 -m datasets.min88_lodging export-map    # geocoded V1 -> map.geojson
-python3 -m datasets.min88_lodging verify
-python3 -m datasets.min88_lodging report
+python3 -m datasets.min88_lodging                 # refresh list/details, build all outputs and PMTiles
+python3 -m datasets.min88_lodging fetch           # refresh complete primary source only
+python3 -m datasets.min88_lodging build           # local source; reuse/fill Google response cache
+python3 -m datasets.min88_lodging run --local     # local source and cached Google responses only
+python3 -m datasets.min88_lodging run --force     # rebuild even when final hashes match
+python3 -m datasets.min88_lodging validate        # source/cache/output hashes, schema, accounting, tiles
 ```
 
-預設 archive 是 `datasets/min88_lodging/raw/`，產出是
-`datasets/min88_lodging/output/{raw,v1,v1-geocoded}.jsonl` 與 `report.json`。相同 archive 的
-parse 是 deterministic；archive 與 manifest 都不變時，normalize 與 report 亦為
-byte-stable。retrieval metadata 以 manifest 為準，normalize 會把每頁 retrieval time 寫入
-`source.retrieved_at`。
+預設 archive 是 `datasets/min88_lodging/raw/`，完整抓取通過後才發布至
+`raw/snapshots/<content-sha256>/`，並最後 atomic 更新 `raw/current.json`。每次正常 run
+都重新下載列表與所有詳細頁，不把 resume cache 當成 refresh。任一失敗或不完整頁面均不會
+取代目前 snapshot；舊 snapshot 保留。既有 flat archive 亦可用於 build / local run。
 
-資料流如下；crawl/geocode 會連網，其餘步驟離線：
+所有命令支援 `--raw-dir`、`--output-dir`、`--reports-dir`、`--cache-dir`、`--timeout`、
+`--delay`；`--local` 只適用 run，`--force` 只適用 run/build。完整 pipeline 用 source-local
+nonblocking `.pipeline.lock` 排除重複更新；低階 legacy commands 仍保留供手動操作。
+
+完整產出為 `output/{raw,v1,v1-geocoded}.jsonl`、`map.geojson`、`report.json`、
+`shikoku-min88-lodging.pmtiles`。PMTiles 使用 `lodging` layer、z6–14 與
+`min88 lodging data © min88.jp` attribution。所有產出先在暫存目錄驗證，再逐檔 atomic
+發布，最後寫 `reports/pipeline.json`，含原始頁/Google cache hashes、程式/settings、
+coverage/warning accounting 與每個 final output hash。相同來源/config/cache/final hashes
+會略過重建；修改或遺失任一 output 會重建。partial source/geocode/build failure 不發布產出。
+
+完整 pipeline 的 derived records 不放 retrieval timestamp（`source.retrieved_at=null`）；
+真實 HTTP retrieval provenance 保存在 snapshot `manifest.json`。正常保守 normalizer warnings
+仍保留並逐項統計，不因 ambiguous price 等合法來源文字拒絕整批資料。Google fetch failure
+則屬不完整 enrichment，不能發布；place-not-found/ambiguous/outside-Shikoku 保留原狀態，
+不捏造座標。cache 在 `raw/google-maps/` 以單一 atomic JSON 保存 response HTML、request/final
+URL（亦可讀取並遷移既有 `.html` + `.url` cache）；local run 缺 cache 會失敗而不連網。
+`parse`／`normalize`／`verify`／`report` 的 `--data-dir` 若含 current selector，
+會先解析並驗證所選 snapshot，不再誤讀過時的平面 archive。
 
 ```text
-list_ja HTML -> index.json -> records/<post-id>/page.html
-                              -> raw.jsonl -> v1.jsonl -> optional v1-geocoded.jsonl
+list_ja HTML -> complete detail snapshot -> raw.jsonl -> v1.jsonl
+  -> cached Google single-place enrichment -> v1-geocoded.jsonl -> map.geojson -> PMTiles
 ```
 
 ## Crawl Operations
@@ -78,6 +95,15 @@ positional input，預設分別為 `raw.jsonl`、`v1.jsonl`，並以 `--output` 
 ID、crawl status accounting、Raw/V1 counts、JSONL 與 resolved coordinate provenance。
 `report` 彙整縣別/類型/狀態、source field coverage、normalization coverage、map
 status、warning examples、缺頁及 index drift。
+
+## 2026-11-09 One-command Update
+
+- 正常一鍵更新及獨立 validate/verify 通過：654 records/detail pages。
+- 德島 124／高知 240／愛媛 185／香川 105；646 resolved map features、
+  5 place_not_found、3 source_data_incomplete，0 geocode fetch errors。
+- 112 warnings：94 UNRECOGNIZED_FORMAT、10 SOURCE_NAME_MISMATCH、
+  3 MISSING_REQUIRED_FIELD、5 GOOGLE_MAPS_PLACE_NOT_FOUND；來源原文全保留。
+- 60 tests 通過；同一 source/config/cache 下重跑不更動產出與報告。
 
 ## 2026-08-19 Live Archive
 

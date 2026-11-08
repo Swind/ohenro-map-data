@@ -51,6 +51,8 @@ def _http_result(url: str, local_path: str, status, headers: dict, body: bytes,
 def validate_index_html(body: bytes, list_url: str = LIST_URL) -> dict:
     if not body:
         raise ValueError("empty index response")
+    if not re.search(br"</html\s*>", body, re.IGNORECASE):
+        raise ValueError("incomplete index document")
     html = body.decode("utf-8", errors="replace")
     soup = BeautifulSoup(html, "html.parser")
     canonical = soup.select_one('link[rel="canonical"][href]')
@@ -62,6 +64,8 @@ def validate_index_html(body: bytes, list_url: str = LIST_URL) -> dict:
 def validate_detail_html(body: bytes, source_id: str) -> None:
     if not body:
         raise ValueError("empty detail response")
+    if not re.search(br"</html\s*>", body, re.IGNORECASE):
+        raise ValueError("incomplete detail document")
     soup = BeautifulSoup(body.decode("utf-8", errors="replace"), "html.parser")
     canonical = soup.select_one('link[rel="canonical"][href]')
     canonical_url = urljoin(canonical_detail_url(source_id), canonical["href"]) if canonical else ""

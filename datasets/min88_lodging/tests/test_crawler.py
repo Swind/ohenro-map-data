@@ -83,6 +83,23 @@ class CrawlerTests(unittest.TestCase):
             with open(page, "rb") as source:
                 self.assertEqual(source.read(), original)
 
+    def test_truncated_detail_with_valid_title_never_replaces_archive(self):
+        with tempfile.TemporaryDirectory() as data_dir:
+            records = [{"source_id": "1", "source_url": "https://min88.jp/inn/1/"}]
+            page = os.path.join(data_dir, "records", "1", "page.html")
+            os.makedirs(os.path.dirname(page))
+            original = detail("1", "original")
+            with open(page, "wb") as output:
+                output.write(original)
+            with open(os.path.join(data_dir, "index.json"), "w", encoding="utf-8") as output:
+                json.dump({"records": records}, output)
+            truncated = detail("1", "changed").split(b"</body>")[0]
+            result = crawl_details(data_dir, force=True, client=FakeClient([(200, {}, truncated)]))
+            self.assertEqual(result["failed"], 1)
+            self.assertIn("incomplete detail", result["records"][0]["error"])
+            with open(page, "rb") as source:
+                self.assertEqual(source.read(), original)
+
     def test_malformed_index_records_fail_without_network_or_path_access(self):
         with tempfile.TemporaryDirectory() as data_dir:
             records = [

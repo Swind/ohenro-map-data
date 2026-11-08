@@ -1,12 +1,12 @@
 # Lodging PMTiles
 
-Henroyado and min88 remain independent lodging sources and are built into separate PMTiles archives:
+Henroyado and min88 remain independent sources. Update each complete source and its map in one command:
 
 ```bash
-bash scripts/build-lodging-pmtiles.sh
-# Or rebuild just one source:
-bash scripts/build-lodging-pmtiles.sh henroyado
-bash scripts/build-lodging-pmtiles.sh min88
+python3 -m datasets.henroyado
+python3 -m datasets.min88_lodging
+# Rebuild from selected local source snapshots (reuse/fill Google response cache):
+bash scripts/build-lodging-pmtiles.sh [all|henroyado|min88] [--force]
 ```
 
 Outputs:
@@ -21,3 +21,9 @@ Both archives contain one `lodging` point layer at zooms 6-14 with the same comp
 Only records with resolved Google Place coordinates are emitted. min88 keeps its source post ID.
 Henroyado uses its Google Place ID and emits one feature per place, collapsing duplicate source listings
 only in the map export; its source JSONL remains unchanged.
+
+The shell entry delegates to each source's `build`; it no longer publishes tiles independently
+of its source JSONL/GeoJSON. Each source stages and validates all managed outputs before
+per-file atomic publication, then writes `datasets/<source>/reports/pipeline.json`.
+`run --local` uses the selected source snapshot and cached Google responses without network;
+missing cache fails safely. `validate` independently checks source/cache/output hashes and tiles.

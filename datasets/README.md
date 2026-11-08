@@ -13,7 +13,7 @@
 | [mizutani_henro_map](mizutani_henro_map/docs/mizutani_henro_map_pipeline.md) | 水谷卓也 Google My Maps 路線與 POI | **已一鍵化**：`python3 -m datasets.mizutani_henro_map`（KML 更新→JSON／GeoJSON→overlay + routes PMTiles→驗證；未變跳過） |
 | [shikoku_nature_trail](shikoku_nature_trail/README.md) | 四國自然步道網站與 My Maps | **已一鍵化**：`python3 -m datasets.shikoku_nature_trail`（HTML／圖片／KML 更新→JSON／GeoJSON／PMTiles→驗證；未變跳過） |
 | [henroyado](henroyado/docs/henroyado-parser-standardization-plan.md) | Henroyado 住宿；Google Place 補座標快取 | **已一鍵化**：`python3 -m datasets.henroyado`（HTML 更新→JSONL／geocode／GeoJSON／PMTiles→驗證；未變跳過） |
-| [min88_lodging](min88_lodging/) | min88 住宿 | `python3 -m datasets.min88_lodging` |
+| [min88_lodging](min88_lodging/docs/min88_lodging_pipeline.md) | min88 住宿；Google Place 補座標快取 | **已一鍵化**：`python3 -m datasets.min88_lodging`（完整列表／詳細頁更新→JSONL／geocode／GeoJSON／PMTiles→驗證；未變跳過） |
 | [henrohub](henrohub/docs/henro-hub-comparison.md) | Henro Hub 公開 release 路線與 graph（個人使用） | **已一鍵化**：`python3 -m datasets.henrohub`（channel／manifest 更新→routes／graph／PMTiles→驗證；未變跳過） |
 | [henro_helper](#henro-helper-一鍵更新) | Henro Helper APK 路線與 POI | **已一鍵化**：`python3 -m datasets.henro_helper`（APKPure 更新→ARM64 靜態抽取→驗證發布；未變跳過） |
 | [ohenro88](ohenro88/) | OHenro 88 APK 路線、區間與 graph | **已一鍵化**：`python3 -m datasets.ohenro88`（APKPure 更新→靜態 assets→routes／sections／graph→驗證；未變跳過） |

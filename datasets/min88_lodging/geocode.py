@@ -8,7 +8,8 @@ import time
 import urllib.parse
 import urllib.request
 
-from datasets.henroyado.geocode import PLACE_RE, embed_url, parse_place
+from datasets._pipeline import atomic_json, read_json
+from datasets.henroyado.geocode import PLACE_RE, embed_url, parse_place, validate_response
 from datasets.min88_lodging.model.v1 import (JAPANESE_PREFECTURE_RE, SHIKOKU_POLYGON,
                                     SHIKOKU_PREFECTURES)
 
@@ -48,12 +49,24 @@ def fetch_place(request_url, cache_dir, timeout=30, force=False, opener=urllib.r
     _require_google_maps_url(url)
     path = os.path.join(cache_dir, hashlib.sha256(url.encode("utf-8")).hexdigest() + ".html")
     final_url_path = path + ".url"
+    response_path = path.removesuffix(".html") + ".json"
+    if os.path.exists(response_path) and not force:
+        cached = read_json(response_path)
+        if cached.get("request_url") != url:
+            raise ValueError("Google response cache URL mismatch")
+        final_url, content = cached["final_url"], cached["content"]
+        _require_google_maps_url(final_url)
+        validate_response(content, final_url)
+        place, ambiguous = parse_place_result(content, final_url)
+        return place, ambiguous, url, True
     if os.path.exists(path) and os.path.exists(final_url_path) and not force:
         with open(final_url_path, encoding="utf-8") as handle:
             final_url = handle.read().strip()
         _require_google_maps_url(final_url)
         with open(path, encoding="utf-8") as handle:
             content = handle.read()
+        validate_response(content, final_url)
+        atomic_json(response_path, {"request_url": url, "final_url": final_url, "content": content})
         place, ambiguous = parse_place_result(content, final_url)
         return place, ambiguous, url, True
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
@@ -61,16 +74,8 @@ def fetch_place(request_url, cache_dir, timeout=30, force=False, opener=urllib.r
         final_url = response.geturl()
         _require_google_maps_url(final_url)
         content = response.read().decode("utf-8", errors="replace")
-    os.makedirs(cache_dir, exist_ok=True)
-    temporary = path + ".tmp"
-    with open(temporary, "w", encoding="utf-8") as handle:
-        handle.write(content)
-    os.replace(temporary, path)
-    if final_url:
-        temporary = final_url_path + ".tmp"
-        with open(temporary, "w", encoding="utf-8") as handle:
-            handle.write(final_url)
-        os.replace(temporary, final_url_path)
+    validate_response(content, final_url)
+    atomic_json(response_path, {"request_url": url, "final_url": final_url, "content": content})
     place, ambiguous = parse_place_result(content, final_url)
     return place, ambiguous, url, False
 

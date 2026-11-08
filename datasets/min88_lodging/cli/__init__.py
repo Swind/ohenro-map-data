@@ -5,6 +5,10 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import subprocess
+from pathlib import Path
+
+from datasets.min88_lodging import updater
 
 from datasets.min88_lodging.geocode import enrich_file
 from datasets.min88_lodging.export_map import export_map
@@ -34,7 +38,22 @@ def _crawl_arguments(parser):
 def build_parser():
     parser = argparse.ArgumentParser(prog="python3 -m datasets.min88_lodging",
                                      description="min88 lodging archive and normalization pipeline")
-    commands = parser.add_subparsers(dest="command", required=True)
+    parser.set_defaults(command="run", raw_dir=DEFAULT_DATA_DIR, output_dir=DEFAULT_OUTPUT_DIR,
+                        reports_dir=os.path.join(ROOT, "datasets/min88_lodging/reports"),
+                        cache_dir=None, timeout=30, delay=0.3, local=False, force=False)
+    commands = parser.add_subparsers(dest="command")
+    for name in ("run", "fetch", "build", "validate"):
+        command = commands.add_parser(name, help="complete pipeline: " + name)
+        command.add_argument("--raw-dir", default=DEFAULT_DATA_DIR)
+        command.add_argument("--output-dir", default=DEFAULT_OUTPUT_DIR)
+        command.add_argument("--reports-dir", default=os.path.join(ROOT, "datasets/min88_lodging/reports"))
+        command.add_argument("--cache-dir", default=None)
+        command.add_argument("--timeout", type=float, default=30)
+        command.add_argument("--delay", type=float, default=0.3)
+        if name == "run":
+            command.add_argument("--local", action="store_true", help="use local archive and cached Google responses only")
+        if name in ("run", "build"):
+            command.add_argument("--force", action="store_true", help="rebuild even when final hashes match")
     for name, help_text in (("crawl-index", "archive the Japanese lodging list"),
                             ("crawl-details", "archive details listed in index.json"),
                             ("crawl-all", "archive the list and all details")):
@@ -74,6 +93,12 @@ def build_parser():
 
 
 def _run(args):
+    if args.command in ("run", "fetch", "build", "validate"):
+        if args.timeout <= 0 or args.delay < 0:
+            raise ValueError("timeout must be positive and delay nonnegative")
+        return updater.execute(args)
+    if args.command in ("parse", "normalize", "verify", "report") and (Path(args.data_dir) / "current.json").exists():
+        args.data_dir = str(updater.resolve(Path(args.data_dir)))
     crawl_kwargs = {"timeout": args.timeout, "delay": args.delay, "force": args.force} \
         if args.command.startswith("crawl-") else None
     if args.command == "crawl-index":
@@ -133,10 +158,13 @@ def _run(args):
 
 def main(argv=None):
     try:
+        argv = list(sys.argv[1:] if argv is None else argv)
+        if not argv or argv[0].startswith("-") and argv[0] not in ("-h", "--help"):
+            argv.insert(0, "run")
         return _run(build_parser().parse_args(argv))
     except KeyboardInterrupt:
         print("interrupted", file=sys.stderr)
         return 130
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError, subprocess.CalledProcessError) as error:
         print("error: %s" % error, file=sys.stderr)
         return 1
