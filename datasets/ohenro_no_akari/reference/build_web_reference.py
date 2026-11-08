@@ -1,247 +1,229 @@
 #!/usr/bin/env python3
-"""Build Henro no Akari (Yonden, jp.co.yonden.henronoakari) web route reference.
+"""Statically extract the Henro no Akari web route from a local JavaScript bundle.
 
-The native app (遍路のあかり+) itself embeds no route geometry: its Dart AOT
-(libapp.so) only carries URL fragments for Google Maps directions
-(`google.com` + `/maps/dir` + `destination`, see analysis), and temples/spots
-are fetched from the CMS at runtime. The walking pilgrim route is published in
-the companion web app at https://app.henro-no-akari.com: the Leaflet map page
-bundle embeds the full route as an inline GeoJSON object literal.
-
-Input (immutable snapshot):
-  - https://app.henro-no-akari.com/assets/MapPage.js
-    cached at datasets/ohenro_no_akari/reference/data/MapPage.js (gitignored,
-    re-fetchable). The route is a top-level `const <name>=[{type:"Feature",...}`
-    array of LineString features (Leaflet styling props `_color/_opacity/_weight`).
-
-Outputs (deterministic, no timestamps, atomic writes):
-  - datasets/ohenro_no_akari/output/henro-no-akari-route.geojson
-      FeatureCollection with per-feature stable ids and per-route stats.
-  - datasets/ohenro_no_akari/output/manifest.json
-      Source URL + bundle SHA-256 + feature/point/length/bounds accounting.
-
-The bundle is minified JavaScript, so object keys may be unquoted; a small
-tokenizer re-quotes keys before feeding the literal to json.
+Use ``python3 -m datasets.ohenro_no_akari`` to discover and download the current
+app module graph, retain immutable HTML/bundle provenance, and publish validated
+outputs. This script is the offline extractor; it never downloads or executes JS.
+Source styling, stable segment IDs, and the original output schema are retained.
 """
 import argparse
-import hashlib
+import ast
 import json
-import os
+import math
+from pathlib import Path
 import re
-import tempfile
-import urllib.request
+import sys
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(SCRIPT_DIR, "data")
-BUNDLE_PATH = os.path.join(DATA_DIR, "MapPage.js")
-OUT_DIR = os.path.join(SCRIPT_DIR, "..", "output")
-BUNDLE_URL = "https://app.henro-no-akari.com/assets/MapPage.js"
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-ARRAY_RE = re.compile(r'=\s*(\[\{type:"Feature")')
+from datasets._pipeline import atomic_json, digest
+
+APP_URL = "https://app.henro-no-akari.com/"
+DATASET = Path(__file__).resolve().parents[1]
+TOKEN_RE = re.compile(
+    r'(?P<space>\s+)|(?P<comment>//[^\n]*|/\*[\s\S]*?\*/)|'
+    r'(?P<string>"(?:\\[\s\S]|[^"\\])*"|\'(?:\\[\s\S]|[^\'\\])*\')|'
+    r'(?P<template>`(?:\\[\s\S]|[^`\\])*`)|'
+    r'(?P<identifier>[A-Za-z_$][\w$]*)|'
+    r'(?P<number>-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)|'
+    r'(?P<punct>[\s\S])'
+)
+REGEX_RE = re.compile(r"/(?:\\[^\n]|\[(?:\\[^\n]|[^\]\\\n])*\]|[^/\\\n])+/[a-z]*")
+EXPRESSION_PREFIXES = {"", "=", "(", "[", "{", ":", ",", ";", "!", "?", "&", "|",
+                       "+", "-", "*", "%", "/", "~", ">", "return", "throw", "case", "typeof", "void", "delete"}
+
+
+def tokens(text):
+    """Yield lexical tokens without interpreting strings, templates, or regexes."""
+    position = 0
+    previous = ""
+    while position < len(text):
+        if (text[position] == "/" and not text.startswith(("//", "/*"), position) and
+                previous in EXPRESSION_PREFIXES):
+            regex = REGEX_RE.match(text, position)
+            if regex:
+                yield "regex", regex.group(), position, regex.end()
+                position = regex.end()
+                previous = "regex"
+                continue
+        match = TOKEN_RE.match(text, position)
+        position = match.end()
+        kind = match.lastgroup
+        if kind not in ("space", "comment"):
+            previous = match.group()
+            yield kind, previous, match.start(), position
+
+
+def string_value(token):
+    # literal_eval parses a string only; neither parser evaluates JavaScript.
+    return json.loads(token) if token.startswith('"') else ast.literal_eval(token)
+
+
+def module_imports(text):
+    """Collect literal static and dynamic ES module dependencies without JS eval."""
+    previous = []
+    imports = set()
+    for kind, value, _, _ in tokens(text):
+        if kind == "string" and (previous[-1:] in (["from"], ["import"]) or
+                                 previous[-2:] == ["import", "("]):
+            imports.add(string_value(value))
+        previous = (previous + [value])[-2:]
+    return sorted(imports)
 
 
 def quote_js_object_literal(text):
-    """Re-quote unquoted JS object keys so the literal is valid JSON.
-
-    Only touches identifier keys followed by ':' outside string literals;
-    bare identifiers (true/false/null) are passed through unchanged.
-    """
+    """Turn static JS object keys, strings, and leading-dot numbers into JSON."""
+    source_tokens = list(tokens(text))
     out = []
-    i = 0
-    n = len(text)
-    while i < n:
-        c = text[i]
-        if c == '"':
-            j = i + 1
-            while j < n:
-                if text[j] == "\\":
-                    j += 2
-                    continue
-                if text[j] == '"':
-                    j += 1
-                    break
-                j += 1
-            out.append(text[i:j])
-            i = j
-        elif c in "{}[],:":
-            out.append(c)
-            i += 1
-        elif c.isdigit() or c in "+-.":
-            if c == "." and (i == 0 or text[i - 1] in ":,["):
-                out.append("0")
-            j = i
-            while j < n and (text[j].isdigit() or text[j] in ".+-eE"):
-                j += 1
-            out.append(text[i:j])
-            i = j
-        elif c.isalpha() or c in "_$":
-            j = i
-            while j < n and (text[j].isalnum() or text[j] in "_$"):
-                j += 1
-            ident = text[i:j]
-            k = j
-            while k < n and text[k] in " \t\n":
-                k += 1
-            if k < n and text[k] == ":":
-                out.append('"' + ident + '"')
-            else:
-                out.append(ident)
-            i = j
+    for i, (kind, value, _, _) in enumerate(source_tokens):
+        if kind == "string":
+            out.append(json.dumps(string_value(value), ensure_ascii=False))
+        elif kind == "identifier" and i + 1 < len(source_tokens) and source_tokens[i + 1][1] == ":":
+            out.append(json.dumps(value))
+        elif kind == "number" and value.startswith((".", "-.")):
+            out.append(value.replace(".", "0.", 1))
+        elif kind == "template":
+            raise ValueError("Template expression in route data is not static JSON")
         else:
-            out.append(c)
-            i += 1
+            out.append(value)
     return "".join(out)
 
 
+def route_arrays(bundle):
+    """Find every array containing direct GeoJSON Features, balancing strings safely.
+
+    Mark all Feature arrays, not just valid LineStrings: a malformed second array
+    must not silently disappear while a plausible first array is published.
+    """
+    stack = []
+    previous = []
+    arrays = []
+    for kind, value, start, end in tokens(bundle):
+        if value in ("[", "{") and kind == "punct":
+            stack.append({"kind": value, "start": start, "feature": False})
+        elif value in ("]", "}") and kind == "punct":
+            expected = "[" if value == "]" else "{"
+            if stack and stack[-1]["kind"] == expected:
+                opened = stack.pop()
+                if opened["kind"] == "[" and opened["feature"]:
+                    arrays.append(bundle[opened["start"]:end])
+        elif (kind == "string" and value in ('"Feature"', "'Feature'") and
+              len(previous) == 2 and previous[-1] == ":" and previous[-2] in ("type", '"type"', "'type'") and
+              len(stack) >= 2 and stack[-1]["kind"] == "{" and stack[-2]["kind"] == "["):
+            stack[-2]["feature"] = True
+        previous = (previous + [value])[-2:]
+    if any(item["feature"] for item in stack):
+        raise ValueError("Unbalanced route array in JavaScript bundle")
+    return arrays
+
+
 def extract_route_array(bundle):
-    """Return the raw route array text (balanced brackets) from the bundle."""
-    m = ARRAY_RE.search(bundle)
-    if not m:
-        raise SystemExit("route array (=[{type:\"Feature\") not found in MapPage.js")
-    start = m.start(1)
-    depth = 0
-    i = start
-    while i < len(bundle):
-        if bundle[i] == "[":
-            depth += 1
-        elif bundle[i] == "]":
-            depth -= 1
-            if depth == 0:
-                return bundle[start:i + 1]
-        i += 1
-    raise SystemExit("unbalanced route array in MapPage.js")
+    arrays = route_arrays(bundle)
+    if len(arrays) != 1:
+        raise ValueError(f"Expected exactly one complete route array, found {len(arrays)}")
+    return arrays[0]
 
 
 def great_circle_length_m(points):
-    import math
-    r = 6371000.0
     total = 0.0
     for a, b in zip(points, points[1:]):
-        lat1, lon1, lat2, lon2 = (
-            math.radians(a[1]),
-            math.radians(a[0]),
-            math.radians(b[1]),
-            math.radians(b[0]),
-        )
+        lat1, lon1, lat2, lon2 = map(math.radians, (a[1], a[0], b[1], b[0]))
         h = math.sin((lat2 - lat1) / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin((lon2 - lon1) / 2) ** 2
-        total += 2 * r * math.asin(math.sqrt(h))
+        total += 2 * 6371000.0 * math.asin(min(1.0, math.sqrt(h)))
     return total
 
 
-def build_route(bundle_text):
-    raw = extract_route_array(bundle_text)
-    features = json.loads(quote_js_object_literal(raw))
+def accounting(features):
+    if not isinstance(features, list) or not features:
+        raise ValueError("Empty or invalid route features")
+    west = south = float("inf")
+    east = north = float("-inf")
+    points = 0
+    length = 0.0
+    for feature in features:
+        if (not isinstance(feature, dict) or feature.get("type") != "Feature" or
+                not isinstance(feature.get("properties"), dict) or
+                not isinstance(feature.get("geometry"), dict) or
+                feature["geometry"].get("type") != "LineString"):
+            raise ValueError("Expected only complete GeoJSON LineString Features")
+        coords = feature["geometry"].get("coordinates")
+        if not isinstance(coords, list) or len(coords) < 2:
+            raise ValueError("Degenerate route segment")
+        for coordinate in coords:
+            if (not isinstance(coordinate, list) or len(coordinate) not in (2, 3) or
+                    not all(type(v) in (int, float) and math.isfinite(v) for v in coordinate) or
+                    not (131 < coordinate[0] < 136 and 31.5 < coordinate[1] < 35.5)):
+                raise ValueError("Invalid Shikoku route coordinate")
+            west, south = min(west, coordinate[0]), min(south, coordinate[1])
+            east, north = max(east, coordinate[0]), max(north, coordinate[1])
+        segment_length = great_circle_length_m(coords)
+        if segment_length <= 0:
+            raise ValueError("Zero-length route segment")
+        points += len(coords)
+        length += segment_length
+    return {"feature_count": len(features), "point_count": points,
+            "total_length_m": round(length, 2), "bounds": [west, south, east, north]}
+
+
+def build_route(bundle_text, source_url=APP_URL):
+    features = json.loads(quote_js_object_literal(extract_route_array(bundle_text)))
+    counts = accounting(features)
     out_features = []
-    min_lng = min_lat = float("inf")
-    max_lng = max_lat = float("-inf")
-    total_pts = 0
-    total_len = 0.0
-    for i, f in enumerate(features):
-        coords = f["geometry"]["coordinates"]
-        for p in coords:
-            min_lng, min_lat = min(min_lng, p[0]), min(min_lat, p[1])
-            max_lng, max_lat = max(max_lng, p[0]), max(max_lat, p[1])
-        total_pts += len(coords)
-        total_len += great_circle_length_m(coords)
-        props = dict(f.get("properties", {}))
-        props["id"] = f"henro-no-akari-{i:04d}"
-        props["index"] = i
-        props["num_points"] = len(coords)
-        props["length_m"] = round(great_circle_length_m(coords), 2)
-        out_features.append({
-            "type": "Feature",
-            "properties": props,
-            "geometry": f["geometry"],
-        })
-    return {
-        "type": "FeatureCollection",
-        "name": "henro-no-akari-route",
-        "features": out_features,
-    }, {
+    for i, feature in enumerate(features):
+        coords = feature["geometry"]["coordinates"]
+        properties = dict(feature["properties"])
+        properties.update(id=f"henro-no-akari-{i:04d}", index=i,
+                          num_points=len(coords), length_m=round(great_circle_length_m(coords), 2))
+        out_features.append({"type": "Feature", "properties": properties, "geometry": feature["geometry"]})
+    return {"type": "FeatureCollection", "name": "henro-no-akari-route", "features": out_features}, {
         "schema_version": 1,
         "kind": "ohenro_no_akari_web_route_reference",
         "source_name": "遍路のあかり+ (jp.co.yonden.henronoakari) web app",
-        "source_url": BUNDLE_URL,
+        "source_url": source_url,
         "projection": "EPSG:4326 (WGS84)",
         "note": (
-            "Walking pilgrim route embedded in the Henro no Akari web app "
-            "Leaflet map bundle. Road-level LineString segments with Leaflet "
-            "styling props preserved. NOT official and NOT a navigation "
-            "guarantee; use as an independent reference for cross-checking "
-            "arukihenro_routes / datasets.sekaiisan_henro."
+            "Walking pilgrim route embedded in the Henro no Akari web app Leaflet map bundle. "
+            "Road-level LineString segments with Leaflet styling props preserved. "
+            "NOT official and NOT a navigation guarantee; use as an independent reference "
+            "for cross-checking arukihenro_routes / datasets.sekaiisan_henro."
         ),
-        "accounting": {
-            "feature_count": len(out_features),
-            "point_count": total_pts,
-            "total_length_m": round(total_len, 2),
-            "bounds": [min_lng, min_lat, max_lng, max_lat],
-        },
+        "accounting": counts,
     }
 
 
-def atomic_write_json(path, data):
-    directory = os.path.dirname(path) or "."
-    os.makedirs(directory, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=directory, prefix=".henro-no-akari-", suffix=".tmp")
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            json.dump(data, handle, ensure_ascii=False, indent=2, sort_keys=True)
-            handle.write("\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(tmp, path)
-    except BaseException:
-        try:
-            os.unlink(tmp)
-        except OSError:
-            pass
-        raise
+def validate_route(collection, manifest):
+    if collection.get("type") != "FeatureCollection" or collection.get("name") != "henro-no-akari-route":
+        raise ValueError("Invalid route collection")
+    features = collection["features"]
+    counts = accounting(features)
+    if manifest.get("accounting") != counts:
+        raise ValueError("Route manifest accounting differs from geometry")
+    for i, feature in enumerate(features):
+        props = feature["properties"]
+        coords = feature["geometry"]["coordinates"]
+        if (props.get("id") != f"henro-no-akari-{i:04d}" or props.get("index") != i or
+                props.get("num_points") != len(coords) or
+                props.get("length_m") != round(great_circle_length_m(coords), 2)):
+            raise ValueError("Route segment identity or accounting mismatch")
+    if (manifest.get("schema_version") != 1 or manifest.get("kind") != "ohenro_no_akari_web_route_reference" or
+            not isinstance(manifest.get("source_url"), str)):
+        raise ValueError("Invalid route manifest schema")
+    return counts
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--bundle", default=BUNDLE_PATH,
-                        help="local MapPage.js snapshot (default: %(default)s)")
-    parser.add_argument("--fetch", action="store_true",
-                        help="download the bundle into data/ (default if missing)")
-    parser.add_argument("--force", action="store_true",
-                        help="re-download the bundle even if data/MapPage.js exists")
-    parser.add_argument("--out-dir", default=OUT_DIR,
-                        help="output directory (default: %(default)s)")
-    args = parser.parse_args()
-
-    bundle_path = args.bundle
-    if args.force or (args.fetch and not os.path.exists(bundle_path)):
-        os.makedirs(DATA_DIR, exist_ok=True)
-        with urllib.request.urlopen(BUNDLE_URL, timeout=60) as resp, \
-                open(bundle_path, "wb") as handle:
-            data = resp.read()
-            handle.write(data)
-        print(f"fetched {BUNDLE_URL} -> {bundle_path} ({len(data)} bytes)")
-    if not os.path.exists(bundle_path):
-        raise SystemExit(f"bundle not found: {bundle_path} (use --fetch to download)")
-
-    with open(bundle_path, "rb") as f:
-        bundle_bytes = f.read()
-    sha256 = hashlib.sha256(bundle_bytes).hexdigest()
-    bundle_text = bundle_bytes.decode("utf-8")
-
-    fc, manifest = build_route(bundle_text)
-    manifest["source_sha256"] = sha256
-
-    os.makedirs(args.out_dir, exist_ok=True)
-    geojson_path = os.path.join(args.out_dir, "henro-no-akari-route.geojson")
-    manifest_path = os.path.join(args.out_dir, "manifest.json")
-    atomic_write_json(geojson_path, fc)
-    atomic_write_json(manifest_path, manifest)
-
-    acc = manifest["accounting"]
-    print(f"features={acc['feature_count']} points={acc['point_count']} "
-          f"length_km={acc['total_length_m']/1000:.1f}")
-    print(f"bounds={acc['bounds']}")
-    print(f"sha256={sha256}")
-    print(f"  -> {geojson_path}")
-    print(f"  -> {manifest_path}")
+    parser.add_argument("--bundle", type=Path, default=Path(__file__).parent / "data/MapPage.js")
+    parser.add_argument("--source-url", default=APP_URL, help="original URL of the local bundle")
+    parser.add_argument("--out-dir", type=Path, default=DATASET / "output")
+    args = parser.parse_args(argv)
+    collection, manifest = build_route(args.bundle.read_text(encoding="utf-8"), args.source_url)
+    manifest["source_sha256"] = digest(args.bundle)
+    validate_route(collection, manifest)
+    atomic_json(args.out_dir / "henro-no-akari-route.geojson", collection)
+    atomic_json(args.out_dir / "manifest.json", manifest)
+    print(json.dumps(manifest["accounting"], ensure_ascii=False))
 
 
 if __name__ == "__main__":
