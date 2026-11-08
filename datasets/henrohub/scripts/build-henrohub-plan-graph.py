@@ -45,6 +45,13 @@ import math
 import os
 import tempfile
 from collections import defaultdict
+from bisect import bisect_right
+from pathlib import Path
+import sys
+
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from datasets.henrohub.validation import validate_graph, validate_routes
 
 R = 6371008.8
 LON0 = 133.75
@@ -237,6 +244,7 @@ def _simplify(edges: list[dict], keep_nodes: set,
         new_edge = {
             "id": "HHE_" + _hash16(_canon({
                 "from": a, "to": b,
+                "edges": sorted((e1["id"], e2["id"])),
                 "first": ["%.6f" % cleaned[0][0], "%.6f" % cleaned[0][1]],
                 "last": ["%.6f" % cleaned[-1][0], "%.6f" % cleaned[-1][1]],
             })),
@@ -331,9 +339,17 @@ def _proximity_joins(edges: list[dict], node_coords: dict,
             })
         else:
             snode = _node_id(lon_p, lat_p)
+            if snode == nid:
+                continue
+            source_coords = edges[best["edge"]]["coordinates"]
+            source_metric = segs[best["edge"]]
+            index = min(len(source_coords) - 2, bisect_right(source_metric["cum"], best["measure"]) - 1)
+            span = source_metric["cum"][index + 1] - source_metric["cum"][index]
+            fraction = (best["measure"] - source_metric["cum"][index]) / span if span else 0.0
+            elevation = source_coords[index][2] + fraction * (source_coords[index + 1][2] - source_coords[index][2])
             splits[best["edge"]].append({
                 "measure": best["measure"], "node_id": snode,
-                "wgs84": [lon_p, lat_p],
+                "wgs84": [lon_p, lat_p, elevation],
             })
             joins.append({
                 "id": "HHJ_" + _hash16(_canon({"a": nid, "b": snode})),
@@ -349,8 +365,8 @@ def _proximity_joins(edges: list[dict], node_coords: dict,
             final.append(edge)
             continue
         seg = segs[i]
-        cut_list = [{"measure": 0.0, "node_id": edge["from"], "wgs84": edge["coordinates"][0][:2]},
-                    {"measure": seg["length"], "node_id": edge["to"], "wgs84": edge["coordinates"][-1][:2]}]
+        cut_list = [{"measure": 0.0, "node_id": edge["from"], "wgs84": edge["coordinates"][0]},
+                    {"measure": seg["length"], "node_id": edge["to"], "wgs84": edge["coordinates"][-1]}]
         cut_list.extend(cuts)
         cut_list.sort(key=lambda c: (c["measure"], c["node_id"]))
         for j in range(len(cut_list) - 1):
@@ -611,8 +627,10 @@ def main(argv: list[str] | None = None) -> int:
 
     with open(args.input, encoding="utf-8") as stream:
         data = json.load(stream)
+    validate_routes(data)
     segs = _line_parts(data.get("features", []))
     graph = _build(segs, args.join_m, args.proximity_m)
+    validate_graph(graph, data)
     _write_atomic(args.output, graph)
     acct = graph["accounting"]
     print("build-henrohub-plan-graph: segments=%d nodes=%d edges=%d "

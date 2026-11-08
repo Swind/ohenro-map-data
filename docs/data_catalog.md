@@ -28,6 +28,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
 | 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON | 319 LineString / 28,405 座標 | 一日一斉おもてなし遍路道ウォーク覆蓋；不是通行／維護保證 |
+| Henro Hub 更新來源／報告 | `datasets/henrohub/raw/{current.json,snapshots/}`、`datasets/henrohub/reports/pipeline.json` | JSON / GeoJSON | 1,884 routes；release `henro-route-network-20260927-1028` | 公開 channel/manifest 驗證下載；個人使用，不授予再散布權 |
 | Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,471（2.26.111） | Henro Helper app，88 札所；另有 5 筆非空間原始記錄 |
 | Henro Helper 原始快照／建置報告 | `datasets/henro_helper/raw/{current.json,snapshots/}`、`datasets/henro_helper/reports/pipeline.json` | XAPK/APK / JSON | 最新 ARM64 archive 240,093,231 bytes | API 版本／SHA1、本機 SHA256、native libs、產出 hash 與完整 accounting |
 | OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
@@ -173,13 +174,26 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 |---|---|---|---|
 | 步行遍路 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON，90 routes / 91 maps / 324 lines / 933 points | schema v1：每 route 有 region/title/from/to_temple/temple_range；每 map 有 `lines` + `points` |
 | OHenro 88 | `datasets/ohenro88/output/ohenro88-routes.geojson` | GeoJSON，172 線幾何（67 LineString + 105 MultiLineString）＋108 Point | App 抽取，路線含 `[lon,lat,elev]` |
-| Henro Hub | `datasets/henrohub/output/henrohub-routes.geojson` | GeoJSON，1884 LineString | properties: `route_id`/`route_role`(canonical_shikoku88/unique_alternative/transition_connector/continuity_fallback)/`route_class`(black/red/green/blue/purple/special)/`route_sets`/`name`。**授權未定，非正式管線** |
+| Henro Hub | `datasets/henrohub/output/henrohub-routes.geojson` | GeoJSON，1884 LineString | properties: `route_id`/`route_role`(canonical_shikoku88/unique_alternative/transition_connector/continuity_fallback)/`route_class`(black/red/green/blue/purple/special)/`route_sets`/`name`。自動更新公開 release；**授權未定，個人使用** |
 | Henro Helper | `datasets/henro_helper/output/`（`henro-helper-routes.geojson` + 各 `*.geojson`） | GeoJSON，1,586 LineString + 2,501 Point（2.26.111） | 依 App layer 拆分（black/red/...、itinerary_*、accommodations_* 等）；操作見 `datasets/README.md` 的 Henro Helper 一鍵更新 |
 | 遍路のあかり | `datasets/ohenro_no_akari/output/henro-no-akari-route.geojson` | GeoJSON，319 | + `manifest.json` |
 | 四國自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail.geojson` / `shikoku-nature-trail.json` | GeoJSON / JSON，123 courses / 145 segments | json 含 tourism_spots + KML Placemarks |
 | Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON，128 LineString | 水谷遍路導覽圖路線；另有 overlay 與 routes-only PMTiles |
 | 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON，319 LineString / 28,405 座標 | 原 Placemark、名稱、folders、description、style、原次序與高度原樣保留；不拼接或簡化 |
+
+Henro Hub 一鍵入口 `python3 -m datasets.henrohub`：讀取公開 beta channel、
+release manifest 及其 planner GeoJSON，驗證 manifest 宣告的 size/SHA256 與
+所有 feature，保存 immutable snapshot/current，再產出 routes GeoJSON、
+main+alternative-only plan graph（3D 高程保留）與 `shikoku-henrohub.pmtiles`。
+支援 fetch/build/validate、run --local、run/build --force、`--source` 手動匯入。
+`reports/pipeline.json` 記錄來源 release/hash、設定／程式、三份產出的 hash 與
+routes/graph accounting；相同線上 release 實跑確認 skip、hash/mtime 不變。
+2026-11-09 全量 1,884 線／301,458 頂點；graph 2,309 nodes、2,840 edges、
+152 synthetic joins、4 components（largest 2,303）。修正 degree-2 收縮後
+不同平行 path 共用 edge ID 的問題，geometry lookup 不再覆蓋不同路徑。
+6 項邊界測試與實際前端 planRoute（寺 1→2→5，candidate，8,246m）通過。
+不抓取非本管線的 Supabase POI，不將商業資產視為開放授權。
 
 水谷一鍵入口 `python3 -m datasets.mizutani_henro_map`：更新／驗證 My Maps KML，
 保存不可變 snapshot，再產出 normalized JSON、routes/POIs/report/diff，

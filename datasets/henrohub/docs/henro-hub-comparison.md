@@ -126,3 +126,33 @@ henrohub POI 對 repo 的**附加價值主要在中盤**：bus/train/konbini/ons
 - `thematic/*.preview.geojson`、`thematic/{pilgrim_way,road_stress,surface}.web.geojson`
 - `poi-all.json`（3286 筆全欄位）
 - 分析腳本：`compare_routes.py` / `compare_groups.py` / `compare_pois.py` / `find_uncovered.py`
+
+## 7. 更新操作（不改寫上述歷史調查）
+
+```bash
+python3 -m datasets.henrohub                  # beta channel → 驗證 release → 全部衍生產出
+python3 -m datasets.henrohub fetch            # 僅更新已驗證的 immutable snapshot
+python3 -m datasets.henrohub build            # 本地 current snapshot → routes + graph + PMTiles
+python3 -m datasets.henrohub validate         # 檢查發布雜湊、schema、幾何及 accounting
+python3 -m datasets.henrohub --local          # 不連網；未變則跳過
+python3 -m datasets.henrohub --source /path/to/planner.geojson
+```
+
+可用 `--raw-dir`、`--output-dir`、`--reports-dir` 指定資料目錄；`--force` 僅供
+run/build，`--source` 僅供 run/fetch 匯入原生 archived planner（舊的
+`raw/planner.geojson` 也可明確指定）。正常 run 每次重新查詢公開 beta channel，
+依 manifest 宣告路徑、SHA-256、bytes、feature count 下載和驗證，不固定舊 release。
+原始 channel、manifest、planner、provenance 保存在 `raw/snapshots/<hash>/`，
+驗證成功才原子更新 `raw/current.json`；錯誤／不完整下載不取代有效 current。
+
+每次完整 build 先暫存並驗證 `henrohub-routes.geojson`、
+`henrohub-plan-graph.json`、`shikoku-henrohub.pmtiles`，再逐檔原子發布，
+最後寫入 `reports/pipeline.json`。輸入、程式設定和所有輸出雜湊未變則跳過；
+中斷後報告與輸出不符會在下次重建。非阻塞 `.pipeline.lock` 防止同來源並行執行。
+既有 `scripts/build-henrohub-pmtiles.sh` 改為完整本地 build 入口，避免單獨覆寫 tiles。
+Graph 仍只納入 main + alternative；connector/fallback 僅保留在 GeoJSON/tiles。
+切分 traversal edge 時保留並插值來源高程，synthetic join 本身仍可為 2D。
+
+自動化不代表取得開放授權：所有產出仍限 **personal-use**，保留 Henro Hub attribution；
+不下載 Supabase POI，也不抓取本管線未使用的 thematic/section/profile 資產。
+上述 2026-09-07 比較數字與觀察保留為歷史記錄，不代表後續 release 的即時結果。

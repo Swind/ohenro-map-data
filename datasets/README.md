@@ -14,7 +14,7 @@
 | [shikoku_nature_trail](shikoku_nature_trail/) | 四國自然步道網站與 My Maps | `python3 -m datasets.shikoku_nature_trail` |
 | [henroyado](henroyado/) | Henroyado 住宿；含 Google Maps 補座標快取 | `python3 -m datasets.henroyado` |
 | [min88_lodging](min88_lodging/) | min88 住宿 | `python3 -m datasets.min88_lodging` |
-| [henrohub](henrohub/) | Henro Hub release 路線與 graph | `scripts/` |
+| [henrohub](henrohub/docs/henro-hub-comparison.md) | Henro Hub 公開 release 路線與 graph（個人使用） | **已一鍵化**：`python3 -m datasets.henrohub`（channel／manifest 更新→routes／graph／PMTiles→驗證；未變跳過） |
 | [henro_helper](#henro-helper-一鍵更新) | Henro Helper APK 路線與 POI | **已一鍵化**：`python3 -m datasets.henro_helper`（APKPure 更新→ARM64 靜態抽取→驗證發布；未變跳過） |
 | [ohenro88](ohenro88/) | OHenro 88 APK 路線與 graph | `reference/build_reference.py`、`scripts/` |
 | [ohenro_no_akari](ohenro_no_akari/) | 四國電力「遍路のあかり」網站路線 | `reference/build_web_reference.py` |
@@ -57,8 +57,8 @@ Docker Compose 同時掛載 `datasets/` 與共用 `output/`。
 
 完整 schema、數量與資料用途見 [資料目錄](../docs/data_catalog.md)。
 
-Henro Hub 的原始 release 檔先前位於暫存目錄，目前本機只保有衍生產出；
-下次下載請存為 `henrohub/raw/planner.geojson`，再執行 `henrohub/scripts/build-henrohub-routes.py`。
+Henro Hub 由公開 channel/manifest 自動發現當前 release 並驗證 SHA256；
+手動保存的 planner GeoJSON 可用 `python3 -m datasets.henrohub --source <檔案>` 匯入。
 
 ## Henro Helper 一鍵更新
 

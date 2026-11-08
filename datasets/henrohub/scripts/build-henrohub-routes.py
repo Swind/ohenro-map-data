@@ -4,7 +4,7 @@
 Reads the henrohub planner GeoJSON (route.planner.geojson) and emits a
 deterministic, byte-stable FeatureCollection aligned with map-preview's
 existing route-layer conventions: `kind=line`, stable `route_id`,
-`route_role` (main / alternative / connector / fallback), `route_class`
+`route_role` (canonical_shikoku88 / unique_alternative / transition_connector / continuity_fallback), `route_class`
 (colour), `route_sets`, a human-readable `name`, and the elevation summary
 fields that henrohub already computes per feature.
 
@@ -19,6 +19,10 @@ import re
 import sys
 from pathlib import Path
 from collections import Counter
+
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from datasets.henrohub.validation import validate_routes
 
 ROLE_ORDER = ["canonical_shikoku88", "unique_alternative",
               "transition_connector", "continuity_fallback"]
@@ -58,6 +62,7 @@ def display_name(rid: str) -> str:
 def convert(src: str, dst: str) -> dict:
     with open(src, encoding="utf-8") as fh:
         data = json.load(fh)
+    validate_routes(data, planner=True)
 
     features = []
     counts = Counter()
@@ -65,10 +70,6 @@ def convert(src: str, dst: str) -> dict:
         props = f.get("properties", {})
         rid = props.get("route_feature_id") or f.get("id")
         geom = f.get("geometry")
-        if not rid or not geom:
-            continue
-        if geom.get("type") not in ("LineString", "MultiLineString"):
-            continue
         role = props.get("route_role", "other")
         route_class = props.get("effective_route_class") or "other"
         counts[(role, route_class)] += 1
@@ -96,6 +97,8 @@ def convert(src: str, dst: str) -> dict:
         "name": "henrohub",
         "features": features,
     }
+    validate_routes(out)
+    Path(dst).parent.mkdir(parents=True, exist_ok=True)
     with open(dst, "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
     return {
