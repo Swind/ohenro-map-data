@@ -28,6 +28,8 @@ datasets/seichijunrei/.temples-build-*/
 datasets/sekaiisan_henro/.pipeline.lock
 datasets/sekaiisan_henro/.sekaiisan-build-*/
 datasets/arukihenro_routes/.pipeline.lock
+datasets/henro_helper/.pipeline.lock
+datasets/henro_helper/.henro-helper-build-*/
 
 # GSI DEM pipeline intermediate + output (re-buildable, see datasets/gsi/gsi-dem/README.md)
 work/

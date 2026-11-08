@@ -15,7 +15,7 @@
 | [henroyado](henroyado/) | Henroyado 住宿；含 Google Maps 補座標快取 | `python3 -m datasets.henroyado` |
 | [min88_lodging](min88_lodging/) | min88 住宿 | `python3 -m datasets.min88_lodging` |
 | [henrohub](henrohub/) | Henro Hub release 路線與 graph | `scripts/` |
-| [henro_helper](henro_helper/) | Henro Helper APK 路線與 POI | `reference/extract_routes.py` |
+| [henro_helper](#henro-helper-一鍵更新) | Henro Helper APK 路線與 POI | **已一鍵化**：`python3 -m datasets.henro_helper`（APKPure 更新→ARM64 靜態抽取→驗證發布；未變跳過） |
 | [ohenro88](ohenro88/) | OHenro 88 APK 路線與 graph | `reference/build_reference.py`、`scripts/` |
 | [ohenro_no_akari](ohenro_no_akari/) | 四國電力「遍路のあかり」網站路線 | `reference/build_web_reference.py` |
 | [omotenashi_henro_inspection](omotenashi_henro_inspection/) | 遍路道點檢活動 KML archive | `python3 -m datasets.omotenashi_henro_inspection` |
@@ -59,3 +59,37 @@ Docker Compose 同時掛載 `datasets/` 與共用 `output/`。
 
 Henro Hub 的原始 release 檔先前位於暫存目錄，目前本機只保有衍生產出；
 下次下載請存為 `henrohub/raw/planner.geojson`，再執行 `henrohub/scripts/build-henrohub-routes.py`。
+
+## Henro Helper 一鍵更新
+
+```bash
+python3 -m datasets.henro_helper                  # 查最新版、下載、抽取及驗證發布
+python3 -m datasets.henro_helper fetch            # 僅更新已驗證 APK/XAPK 快照
+python3 -m datasets.henro_helper run --local      # 使用本機 current 快照
+python3 -m datasets.henro_helper build            # 離線來源建置
+python3 -m datasets.henro_helper validate         # 產出 hash／schema／accounting 驗證
+python3 -m datasets.henro_helper run --force      # 強制重建（仍檢查遠端更新）
+python3 -m unittest discover datasets/henro_helper/tests
+```
+
+需要 Python 3.11+、`curl`、`git`。Blutter 使用固定 revision，自動下載至
+`work/henro-helper-tools/`，Python 依賴裝在其獨立 venv，不修改系統環境。
+Linux 主機另需 g++ >=13（或設定 `CXX` 使用 clang++ >=16）、cmake、ninja、
+pkg-config、libicu-dev、libcapstone-dev、python3-venv；缺少主機建置依賴時使用
+Docker 自動建置工具映像。首次執行會下載並編譯對應 Dart runtime；之後重用工具快取。
+`--local`／`build` 只免除 APK 來源下載，工具未快取時仍需網路。
+可用 `--raw-dir`／`--output-dir`／`--reports-dir`／`--tools-dir` 隔離執行。
+
+套件為 `com.henrohelper100.app`。採用 [EFF apkeep](https://github.com/EFForg/apkeep)
+的 APKPure App API 與 headers，用 curl 傳輸；API 仍可能回傳多個 ABI，
+先以 ZIP range 讀 XAPK manifest 選 ARM64。完整下載後檢查來源 SHA1、ZIP CRC、
+package/version 與兩個 ARM64 ELF，再保存 `raw/snapshots/<sha256>/`、更新
+`raw/current.json`。相同已驗證版本不重抓完整 archive；保留歷史來源。
+
+只靜態抽取 `libapp.so`／`libflutter.so`，不安裝或執行 App。來源、抽取程式與
+全部產出 hash 未變就跳過建置。全部 GeoJSON 驗證成功才逐檔 atomic replace，
+最後寫 `reports/pipeline.json`；**不是跨檔交易**，中斷後重跑修復。
+網頁挑戰／API schema 改變或來源損壞會失敗，不用 HTML 冒充 APK、不覆蓋有效產出。
+來源 SHA1／本機 SHA256／CRC 是完整性檢查，**不是開發者簽章驗證**。
+APKPure 僅供研究／個人靜態分析，App 資料非官方引導線，未加入正式 App manifest。
+產出位置、欄位與來源記錄 accounting 見 [資料目錄](../docs/data_catalog.md)。

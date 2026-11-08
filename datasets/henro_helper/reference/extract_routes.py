@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-"""Extract Henro Helper route geometry from blutter disassembly into GeoJSON.
+"""Extract Henro Helper's static Dart route/POI literals as GeoJSON.
 
-Each route class in the app is a Dart static literal (List<List<List<double>>>):
-  - 3-double points (literal3) = [lon, lat, elevation]
-  - 2-double points (literal2) = [lon, lat]
-Polylines are delimited by `_GrowableList._literal()` (no number) calls.
+Run through ``python3 -m datasets.henro_helper`` for validated APK acquisition,
+Blutter bootstrap, staged extraction and publication.
 """
 import argparse
 import json
@@ -12,63 +10,19 @@ import os
 import re
 import sys
 
+from pathlib import Path
+
+from datasets.henro_helper.route_literals import parse_layer as parse_route_layer
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ASM_DIR = os.path.join(SCRIPT_DIR, "blutter-out", "asm", "henro_helper_real")
 PP_PATH = os.path.join(SCRIPT_DIR, "blutter-out", "pp.txt")
 OUT_DIR = os.path.join(SCRIPT_DIR, "..", "output")
 
-FLOAT_RE = re.compile(r'^\s*// 0x[0-9a-f]+: r\d+ = (-?\d+\.\d+)')
-LIT_RE = re.compile(r'^\s*// 0x[0-9a-f]+: r0 = _GrowableList\._literal(\d*)\(\)$')
 
 
 def parse_layer(filename):
-    """Return (polylines, skipped) where each polyline is a list of points.
-
-    A point is `[lon, lat, elevation]` (literal3) or `[lon, lat]` (literal2).
-    Some literal3/literal2 calls reuse previously-created point objects (the
-    compiler hoisted shared values into fp slots); those carry no fresh
-    coordinates and are skipped (their coordinates already appear in adjacent
-    polylines). They are counted in `skipped`.
-    """
-    path = os.path.join(ASM_DIR, filename)
-    polylines = []
-    cur = []
-    pending = []
-    connectors = 0
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            m = FLOAT_RE.match(line)
-            if m:
-                pending.append(float(m.group(1)))
-                if len(pending) > 16:
-                    pending = pending[-16:]
-                continue
-            m = LIT_RE.match(line)
-            if m:
-                nstr = m.group(1)
-                if nstr == "":
-                    # _GrowableList._literal(): a completed polyline is wrapped.
-                    if cur:
-                        polylines.append(cur)
-                        cur = []
-                    pending = []
-                else:
-                    n = int(nstr)
-                    if n in (2, 3) and len(pending) >= n:
-                        cur.append(pending[-n:])
-                        pending = []
-                    else:
-                        # Reference construction: the compiler reuses previously
-                        # created point objects (fp slots) to build a connector
-                        # polyline (_literal2/3/7/...). This marks a boundary.
-                        if cur:
-                            polylines.append(cur)
-                            cur = []
-                        pending = []
-                        connectors += 1
-    if cur:
-        polylines.append(cur)
-    return polylines, connectors
+    """Reconstruct complete paths, including point references and singletons."""
+    return parse_route_layer(Path(ASM_DIR) / filename)
 
 
 def stats(polyline):
@@ -130,24 +84,25 @@ def parse_itinerary_days(filename, alloc_marker):
     regs = {}
     records = []
     cur = None
-    for line in open(path, encoding="utf-8"):
-        if alloc_marker in line:
-            if cur:
-                records.append(cur)
-            cur = {}
-            continue
-        if cur is None:
-            continue
-        m = STR_RE.match(line)
-        if m:
-            regs[m.group(1)] = m.group(2)
-            continue
-        m = STORE_RE.search(line)
-        if m:
-            off = m.group(1)
-            reg = m.group(2)
-            if off in ("7", "33", "37", "3b") and reg in regs:
-                cur[off] = regs[reg]
+    with open(path, encoding="utf-8") as stream:
+        for line in stream:
+            if alloc_marker in line:
+                if cur:
+                    records.append(cur)
+                cur = {}
+                continue
+            if cur is None:
+                continue
+            m = STR_RE.match(line)
+            if m:
+                regs[m.group(1)] = m.group(2)
+                continue
+            m = STORE_RE.search(line)
+            if m:
+                off = m.group(1)
+                reg = m.group(2)
+                if off in ("7", "33", "37", "3b") and reg in regs:
+                    cur[off] = regs[reg]
     if cur:
         records.append(cur)
     return records
@@ -237,20 +192,21 @@ def load_latlng_pool(path):
     """Map Obj!LatLng@<id> -> (lat, lon).  LatLng fields: off_8 = latitude, off_10 = longitude."""
     pool = {}
     cur = None
-    for line in open(path, encoding="utf-8"):
-        m = LATLNG_POOL_RE.search(line)
-        if m:
-            cur = m.group(1)
-            pool[cur] = {}
-            continue
-        if cur is None:
-            continue
-        m = LATLNG_OFF_RE.match(line.strip())
-        if m:
-            off, val = m.groups()
-            pool[cur][int(off, 16)] = float(val)
-            if len(pool[cur]) == 2:
-                cur = None
+    with open(path, encoding="utf-8") as stream:
+        for line in stream:
+            m = LATLNG_POOL_RE.search(line)
+            if m:
+                cur = m.group(1)
+                pool[cur] = {}
+                continue
+            if cur is None:
+                continue
+            m = LATLNG_OFF_RE.match(line.strip())
+            if m:
+                off, val = m.groups()
+                pool[cur][int(off, 16)] = float(val)
+                if len(pool[cur]) == 2:
+                    cur = None
     out = {}
     for ref, d in pool.items():
         lat, lon = d.get(0x8), d.get(0x10)
@@ -271,54 +227,57 @@ def parse_poi_class(filename, class_name):
     records = []
     cur = None
     pending_latlng = None
-    for line in open(path, encoding="utf-8"):
-        m = POI_ALLOC_RE.search(line)
-        if m:
-            if m.group(1) == class_name:
+    with open(path, encoding="utf-8") as stream:
+        for line in stream:
+            m = POI_ALLOC_RE.search(line)
+            if m:
                 if cur is not None:
                     records.append(cur)
-                # obj_reg = the record's own object register, learned from the
-                # first StoreField so stores into nested helper objects (which
-                # reuse other registers) are not mis-attributed.
-                cur = {"fields": {}, "obj_reg": None}
-            else:
-                cur = None
-            regs = {}
-            pending_latlng = None
-            continue
-        if cur is None:
-            continue
-        m = LATLNG_LOAD_RE.match(line)
-        if m:
-            pending_latlng = m.group(1)
-            continue
-        m = LATLNG_REF_RE.search(line)
-        if m and pending_latlng is not None:
-            regs[pending_latlng] = ("latlng", m.group(1))
-            pending_latlng = None
-            continue
-        m = STR_RE.match(line)
-        if m:
-            regs[m.group(1)] = ("str", m.group(2))
-            continue
-        m = POI_STORE_RE.search(line)
-        if m:
-            obj, off, val = m.groups()
-            if cur["obj_reg"] is None:
-                cur["obj_reg"] = obj
-            if obj != cur["obj_reg"]:
+                if m.group(1) == class_name:
+                    # The previous record is complete even if the next allocation
+                    # belongs to another class.
+                    # obj_reg = the record's own object register, learned from the
+                    # first StoreField so stores into nested helper objects (which
+                    # reuse other registers) are not mis-attributed.
+                    cur = {"fields": {}, "obj_reg": None}
+                else:
+                    cur = None
+                regs = {}
+                pending_latlng = None
                 continue
-            v = regs.get(val)
-            if v is not None:
-                cur["fields"]["field_%s" % off] = v
-            continue
-        m = ARRSTORE_RE.search(line)
-        if m:
-            obj, _, val = m.groups()
-            if obj == cur["obj_reg"]:
+            if cur is None:
+                continue
+            m = LATLNG_LOAD_RE.match(line)
+            if m:
+                pending_latlng = m.group(1)
+                continue
+            m = LATLNG_REF_RE.search(line)
+            if m and pending_latlng is not None:
+                regs[pending_latlng] = ("latlng", m.group(1))
+                pending_latlng = None
+                continue
+            m = STR_RE.match(line)
+            if m:
+                regs[m.group(1)] = ("str", m.group(2))
+                continue
+            m = POI_STORE_RE.search(line)
+            if m:
+                obj, off, val = m.groups()
+                if cur["obj_reg"] is None:
+                    cur["obj_reg"] = obj
+                if obj != cur["obj_reg"]:
+                    continue
                 v = regs.get(val)
                 if v is not None:
-                    cur["fields"].setdefault("field_17_array", []).append(v)
+                    cur["fields"]["field_%s" % off] = v
+                continue
+            m = ARRSTORE_RE.search(line)
+            if m:
+                obj, _, val = m.groups()
+                if obj == cur["obj_reg"]:
+                    v = regs.get(val)
+                    if v is not None:
+                        cur["fields"].setdefault("field_17_array", []).append(v)
     if cur is not None:
         records.append(cur)
     return records
@@ -440,6 +399,7 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     all_features = []
     report = []
+    accounting = {"routes": {}, "pois": {}}
     for filename, layer, rtype, swap in LAYERS:
         polylines, skipped = parse_layer(filename)
         if swap:
@@ -480,14 +440,17 @@ def main():
             features.append({
                 "type": "Feature",
                 "properties": props,
-                "geometry": {"type": "LineString", "coordinates": pl},
+                "geometry": ({"type": "Point", "coordinates": pl[0]} if len(pl) == 1
+                             else {"type": "LineString", "coordinates": pl}),
             })
-        if features:
-            fc = {"type": "FeatureCollection", "name": layer, "features": features}
-            with open(os.path.join(OUT_DIR, f"{layer}.geojson"), "w", encoding="utf-8") as f:
-                json.dump(fc, f, ensure_ascii=False)
+        fc = {"type": "FeatureCollection", "name": layer, "features": features}
+        with open(os.path.join(OUT_DIR, f"{layer}.geojson"), "w", encoding="utf-8") as f:
+            json.dump(fc, f, ensure_ascii=False, allow_nan=False)
         npts = sum(len(pl) for pl in polylines)
         report.append(f"{layer:15s} route_type={rtype:11s} polylines={len(polylines):5d} points={npts:7d} connectors={skipped:2d}")
+        accounting["routes"][layer] = {
+            "features": len(features), "points": npts, "reference_constructors": skipped,
+            "singleton_path_count": sum(len(pl) == 1 for pl in polylines) if layer != "connection" else 0}
         all_features.extend(features)
 
     combined = {"type": "FeatureCollection", "name": "henro-helper-routes",
@@ -507,17 +470,25 @@ def main():
         records = parse_poi_class(filename, cls)
         features = []
         skipped = 0
+        nonspatial = []
         for i, rec in enumerate(records):
             ft = poi_record_to_feature(layer, kind, cls, i, rec["fields"], latlng_pool)
             if ft is None:
-                skipped += 1
+                value = rec["fields"].get(POI_COORD_FIELD.get(cls, "field_7"))
+                if value and value[0] == "str" and all(v[0] == "str" for v in rec["fields"].values()):
+                    nonspatial.append({"index": i, "class": cls, "fields": rec["fields"],
+                                       "reason": "source_record_contains_text_not_coordinates"})
+                else:
+                    skipped += 1
                 continue
             features.append(ft)
-        if features:
-            fc = {"type": "FeatureCollection", "name": layer, "features": features}
-            with open(os.path.join(OUT_DIR, f"{layer}.geojson"), "w", encoding="utf-8") as f:
-                json.dump(fc, f, ensure_ascii=False)
+        fc = {"type": "FeatureCollection", "name": layer, "features": features}
+        with open(os.path.join(OUT_DIR, f"{layer}.geojson"), "w", encoding="utf-8") as f:
+            json.dump(fc, f, ensure_ascii=False, allow_nan=False)
         poi_report.append(f"{layer:24s} kind={kind:16s} records={len(records):4d} features={len(features):4d} skipped={skipped:2d}")
+        accounting["pois"][layer] = {
+            "records": len(records), "features": len(features), "unresolved_coordinates": skipped,
+            "nonspatial_records": nonspatial}
         poi_features.extend(features)
 
     poi_combined = {"type": "FeatureCollection", "name": "henro-helper-pois",
@@ -527,6 +498,8 @@ def main():
 
     print("\n".join(poi_report))
     print(f"\nPOI TOTAL features={len(poi_features)}")
+    with open(os.path.join(OUT_DIR, "extraction-report.json"), "w", encoding="utf-8") as f:
+        json.dump(accounting, f, ensure_ascii=False, indent=2, allow_nan=False)
     for fname in sorted(os.listdir(OUT_DIR)):
         size = os.path.getsize(os.path.join(OUT_DIR, fname))
         print(f"  {fname:45s} {size/1024:10.1f} KiB")
