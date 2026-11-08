@@ -19,7 +19,7 @@
 | [ohenro88](ohenro88/) | OHenro 88 APK 路線、區間與 graph | **已一鍵化**：`python3 -m datasets.ohenro88`（APKPure 更新→靜態 assets→routes／sections／graph→驗證；未變跳過） |
 | [ohenro_no_akari](ohenro_no_akari/) | 四國電力「遍路のあかり」網站路線 | **已一鍵化**：`python3 -m datasets.ohenro_no_akari`（HTML／module graph 發現來源 bundle→快照→GeoJSON／manifest→驗證） |
 | [omotenashi_henro_inspection](omotenashi_henro_inspection/docs/omotenashi_henro_inspection_source.md) | 遍路道點檢活動覆蓋（非通行保證） | **已一鍵化**：`python3 -m datasets.omotenashi_henro_inspection`（官方頁發現 KML→快照→GeoJSON／provenance→驗證；未變跳過） |
-| [info_pois](info_pois/) | 多來源統合 POI（衍生資料集） | `scripts/` |
+| [info_pois](../docs/data_catalog.md#11-統合資訊-poi--datasetsinfo_poisoutput) | 多來源統合 POI（衍生資料集，個人使用） | **已一鍵化**：`python3 -m datasets.info_pois`（刷新五來源 + OSM PBF→POI-only profile→GeoJSON／report／PMTiles→驗證；未變跳過） |
 
 ## 資料夾約定
 
@@ -59,6 +59,13 @@ Docker Compose 同時掛載 `datasets/` 與共用 `output/`。
 
 Henro Hub 由公開 channel/manifest 自動發現當前 release 並驗證 SHA256；
 手動保存的 planner GeoJSON 可用 `python3 -m datasets.henrohub --source <檔案>` 匯入。
+
+統合 POI 的 `python3 -m datasets.info_pois` 會更新所需五來源與 OSM PBF。
+`run --local`／`build` 使用現有來源，`validate` 獨立驗證來源與產出；
+`--basemap <PMTiles>` 可明確使用已有的 OSM `pois` layer。
+預設只建 OSM profile 的 z15 POI 層，無須海岸線，不把它冒充完整底圖。
+原有 `datasets/info_pois/scripts/build-info-pois.sh` 現委派完整 build，
+不再單獨替換 PMTiles；`--skip-osm` 只有明確指定時才排除 OSM。
 
 ## Henro Helper 一鍵更新
 

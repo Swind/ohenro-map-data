@@ -18,12 +18,13 @@ assets／manifest、route packs 與人工編輯成果。
 | 資料 | 主要檔案 | 格式 | 數量 | 一句話 |
 |---|---|---|---|---|
 | 步行遍路建置報告 | `datasets/arukihenro_routes/reports/pipeline.json` | JSON | 單一 normalized JSON | 來源快照／程式碼／產出 hash、summary；操作見 §2 |
-| 統合資訊 POI | `datasets/info_pois/output/pois.geojson` | GeoJSON | 16,763 點 | 精選 POI 統一分類，app 過濾用 |
-| 統合 POI 離線 | `datasets/info_pois/output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3769 tiles | 單一 `info_pois` layer |
+| 統合資訊 POI | `datasets/info_pois/output/pois.geojson` | GeoJSON | 16,877 點（2026-11-09） | 六來源精選 POI，保留原分類，不跨來源去重 |
+| 統合 POI 離線 | `datasets/info_pois/output/shikoku-info-pois.pmtiles` | PMTiles (MVT) | 3,694 tiles | 單一 `info_pois` layer，z0–14，個人使用 |
+| 統合 POI 來源／建置報告 | `datasets/info_pois/raw/osm-pois/`、`datasets/info_pois/reports/pipeline.json` | PMTiles / JSON | 3 份正式產出；OSM cache 僅 z15 | PBF／profile／輔助輸入 provenance、來源／產出 hashes 與分類 accounting |
 | 88 札所 | `datasets/seichijunrei/output/temples.geojson` / `temples.json` / `content.sqlite` | GeoJSON / JSON / SQLite | 88 | canonical 寺廟資料 |
 | 88 札所離線 tiles | `datasets/seichijunrei/output/shikoku-temples.pmtiles` | PMTiles (MVT) | 88 unique IDs | `temples` layer，z0–14，未加入共用 App manifest |
-| 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
-| 協議會一鍵建置報告 | `datasets/sekaiisan_henro/reports/pipeline.json` | JSON | 核心 15 檔／可選 17 檔 | snapshot、設定、驗證摘要、產出 hash；最新隔離實跑 594 廁所，見 §1.3 |
+| 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 594 廁所 | 四國遍路世界遺產協議會；另保留 1 coordinate defect |
+| 協議會一鍵建置報告 | `datasets/sekaiisan_henro/reports/pipeline.json` | JSON | 核心 15 檔／可選 17 檔 | snapshot、設定、驗證摘要、產出 hash；正式來源 accounting 見 §1.3 |
 | Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,572（2026-11-09） | 水谷遍路導覽圖；保留 1 筆未分類 warning |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
 | 自然步道來源／建置報告 | `datasets/shikoku_nature_trail/raw/{current.json,snapshots/}`、`datasets/shikoku_nature_trail/reports/pipeline.json` | HTML / images / KML / JSON | 123 courses / 123 KML / 1,040 images | 完整 archive 驗證後切換 current；五份產出整組驗證發布 |
@@ -42,7 +43,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
 | 高程 | `datasets/gsi/output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
 | 高程原始資料／建置索引 | `datasets/gsi/raw/`、`datasets/gsi/reports/{updates,pipeline}.json` | ZIP / JSON | 692 ZIP（2026-11-04 清單） | 官方四國版本清單、本機 SHA-256 與產出 hash |
-| 互動規劃 graph | `output/*-plan-graph.json` ×3 | JSON | — | map-preview 規劃用 |
+| 互動規劃 graph | `datasets/{sekaiisan_henro,ohenro88,henrohub}/output/*-plan-graph.json` | JSON | 3 來源 | map-preview 規劃用 |
 | App 離線包 manifest | `output/app-map-manifest.json` | JSON | — | Android 安裝清單 |
 
 ---
@@ -52,14 +53,34 @@ assets／manifest、route packs 與人工編輯成果。
 ### 1.1 統合資訊 POI — `datasets/info_pois/output/`
 
 ```text
-datasets/info_pois/output/pois.geojson        # FeatureCollection，16,763 點
-datasets/info_pois/output/pois-report.json    # per-source / per-category accounting
-datasets/info_pois/output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_pois layer，~2.7MB）
-
-> **設計原則**：統合 POI 只放**精選的特別有用點**（廁所/旅館/水/休息/溫泉/
-> 主要交通/便利商店 + 各來源核心 POI）。其餘 OSM 點（restaurant/shop/學校/
-> 醫院/crossing 等）**留在 basemap 的 `pois` layer 原生顯示**，不重複抽。
+datasets/info_pois/output/pois.geojson          # FeatureCollection；count 見 pois-report.json
+datasets/info_pois/output/pois-report.json      # per-source / per-category accounting
+datasets/info_pois/output/shikoku-info-pois.pmtiles # 單一 info_pois layer，z0–14
+datasets/info_pois/reports/pipeline.json        # source/config/output SHA256、size、summary
+datasets/info_pois/raw/osm-pois/<sha256>/       # OSM z15 pois-only PMTiles + provenance.json
 ```
+
+> **設計原則**：只放精選的特別有用點（廁所／旅館／水／休息／溫泉／主要交通／
+> 便利商店及各來源核心 POI）。其餘 OSM 點留在底圖原生 `pois` layer，不重複抽。
+
+一鍵更新：`python3 -m datasets.info_pois` 會依序更新 seichijunrei、sekaiisan、
+Mizutani、nature-trail、arukihenro 的完整來源管線，並刷新 OSM PBF，再建立三份產出。
+`run --local`／`build` 使用現有已發布的五來源及本機 PBF；`validate` 不連網，
+驗證所選來源、output hashes、geometry、分類／來源 accounting、唯一 IDs 及 tiles。
+`run/build --force` 強制重建；支援 raw/output/reports/datasets 路徑覆寫，
+但非預設 datasets root 只能用 local/build/validate，不會誤更新另一份來源。
+
+OSM 預設使用官方 Protomaps Basemap profile 的 `--layer=pois --minzoom=15 --maxzoom=15`，
+產生**僅供抽取的 POI 層**（不是完整底圖），不需要無關的海岸線／landcover。
+`provenance.json` 記錄 PBF、profile source/JAR、QRank／encoding、設定及 artifact hashes；
+只有完整驗證後才保存 immutable cache。初次建置需 Java 21+、Maven、git；
+工具／輔助資料未快取時，即使 local build 也可能需要網路。
+`--basemap <PMTiles>` 可明確選用已有的完整底圖或 POI 層，`--skip-osm` 必須明確指定；
+不因缺檔、壞 tile 或下載失敗自動省略 OSM。低階 JSON builder 仍可手動使用；
+shell `build-info-pois.sh` 現委派完整 build，不再單獨替換 PMTiles。
+
+所有來源與三份產出先驗證、複核來源未變後逐檔 atomic 發布，報告最後更新；
+**不是跨檔交易**。相同來源／程式／設定／產出 hash 跳過，缺檔／變更會重建。
 
 **統一 `category` taxonomy（app 過濾層級，16 類）**：
 
@@ -71,24 +92,31 @@ datasets/info_pois/output/shikoku-info-pois.pmtiles# 離線 tile（單一 info_p
 |---|---|
 | `poi_id` | 穩定唯一 ID（如 `MHM_P_...` / `SHT_tokushima_1` / `osm-...`） |
 | `source` | `temples` / `sekaiisan` / `mizutani` / `nature_trail` / `arukihenro` / `osm` |
-| `source_category` | **原來源分類**（不丟失，如 mizutani 的 `water_toilet_rest` 或 OSM 的 `restaurant`） |
+| `source_category` | **原來源分類**（不丟失，如 mizutani 的 `water_toilet_rest` 或 OSM 的 `toilets`） |
 | `category` | 統一分類 |
 | `name` | 顯示名稱 |
 | 其他 | source 特有：廁所有 `address`/`hours`/`toilet_type`/`washlet`/`prefecture`；temple 有 `number`；arukihenro 有 `photos`；mizutani 有 `description`/`url`/`icon`/`color`；OSM 有 `kind_detail`/`name_ja` |
 
 來源 → 統一 category 對應（詳見 `AGENTS.md`「統合資訊 POI」）：
 - `temples.geojson`（88）→ `temple`
-- `sekaiisan`：88 札所 → `temple`；599 廁所 → `toilet`
+- `sekaiisan`：88 札所 → `temple`；594 廁所 → `toilet`；1 筆 coordinate defect 不成為 POI
 - `mizutani`（exclude lodging）：`temple→temple`、`transport→transport`、`shop_supply→shop`、`food→food`、`wayfinding→wayfinding`、`warning_hazard→warning_hazard`、`experience_note→experience_note`、`other→other`；`water_toilet_rest` 以 name 啟發式拆 `rest_area`/`onsen`/`water`
 - `nature_trail`：tourism_spot + kml_poi → `sightseeing`
 - `arukihenro`（exclude lodging）：`temple_related→temple`、`shrine→shrine`、`waymarker/route_feature/elevation_mileage→wayfinding`、`food_shop→food`、`onsen→onsen`、`viewpoint/sightseeing→sightseeing`、`rest_area→rest_area`、`route_endpoint→route_endpoint`
-- `osm`（basemap `pois` layer，**精選 kind 抽出，11,371 點**）：`toilets→toilet`、
+- `osm`（Protomaps `pois` layer，**精選 kind 抽出，11,654 點**）：`toilets→toilet`、
   `drinking_water/water_point/fountain→water`、`hotel/guest_house/hostel/motel/camp_site/chalet→lodging`、
   `shelter/rest_area/picnic_table→rest_area`、`public_bath/hot_spring/sauna→onsen`、
   `station/bus_stop→transport`、`convenience→shop`；**其餘 ~490 種 kind 留在
-  basemap 原生 `pois` layer，不抽入統合 POI**。geometry 用 mercantile tile-bounds 內插回經緯度；`--skip-osm` 可跳過
+  basemap 原生 `pois` layer，不抽入統合 POI**。MVT 保留向下的 tile-y 後以 inverse Web Mercator 還原經緯度；`--skip-osm` 僅供明確排除 OSM
 
-**lodging 註記**：統合 POI 現含 OSM 的 lodging（hotel/guest_house/hostel/motel/camp_site 等 1,276 點）；Henroyado / min88 兩套專屬住宿管線**仍不在此**（各有獨立 JSONL + PMTiles）。**跨來源不去重**（同一寺廟/餐廳可能出現在多個 source，app 端以 source+category 過濾）。
+**lodging 註記**：統合 POI 含 OSM 的 lodging（hotel/guest_house/hostel/motel/camp_site 等 1,481 點）；Henroyado / min88 兩套專屬住宿管線**仍不在此**（各有獨立 JSONL + PMTiles）。**跨來源不去重**（同一寺廟/餐廳可能出現在多個 source，app 端以 source+category 過濾）。
+
+2026-11-09 全量：temples 88／sekaiisan 682／Mizutani 2,035／nature-trail 1,568／
+arukihenro 850／OSM 11,654 = **16,877**。Mizutani mixed bucket 分為 rest_area 124／
+onsen 51／water 2。既有 MVT 解碼的 tile-y 翻轉已修正（z15 回歸樣本原先偏移約
+765m），使用明確向下的 y 與 inverse Web Mercator，不用經緯度線性近似。
+實際建置／獨立 validate／37 tests 通過，涵蓋損壞座標、分類／來源 accounting、
+cache tamper、建置途中來源變動、發布失敗保留舊資料及 native header center 修正。
 
 ### 1.2 88 札所（canonical）
 
@@ -104,8 +132,8 @@ datasets/seichijunrei/output/shikoku-temples.pmtiles # temples layer，z0–14�
 canonical ID 使用 `properties.id`，不依賴 MVT 的 numeric feature ID。
 `reports/pipeline.json` 記錄 source_url/input_sha256/build_config/temple_count/outputs
 （size、sha256）；未變則跳過，`--force` 強制重建。操作見
-[`datasets/seichijunrei/README.md`](../datasets/seichijunrei/README.md)。首次隔離實跑的
-PMTiles 位於 `/tmp/opencode/temples-check/output/`，正式 output 需執行入口產生。
+[`datasets/seichijunrei/README.md`](../datasets/seichijunrei/README.md)。
+2026-11-09 已以一鍵入口在正式來源目錄建置並驗證四份產出。
 
 ### 1.3 協議會（世界遺産登錄推進協議會）— `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json`
 
@@ -118,10 +146,10 @@ plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層
 `outputs`（相對 output 路徑 → size/sha256）。全部未變時跳過重建。
 操作與 archive 位置見 [`datasets/sekaiisan_henro/README.md`](../datasets/sekaiisan_henro/README.md)。
 
-2026-11-05 全量隔離實跑（`/tmp/opencode/sekaiisan-check/`）：snapshot `dc5c5a86…`，
+2026-11-09 正式來源更新（snapshot `dc5c5a86…`）：
 1494 route Placemarks / 1506 lines / 36,350 vertices / 88 temples / **594 toilets + 1 defect**。
-正式 output 尚未替換（上方 599 為既有正式資料）。plan graph 為 2080 nodes /
-1744 traversal edges / **443 joins**；新 exporter 去除同一 bridge ID 的重複候選
+先前 2026-11-05 隔離實跑為同一 snapshot；正式 output 現已同步。
+plan graph 為 2080 nodes / 1744 traversal edges / **443 joins**；exporter 去除同一 bridge ID 的重複候選
 （舊版 452 joins 中有 9 筆重複），source/exact graph 不受影響。
 87 sections：candidate 34 / ambiguous 17 / disconnected 23 / anchor_review_required 13；
 87 corridors：corridor 28 / branched_corridor 23 / disconnected 23 / anchor_review_required 13。
@@ -131,9 +159,9 @@ plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層
   "schema_version": 1,
   "routes":    [/* 1506 條 LineString，含 prefecture/part/source_fid/raw_name */],
   "temples":   [/* 88 座，id=TEMPLE_N, number, name_jp */],
-  "toilets":   [/* 599 個，見下 */],
+  "toilets":   [/* 594 個，見下 */],
   "toilet_defects": [/* 1 個 kochi 座標 typo（1330000212,32.7873752），不臆測修正 */],
-  "accounting": { "routes":1506, "temples":88, "toilets":599, "toilet_defects":1, ... }
+  "accounting": { "routes":1494, "linestrings":1506, "temples":88, "toilets":594, "toilet_defects":1, ... }
 }
 ```
 

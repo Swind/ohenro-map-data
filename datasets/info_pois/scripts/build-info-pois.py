@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Consolidate information-POI sources into one category-consistent GeoJSON.
 
-Excludes lodging (dedicated datasets/henroyado/min88/OSM pipeline). Unified `category`
-taxonomy (the app-filter level):
+Excludes dedicated Henroyado/min88 lodging; includes curated OSM lodging.
+Unified `category` taxonomy (the app-filter level):
 
     temple / shrine / toilet / water / rest_area / food / shop / transport /
-    onsen / sightseeing / wayfinding / warning_hazard / experience_note /
-    route_endpoint / other
+    onsen / sightseeing / wayfinding / warning_hazard / lodging /
+    experience_note / route_endpoint / other
 
 Every feature carries `source`, `source_category` (the original classification,
 never discarded), a stable `poi_id`, `name` and the unified `category`. No
@@ -14,7 +14,7 @@ cross-source dedup (the app filters by source+category instead).
 
 Sources:
   datasets/seichijunrei/output/temples.geojson               -> temple (canonical 88)
-  datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json -> temples + toilets (599+1 defect)
+  datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json -> temples + valid toilets (defects excluded)
   datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson   -> all non-lodging categories
   datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson -> tourism_spot / kml_poi
   datasets/arukihenro_routes/output/arukihenro-routes.json        -> all non-lodging point categories
@@ -32,11 +32,12 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import math
 import os
 import re
 import tempfile
+from pathlib import Path
 
-import mercantile
 import mapbox_vector_tile
 from pmtiles.reader import MemorySource, Reader, Compression, all_tiles
 
@@ -133,6 +134,15 @@ EXCLUDED_SOURCE_CATEGORIES = {"lodging"}
 
 def feature(poi_id: str, source: str, source_category: str, category: str,
             name: str, geometry: dict, extra: dict | None = None) -> dict:
+    coords = geometry.get("coordinates") if isinstance(geometry, dict) else None
+    if (not isinstance(geometry, dict) or geometry.get("type") != "Point"
+            or not isinstance(coords, (list, tuple)) or len(coords) < 2
+            or any(isinstance(v, bool) or not isinstance(v, (int, float))
+                   or not math.isfinite(v) for v in coords)
+            or not (131 < coords[0] < 136 and 31.5 < coords[1] < 35.5)):
+        raise ValueError(f"Invalid Shikoku POI geometry: {poi_id}")
+    if category not in CATEGORIES:
+        raise ValueError(f"Unknown POI category: {category}")
     props = {
         "poi_id": poi_id,
         "source": source,
@@ -158,7 +168,7 @@ def load_temples(features: list[dict]) -> tuple[list[dict], dict]:
         props = f.get("properties", {})
         geom = f.get("geometry")
         if not geom or geom.get("type") != "Point":
-            continue
+            raise ValueError("Canonical temple requires Point geometry")
         pid = props.get("id") or "temple-%s" % props.get("number")
         out.append(feature(
             pid, "temples", "temple", "temple",
@@ -178,7 +188,7 @@ def load_sekaiisan(data: dict, toilets: bool = True) -> tuple[list[dict], dict]:
     for t in data.get("temples", []):
         geom = t.get("geometry")
         if not geom:
-            continue
+            raise ValueError(f"Temple missing geometry: {t['id']}")
         out.append(feature(
             t["id"], "sekaiisan", "temple", "temple",
             t.get("name_jp") or t.get("raw_name") or "",
@@ -190,7 +200,7 @@ def load_sekaiisan(data: dict, toilets: bool = True) -> tuple[list[dict], dict]:
         for t in data.get("toilets", []):
             geom = t.get("geometry")
             if not geom:
-                continue
+                raise ValueError(f"Toilet missing geometry: {t['id']}")
             out.append(feature(
                 t["id"], "sekaiisan", "toilet", "toilet",
                 t.get("facility_name") or t.get("raw_type") or "",
@@ -212,7 +222,7 @@ def load_mizutani(features: list[dict]) -> tuple[list[dict], dict]:
         props = f.get("properties", {})
         geom = f.get("geometry")
         if not geom or geom.get("type") != "Point":
-            continue
+            raise ValueError("Mizutani POI requires Point geometry")
         coords = geom["coordinates"][:2]
         scat = props.get("category") or "other"
         if scat in EXCLUDED_SOURCE_CATEGORIES:
@@ -245,7 +255,7 @@ def load_nature_trail(features: list[dict]) -> tuple[list[dict], dict]:
         props = f.get("properties", {})
         geom = f.get("geometry")
         if not geom or geom.get("type") != "Point":
-            continue
+            raise ValueError("Nature-trail POI requires Point geometry")
         kind = props.get("kind") or "kml_poi"
         out.append(feature(
             props["poi_id"], "nature_trail", kind, "sightseeing",
@@ -267,8 +277,6 @@ def load_arukihenro(data: dict) -> tuple[list[dict], dict]:
             map_id = map_.get("map_id") or "map"
             for idx, p in enumerate(map_.get("points", []), start=1):
                 coords = p.get("coordinates")
-                if not coords or len(coords) < 2:
-                    continue
                 scat = p.get("category") or "other"
                 if scat in EXCLUDED_SOURCE_CATEGORIES:
                     continue
@@ -291,9 +299,10 @@ def load_arukihenro(data: dict) -> tuple[list[dict], dict]:
 
 def _mvt_to_lonlat(z: int, x: int, y: int, px: float, py: float,
                    extent: int) -> tuple[float, float]:
-    west, south, east, north = mercantile.bounds(x, y, z)
-    lon = west + (px / extent) * (east - west)
-    lat = north - (py / extent) * (north - south)
+    scale = 2 ** z
+    lon = (x + px / extent) / scale * 360 - 180
+    lat = math.degrees(math.atan(math.sinh(
+        math.pi * (1 - 2 * (y + py / extent) / scale))))
     return round(lon, 6), round(lat, 6)
 
 
@@ -304,7 +313,7 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
     other basemap POI stays in the basemap's own pois layer. kind_detail and
     name:ja are carried over when present.
     """
-    data_bytes = open(basemap_path, "rb").read()
+    data_bytes = Path(basemap_path).read_bytes()
     src = MemorySource(data_bytes)
     reader = Reader(src)
     header = reader.header()
@@ -317,10 +326,7 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
             continue
         if header["tile_compression"] == Compression.GZIP:
             raw = gzip.decompress(raw)
-        try:
-            decoded = mapbox_vector_tile.decode(raw)
-        except Exception:
-            continue
+        decoded = mapbox_vector_tile.decode(raw, default_options={"y_coord_down": True})
         pois = decoded.get("pois")
         if not pois or not pois.get("features"):
             continue
@@ -331,7 +337,7 @@ def load_osm_basemap(basemap_path: str) -> tuple[list[dict], dict]:
                 continue
             geometry = f.get("geometry")
             if not geometry or geometry.get("type") != "Point":
-                continue
+                raise ValueError(f"Curated OSM {kind} requires Point geometry")
             px, py = geometry["coordinates"][0], geometry["coordinates"][1]
             lon, lat = _mvt_to_lonlat(z, x, y, px, py, extent)
             name = f["properties"].get("name") or f["properties"].get(
@@ -376,8 +382,9 @@ def atomic_write_json(path: str, data) -> None:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output-dir", default=DEFAULT_OUT_DIR)
-    parser.add_argument("--basemap",
-                        default=os.path.join(ROOT, 'datasets/osm/output/shikoku-basemap.pmtiles'))
+    parser.add_argument("--datasets-dir", type=Path, default=Path(ROOT) / "datasets",
+                        help="published source dataset root")
+    parser.add_argument("--basemap", help="OSM PMTiles override (default: <datasets-dir>/osm/output/shikoku-basemap.pmtiles)")
     parser.add_argument("--skip-osm", action="store_true",
                         help="skip the OSM basemap POI extraction")
     args = parser.parse_args(argv)
@@ -391,29 +398,28 @@ def main(argv=None) -> int:
         report[label] = counts
 
     absorb("temples", load_temples(
-        json.load(open(os.path.join(ROOT, 'datasets/seichijunrei/output/temples.geojson'),
+        json.loads((args.datasets_dir / "seichijunrei/output/temples.geojson").read_text(
                        encoding="utf-8"))["features"]))
     absorb("sekaiisan", load_sekaiisan(
-        json.load(open(os.path.join(ROOT, 'datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json'),
+        json.loads((args.datasets_dir / "sekaiisan_henro/output/sekaiisan-henro-normalized.json").read_text(
                        encoding="utf-8"))))
     absorb("mizutani", load_mizutani(
-        json.load(open(os.path.join(ROOT, 'datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson'),
+        json.loads((args.datasets_dir / "mizutani_henro_map/output/mizutani-henro-pois.geojson").read_text(
                        encoding="utf-8"))["features"]))
     absorb("nature_trail", load_nature_trail(
-        json.load(open(os.path.join(ROOT, 'datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson'),
+        json.loads((args.datasets_dir / "shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson").read_text(
                        encoding="utf-8"))["features"]))
     absorb("arukihenro", load_arukihenro(
-        json.load(open(os.path.join(ROOT, 'datasets/arukihenro_routes/output/arukihenro-routes.json'),
+        json.loads((args.datasets_dir / "arukihenro_routes/output/arukihenro-routes.json").read_text(
                        encoding="utf-8"))))
     if not args.skip_osm:
-        absorb("osm", load_osm_basemap(args.basemap))
+        absorb("osm", load_osm_basemap(args.basemap or args.datasets_dir / "osm/output/shikoku-basemap.pmtiles"))
 
     features.sort(key=lambda f: f["id"])
     for cat in CATEGORIES:
         report["categories"][cat] = sum(
             1 for f in features if f["properties"]["category"] == cat
         )
-    other = sum(report["categories"].values())
     report["categories"]["total"] = len(features)
     report["feature_count"] = len(features)
 
