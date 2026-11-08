@@ -46,6 +46,19 @@ def _ext_for(content_type: str, url: str) -> str:
     return ext if ext in (".jpg", ".jpeg", ".png", ".webp", ".gif") else ".jpg"
 
 
+def image_type(body: bytes) -> str | None:
+    """Recognize actual image bytes, not an HTTP error page with an image URL."""
+    if body.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if body.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if body.startswith((b"GIF87a", b"GIF89a")):
+        return "image/gif"
+    if body.startswith(b"RIFF") and body[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
 def download_assets(client: HttpClient, data_dir: str, force: bool = False):
     """Download all pending images for all courses. Returns (ok, failures)."""
     layout = config.data_layout(data_dir)
@@ -85,7 +98,8 @@ def download_assets(client: HttpClient, data_dir: str, force: bool = False):
             url = asset["source_url"]
             logger.info("downloading image post_id=%s: %s", post_id, url)
             status, headers, body = client.get_bytes(url)
-            if status != 200 or not body:
+            detected_type = image_type(body)
+            if status != 200 or detected_type is None:
                 failures.append({
                     "post_id": post_id, "url": url,
                     "status": status, "step": "image",
@@ -98,9 +112,9 @@ def download_assets(client: HttpClient, data_dir: str, force: bool = False):
                 logger.warning("image failed post_id=%s HTTP %s", post_id, status)
                 continue
 
-            content_type = headers.get("Content-Type", "")
+            content_type = detected_type
             ext = _ext_for(content_type, url)
-            rel = asset["local_file"] + ext
+            rel = os.path.splitext(asset["local_file"])[0] + ext
             local_path = os.path.join(ddir, rel)
             atomic_write_bytes(local_path, body)
 

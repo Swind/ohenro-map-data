@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from pathlib import Path
 
 from datasets.shikoku_nature_trail import config
 from datasets.shikoku_nature_trail.crawler.assets import download_assets
@@ -78,6 +79,9 @@ def _make_client(args):
 
 
 def _run(args):
+    if args.command in ("normalize", "verify", "report") and (Path(args.data_dir) / "current.json").exists():
+        from .pipeline import resolve
+        args.data_dir = str(resolve(Path(args.data_dir)))
     if args.command == "export-map":
         result = export_map(args.input, args.routes, args.pois, args.report)
         print("export-map: routes=%(route_ids)d segments=%(route_segments)d "

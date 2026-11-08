@@ -26,6 +26,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 協議會一鍵建置報告 | `datasets/sekaiisan_henro/reports/pipeline.json` | JSON | 核心 15 檔／可選 17 檔 | snapshot、設定、驗證摘要、產出 hash；最新隔離實跑 594 廁所，見 §1.3 |
 | Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,572（2026-11-09） | 水谷遍路導覽圖；保留 1 筆未分類 warning |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
+| 自然步道來源／建置報告 | `datasets/shikoku_nature_trail/raw/{current.json,snapshots/}`、`datasets/shikoku_nature_trail/reports/pipeline.json` | HTML / images / KML / JSON | 123 courses / 123 KML / 1,040 images | 完整 archive 驗證後切換 current；五份產出整組驗證發布 |
 | 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON | 319 LineString / 28,405 座標 | 一日一斉おもてなし遍路道ウォーク覆蓋；不是通行／維護保證 |
 | Henro Hub 更新來源／報告 | `datasets/henrohub/raw/{current.json,snapshots/}`、`datasets/henrohub/reports/pipeline.json` | JSON / GeoJSON | 1,884 routes；release `henro-route-network-20260927-1028` | 公開 channel/manifest 驗證下載；個人使用，不授予再散布權 |
@@ -183,6 +184,17 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 | Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON，128 LineString | 水谷遍路導覽圖路線；另有 overlay 與 routes-only PMTiles |
 | 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON，319 LineString / 28,405 座標 | 原 Placemark、名稱、folders、description、style、原次序與高度原樣保留；不拼接或簡化 |
+
+自然步道一鍵入口 `python3 -m datasets.shikoku_nature_trail`：重新下載四縣列表、
+detail HTML 與全部 KML；僅在 owning detail 與圖片 provenance/檔案 hash 一致時
+重用圖片。完整 archive 驗證後保存 immutable snapshot/current，再產出
+normalized JSON、routes/POIs/report 與 PMTiles（route + POI 兩層）。
+支援 fetch/build/validate、run --local、run/build --force 及路徑／限速覆寫；
+既有 normalize/verify/report 分步命令亦會解析 current snapshot。
+來源／設定／五份產出 hash 相同才略過；缺課程、缺圖片、KML 錯誤不替換有效資料。
+2026-11-09 全量線上更新與離線重建通過：123 courses、145 route segments、
+65,753 route vertices、1,568 POIs、686 tourism spots、1,040 images、
+0 normalization warnings；22 項來源測試通過，相同選定快照 hash/mtime 不變。
 
 OHenro 88 一鍵入口 `python3 -m datasets.ohenro88`：沿用 APKPure App API
 讀取套件 `com.sallyzzz.ohenroapp` 的最新版，驗證 APK/XAPK identity、CRC、
