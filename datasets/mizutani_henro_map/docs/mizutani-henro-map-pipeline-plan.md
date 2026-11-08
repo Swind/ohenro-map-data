@@ -195,18 +195,19 @@ python3 -m datasets.mizutani_henro_map export-map
 # 驗證 raw、normalized 與 GeoJSON accounting
 python3 -m datasets.mizutani_henro_map verify
 
-# 完整建立獨立 PMTiles
-./datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh
+# 完整下載、驗證並建立 overlay 與 provider pack
+python3 -m datasets.mizutani_henro_map
 
-# 更新來源；SHA 有變才 normalize/export/build
-./datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh --update
+# 只從 local current 重建／驗證已發布資料
+python3 -m datasets.mizutani_henro_map build
+python3 -m datasets.mizutani_henro_map validate
 ```
 
-第一版只提供實際需要的參數：
+目前 CLI 與所有輸出契約以 [Pipeline 操作文件](mizutani_henro_map_pipeline.md) 為準：
 
-- `--data-dir`：測試或替代 archive 路徑。
-- `--force`：即使來源 checksum 相同仍重新下載或 build。
-- `--snapshot <sha256>`：需要重建舊版時指定 snapshot。
+- `--raw-dir`（保留 `--data-dir` 別名）、`--output-dir`、`--reports-dir`：替代資料路徑。
+- `--force`：run/build 不跳過完整重建；run 預設每次下載來源。
+- `--local`：run 使用已驗證的 current；低階 inspect/normalize/verify 可用 `--snapshot <sha256>`。
 
 不先加入 concurrency、複雜 config framework 或資料庫。
 
@@ -459,17 +460,14 @@ GeoJSON 不攜帶 `description_html`，避免 tile 膨脹與 App 誤當可信 HT
 
 ## 12. Phase 6：PMTiles build
 
-`datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh` 流程：
+`datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh` 只轉交 Python `build`；`--update` 轉交 `run`。唯一建置實作位於 `pipeline.py`：
 
-1. 檢查 `python3`、Docker、tippecanoe image、`pmtiles` CLI。
-2. 選取 `current.json` 指向的有效 snapshot。
-3. 執行 normalize、export-map、verify。
-4. 若有 unsupported geometry、accounting mismatch 或座標錯誤，停止。
-5. 使用既有 `ohenro-elevation-visuals` image 中的 tippecanoe。
-6. MBTiles 轉 PMTiles。
-7. 寫入 attribution/source metadata。
-8. 驗證 layers、bounds、zoom、feature accounting。
-9. 寫 build log 與 metadata report。
+1. run 下載遠端來源；build 選取 current，驗證 immutable source hashes 與完整 geometry/styles。
+2. 只有來源、程式、設定、所有成品 size/hash 全部吻合才略過。
+3. 在 stage 執行 normalize、export-map、diff、verify。
+4. 使用共用 helper 建立 overlay 及只有 `routes` layer 的 provider pack。
+5. 寫入 attribution/source metadata，驗證 layers、bounds、實際 tile 中的 consumer IDs 與分類。
+6. 全部成功後才逐檔 atomic replace 全部成品，最後寫入 `reports/pipeline.json`。
 
 建議 tippecanoe 命令：
 
@@ -568,13 +566,12 @@ python3 -m unittest discover datasets/mizutani_henro_map/tests
 
 行為：
 
-1. fetch KML 並算 SHA。
-2. SHA 未變：顯示 `source unchanged`，不執行後續 build。
-3. SHA 改變：保存新 snapshot。
-4. 比較新舊 snapshot，產生 update report。
-5. 若 parser/validation 通過，normalize、export、build 新 PMTiles。
-6. build 全部成功後才 atomic replace 正式 PMTiles。
-7. 任一步驟失敗時保留上一版 PMTiles 與 current working artifact，不覆蓋可用版本。
+1. fetch KML、驗證完整 routes/POIs、styles、geometry，保存 immutable snapshot 後才選為 current。
+2. SHA、程式、build config 與全部輸出 hashes 都未變時才跳過；任何缺檔或損毀都重建。
+3. 比較已發布的新舊 snapshot，產生 update report；首次建置比較自身。
+4. 在 stage normalize、export、verify，建立 overlay 與 provider pack。
+5. 全部驗證成功後才逐檔 atomic replace 全部輸出，最後寫 pipeline report。
+6. 不完整來源保留 current 與既有成品；建置失敗保留既有成品。非阻塞 source-local lock 避免併行更新。
 
 Update report 至少包含：
 

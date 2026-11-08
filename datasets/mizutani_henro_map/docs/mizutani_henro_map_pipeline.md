@@ -12,16 +12,14 @@
 ## 前置需求
 
 - Python 3
-- Docker，及 `ohenro-elevation-visuals:latest` image
-- `pmtiles` 或 `go-pmtiles` CLI
-- `jq`（PMTiles tile smoke test）
+- `tippecanoe`，或 Docker 與 `ohenro-elevation-visuals:latest` image（缺少 image 時共用 helper 會建置）。
+- `pmtiles` 或 `go-pmtiles` CLI。
+- Python packages：`pmtiles`、`mapbox-vector-tile`、`mercantile`（讀回實際 z14 tiles）。
 
 ## 初次建置
 
 ```bash
-python3 -m datasets.mizutani_henro_map fetch
-python3 -m datasets.mizutani_henro_map inspect
-./datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh
+python3 -m datasets.mizutani_henro_map
 ```
 
 產出：
@@ -30,22 +28,37 @@ python3 -m datasets.mizutani_henro_map inspect
 - `datasets/mizutani_henro_map/raw/current.json`：目前 snapshot pointer。
 - `datasets/mizutani_henro_map/output/mizutani-henro-map.json`：deterministic normalized data。
 - `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson`、`datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson`：tile input。
+- `datasets/mizutani_henro_map/output/mizutani-henro-report.json`：來源、分類與 feature accounting。
+- `datasets/mizutani_henro_map/output/mizutani-henro-update-report.json`：與上次發布來源的 diff；首次建置比較自身，首次遷移則保留有效既有 diff 的基準。
 - `datasets/mizutani_henro_map/output/shikoku-mizutani-henro.pmtiles`：獨立 overlay。
-- `reports/mizutani-henro-{build,metadata}.*`：build log 與 metadata。
+- `datasets/mizutani_henro_map/output/mizutani-henro-routes.pmtiles`：provider route pack。
+- `datasets/mizutani_henro_map/reports/pipeline.json`：來源、build config、全部輸出 SHA-256 與驗證摘要，最後才發布。
 
-PMTiles layers 為 `mizutani_henro_routes` 與 `mizutani_henro_pois`，zoom 0-14。
+Overlay layers 為 `mizutani_henro_routes` 與 `mizutani_henro_pois`；provider pack 只有 `routes`，保留 `route_id`、`segment_id`。兩者均為 zoom 0–14、不簡化線條，provider pack 不啟用 drop-densest。
 
 ## 日常更新
 
 ```bash
-./datasets/mizutani_henro_map/scripts/build-mizutani-henro.sh --update
+python3 -m datasets.mizutani_henro_map
 ```
 
-此命令下載 KML 並比較 raw SHA-256：
+預設為 `run`，每次重新下載並驗證遠端 KML，不要求預先存在 `current.json`：
 
-- SHA 相同：輸出 `source unchanged`，不啟動 Docker、不重建 PMTiles。
-- SHA 不同：保存新 snapshot、產生 `datasets/mizutani_henro_map/output/mizutani-henro-update-report.json`，再 normalize、verify、build。
-- 任何 build 或 validation 失敗都不會替換現有 PMTiles。
+- 來源、設定、程式及所有輸出 size/SHA-256 都相同時才跳過；缺少任一 JSON 或 tile archive 都會重建。
+- 新來源在語法、geometry、styles、Shikoku bounds 與 routes/POIs 完整性通過後才選為 current；不完整或錯誤回應不會取代有效 current。
+- 所有 JSON、GeoJSON、diff 及兩份 PMTiles 先在同一 stage 產生並驗證；全部成功才逐檔 atomic replace，最後發布 pipeline report。建置失敗保留既有輸出。
+- source-local `.pipeline.lock` 非阻塞鎖避免兩個更新互相覆蓋。若發布中斷，下次會依完整輸出 hashes 修復，不會誤判 unchanged。
+
+```bash
+python3 -m datasets.mizutani_henro_map fetch       # 只更新 raw
+python3 -m datasets.mizutani_henro_map build       # 從 local current 建置
+python3 -m datasets.mizutani_henro_map run --local # 同 build
+python3 -m datasets.mizutani_henro_map build --force
+python3 -m datasets.mizutani_henro_map validate    # 不下載；驗證已發布全部輸出
+```
+
+`--raw-dir`（舊名 `--data-dir`）、`--output-dir`、`--reports-dir` 可放在 command 前後。`--local` 只用於 run，`--force` 只用於 run/build。`MIZUTANI_IMAGE` 可指定 Docker image，會記入 build config。
+舊 `build-mizutani-henro.sh` 只轉交 `build`，加 `--update` 則轉交 `run`，沒有第二套建置路徑。
 
 Google endpoint 可能即使資料量未變仍回傳不同 raw SHA。這是依設計採用的 source identity；update report 可用 stable feature IDs 區分實際新增、移除或內容修改。
 
@@ -71,4 +84,4 @@ python3 -m unittest discover datasets/mizutani_henro_map/tests
 ./scripts/validate.sh
 ```
 
-`verify` 比對 raw、normalized 與 GeoJSON 的 Point、LineString 與 feature IDs。build 另驗證 PMTiles structure、layers、bounds、personal-use metadata，並以 GDAL MVT reader 從 z14 tile 讀回一條 route 和每個 category 的一筆 POI。
+`verify` 比對 raw、normalized 與 GeoJSON 的完整 schema、properties、分類及 geometry，不只計數。`validate` 另驗證全部輸出 hashes、diff、PMTiles structure、layers、bounds、personal-use/source metadata，並讀回 z14 的 route、每個 category 的一筆 POI 及 provider route，確認 consumer IDs 與分類。

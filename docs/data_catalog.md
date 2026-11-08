@@ -24,7 +24,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 88 札所離線 tiles | `datasets/seichijunrei/output/shikoku-temples.pmtiles` | PMTiles (MVT) | 88 unique IDs | `temples` layer，z0–14，未加入共用 App manifest |
 | 協議會（路線+寺+廁所） | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` | JSON | 1506 線 / 88 寺 / 599 廁所 | 四國遍路世界遺產協議會 |
 | 協議會一鍵建置報告 | `datasets/sekaiisan_henro/reports/pipeline.json` | JSON | 核心 15 檔／可選 17 檔 | snapshot、設定、驗證摘要、產出 hash；最新隔離實跑 594 廁所，見 §1.3 |
-| Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,680 | 水谷遍路導覽圖 |
+| Mizutani POI | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson` | GeoJSON | 2,572（2026-11-09） | 水谷遍路導覽圖；保留 1 筆未分類 warning |
 | 自然步道 POI | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson` | GeoJSON | 1,568 | 四國自然步道 |
 | 步行遍路點 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON | 933 點 | ohenro.jp 步行遍路 |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON | 319 LineString / 28,405 座標 | 一日一斉おもてなし遍路道ウォーク覆蓋；不是通行／維護保證 |
@@ -137,7 +137,7 @@ plan graph 與 6 檔 review pack。可選 `--arukihenro PATH` 同時產生兩層
 
 | 來源 | 檔案 | category 欄位 | 備註 |
 |---|---|---|---|
-| Mizutani | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson`（2680） | `category`：temple/transport/shop_supply/food/water_toilet_rest/other/experience_note/wayfinding/warning_hazard/lodging | 另有 `icon`/`color`/`url`/`description`；geometry 是 `[lon,lat]` |
+| Mizutani | `datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson`（2572） | `category`：temple/transport/shop_supply/food/water_toilet_rest/other/experience_note/wayfinding/warning_hazard/lodging | 另有 `icon`/`color`/`url`/`description`；geometry 是 `[lon,lat]` |
 | 自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail-pois.geojson`（1568） | `kind`：`tourism_spot`(394) / `kml_poi`(1174) | `poi_id`(`SNT_...`)、`route_id`、`content_id` |
 | 步行遍路 | `datasets/arukihenro_routes/output/arukihenro-routes.json` 的 `routes[].maps[].points[]`（933） | `category`：temple_related/waymarker/food_shop/route_endpoint/lodging/viewpoint/elevation_mileage/onsen/sightseeing/rest_area/shrine/route_feature/other | 385 點帶 `photos` URL |
 | Henro Helper | `datasets/henro_helper/output/henro-helper-pois.geojson`（2471，2.26.111） | `kind`：temple/bekkaku/okunoin/bangai/toilet/shower/convenience_store/rest_area/onsen/bus_stop/train_station/campground/accommodation/label/poi/... | 有 `name_ja`/`name_en`/`temple_number`；5 筆純文字／URL 記錄保留於 extraction-report，不猜座標 |
@@ -177,9 +177,20 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 | Henro Helper | `datasets/henro_helper/output/`（`henro-helper-routes.geojson` + 各 `*.geojson`） | GeoJSON，1,586 LineString + 2,501 Point（2.26.111） | 依 App layer 拆分（black/red/...、itinerary_*、accommodations_* 等）；操作見 `datasets/README.md` 的 Henro Helper 一鍵更新 |
 | 遍路のあかり | `datasets/ohenro_no_akari/output/henro-no-akari-route.geojson` | GeoJSON，319 | + `manifest.json` |
 | 四國自然步道 | `datasets/shikoku_nature_trail/output/shikoku-nature-trail.geojson` / `shikoku-nature-trail.json` | GeoJSON / JSON，123 courses / 145 segments | json 含 tourism_spots + KML Placemarks |
-| Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON | 水谷遍路導覽圖路線 |
+| Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON，128 LineString | 水谷遍路導覽圖路線；另有 overlay 與 routes-only PMTiles |
 | 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON，319 LineString / 28,405 座標 | 原 Placemark、名稱、folders、description、style、原次序與高度原樣保留；不拼接或簡化 |
+
+水谷一鍵入口 `python3 -m datasets.mizutani_henro_map`：更新／驗證 My Maps KML，
+保存不可變 snapshot，再產出 normalized JSON、routes/POIs/report/diff，
+`shikoku-mizutani-henro.pmtiles`（routes+pois）與 `mizutani-henro-routes.pmtiles`
+（單一 routes layer）。`reports/pipeline.json` 包含當前／diff baseline snapshot、
+程式／設定與七份產出的 hash；本機來源、設定及所有產出未變才略過。
+Google hosted-image URL 每次請求可能輪替：這是真實來源位元組變更，保留新快照、
+不以假 URL 遮蔽；相同選定快照的 `run --local` 已確認 hash/mtime 不變。
+2026-11-09 全量 2,700 Placemarks（128 線／2,572 點），七份產出、
+兩組 PMTiles 實際 z14 feature/fields 驗證通過，10 項來源測試通過。
+1 個未分類 Point 以原始值與 warning 保留，非不完整下載。
 
 點檢活動一鍵入口 `python3 -m datasets.omotenashi_henro_inspection`：重新從官方頁
 及其地圖程式發現當前 KML，完整解析驗證後更新 immutable snapshot/current，

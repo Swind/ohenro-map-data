@@ -6,23 +6,16 @@ import os
 import time
 import urllib.error
 import urllib.request
-import xml.etree.ElementTree as ElementTree
+from pathlib import Path
 
 from datasets.mizutani_henro_map import config
+from datasets._pipeline import digest, read_json
+from datasets.mizutani_henro_map.parser import validate_source
 from datasets.mizutani_henro_map.storage import atomic_write_bytes, atomic_write_json, sha256_bytes, utc_now
 
 
 def _validate_kml(body: bytes) -> None:
-    if not body or b"<kml" not in body.lower():
-        raise ValueError("response is not a non-empty KML document")
-    try:
-        root = ElementTree.fromstring(body)
-    except ElementTree.ParseError as error:
-        raise ValueError("invalid KML XML: %s" % error) from error
-    if root.tag.rsplit("}", 1)[-1] != "kml" or not any(
-        element.tag.rsplit("}", 1)[-1] == "Document" for element in root.iter()
-    ):
-        raise ValueError("KML document root or Document element is missing")
+    validate_source(body)
 
 
 def _get(url: str, timeout: int) -> tuple[int | None, dict[str, str], bytes]:
@@ -83,6 +76,13 @@ def fetch(data_dir: str = config.DEFAULT_DATA_DIR, *, timeout: int = config.DEFA
     if is_new:
         atomic_write_bytes(os.path.join(snapshot_dir, "map.kml"), body)
         atomic_write_json(os.path.join(snapshot_dir, "metadata.json"), metadata)
+    else:
+        stored = read_json(Path(snapshot_dir) / "metadata.json")
+        if (digest(Path(snapshot_dir) / "map.kml") != checksum or
+                stored["sha256"] != checksum or stored["size"] != len(body) or
+                stored["map_id"] != config.MAP_ID):
+            raise ValueError("Existing immutable snapshot is damaged")
+        metadata = stored
 
     atomic_write_json(layout["current"], {
         "schema_version": 1,

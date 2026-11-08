@@ -106,6 +106,8 @@ def _walk(element: ElementTree.Element, folder_path: list[str], placemarks: list
                 "geometries": [geometry for geometry in geometries if geometry is not None],
                 "unsupported_geometry_types": sorted({_name(item) for item, geometry in zip(geometry_elements, geometries) if geometry is None}),
             })
+        elif kind == "NetworkLink":
+            unsupported.add(kind)
         elif kind in {"Document", "kml"}:
             _walk(child, folder_path, placemarks, unsupported)
 
@@ -144,6 +146,34 @@ def resolve_style(style_url: str | None, styles: dict, style_maps: dict) -> dict
     if mapping and mapping["normal"]:
         style_id = mapping["normal"].removeprefix("#")
     return styles.get(style_id)
+
+
+def validate_source(data: bytes | str) -> dict:
+    """Reject incomplete source documents before selecting an immutable snapshot."""
+    parsed = parse_kml(data)
+    if not parsed["placemarks"] or parsed["unsupported_geometry_types"]:
+        raise ValueError("KML has no placemarks or contains unsupported geometry")
+    kinds = set()
+    for placemark in parsed["placemarks"]:
+        if not placemark["geometries"] or placemark["unsupported_geometry_types"]:
+            raise ValueError("KML Placemark has missing or unsupported geometry")
+        if placemark["style_url"] and not resolve_style(
+                placemark["style_url"], parsed["styles"], parsed["style_maps"]):
+            raise ValueError("KML contains an unresolved style URL: %s" % placemark["style_url"])
+        for geometry in placemark["geometries"]:
+            parts = geometry["geometries"] if geometry["type"] == "MultiGeometry" else [geometry]
+            if not parts:
+                raise ValueError("KML contains empty MultiGeometry")
+            for part in parts:
+                if part["type"] not in {"Point", "LineString"}:
+                    raise ValueError("KML contains unsupported nested geometry")
+                kinds.add(part["type"])
+                points = [part["coordinates"]] if part["type"] == "Point" else part["coordinates"]
+                if any(not (131 < point[0] < 136 and 31.5 < point[1] < 35.5) for point in points):
+                    raise ValueError("KML coordinate outside Shikoku")
+    if kinds != {"Point", "LineString"}:
+        raise ValueError("KML must contain both the source routes and POIs")
+    return parsed
 
 
 def icon_details(style_url: str | None) -> dict:

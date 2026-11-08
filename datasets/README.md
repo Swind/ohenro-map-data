@@ -10,7 +10,7 @@
 | [seichijunrei](seichijunrei/README.md) | 聖地巡礼網站的 canonical 88 札所與詳細內容 | **已一鍵化**：`python3 -m datasets.seichijunrei`（下載→JSON／GeoJSON／SQLite／PMTiles→驗證；未變跳過） |
 | [sekaiisan_henro](sekaiisan_henro/README.md) | 世界遺產協議會路線、札所、廁所、路由 graph | **已一鍵化**：`python3 -m datasets.sekaiisan_henro run`（更新→graph／區間／審閱→驗證；未變跳過） |
 | [arukihenro_routes](arukihenro_routes/README.md) | ohenro.jp 步行遍路路線與 POI | **已一鍵化**：`python3 -m datasets.arukihenro_routes run`（HTML／KML 更新→驗證→JSON；未變不重發） |
-| [mizutani_henro_map](mizutani_henro_map/) | 水谷卓也 Google My Maps 路線與 POI | `python3 -m datasets.mizutani_henro_map` |
+| [mizutani_henro_map](mizutani_henro_map/docs/mizutani_henro_map_pipeline.md) | 水谷卓也 Google My Maps 路線與 POI | **已一鍵化**：`python3 -m datasets.mizutani_henro_map`（KML 更新→JSON／GeoJSON→overlay + routes PMTiles→驗證；未變跳過） |
 | [shikoku_nature_trail](shikoku_nature_trail/) | 四國自然步道網站與 My Maps | `python3 -m datasets.shikoku_nature_trail` |
 | [henroyado](henroyado/) | Henroyado 住宿；含 Google Maps 補座標快取 | `python3 -m datasets.henroyado` |
 | [min88_lodging](min88_lodging/) | min88 住宿 | `python3 -m datasets.min88_lodging` |

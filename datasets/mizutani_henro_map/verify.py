@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
-import os
+import tempfile
+from pathlib import Path
 
 from datasets.mizutani_henro_map import config
-from datasets.mizutani_henro_map.normalize import _snapshot
-from datasets.mizutani_henro_map.parser import parse_kml, resolve_style
+from datasets.mizutani_henro_map.export_map import export_map
+from datasets.mizutani_henro_map.normalize import _snapshot, normalize
+from datasets.mizutani_henro_map.parser import resolve_style, validate_source
 
 
 def _read(path: str) -> dict:
@@ -18,9 +20,10 @@ def _read(path: str) -> dict:
 def verify(data_dir: str = config.DEFAULT_DATA_DIR, *, snapshot: str | None = None,
            normalized_path: str = "datasets/mizutani_henro_map/output/mizutani-henro-map.json",
            routes_path: str = "datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson",
-           pois_path: str = "datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson") -> dict:
+           pois_path: str = "datasets/mizutani_henro_map/output/mizutani-henro-pois.geojson",
+           report_path: str | None = None) -> dict:
     snapshot, _, raw = _snapshot(data_dir, snapshot)
-    parsed = parse_kml(raw)
+    parsed = validate_source(raw)
     normalized = _read(normalized_path)
     routes = _read(routes_path).get("features", [])
     pois = _read(pois_path).get("features", [])
@@ -56,6 +59,18 @@ def verify(data_dir: str = config.DEFAULT_DATA_DIR, *, snapshot: str | None = No
         if props.get("route_id") != props.get("feature_id") or props.get("segment_id") != props.get("feature_id"):
             errors.append("route feature %s missing route_id/segment_id equal to feature_id" % props.get("feature_id"))
             break
+    with tempfile.TemporaryDirectory(prefix="mizutani-verify-") as directory:
+        expected = Path(directory)
+        rebuilt = normalize(data_dir, snapshot=snapshot, output=expected / "normalized.json")
+        export_map(expected / "normalized.json", routes_path=expected / "routes.geojson",
+                   pois_path=expected / "pois.geojson", report_path=expected / "report.json")
+        if normalized != rebuilt:
+            errors.append("normalized data differs from selected raw source and classification")
+        for actual, name in ((routes_path, "routes.geojson"), (pois_path, "pois.geojson")):
+            if _read(actual) != _read(expected / name):
+                errors.append("%s schema, properties or geometry differ from normalized data" % name)
+        if report_path is not None and _read(report_path) != _read(expected / "report.json"):
+            errors.append("export report accounting differs from normalized data")
     unclassified = sum(feature["category"] == "unclassified" for feature in normalized["features"] if feature["geometry_type"] == "Point")
     if unclassified:
         warnings.append("%d Point features are unclassified" % unclassified)

@@ -41,3 +41,12 @@ class TestNormalize(unittest.TestCase):
             self.assertTrue(checked["ok"], checked["errors"])
             update = generate_update_report(directory, snapshot, snapshot, os.path.join(directory, "update.json"))
             self.assertEqual(update["features"], {"added": [], "removed": [], "changed": []})
+            route_features[0]["geometry"]["coordinates"][0][0] += 0.01
+            with open(os.path.join(directory, "routes.geojson"), "w", encoding="utf-8") as stream:
+                json.dump({"type": "FeatureCollection", "features": route_features}, stream)
+            corrupted = verify(directory, snapshot=snapshot, normalized_path=output,
+                               routes_path=os.path.join(directory, "routes.geojson"),
+                               pois_path=os.path.join(directory, "pois.geojson"),
+                               report_path=os.path.join(directory, "report.json"))
+            self.assertFalse(corrupted["ok"])
+            self.assertTrue(any("geometry differ" in error for error in corrupted["errors"]))
