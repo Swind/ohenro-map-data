@@ -30,6 +30,7 @@ assets／manifest、route packs 與人工編輯成果。
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON | 319 LineString / 28,405 座標 | 一日一斉おもてなし遍路道ウォーク覆蓋；不是通行／維護保證 |
 | Henro Hub 更新來源／報告 | `datasets/henrohub/raw/{current.json,snapshots/}`、`datasets/henrohub/reports/pipeline.json` | JSON / GeoJSON | 1,884 routes；release `henro-route-network-20260927-1028` | 公開 channel/manifest 驗證下載；個人使用，不授予再散布權 |
 | 遍路のあかり更新來源／報告 | `datasets/ohenro_no_akari/raw/{current.json,snapshots/}`、`datasets/ohenro_no_akari/reports/pipeline.json` | JS / JSON / GeoJSON | 319 線 / 28,405 頂點 | 靜態解析公開網站 bundle，不執行來源 JS；同資料不重發 |
+| OHenro 88 更新來源／報告 | `datasets/ohenro88/raw/{current.json,snapshots/}`、`datasets/ohenro88/reports/pipeline.json` | APK/XAPK / JSON | App 1.1.0 / versionCode 24 | 驗證套件／版本／archive／assets hash；只靜態讀取，不執行 App |
 | Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,471（2.26.111） | Henro Helper app，88 札所；另有 5 筆非空間原始記錄 |
 | Henro Helper 原始快照／建置報告 | `datasets/henro_helper/raw/{current.json,snapshots/}`、`datasets/henro_helper/reports/pipeline.json` | XAPK/APK / JSON | 最新 ARM64 archive 240,093,231 bytes | API 版本／SHA1、本機 SHA256、native libs、產出 hash 與完整 accounting |
 | OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
@@ -174,7 +175,7 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 | 資料集 | 檔案 | 格式/數量 | 說明 |
 |---|---|---|---|
 | 步行遍路 | `datasets/arukihenro_routes/output/arukihenro-routes.json` | JSON，90 routes / 91 maps / 324 lines / 933 points | schema v1：每 route 有 region/title/from/to_temple/temple_range；每 map 有 `lines` + `points` |
-| OHenro 88 | `datasets/ohenro88/output/ohenro88-routes.geojson` | GeoJSON，172 線幾何（67 LineString + 105 MultiLineString）＋108 Point | App 抽取，路線含 `[lon,lat,elev]` |
+| OHenro 88 | `datasets/ohenro88/output/ohenro88-routes.geojson` | GeoJSON，172 線幾何（67 LineString + 105 MultiLineString）＋108 Point | App 1.1.0 / 24 抽取，路線含 `[lon,lat,elev]`；另有 sections、PlanGraph |
 | Henro Hub | `datasets/henrohub/output/henrohub-routes.geojson` | GeoJSON，1884 LineString | properties: `route_id`/`route_role`(canonical_shikoku88/unique_alternative/transition_connector/continuity_fallback)/`route_class`(black/red/green/blue/purple/special)/`route_sets`/`name`。自動更新公開 release；**授權未定，個人使用** |
 | Henro Helper | `datasets/henro_helper/output/`（`henro-helper-routes.geojson` + 各 `*.geojson`） | GeoJSON，1,586 LineString + 2,501 Point（2.26.111） | 依 App layer 拆分（black/red/...、itinerary_*、accommodations_* 等）；操作見 `datasets/README.md` 的 Henro Helper 一鍵更新 |
 | 遍路のあかり | `datasets/ohenro_no_akari/output/henro-no-akari-route.geojson` | GeoJSON，319 LineString / 28,405 頂點 | + `manifest.json`：來源 URL、bundle/HTML/snapshot hash、長度／邊界 accounting |
@@ -182,6 +183,18 @@ JSON／程式碼／產出 hash 皆未變則不重發。操作見
 | Mizutani 路線 | `datasets/mizutani_henro_map/output/mizutani-henro-routes.geojson` | GeoJSON，128 LineString | 水谷遍路導覽圖路線；另有 overlay 與 routes-only PMTiles |
 | 協議會路線 | `datasets/sekaiisan_henro/output/sekaiisan-henro-normalized.json` 的 `routes`（1506） | JSON LineString | 官方引導線 source edges |
 | 點檢活動路線 | `datasets/omotenashi_henro_inspection/output/omotenashi-henro-inspection-routes.geojson` | GeoJSON，319 LineString / 28,405 座標 | 原 Placemark、名稱、folders、description、style、原次序與高度原樣保留；不拼接或簡化 |
+
+OHenro 88 一鍵入口 `python3 -m datasets.ohenro88`：沿用 APKPure App API
+讀取套件 `com.sallyzzz.ohenroapp` 的最新版，驗證 APK/XAPK identity、CRC、
+來源雜湊與完整 assets 後保存 immutable snapshot/current，靜態讀取
+`trails_all.geojson`、`merged.json`。支援 fetch/build/validate、run --local、
+run/build --force、`--archive <本機 APK/XAPK>`；不安裝或執行 App。
+完整產出 routes GeoJSON、87 sections + 88→1 closure、schema v2 PlanGraph。
+2026-11-09 1.1.0 / 24 全量：172 線／108 點，graph 7,536 nodes、
+11,581 edges、749 synthetic joins、1 component。收縮平行 path 的 edge ID
+保留來源邊 identity；已在相同 node 的 interior contact 只切邊，不產生 self-join。
+15 項邊界測試、線上未變更 skip/hash/mtime，以及實際前端 planRoute
+（寺 1→2→5，candidate，9,369m）通過。第三方 APK 不等同開發者簽章可信。
 
 遍路のあかり一鍵入口 `python3 -m datasets.ohenro_no_akari`：從官方 HTML
 及同源 module graph 找到唯一完整路線 bundle（不依賴固定檔名），保存已驗證

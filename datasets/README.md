@@ -16,7 +16,7 @@
 | [min88_lodging](min88_lodging/) | min88 住宿 | `python3 -m datasets.min88_lodging` |
 | [henrohub](henrohub/docs/henro-hub-comparison.md) | Henro Hub 公開 release 路線與 graph（個人使用） | **已一鍵化**：`python3 -m datasets.henrohub`（channel／manifest 更新→routes／graph／PMTiles→驗證；未變跳過） |
 | [henro_helper](#henro-helper-一鍵更新) | Henro Helper APK 路線與 POI | **已一鍵化**：`python3 -m datasets.henro_helper`（APKPure 更新→ARM64 靜態抽取→驗證發布；未變跳過） |
-| [ohenro88](ohenro88/) | OHenro 88 APK 路線與 graph | `reference/build_reference.py`、`scripts/` |
+| [ohenro88](ohenro88/) | OHenro 88 APK 路線、區間與 graph | **已一鍵化**：`python3 -m datasets.ohenro88`（APKPure 更新→靜態 assets→routes／sections／graph→驗證；未變跳過） |
 | [ohenro_no_akari](ohenro_no_akari/) | 四國電力「遍路のあかり」網站路線 | **已一鍵化**：`python3 -m datasets.ohenro_no_akari`（HTML／module graph 發現來源 bundle→快照→GeoJSON／manifest→驗證） |
 | [omotenashi_henro_inspection](omotenashi_henro_inspection/docs/omotenashi_henro_inspection_source.md) | 遍路道點檢活動覆蓋（非通行保證） | **已一鍵化**：`python3 -m datasets.omotenashi_henro_inspection`（官方頁發現 KML→快照→GeoJSON／provenance→驗證；未變跳過） |
 | [info_pois](info_pois/) | 多來源統合 POI（衍生資料集） | `scripts/` |

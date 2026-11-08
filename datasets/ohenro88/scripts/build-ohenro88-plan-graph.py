@@ -233,6 +233,7 @@ def _simplify(edges: list[dict], keep_nodes: set,
         new_edge = {
             "id": "OHE_" + _hash16(_canon({
                 "from": a, "to": b,
+                "edges": sorted((e1["id"], e2["id"])),
                 "first": ["%.6f" % cleaned[0][0], "%.6f" % cleaned[0][1]],
                 "last": ["%.6f" % cleaned[-1][0], "%.6f" % cleaned[-1][1]],
             })),
@@ -342,6 +343,9 @@ def _proximity_joins(edges: list[dict], node_coords: dict,
                 "measure": best["measure"], "node_id": snode,
                 "wgs84": [lon_p, lat_p],
             })
+            if snode == nid:
+                # Exact interior contact still needs the split, but no self-join.
+                continue
             joins.append({
                 "id": "OHJ_" + _hash16(_canon({"a": nid, "b": snode})),
                 "from": nid, "to": snode,

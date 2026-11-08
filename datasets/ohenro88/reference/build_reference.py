@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build OHenro 88 (com.sallyzzz.ohenroapp) route reference data.
 
-Inputs (immutable, extracted from the APK into datasets/ohenro88/reference/data/):
+Inputs (immutable, extracted from the APK into raw/snapshots/<sha256>/data/):
   - trails_all.geojson : 108 temple points + 160 walking lines (3D [lon,lat,elev])
   - merged.json        : 110 merged display routes (88 main + 17 bekkaku extra + 5 extra)
 
@@ -21,10 +21,16 @@ import math
 import os
 import re
 import tempfile
+from pathlib import Path
+import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(SCRIPT_DIR, "data")
+RAW_DIR = Path(SCRIPT_DIR).parent / "raw"
 OUT_DIR = os.path.join(SCRIPT_DIR, "..", "output")
+
+if not __package__:
+    sys.path.insert(0, str(Path(SCRIPT_DIR).parents[2]))
+from datasets.ohenro88.downloader import resolve, validate_assets
 
 NAME_RE = re.compile(r"^Walking (?:bekkaku )?(?:extra )?\((\d+|\d+-)?[^-]*\)")
 PAIR_RE = re.compile(r"^Walking (.*?)\s*\(([0-9]+|[A-Za-z]*\d+)-([0-9]+|[A-Za-z]*\d+)\)$")
@@ -325,7 +331,7 @@ def build_sections(trails, merged):
     return {
         "schema_version": 1,
         "kind": "ohenro88_section_reference",
-        "dataset": "com.sallyzzz.ohenroapp (OHenro 88) 1.1.0 APKPure XAPK",
+        "dataset": "com.sallyzzz.ohenroapp (OHenro 88)",
         "projection": "EPSG:4326 (WGS84) + elevation_m (third coordinate)",
         "note": (
             "Independent per-adjacent-temple walking-route reference extracted "
@@ -347,31 +353,42 @@ def build_sections(trails, merged):
     }
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data-dir", default=DATA_DIR, help="input data dir (default: %(default)s)")
-    parser.add_argument("--out-dir", default=OUT_DIR, help="output dir (default: %(default)s)")
-    args = parser.parse_args()
-
-    with open(os.path.join(args.data_dir, "trails_all.geojson"), encoding="utf-8") as f:
-        trails = json.load(f)
-    with open(os.path.join(args.data_dir, "merged.json"), encoding="utf-8") as f:
-        merged = json.load(f)
-
-    os.makedirs(args.out_dir, exist_ok=True)
-
+def build_data(trails, merged, metadata=None):
+    validate_assets({"trails_all.geojson": trails, "merged.json": merged})
     fc = build_features(trails, merged)
     lines = [f for f in fc["features"] if f["properties"]["kind"] == "line"]
     points = [f for f in fc["features"] if f["properties"]["kind"] == "point"]
-    atomic_write_json(os.path.join(args.out_dir, "ohenro88-routes.geojson"), fc)
-
     sections = build_sections(trails, merged)
+    if metadata is not None:
+        sections["dataset"] = f"com.sallyzzz.ohenroapp (OHenro 88) {metadata['version_name']}"
+        sections["source"] = {key: metadata[key] for key in
+                              ("package_name", "version_name", "version_code", "archive_sha256")}
     sections["accounting"]["line_feature_count"] = len(lines)
     sections["accounting"]["point_feature_count"] = len(points)
-    sections["accounting"]["declared_length_total_km"] = round(
-        sum(s["declared_length_km"] for s in sections["sections"] if s["declared_length_km"]) or 0.0,
-        2,
-    )
+    return fc, sections
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--data-dir", help="explicit extracted assets (otherwise resolve validated raw/current.json)")
+    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--out-dir", default=OUT_DIR, help="output dir (default: %(default)s)")
+    args = parser.parse_args()
+    metadata = None
+    if args.data_dir:
+        data_dir = Path(args.data_dir)
+    else:
+        snapshot = resolve(args.raw_dir)
+        data_dir = snapshot / "data"
+        metadata = json.loads((snapshot / "metadata.json").read_text(encoding="utf-8"))
+    with (data_dir / "trails_all.geojson").open(encoding="utf-8") as f:
+        trails = json.load(f)
+    with (data_dir / "merged.json").open(encoding="utf-8") as f:
+        merged = json.load(f)
+    fc, sections = build_data(trails, merged, metadata)
+    lines = [f for f in fc["features"] if f["properties"]["kind"] == "line"]
+    points = [f for f in fc["features"] if f["properties"]["kind"] == "point"]
+    atomic_write_json(os.path.join(args.out_dir, "ohenro88-routes.geojson"), fc)
     atomic_write_json(os.path.join(args.out_dir, "ohenro88-sections.json"), sections)
 
     print(f"lines={len(lines)} points={len(points)} sections={len(sections['sections'])}")
