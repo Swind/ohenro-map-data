@@ -35,12 +35,13 @@ assets／manifest、route packs 與人工編輯成果。
 | OHenro 88 更新來源／報告 | `datasets/ohenro88/raw/{current.json,snapshots/}`、`datasets/ohenro88/reports/pipeline.json` | APK/XAPK / JSON | App 1.1.0 / versionCode 24 | 驗證套件／版本／archive／assets hash；只靜態讀取，不執行 App |
 | Henro Helper POI | `datasets/henro_helper/output/henro-helper-pois.geojson` | GeoJSON | 2,471（2.26.111） | Henro Helper app，88 札所；另有 5 筆非空間原始記錄 |
 | Henro Helper 原始快照／建置報告 | `datasets/henro_helper/raw/{current.json,snapshots/}`、`datasets/henro_helper/reports/pipeline.json` | XAPK/APK / JSON | 最新 ARM64 archive 240,093,231 bytes | API 版本／SHA1、本機 SHA256、native libs、產出 hash 與完整 accounting |
-| OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,161 | OSM extractor |
+| OSM 住宿 | `datasets/osm/output/lodging.geojson` | GeoJSON | 1,355（2026-11-09） | OSM extractor；0 warnings，191 duplicate candidates 保留供審 |
 | Henroyado 住宿 | `datasets/henroyado/output/*.jsonl` | JSONL | 658 筆；561 resolved / 555 distinct map places（2026-11-09） | henroyado.com；所有未定位狀態保留 |
 | Henroyado 更新來源／報告 | `datasets/henroyado/raw/{current.json,snapshots/,google-maps/}`、`datasets/henroyado/reports/pipeline.json` | HTML / JSON / JSONL | 6 份正式產出（含 lodging PMTiles） | source/cache/code/output hashes、listing/geocode/map accounting |
 | min88 住宿 | `datasets/min88_lodging/output/*.jsonl` | JSONL | 654 筆；646 resolved / map features（2026-11-09） | min88.jp；所有未定位狀態保留 |
 | min88 更新來源／報告 | `datasets/min88_lodging/raw/{current.json,snapshots/,google-maps/}`、`datasets/min88_lodging/reports/pipeline.json` | HTML / JSON / JSONL | 6 份正式產出（含 lodging PMTiles） | 完整 detail hashes、cache/code/output hashes、warnings/geocode accounting |
-| 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | ~112MB | Protomaps，10 layers |
+| 底圖 | `datasets/osm/output/shikoku-basemap.pmtiles` | PMTiles | 114.16 MiB / 111,230 addressed tiles | Protomaps，9 layers，z0–15（2026-11-09） |
+| OSM 海岸線備援／報告 | `basemaps/tiles/data/sources/{water,land}-polygons-split-3857.zip`、`datasets/osm/reports/coastlines.json` | ZIP / JSON | 2 份全球 Polygon archives | 官方優先，RRZE 2026-10-31 備援；完整 CRC／geometry header／CRS 驗證及來源 SHA-256 |
 | 高程 | `datasets/gsi/output/shikoku-terrain.pmtiles` + `shikoku-contours.pmtiles` | PMTiles | 1.3GB / 211MB | Terrain-RGB + 20m 等高線 |
 | 高程原始資料／建置索引 | `datasets/gsi/raw/`、`datasets/gsi/reports/{updates,pipeline}.json` | ZIP / JSON | 692 ZIP（2026-11-04 清單） | 官方四國版本清單、本機 SHA-256 與產出 hash |
 | 互動規劃 graph | `datasets/{sekaiisan_henro,ohenro88,henrohub}/output/*-plan-graph.json` | JSON | 3 來源 | map-preview 規劃用 |
@@ -182,7 +183,7 @@ plan graph 為 2080 nodes / 1744 traversal edges / **443 joins**；exporter 去�
 
 | 來源 | 檔案 | 數量 |
 |---|---|---|
-| OSM extractor | `datasets/osm/output/lodging.geojson` | 1,161（properties: subtype/address/phone/website/rooms/beds/...） |
+| OSM extractor | `datasets/osm/output/lodging.geojson` | 1,355（2026-11-09；properties: subtype/address/phone/website/rooms/beds/...） |
 | Henroyado | `datasets/henroyado/output/{detect,raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 658 筆；561 有 place 座標，地圖依 place ID 合併 6 筆重複為 555 features |
 | min88 | `datasets/min88_lodging/output/{raw,v1,v1-geocoded}.jsonl` + `map.geojson` | 654 筆；646 有單一 place 座標且輸出地圖，5 place_not_found、3 source_data_incomplete |
 
@@ -391,7 +392,7 @@ OSM 一鍵管線：`python3 -m datasets.osm`（Geofabrik checksum 更新檢查 �
 [`datasets/osm/README.md`](../datasets/osm/README.md)。
 
 ```text
-datasets/osm/output/shikoku-basemap.pmtiles    # Protomaps Basemap；z0-15；10 layers：
+datasets/osm/output/shikoku-basemap.pmtiles    # Protomaps Basemap；z0-15；9 layers：
                                   #   boundaries/buildings/earth/landcover/landuse/places/pois/roads/water
                                   #   pois layer：~500 kinds（restaurant/hotel/station/toilets/...）
                                   #   = 所有 OSM 點的「原生」顯示層；§1.1 只精選抽出少數 kind
@@ -400,6 +401,21 @@ datasets/gsi/output/shikoku-terrain.pmtiles    # Terrain-RGB PNG，z6-14（DEM10
 datasets/gsi/output/shikoku-elevation.sqlite   # GSI DEM5+DEM10B 合併 SQLite（metadata/elevation_tiles/source_tiles）
 datasets/gsi/output/shikoku-elevation-dem10.sqlite  # DEM10-only（視覺化基底）
 ```
+
+OSM 完整建置會先準備海／陸多邊形：已有有效快取即重用；缺檔或損壞時先試
+`osmdata.openstreetmap.de`，失敗才改用 [RRZE 的 2026-10-31 封存](https://ftp.rrze.uni-erlangen.de/pub/openstreetmapdata.com-archive/2026-10-31/)。
+固定備份不是每日最新資料，不降低解析度也不改投影（維持 split EPSG:3857）。
+`datasets/osm/reports/coastlines.json` 的 `archives` 以檔名為 key，記錄 source
+（official／rrze／existing_cache）、url、data_date、size、sha256 與可選 mirror_snapshot；
+無已知來源的既有快取不冒充官方下載。成功建置時同一 provenance 也包含於
+`reports/pipeline.json.coastlines`。完整 ZIP 與必要圖層通過驗證才替換快取，
+兩個下載點都失敗則停止並保留舊地圖。操作見 `datasets/osm/README.md`。
+
+2026-11-09 已實跑官方失敗→RRZE 完整下載／CRC→正式建置與發布，再獨立 validate：
+basemap 119,701,556 bytes／111,230 addressed tiles／9 layers；hiking overlay
+1,098 tiles（實際 z5–14）；住宿 1,355 筆、0 warnings。兩份海岸線均標示
+`source=rrze`、`data_date=2026-10-31T00:00:00Z`；重跑快取準備後 ZIP 與來源報告的
+SHA-256／mtime 均不變。統合 POI／App manifest 不在本次建置內自動重新發布。
 
 查詢：`cargo run --manifest-path datasets/gsi/gsi-dem/Cargo.toml --release -- query-db datasets/gsi/output/shikoku-elevation.sqlite --lat .. --lon ..`。
 

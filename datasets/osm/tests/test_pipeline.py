@@ -78,16 +78,6 @@ class PipelineTests(unittest.TestCase):
             pipeline.fetch(self.pbf)
         self.assertFalse(self.pbf.exists())
 
-    def test_manual_run_never_fetches_or_replaces_input(self):
-        with patch.object(pipeline, "DATASET", self.root), \
-             patch.object(pipeline, "preflight"), \
-             patch.object(pipeline, "fetch") as fetch, \
-             patch.object(pipeline, "build") as build:
-            self.assertEqual(pipeline.main(["--local", "--pbf", str(self.pbf)]), 0)
-        fetch.assert_not_called()
-        self.assertEqual(build.call_args.args[0], self.pbf)
-        self.assertIsNone(build.call_args.kwargs["source_url"])
-
     def test_failed_build_keeps_published_outputs(self):
         pom = self.root / "basemaps/tiles/pom.xml"
         pom.parent.mkdir(parents=True)

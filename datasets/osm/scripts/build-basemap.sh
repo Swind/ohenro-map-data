@@ -36,6 +36,8 @@ JARS=("$TILES_DIR"/target/*-with-deps.jar)
 JAR="${JARS[0]}"
 
 mkdir -p "$TILES_DIR/data/sources" "$OUTPUT_DIR" "$REPORTS"
+"${PYTHON:-python3}" -m datasets.osm.coastlines \
+  --sources-dir "$TILES_DIR/data/sources" --reports-dir "$REPORTS"
 
 # Copy (not symlink) the immutable local PBF so Planetiler's --download
 # sees the file as present and does not fetch a fresh copy from Geofabrik.

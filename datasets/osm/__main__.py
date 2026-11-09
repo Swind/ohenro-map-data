@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from urllib.error import HTTPError
 from urllib.request import urlopen
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -35,7 +36,9 @@ def download(url, destination):
                 handle.flush()
                 os.fsync(handle.fileno())
             return
-        except (OSError, ValueError):
+        except (OSError, ValueError) as error:
+            if isinstance(error, HTTPError):
+                error.close()
             if attempt == 2:
                 raise
             time.sleep(2 ** attempt)
@@ -187,6 +190,7 @@ def build(pbf, output, reports, source_url=None):
             "input_path": str(pbf),
             "input_sha256": source_sha,
             "basemaps_commit": subprocess.check_output(["git", "-C", str(ROOT / "basemaps"), "rev-parse", "HEAD"], text=True).strip(),
+            "coastlines": json.loads((reports / "coastlines.json").read_text())["archives"],
             "lodging_count": json.loads((staged / "lodging-report.json").read_text())["total"],
             "outputs": {name: {"size": (staged / name).stat().st_size, "sha256": digest(staged / name)} for name in OUTPUTS},
         }
